@@ -1,0 +1,17 @@
+services:
+  sportscrape-local:
+    container_name: sportscrape-local-container
+    image: sportscrape-development
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/sportscrape
+    working_dir: /sportscrape
+    networks:
+      - "sportscrape-local"
+    stdin_open: true
+    tty: true
+
+networks:
+  sportscrape-local:
