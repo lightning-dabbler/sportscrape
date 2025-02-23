@@ -156,6 +156,8 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 				}
 				boxScoreStats.PlayerLink = basketballreference.URL + util.CleanTextDatum(s.Find(basicBoxScorePlayerLinkSelector).AttrOr("href", ""))
 				boxScoreStats.Player = util.CleanTextDatum(s.Find(basicBoxScorePlayerSelector).Text())
+				playerLinkSplit := strings.Split(boxScoreStats.PlayerLink, "/")
+				boxScoreStats.PlayerID = strings.Split(playerLinkSplit[len(playerLinkSplit)-1], ".")[0]
 				minutesPlayed := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
 				if len(minutesPlayed) > 0 && unicode.IsDigit(rune(minutesPlayed[0])) {
 					minutesPlayedSplit := strings.Split(minutesPlayed, ":")
@@ -344,7 +346,7 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 						log.Printf("WARNING: %s\n", err.Error())
 					}
 				} else {
-					boxScoreStats.MinutesPlayed = minutesPlayed
+					boxScoreStats.MinutesPlayed = 0
 				}
 				basicNBABoxScoreStats = append(basicNBABoxScoreStats, boxScoreStats)
 			} else {

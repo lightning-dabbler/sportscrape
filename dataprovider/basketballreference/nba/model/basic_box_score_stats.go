@@ -16,9 +16,11 @@ type NBABasicBoxScoreStats struct {
 	Team string `json:"team"`
 	// Opponent is the opposing team name
 	Opponent string `json:"opponent"`
+	// PlayerID is the player's id extracted from the player's basketball-reference profile url
+	PlayerID string `json:"player_id"`
 	// Player is the player's name
 	Player string `json:"player"`
-	// PlayerLink is link to player's basketball-reference profile
+	// PlayerLink is the link to the player's basketball-reference profile
 	PlayerLink string `json:"player_link"`
 	// Starter is whether the player was apart of the team's starting five during the event or not
 	Starter bool `json:"starter"`
