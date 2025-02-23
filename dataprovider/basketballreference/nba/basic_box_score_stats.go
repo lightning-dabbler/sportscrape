@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
@@ -156,8 +157,23 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 				boxScoreStats.PlayerLink = basketballreference.URL + util.CleanTextDatum(s.Find(basicBoxScorePlayerLinkSelector).AttrOr("href", ""))
 				boxScoreStats.Player = util.CleanTextDatum(s.Find(basicBoxScorePlayerSelector).Text())
 				minutesPlayed := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
-				if minutesPlayed != "Did Not Play" {
-					boxScoreStats.MinutesPlayed = minutesPlayed
+				if len(minutesPlayed) > 0 && unicode.IsDigit(rune(minutesPlayed[0])) {
+					minutesPlayedSplit := strings.Split(minutesPlayed, ":")
+					minutes, err := util.TextToInt(minutesPlayedSplit[0])
+					if err != nil {
+						log.Printf("Could not convert minutes %s to integer\n", minutesPlayedSplit[0])
+						log.Fatalln(err)
+					}
+
+					seconds, err := util.TextToInt(minutesPlayedSplit[1])
+					if err != nil {
+						log.Printf("Could not convert seconds %s to integer\n", minutesPlayedSplit[0])
+						log.Fatalln(err)
+					}
+
+					totalMinutes := float32(minutes) + (float32(seconds) / float32(60))
+					boxScoreStats.MinutesPlayed = totalMinutes
+
 					fieldGoalsMadeText := util.CleanTextDatum(s.Find("td:nth-child(3)").Text())
 					fieldGoalsMade, err := util.TextToInt(fieldGoalsMadeText)
 					if err != nil {

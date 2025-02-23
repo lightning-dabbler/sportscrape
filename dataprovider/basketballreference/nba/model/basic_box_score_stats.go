@@ -23,7 +23,7 @@ type NBABasicBoxScoreStats struct {
 	// Starter is whether the player was apart of the team's starting five during the event or not
 	Starter bool `json:"starter"`
 	// MinutesPlayed is minutes played during the event
-	MinutesPlayed string `json:"minutes_played"`
+	MinutesPlayed float32 `json:"minutes_played"`
 	// FieldGoalsMade is the number of field goals made
 	FieldGoalsMade int `json:"field_goals_made"`
 	// FieldGoalAttempts is the number of field goals attempted
