@@ -35,6 +35,10 @@ unit-tests: # Run unit tests
 	go test -v -tags=unit -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html
 
-integration-test: # Run integration tests
+integration-tests: # Run integration tests
 	go test -v -tags=integration -coverprofile=coverage.out ./...
+	$(MAKE) coverage-html
+
+all-tests: # Run all tests regardless of tags
+	go test -v -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html

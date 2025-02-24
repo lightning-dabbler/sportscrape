@@ -1,12 +1,11 @@
-name: Unit tests
+name: Integration tests
 
 on:
-  push:
-    branches-ignore: [main]
+  pull_request:
 
 jobs:
-  unit-tests:
-    name: Run unit tests
+  integration-tests:
+    name: Run integration tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,12 +18,12 @@ jobs:
         with:
           go-version: '1.24.0'
       - run: go version
-      - name: Run unit tests
-        run: make unit-tests
-      - name: Archive unit test output and coverage
+      - name: Run integration tests
+        run: make integration-tests
+      - name: Archive integration test output and coverage
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-artifacts
+          name: integration-test-artifacts
           path: |
             coverage.out
             coverage.html
