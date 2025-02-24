@@ -2,7 +2,6 @@ package sportsreferenceutil
 
 import (
 	"fmt"
-	"log"
 	"time"
 )
 
@@ -12,30 +11,28 @@ const (
 )
 
 // DateStrToTime takes in a date string in the form 2024-01-25
-// Returns a timestamp
-func DateStrToTime(date string) time.Time {
-	dateParse, timeParseErr := time.Parse(dateLayout, date)
-	if timeParseErr != nil {
-		fmt.Println("Could not parse: '" + date + "'")
-		log.Fatalln(timeParseErr)
+// Returns a timestamp and error
+func DateStrToTime(date string) (time.Time, error) {
+	dateParse, err := time.Parse(dateLayout, date)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("could not parse '%s': %w", date, err)
 	}
-	return dateParse
+	return dateParse, nil
 }
 
 // EventDate takes in a date string in the form 2024-01-25
-// Returns a timezone (America/New_York) aware timestamp
-func EventDate(date string) time.Time {
-	loc, locationErr := time.LoadLocation("America/New_York")
-	if locationErr != nil {
-		log.Fatalln(locationErr)
+// Returns a timezone (America/New_York) aware timestamp error
+func EventDate(date string) (time.Time, error) {
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		return time.Time{}, fmt.Errorf("An issue arose loading timezone: %w", err)
 	}
 
-	dateParse, timeParseErr := time.ParseInLocation(dateLayout, date, loc)
-	if timeParseErr != nil {
-		fmt.Println("Could not parse: '" + date + "'")
-		log.Fatalln(timeParseErr)
+	dateParse, err := time.ParseInLocation(dateLayout, date, loc)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("Could not parse '%s': %w", date, err)
 	}
-	return dateParse
+	return dateParse, nil
 }
 
 type loserValues map[string]struct{}
@@ -45,9 +42,9 @@ var LoserValueExists loserValues = loserValues{"loser": struct{}{}, "winner": st
 
 // ReturnUnemptyField validates that the extracted field from a selector is not an empty string
 // Returns the string if not empty else raises a logs an issue and fails the process
-func ReturnUnemptyField(str string, location string, field string) string {
+func ReturnUnemptyField(str string, location string, field string) (string, error) {
 	if str == "" {
-		log.Fatalf("No value @ %s for %s\n", location, field)
+		return "", fmt.Errorf("No value @ %s for %s", location, field)
 	}
-	return str
+	return str, nil
 }

@@ -27,3 +27,14 @@ down: # stop and kill sportscrape-local-container and sportscrape-local network
 
 pre-commit-all: # Run pre-commit on all files
 	pre-commit run --all-files
+
+coverage-html: # Converts coverage.out to coverage.html
+	go tool cover -html=coverage.out -o coverage.html
+
+unit-tests: # Run unit tests
+	go test -v -tags=unit -coverprofile=coverage.out ./...
+	$(MAKE) coverage-html
+
+integration-test: # Run integration tests
+	go test -v -tags=integration -coverprofile=coverage.out ./...
+	$(MAKE) coverage-html
