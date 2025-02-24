@@ -16,6 +16,3 @@ repos:
         args: [--no-ensure-ascii,--autofix]
     -   id: detect-aws-credentials
         args: [--allow-missing-credentials]
-
-default_language_version:
-    python: python3.10
