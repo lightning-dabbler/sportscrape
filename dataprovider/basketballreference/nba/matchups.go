@@ -295,6 +295,9 @@ func GetMatchups(date string) []interface{} {
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		HomeQ4TotalText := util.CleanTextDatum(s.Find(selector).Text())
 		HomeQ4TotalText, err = sportsreferenceutil.ReturnUnemptyField(HomeQ4TotalText, location, "HomeQ4Total")
+		if err != nil {
+			log.Fatalln(err)
+		}
 		matchup.HomeQ4Total, err = util.TextToInt(HomeQ4TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ4TotalText to Int\n", HomeQ4TotalText)
