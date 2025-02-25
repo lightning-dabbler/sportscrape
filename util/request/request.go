@@ -2,21 +2,19 @@ package request
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 )
 
 // Get performs a GET request using the url it receives
 // Returns an http response
-func Get(url string) *http.Response {
+func Get(url string) (*http.Response, error) {
 	fmt.Printf("Fetching from %s\n", url)
-	resp, httpGetErr := http.Get(url)
-	if httpGetErr != nil {
-		log.Printf("HTTP Error at %s\n", url)
-		log.Fatalln(httpGetErr)
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("HTTP Error at %s: %w", url, err)
 	}
 	if resp.StatusCode != 200 {
-		log.Fatalf("Request to '%s' %s\n", url, resp.Status)
+		return nil, fmt.Errorf("Request to '%s' received a %s status", url, resp.Status)
 	}
-	return resp
+	return resp, nil
 }
