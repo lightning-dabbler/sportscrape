@@ -31,19 +31,19 @@ type NBABasicBoxScoreStats struct {
 	// FieldGoalAttempts is the number of field goals attempted
 	FieldGoalAttempts int `json:"field_goal_attempts"`
 	// FieldGoalPercentage is the field goal percentage
-	FieldGoalPercentage float64 `json:"field_goal_percentage"`
+	FieldGoalPercentage float32 `json:"field_goal_percentage"`
 	// ThreePointsMade is the number of three pointers made
 	ThreePointsMade int `json:"three_points_made"`
-	// ThreePointsAttempts is the number of three point attempts
-	ThreePointsAttempts int `json:"three_point_attempts"`
+	// ThreePointAttempts is the number of three point attempts
+	ThreePointAttempts int `json:"three_point_attempts"`
 	// ThreePointPercentage is the three point percentage
-	ThreePointPercentage float64 `json:"three_point_percentage"`
+	ThreePointPercentage float32 `json:"three_point_percentage"`
 	// FreeThrowsMade is the number of free throws made
 	FreeThrowsMade int `json:"free_throws_made"`
 	// FreeThrowAttempts is the number of free throw attempts
 	FreeThrowAttempts int `json:"free_throw_attempts"`
 	// FreeThrowPercentage is the free throw percentage
-	FreeThrowPercentage float64 `json:"free_throw_percentage"`
+	FreeThrowPercentage float32 `json:"free_throw_percentage"`
 	// OffensiveRebounds is the number of offensive rebounds
 	OffensiveRebounds int `json:"offensive_rebounds"`
 	// DefensiveRebounds is the number of defensive rebounds
@@ -62,6 +62,8 @@ type NBABasicBoxScoreStats struct {
 	PersonalFouls int `json:"personal_fouls"`
 	// Points is the number of points
 	Points int `json:"points"`
+	// GameScore is a metric used to evaluate how well a player performs in a single game
+	GameScore float32 `json:"game_score"`
 	// PlusMinus is the plus-minus
 	PlusMinus int `json:"plus_minus"`
 }

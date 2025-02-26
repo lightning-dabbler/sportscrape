@@ -31,6 +31,7 @@ const (
 
 type headerValues map[string]struct{}
 
+// basicBoxScoreStarterHeaderValues represents the headers in sequential order for the starter team members
 var basicBoxScoreStarterHeaderValues headerValues = headerValues{
 	"Starters": struct{}{},
 	"MP":       struct{}{},
@@ -52,9 +53,11 @@ var basicBoxScoreStarterHeaderValues headerValues = headerValues{
 	"TOV":      struct{}{},
 	"PF":       struct{}{},
 	"PTS":      struct{}{},
+	"GmSc":     struct{}{},
 	"+/-":      struct{}{},
 }
 
+// basicBoxScoreReservesHeaderValues represents the headers in sequential order for the reserve team members
 var basicBoxScoreReservesHeaderValues headerValues = headerValues{
 	"Reserves": struct{}{},
 	"MP":       struct{}{},
@@ -76,6 +79,7 @@ var basicBoxScoreReservesHeaderValues headerValues = headerValues{
 	"TOV":      struct{}{},
 	"PF":       struct{}{},
 	"PTS":      struct{}{},
+	"GmSc":     struct{}{},
 	"+/-":      struct{}{},
 }
 
@@ -191,12 +195,12 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 						log.Printf("WARNING: %s\n", err.Error())
 					}
 					rawFieldGoalPercentage := util.CleanTextDatum(s.Find("td:nth-child(5)").Text())
-					var fieldGoalPercentage float64
+					var fieldGoalPercentage float32
 
 					if rawFieldGoalPercentage == "" {
 						fieldGoalPercentage = 0.00
 					} else {
-						fieldGoalPercentage, err = util.TextToFloat64(rawFieldGoalPercentage)
+						fieldGoalPercentage, err = util.TextToFloat32(rawFieldGoalPercentage)
 						if err != nil {
 							log.Printf("Can't convert '%s' for rawFieldGoalPercentage to Float64\n", rawFieldGoalPercentage)
 							log.Fatalln(err)
@@ -210,20 +214,20 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 						threePointsMade = 0
 						log.Printf("WARNING: %s\n", err.Error())
 					}
-					threePointsAttemptsText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
-					threePointsAttempts, err := util.TextToInt(threePointsAttemptsText)
+					threePointAttemptsText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
+					threePointAttempts, err := util.TextToInt(threePointAttemptsText)
 					if err != nil {
-						log.Printf("Can't convert '%s' for threePointsAttemptsText to Int\n", threePointsAttemptsText)
+						log.Printf("Can't convert '%s' for threePointAttemptsText to Int\n", threePointAttemptsText)
 						threePointsMade = 0
 						log.Printf("WARNING: %s\n", err.Error())
 					}
 					rawthreePointPercentage := util.CleanTextDatum(s.Find("td:nth-child(8)").Text())
-					var threePointPercentage float64
+					var threePointPercentage float32
 
 					if rawthreePointPercentage == "" {
 						threePointPercentage = 0.00
 					} else {
-						threePointPercentage, err = util.TextToFloat64(rawthreePointPercentage)
+						threePointPercentage, err = util.TextToFloat32(rawthreePointPercentage)
 						if err != nil {
 							log.Printf("Can't convert '%s' for rawthreePointPercentage to Float64\n", rawthreePointPercentage)
 							log.Fatalln(err)
@@ -245,12 +249,12 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 						log.Printf("WARNING: %s\n", err.Error())
 					}
 					rawfreeThrowPercentage := util.CleanTextDatum(s.Find("td:nth-child(11)").Text())
-					var freeThrowPercentage float64
+					var freeThrowPercentage float32
 
 					if rawfreeThrowPercentage == "" {
 						freeThrowPercentage = 0.00
 					} else {
-						freeThrowPercentage, err = util.TextToFloat64(rawfreeThrowPercentage)
+						freeThrowPercentage, err = util.TextToFloat32(rawfreeThrowPercentage)
 						if err != nil {
 							log.Printf("Can't convert '%s' for rawfreeThrowPercentage to Float64\n", rawfreeThrowPercentage)
 							log.Fatalln(err)
@@ -260,7 +264,7 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 					boxScoreStats.FieldGoalAttempts = fieldGoalAttempts
 					boxScoreStats.FieldGoalPercentage = fieldGoalPercentage
 					boxScoreStats.ThreePointsMade = threePointsMade
-					boxScoreStats.ThreePointsAttempts = threePointsAttempts
+					boxScoreStats.ThreePointAttempts = threePointAttempts
 					boxScoreStats.ThreePointPercentage = threePointPercentage
 					boxScoreStats.FreeThrowsMade = freeThrowsMade
 					boxScoreStats.FreeThrowAttempts = freeThrowAttempts
@@ -338,7 +342,15 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 						log.Printf("WARNING: %s\n", err.Error())
 					}
 
-					PlusMinusText := util.CleanTextDatum(s.Find("td:nth-child(21)").Text())
+					GameScoreText := util.CleanTextDatum(s.Find("td:nth-child(21)").Text())
+					boxScoreStats.GameScore, err = util.TextToFloat32(GameScoreText)
+					if err != nil {
+						log.Printf("Cannot convert '%s' for GameScoreText to Float64\n", GameScoreText)
+						boxScoreStats.GameScore = 0
+						log.Printf("WARNING: %s\n", err.Error())
+					}
+
+					PlusMinusText := util.CleanTextDatum(s.Find("td:nth-child(22)").Text())
 					boxScoreStats.PlusMinus, err = util.TextToInt(PlusMinusText)
 					if err != nil {
 						log.Printf("Cannot convert '%s' for PlusMinusText to Int\n", PlusMinusText)
