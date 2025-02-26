@@ -53,7 +53,7 @@ func TestGetUnitTests(t *testing.T) {
 				assert.NotNil(t, resp)
 				body, _ := io.ReadAll(resp.Body)
 				resp.Body.Close()
-				assert.Equal(t, tt.response, string(body))
+				assert.Equal(t, tt.response, string(body), "Equal response body")
 			}
 		})
 	}
@@ -90,7 +90,7 @@ func TestGetIntegrationTests(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				assert.Equal(t, tt.status, resp.StatusCode)
+				assert.Equal(t, tt.status, resp.StatusCode, "Equal status codes")
 			}
 		})
 	}

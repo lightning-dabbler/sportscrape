@@ -62,3 +62,13 @@ func TextToFloat64(str string) (float64, error) {
 	}
 	return val, nil
 }
+
+// TextToFloat32 attempts to convert a string to a float32
+// Returns an 32-bit float and error (nil if the transformation was successful)
+func TextToFloat32(str string) (float32, error) {
+	val, err := strconv.ParseFloat(str, 32)
+	if err != nil {
+		return 0, fmt.Errorf("Could not convert %s to float32: %w", str, err)
+	}
+	return float32(val), nil
+}

@@ -199,3 +199,46 @@ func TestTextToFloat64(t *testing.T) {
 		})
 	}
 }
+
+func TestTextToFloat32(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected float32
+		isError  bool
+	}{
+		{
+			name:     "integer as float",
+			input:    "123",
+			expected: 123.0,
+		},
+		{
+			name:     "decimal",
+			input:    "123.45",
+			expected: 123.45,
+		},
+		{
+			name:     "scientific notation",
+			input:    "1.23e-5",
+			expected: 1.23e-5,
+		},
+		{
+			name:    "non-numeric",
+			input:   "abc",
+			isError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := TextToFloat32(tt.input)
+
+			if tt.isError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, result)
+			}
+		})
+	}
+}
