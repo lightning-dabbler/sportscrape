@@ -1,4 +1,4 @@
-name: Validate file content structure
+name: Validate files
 
 on:
   push:
