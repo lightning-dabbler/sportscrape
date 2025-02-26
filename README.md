@@ -13,7 +13,7 @@ package main
 import (
     "fmt"
     "time"
-    
+
     "github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba"
 )
 
@@ -21,10 +21,10 @@ func main() {
     // Get Feb 20, 2025's matchups
     date := "2025-02-20"
     matchups := nba.GetMatchups(date)
-    
+
     // Get basic box score stats with 5 concurrent requests
     stats := nba.GetBasicBoxScoreStats(5, matchups...)
-    
+
     fmt.Printf("Found %d matchups with %d player stat lines\n", len(matchups), len(stats))
 }
 ```
