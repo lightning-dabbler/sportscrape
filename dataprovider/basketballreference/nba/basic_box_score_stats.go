@@ -1,7 +1,6 @@
 package nba
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -12,10 +11,9 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
+	"github.com/lightning-dabbler/sportscrape/util/request"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/chromedp/cdproto/network"
-	"github.com/chromedp/chromedp"
 )
 
 const (
@@ -89,41 +87,12 @@ var basicBoxScoreReservesHeaderValues headerValues = headerValues{
 func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 	matchup := nbaMatchup.(model.NBAMatchup)
 	url := matchup.BoxScoreLink
-	var basicNBABoxScoreStats []interface{}
-	ctx, cancel := chromedp.NewContext(context.Background())
-	defer cancel()
-	ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
-	defer cancel()
-	fmt.Println("Scraping Basic Box Score: " + url)
-	var outer string
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
-	if err := chromedp.Run(ctx,
-		network.Enable(),
-		network.SetExtraHTTPHeaders(network.Headers(map[string]interface{}{
-			"authority":                 "www.basketball-reference.com",
-			"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-			"accept-language":           "en-US;q=0.8",
-			"cookie":                    "is_live=true; sr_note_box_countdown=57",
-			"if-modified-since":         "Tue, 08 Nov 2022 01:08:31 GMT",
-			"sec-fetch-dest":            "document",
-			"sec-fetch-mode":            "navigate",
-			"sec-fetch-site":            "none",
-			"sec-fetch-user":            "?1",
-			"sec-gpc":                   "1",
-			"upgrade-insecure-requests": "1",
-			"user-agent":                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36",
-		})),
-		chromedp.Navigate(url),
-		chromedp.WaitReady(basicBoxScoreContentSelector),
-		chromedp.OuterHTML(basicBoxScoreContentSelector, &outer, chromedp.ByQuery),
-	); err != nil {
-		fmt.Println("ERROR:")
-		fmt.Printf("getBasicBoxScoreStats %s\n", url)
-		log.Fatalln(err)
-	}
-	myReader := strings.NewReader(outer)
-	doc, err := goquery.NewDocumentFromReader(myReader)
+	var basicNBABoxScoreStats []interface{}
+	fmt.Println("Scraping Basic Box Score: " + url)
+	dr := request.NewDocumentRetriever(2 * time.Minute)
+	doc, err := dr.RetrieveDocument(url, networkHeaders, basicBoxScoreContentSelector)
 	if err != nil {
 		log.Fatalln(err)
 	}
