@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Refactored `getBasicBoxScoreStats` and `GetMatchups` to use `networkHeaders` and `DocumentRetriever`
 ### Added
-- `NBAAdvBoxScoreStats` data model for basketball-reference NBA Advanced box score stats 
+- `NBAAdvBoxScoreStats` data model for basketball-reference NBA Advanced box score stats
 
 ## [0.1.0-alpha] - 2025-02-25
 ### Added
