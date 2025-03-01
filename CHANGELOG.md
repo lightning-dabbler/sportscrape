@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Refactored `getBasicBoxScoreStats` and `GetMatchups` to use `networkHeaders` and `DocumentRetriever`
+### Added
+- `NBAAdvBoxScoreStats` data model for basketball-reference NBA Advanced box score stats 
+
 ## [0.1.0-alpha] - 2025-02-25
 ### Added
 - Functionality to scrape NBA matchup and related basic box score stats data from https://basketball-reference.com (#2)
