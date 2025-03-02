@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -30,6 +31,7 @@ func Get(url string) (*http.Response, error) {
 // DocumentRetriever
 type DocumentRetriever struct {
 	timeout        time.Duration
+	debug          bool
 	ChromeRun      func(ctx context.Context, actions ...chromedp.Action) error
 	DocumentReader func(r io.Reader) (*goquery.Document, error)
 }
@@ -48,7 +50,13 @@ func NewDocumentRetriever(timeout time.Duration) *DocumentRetriever {
 // It uses chromium to fetch a web page from the url
 // Returns *goquery.Document and error
 func (dr *DocumentRetriever) RetrieveDocument(url string, networkHeaders network.Headers, waitReadySelector string) (*goquery.Document, error) {
-	ctx, cancel := chromedp.NewContext(context.Background())
+	var contextOptions []chromedp.ContextOption
+
+	if dr.debug {
+		contextOptions = append(contextOptions, chromedp.WithDebugf(log.Printf))
+	}
+	ctx, cancel := chromedp.NewContext(context.Background(), contextOptions...)
+
 	defer cancel()
 	ctx, cancel = context.WithTimeout(ctx, dr.timeout)
 	defer cancel()
