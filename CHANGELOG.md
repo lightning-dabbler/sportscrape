@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Slight refactor of `getBasicBoxScoreStats` to use shared components
 ### Added
 - Added `GetAdvBoxScoreStats` to scrape NBA advanced box score stats from basketball-reference.com
-- `NBAAdvBoxScoreStats` is the data model for NBA Advanced box score stats from basketball-reference.com 
+- `NBAAdvBoxScoreStats` is the data model for NBA Advanced box score stats from basketball-reference.com
 - Created shared.go for shared components for scraping NBA box score data from basketball-reference.com
 - Created functions to extract player ID and transform player minutes played
 
