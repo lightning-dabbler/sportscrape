@@ -71,7 +71,7 @@ func getAdvBoxScoreStats(nbaMatchup interface{}) []interface{} {
 	start := time.Now().UTC()
 	var advNBABoxScoreStats []interface{}
 	fmt.Println("Scraping Advanced Box Score: " + url)
-	dr := request.NewDocumentRetriever(2 * time.Minute)
+	dr := request.NewDocumentRetriever(request.WithTimeout(2 * time.Minute))
 	doc, err := dr.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
 	if err != nil {
 		log.Fatalln(err)

@@ -30,35 +30,92 @@ func Get(url string) (*http.Response, error) {
 
 // DocumentRetriever
 type DocumentRetriever struct {
-	timeout        time.Duration
-	debug          bool
-	ChromeRun      func(ctx context.Context, actions ...chromedp.Action) error
+	// timeout is the context timeout for ChromeRun operations
+	Timeout time.Duration
+	// debug enables verbose logging of Chrome operations when true
+	Debug bool
+	// ChromeRun executes Chrome DevTools Protocol actions in a given context
+	ChromeRun func(ctx context.Context, actions ...chromedp.Action) error
+	// DocumentReader parses HTML content into a goquery Document
 	DocumentReader func(r io.Reader) (*goquery.Document, error)
 }
 
-// NewDocumentRetriever accepts a timeout
-// returns DocumentRetriever
-func NewDocumentRetriever(timeout time.Duration) *DocumentRetriever {
-	return &DocumentRetriever{
-		timeout:        timeout,
-		ChromeRun:      chromedp.Run,
-		DocumentReader: goquery.NewDocumentFromReader,
+// RetrieverOption defines a function that configures a DocumentRetriever.
+// This is part of the functional options pattern for configuration.
+type RetrieverOption func(*DocumentRetriever)
+
+// WithTimeout returns a RetrieverOption that sets the timeout duration for document retrieval operations.
+//
+// Parameter:
+//   - timeout: The duration after which document retrieval operations will be cancelled
+func WithTimeout(timeout time.Duration) RetrieverOption {
+	return func(dr *DocumentRetriever) {
+		dr.Timeout = timeout
 	}
 }
 
-// RetrieveDocument accepts a url, network headers, and selector to indicate when the page is ready
-// It uses chromium to fetch a web page from the url
-// Returns *goquery.Document and error
+// WithDebug returns a RetrieverOption that enables or disables debug logging.
+//
+// Parameter:
+//   - debug: When true, enables verbose logging of Chrome operations
+func WithDebug(debug bool) RetrieverOption {
+	return func(dr *DocumentRetriever) {
+		dr.Debug = debug
+	}
+}
+
+// NewDocumentRetriever creates a new DocumentRetriever with default settings,
+// which can be overridden by the provided options.
+//
+// By default, the retriever uses:
+//   - 30 second timeout
+//   - Debug logging disabled
+//   - Standard chromedp.Run for Chrome operations
+//   - Standard goquery document parser
+//
+// Parameters:
+//   - options: A variadic list of RetrieverOption functions that modify the default configuration
+//
+// Returns a pointer to the configured DocumentRetriever
+func NewDocumentRetriever(options ...RetrieverOption) *DocumentRetriever {
+	// Set defaults
+	dr := &DocumentRetriever{
+		Timeout:        30 * time.Second,
+		Debug:          false,
+		ChromeRun:      chromedp.Run,
+		DocumentReader: goquery.NewDocumentFromReader,
+	}
+
+	// Apply options
+	for _, option := range options {
+		option(dr)
+	}
+
+	return dr
+}
+
+// RetrieveDocument fetches and parses a web document from the specified URL.
+// It uses headless Chrome to load the page, waits for the element matching waitReadySelector
+// to be ready, and returns the parsed document.
+//
+// Parameters:
+//   - url: The web page URL to retrieve
+//   - networkHeaders: HTTP headers to include with the request
+//   - waitReadySelector: CSS selector of element that indicates page is fully loaded
+//
+// Returns:
+//   - *goquery.Document: The parsed document
+//   - error: Any error encountered during fetching or parsing
 func (dr *DocumentRetriever) RetrieveDocument(url string, networkHeaders network.Headers, waitReadySelector string) (*goquery.Document, error) {
 	var contextOptions []chromedp.ContextOption
 
-	if dr.debug {
+	if dr.Debug {
 		contextOptions = append(contextOptions, chromedp.WithDebugf(log.Printf))
 	}
 	ctx, cancel := chromedp.NewContext(context.Background(), contextOptions...)
 
 	defer cancel()
-	ctx, cancel = context.WithTimeout(ctx, dr.timeout)
+	ctx, cancel = context.WithTimeout(ctx, dr.Timeout)
 	defer cancel()
 	fmt.Println("Retrieving document from: " + url)
 	var outer string

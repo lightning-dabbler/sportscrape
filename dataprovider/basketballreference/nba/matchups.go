@@ -63,7 +63,7 @@ func GetMatchups(date string) []interface{} {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	dr := request.NewDocumentRetriever(60 * time.Second)
+	dr := request.NewDocumentRetriever(request.WithTimeout(60 * time.Second))
 
 	doc, err := dr.RetrieveDocument(url, networkHeaders, matchupsGameSummariesSelector)
 	if err != nil {

@@ -107,9 +107,10 @@ func TestGetIntegrationTests(t *testing.T) {
 
 func TestNewDocumentRetriever(t *testing.T) {
 	timeout := 30 * time.Second
-	dr := NewDocumentRetriever(timeout)
+	dr := NewDocumentRetriever()
 
-	assert.Equal(t, timeout, dr.timeout)
+	assert.Equal(t, timeout, dr.Timeout)
+	assert.Equal(t, false, dr.Debug)
 	assert.NotNil(t, dr.ChromeRun)
 	assert.NotNil(t, dr.DocumentReader)
 }
@@ -150,7 +151,7 @@ func TestRetrieveDocument(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			dr := &DocumentRetriever{
-				timeout: 100 * time.Millisecond,
+				Timeout: 100 * time.Millisecond,
 				ChromeRun: func(ctx context.Context, actions ...chromedp.Action) error {
 					return tt.runErr
 				},
@@ -215,7 +216,7 @@ func TestDocumentRetriever_Integration(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 
-	dr := NewDocumentRetriever(10 * time.Second)
+	dr := NewDocumentRetriever(WithTimeout(10 * time.Second))
 	doc, err := dr.RetrieveDocument("https://example.com", nil, "body")
 	assert.NoError(t, err)
 	assert.NotNil(t, doc)
