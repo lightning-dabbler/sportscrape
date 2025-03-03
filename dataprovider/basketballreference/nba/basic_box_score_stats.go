@@ -3,14 +3,13 @@ package nba
 import (
 	"fmt"
 	"log"
-	"sync"
 	"time"
 	"unicode"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	"github.com/lightning-dabbler/sportscrape/util/request"
+	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -72,18 +71,63 @@ var basicBoxScoreReservesHeaderValues headerValues = headerValues{
 	"+/-":      struct{}{},
 }
 
-// getBasicBoxScoreStats accepts an interface that represents model.NBAMatchup
-// It fetches the basic box score stats associated with that matchup
-// Returns an array of model.NBABasicBoxScoreStats in the form of interface{}
-func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
-	matchup := nbaMatchup.(model.NBAMatchup)
-	url := matchup.BoxScoreLink
+// BasicBoxScoreOption defines a configuration option for basic box score runners
+type BasicBoxScoreOption func(*BasicBoxScoreRunner)
+
+// WithBasicBoxScoreTimeout sets the timeout duration for basic box score runner
+func WithBasicBoxScoreTimeout(timeout time.Duration) BasicBoxScoreOption {
+	return func(bsr *BasicBoxScoreRunner) {
+		bsr.Timeout = timeout
+	}
+}
+
+// WithBasicBoxScoreDebug enables or disables debug mode for basic box score runner
+func WithBasicBoxScoreDebug(debug bool) BasicBoxScoreOption {
+	return func(bsr *BasicBoxScoreRunner) {
+		bsr.Debug = debug
+	}
+}
+
+// WithBasicBoxScoreConcurrency sets the number of concurrent workers
+func WithBasicBoxScoreConcurrency(n int) BasicBoxScoreOption {
+	return func(bsr *BasicBoxScoreRunner) {
+		bsr.Concurrency = n
+	}
+}
+
+// NewBasicBoxScoreRunner creates a new BasicBoxScoreRunner with the provided options
+func NewBasicBoxScoreRunner(options ...BasicBoxScoreOption) *BasicBoxScoreRunner {
+	bsr := &BasicBoxScoreRunner{}
+	bsr.Processor = bsr
+
+	// Apply all options
+	for _, option := range options {
+		option(bsr)
+	}
+
+	return bsr
+}
+
+// BasicBoxScoreRunner specialized Runner for retrieving NBA basic box score statistics
+// with support for concurrent processing.
+type BasicBoxScoreRunner struct {
+	sportsreferenceutil.BoxScoreRunner
+}
+
+// GetSegmentBoxScoreStats retrieves NBA basic box score statistics for a single matchup.
+//
+// Parameter:
+//   - matchup: The NBA matchup for which to retrieve basic box score statistics
+//
+// Returns a slice of NBA basic box score statistics as interface{} values
+func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup interface{}) []interface{} {
+	matchupModel := matchup.(model.NBAMatchup)
+	url := matchupModel.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	var basicNBABoxScoreStats []interface{}
-	fmt.Println("Scraping Basic Box Score: " + url)
-	dr := request.NewDocumentRetriever(2 * time.Minute)
-	doc, err := dr.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
+	log.Println("Scraping Basic Box Score: " + url)
+	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -102,15 +146,15 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 			var boxScoreStats model.NBABasicBoxScoreStats
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
-				boxScoreStats.EventID = matchup.EventID
+				boxScoreStats.EventID = matchupModel.EventID
 				if i == 0 {
-					boxScoreStats.Team = matchup.AwayTeam
-					boxScoreStats.Opponent = matchup.HomeTeam
+					boxScoreStats.Team = matchupModel.AwayTeam
+					boxScoreStats.Opponent = matchupModel.HomeTeam
 				} else {
-					boxScoreStats.Team = matchup.HomeTeam
-					boxScoreStats.Opponent = matchup.AwayTeam
+					boxScoreStats.Team = matchupModel.HomeTeam
+					boxScoreStats.Opponent = matchupModel.AwayTeam
 				}
-				boxScoreStats.EventDate = matchup.EventDate
+				boxScoreStats.EventDate = matchupModel.EventDate
 				if j < 5 {
 					boxScoreStats.Starter = true
 				} else {
@@ -307,45 +351,11 @@ func getBasicBoxScoreStats(nbaMatchup interface{}) []interface{} {
 		})
 	})
 	if len(basicNBABoxScoreStats) == 0 {
-		fmt.Printf("No Data Scraped @ %s\n", url)
+		log.Printf("No Data Scraped @ %s\n", url)
 	} else {
 		diff := time.Now().UTC().Sub(start)
-		fmt.Printf("Scraping of %s Completed in %s\n", url, diff)
+		log.Printf("Scraping of %s Completed in %s\n", url, diff)
 	}
 
 	return basicNBABoxScoreStats
-}
-
-// basicBoxScoreStatsWorker acts a worker for retrieving and constructing basic box score stats
-func basicBoxScoreStatsWorker(wg *sync.WaitGroup, workerNBAMatchups <-chan interface{}, boxScoreStats chan<- []interface{}) {
-	for matchup := range workerNBAMatchups {
-		boxScoreStats <- getBasicBoxScoreStats(matchup)
-		wg.Done()
-	}
-}
-
-// GetBasicBoxScoreStats retrieves all basic box score stats for all matchups
-// It accepts a concurrency integer to parallelize the requests
-// Returns an array of model.NBABasicBoxScoreStats in the form of interface{}
-func GetBasicBoxScoreStats(concurrency int, matchups ...interface{}) []interface{} {
-	var wg sync.WaitGroup
-	workerNBAMatchups := make(chan interface{}, concurrency)
-	BoxScoreStats := make(chan []interface{}, len(matchups))
-	for i := 0; i < cap(workerNBAMatchups); i++ {
-		go basicBoxScoreStatsWorker(&wg, workerNBAMatchups, BoxScoreStats)
-	}
-	for _, matchup := range matchups {
-		wg.Add(1)
-		workerNBAMatchups <- matchup
-	}
-	wg.Wait()
-	close(workerNBAMatchups)
-	close(BoxScoreStats)
-
-	var allBoxScoreStats []interface{}
-	for boxScoreStats := range BoxScoreStats {
-		allBoxScoreStats = append(allBoxScoreStats, boxScoreStats...)
-
-	}
-	return allBoxScoreStats
 }

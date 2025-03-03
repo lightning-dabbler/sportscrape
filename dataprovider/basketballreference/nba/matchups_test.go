@@ -4,6 +4,7 @@ package nba
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +32,10 @@ func TestGetMatchups(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			matchups := GetMatchups(tt.date)
+			runner := NewMatchupRunner(
+				WithMatchupTimeout(2 * time.Minute),
+			)
+			matchups := runner.GetMatchups(tt.date)
 			assert.Equal(t, tt.expectedNumMatches, len(matchups))
 		})
 	}

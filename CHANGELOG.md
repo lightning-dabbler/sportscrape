@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Created `Runner`, `MatchupRunner`, and `BoxScoreRunner` in base_runner.go as sportreference utils to better configure and facilitate scraping for basketball-reference.com matchups and box scores
+- Created `RetrieverOption` to make `NewDocumentRetriever` more configurable with default values to keep the function signature consistent long term
+### Changed
+- Updated `NewDocumentRetriever` function signature
+- Refactored each scraping process to inherit from `MatchupRunner` and `BoxScoreRunner`
+- Each box score stats scraper uses `Processor.GetSegmentBoxScoreStats` to orchestrate scraping.
+- All round better configuration
+- Update logging all over to use `log`
 
 ## [0.1.0-alpha.1] - 2025-03-02
 ### Added

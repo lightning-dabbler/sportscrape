@@ -11,11 +11,11 @@ go get github.com/lightning-dabbler/sportscrape
 
 ## Data providers
 
-| Source                           | League | Feed                  | Function
-|----------------------------------|--------|-----------------------|-----------------------|
-| https://basketball-reference.com | NBA    | Matchup               | `GetMatchups(date)`   |
-| https://basketball-reference.com | NBA    | Basic box score stats | `GetBasicBoxScoreStats(concurrency, matchups...)` |
-| https://basketball-reference.com | NBA    | Advanced box score stats | `GetAdvBoxScoreStats(concurrency, matchups...)` |
+| Source                           | League | Feed                  |
+|----------------------------------|--------|-----------------------|
+| https://basketball-reference.com | NBA    | Matchup               |
+| https://basketball-reference.com | NBA    | Basic box score stats |
+| https://basketball-reference.com | NBA    | Advanced box score stats|
 
 ## License
 MIT

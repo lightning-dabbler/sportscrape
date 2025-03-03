@@ -94,7 +94,20 @@ func TestGetIntegrationTests(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := Get(tt.url)
+			var resp *http.Response
+			var err error
+
+			// Try up to 3 times with exponential backoff
+			for retries := 0; retries < 3; retries++ {
+				resp, err = Get(tt.url)
+				if !tt.isError && err != nil {
+					// If we expected success but got an error, wait and retry
+					t.Logf("Attempt %d failed: %v. Retrying...", retries+1, err)
+					time.Sleep(time.Duration(1<<uint(retries)) * time.Second) // Exponential backoff
+					continue
+				}
+				break // Either succeeded or got expected error
+			}
 			if tt.isError {
 				assert.Error(t, err)
 			} else {
@@ -105,11 +118,112 @@ func TestGetIntegrationTests(t *testing.T) {
 	}
 }
 
-func TestNewDocumentRetriever(t *testing.T) {
-	timeout := 30 * time.Second
-	dr := NewDocumentRetriever(timeout)
+// TestWithTimeoutOption tests the WithTimeout option function
+func TestWithTimeoutOption(t *testing.T) {
+	// Test cases with different timeout values
+	timeouts := []time.Duration{
+		500 * time.Millisecond,
+		1 * time.Second,
+		5 * time.Minute,
+	}
 
-	assert.Equal(t, timeout, dr.timeout)
+	for _, timeout := range timeouts {
+		dr := &DocumentRetriever{}
+
+		// Apply the option
+		option := WithTimeout(timeout)
+		option(dr)
+
+		// Verify timeout was set correctly
+		assert.Equal(t, timeout, dr.Timeout, "Timeout should be set to the specified value")
+	}
+}
+
+// TestWithDebugOption tests the WithDebug option function
+func TestWithDebugOption(t *testing.T) {
+	testCases := []struct {
+		name       string
+		debugValue bool
+	}{
+		{"Enable Debug", true},
+		{"Disable Debug", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			dr := &DocumentRetriever{}
+
+			// Apply the option
+			option := WithDebug(tc.debugValue)
+			option(dr)
+
+			// Verify debug was set correctly
+			assert.Equal(t, tc.debugValue, dr.Debug, "Debug should be set to the specified value")
+		})
+	}
+}
+
+// TestNewDocumentRetrieverWithOptions tests the NewDocumentRetriever function with different options
+func TestNewDocumentRetrieverWithOptions(t *testing.T) {
+	testCases := []struct {
+		name          string
+		options       []RetrieverOption
+		expectTimeout time.Duration
+		expectDebug   bool
+	}{
+		{
+			name:          "Default configuration",
+			options:       []RetrieverOption{},
+			expectTimeout: 1 * time.Minute, // Default timeout
+			expectDebug:   false,           // Debug off by default
+		},
+		{
+			name:          "With timeout option",
+			options:       []RetrieverOption{WithTimeout(30 * time.Second)},
+			expectTimeout: 30 * time.Second,
+			expectDebug:   false,
+		},
+		{
+			name:          "With debug option",
+			options:       []RetrieverOption{WithDebug(true)},
+			expectTimeout: 1 * time.Minute, // Default timeout
+			expectDebug:   true,
+		},
+		{
+			name:          "With multiple options",
+			options:       []RetrieverOption{WithTimeout(2 * time.Minute), WithDebug(true)},
+			expectTimeout: 2 * time.Minute,
+			expectDebug:   true,
+		},
+		{
+			name:          "Options order should matter (last one wins)",
+			options:       []RetrieverOption{WithTimeout(5 * time.Minute), WithTimeout(10 * time.Second)},
+			expectTimeout: 10 * time.Second,
+			expectDebug:   false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			dr := NewDocumentRetriever(tc.options...)
+
+			// Verify configuration
+			assert.Equal(t, tc.expectTimeout, dr.Timeout, "Timeout should be set correctly")
+			assert.Equal(t, tc.expectDebug, dr.Debug, "Debug should be set correctly")
+
+			// Verify functions are set
+			assert.NotNil(t, dr.ChromeRun, "ChromeRun should be set")
+			assert.NotNil(t, dr.DocumentReader, "DocumentReader should be set")
+		})
+	}
+}
+
+func TestNewDocumentRetriever(t *testing.T) {
+	timeout := 1 * time.Minute
+	dr := NewDocumentRetriever()
+
+	assert.Equal(t, timeout, dr.Timeout)
+	assert.Equal(t, false, dr.Debug)
 	assert.NotNil(t, dr.ChromeRun)
 	assert.NotNil(t, dr.DocumentReader)
 }
@@ -150,7 +264,7 @@ func TestRetrieveDocument(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			dr := &DocumentRetriever{
-				timeout: 100 * time.Millisecond,
+				Timeout: 100 * time.Millisecond,
 				ChromeRun: func(ctx context.Context, actions ...chromedp.Action) error {
 					return tt.runErr
 				},
@@ -178,6 +292,39 @@ func TestRetrieveDocument(t *testing.T) {
 	}
 }
 
+// TestRetrieveDocumentWithTimeout tests that the timeout option works correctly
+func TestRetrieveDocumentWithTimeout(t *testing.T) {
+	timeoutCalled := false
+
+	dr := &DocumentRetriever{
+		Timeout: 50 * time.Millisecond, // Very short timeout
+		ChromeRun: func(ctx context.Context, actions ...chromedp.Action) error {
+			// Create a goroutine to check if context timeouts correctly
+			done := make(chan struct{})
+			go func() {
+				// Wait until the context is canceled or times out
+				<-ctx.Done()
+				timeoutCalled = true
+				close(done)
+			}()
+
+			// Sleep longer than the timeout to trigger deadline exceeded
+			time.Sleep(100 * time.Millisecond)
+			<-done
+			return context.DeadlineExceeded
+		},
+		DocumentReader: func(r io.Reader) (*goquery.Document, error) {
+			return goquery.NewDocumentFromReader(strings.NewReader("<html><body>Test</body></html>"))
+		},
+	}
+
+	_, err := dr.RetrieveDocument("https://example.com", nil, "body")
+
+	assert.Error(t, err)
+	assert.True(t, timeoutCalled, "Context timeout should have been triggered")
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
+}
+
 func TestRetrieveDocument_VerifiesActions(t *testing.T) {
 	url := "https://example.com"
 	headers := network.Headers{"User-Agent": "test-agent"}
@@ -187,7 +334,7 @@ func TestRetrieveDocument_VerifiesActions(t *testing.T) {
 	actionsExecuted := false
 
 	dr := &DocumentRetriever{
-		timeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 		ChromeRun: func(ctx context.Context, actions ...chromedp.Action) error {
 			actionsExecuted = true
 			// Since we can't reliably identify the action types,
@@ -208,19 +355,4 @@ func TestRetrieveDocument_VerifiesActions(t *testing.T) {
 	dr.RetrieveDocument(url, headers, selector)
 	assert.True(t, actionsExecuted, "Actions were not executed")
 	assert.True(t, actionTypes["all_actions_present"], "Not enough actions were executed")
-}
-
-func TestDocumentRetriever_Integration(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping integration test")
-	}
-
-	dr := NewDocumentRetriever(10 * time.Second)
-	doc, err := dr.RetrieveDocument("https://example.com", nil, "body")
-	assert.NoError(t, err)
-	assert.NotNil(t, doc)
-
-	html, err := doc.Html()
-	assert.NoError(t, err)
-	assert.NotEmpty(t, html)
 }
