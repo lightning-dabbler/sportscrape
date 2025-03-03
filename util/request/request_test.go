@@ -94,7 +94,20 @@ func TestGetIntegrationTests(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := Get(tt.url)
+			var resp *http.Response
+			var err error
+
+			// Try up to 3 times with exponential backoff
+			for retries := 0; retries < 3; retries++ {
+				resp, err = Get(tt.url)
+				if !tt.isError && err != nil {
+					// If we expected success but got an error, wait and retry
+					t.Logf("Attempt %d failed: %v. Retrying...", retries+1, err)
+					time.Sleep(time.Duration(1<<uint(retries)) * time.Second) // Exponential backoff
+					continue
+				}
+				break // Either succeeded or got expected error
+			}
 			if tt.isError {
 				assert.Error(t, err)
 			} else {
