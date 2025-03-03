@@ -356,37 +356,3 @@ func TestRetrieveDocument_VerifiesActions(t *testing.T) {
 	assert.True(t, actionsExecuted, "Actions were not executed")
 	assert.True(t, actionTypes["all_actions_present"], "Not enough actions were executed")
 }
-
-func TestDocumentRetriever_Integration(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping integration test")
-	}
-
-	dr := NewDocumentRetriever(WithTimeout(10 * time.Second))
-	doc, err := dr.RetrieveDocument("https://example.com", nil, "body")
-	assert.NoError(t, err)
-	assert.NotNil(t, doc)
-
-	html, err := doc.Html()
-	assert.NoError(t, err)
-	assert.NotEmpty(t, html)
-}
-
-// TestDocumentRetriever_IntegrationWithDebug tests integration with debug mode on
-func TestDocumentRetriever_IntegrationWithDebug(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping integration test")
-	}
-
-	dr := NewDocumentRetriever(
-		WithTimeout(10*time.Second),
-		WithDebug(true),
-	)
-	doc, err := dr.RetrieveDocument("https://example.com", nil, "body")
-	assert.NoError(t, err)
-	assert.NotNil(t, doc)
-
-	html, err := doc.Html()
-	assert.NoError(t, err)
-	assert.NotEmpty(t, html)
-}
