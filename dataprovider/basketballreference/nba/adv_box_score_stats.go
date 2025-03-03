@@ -3,7 +3,6 @@ package nba
 import (
 	"fmt"
 	"log"
-	"sync"
 	"time"
 	"unicode"
 
@@ -11,7 +10,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	"github.com/lightning-dabbler/sportscrape/util/request"
+	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
 )
 
 const (
@@ -61,18 +60,63 @@ var advBoxScoreReservesHeaderValues headerValues = headerValues{
 	"BPM":      struct{}{},
 }
 
-// getAdvBoxScoreStats accepts an interface that represents model.NBAMatchup
-// It fetches the advanced box score stats associated with that matchup
-// Returns an array of model.NBAAdvBoxScoreStats in the form of interface{}
-func getAdvBoxScoreStats(nbaMatchup interface{}) []interface{} {
-	matchup := nbaMatchup.(model.NBAMatchup)
-	url := matchup.BoxScoreLink
+// AdvBoxScoreOption defines a configuration option for advanced box score runners
+type AdvBoxScoreOption func(*AdvBoxScoreRunner)
+
+// WithAdvBoxScoreTimeout sets the timeout duration for advanced box score runner
+func WithAdvBoxScoreTimeout(timeout time.Duration) AdvBoxScoreOption {
+	return func(absr *AdvBoxScoreRunner) {
+		absr.Timeout = timeout
+	}
+}
+
+// WithAdvBoxScoreDebug enables or disables debug mode for advanced box score runner
+func WithAdvBoxScoreDebug(debug bool) AdvBoxScoreOption {
+	return func(absr *AdvBoxScoreRunner) {
+		absr.Debug = debug
+	}
+}
+
+// WithAdvBoxScoreConcurrency sets the number of concurrent workers
+func WithAdvBoxScoreConcurrency(n int) AdvBoxScoreOption {
+	return func(absr *AdvBoxScoreRunner) {
+		absr.Concurrency = n
+	}
+}
+
+// NewAdvBoxScoreRunner creates a new AdvBoxScoreRunner with the provided options
+func NewAdvBoxScoreRunner(options ...AdvBoxScoreOption) *AdvBoxScoreRunner {
+	absr := &AdvBoxScoreRunner{}
+	absr.Processor = absr
+
+	// Apply all options
+	for _, option := range options {
+		option(absr)
+	}
+
+	return absr
+}
+
+// AdvBoxScoreRunner specialized Runner for retrieving NBA advanced box score statistics
+// with support for concurrent processing.
+type AdvBoxScoreRunner struct {
+	sportsreferenceutil.BoxScoreRunner
+}
+
+// GetSegmentBoxScoreStats retrieves NBA advanced box score statistics for a single matchup.
+//
+// Parameter:
+//   - matchup: The NBA matchup for which to retrieve advanced box score statistics
+//
+// Returns a slice of NBA advanced box score statistics as interface{} values
+func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interface{}) []interface{} {
+	matchupModel := matchup.(model.NBAMatchup)
+	url := matchupModel.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	var advNBABoxScoreStats []interface{}
-	fmt.Println("Scraping Advanced Box Score: " + url)
-	dr := request.NewDocumentRetriever(request.WithTimeout(2 * time.Minute))
-	doc, err := dr.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
+	log.Println("Scraping Advanced Box Score: " + url)
+	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -93,15 +137,15 @@ func getAdvBoxScoreStats(nbaMatchup interface{}) []interface{} {
 			var boxScoreStats model.NBAAdvBoxScoreStats
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
-				boxScoreStats.EventID = matchup.EventID
+				boxScoreStats.EventID = matchupModel.EventID
 				if i == 0 {
-					boxScoreStats.Team = matchup.AwayTeam
-					boxScoreStats.Opponent = matchup.HomeTeam
+					boxScoreStats.Team = matchupModel.AwayTeam
+					boxScoreStats.Opponent = matchupModel.HomeTeam
 				} else {
-					boxScoreStats.Team = matchup.HomeTeam
-					boxScoreStats.Opponent = matchup.AwayTeam
+					boxScoreStats.Team = matchupModel.HomeTeam
+					boxScoreStats.Opponent = matchupModel.AwayTeam
 				}
-				boxScoreStats.EventDate = matchup.EventDate
+				boxScoreStats.EventDate = matchupModel.EventDate
 				if j < 5 {
 					boxScoreStats.Starter = true
 				} else {
@@ -275,45 +319,11 @@ func getAdvBoxScoreStats(nbaMatchup interface{}) []interface{} {
 		})
 	})
 	if len(advNBABoxScoreStats) == 0 {
-		fmt.Printf("No Data Scraped @ %s\n", url)
+		log.Printf("No Data Scraped @ %s\n", url)
 	} else {
 		diff := time.Now().UTC().Sub(start)
-		fmt.Printf("Scraping of %s Completed in %s\n", url, diff)
+		log.Printf("Scraping of %s Completed in %s\n", url, diff)
 	}
 
 	return advNBABoxScoreStats
-}
-
-// advBoxScoreStatsWorker acts a worker for retrieving and constructing advanced box score stats
-func advBoxScoreStatsWorker(wg *sync.WaitGroup, workerNBAMatchups <-chan interface{}, boxScoreStats chan<- []interface{}) {
-	for matchup := range workerNBAMatchups {
-		boxScoreStats <- getAdvBoxScoreStats(matchup)
-		wg.Done()
-	}
-}
-
-// GetAdvBoxScoreStats retrieves all advanced box score stats for all matchups
-// It accepts a concurrency integer to parallelize the requests
-// Returns an array of model.NBAAdvBoxScoreStats in the form of interface{}
-func GetAdvBoxScoreStats(concurrency int, matchups ...interface{}) []interface{} {
-	var wg sync.WaitGroup
-	workerNBAMatchups := make(chan interface{}, concurrency)
-	BoxScoreStats := make(chan []interface{}, len(matchups))
-	for i := 0; i < cap(workerNBAMatchups); i++ {
-		go advBoxScoreStatsWorker(&wg, workerNBAMatchups, BoxScoreStats)
-	}
-	for _, matchup := range matchups {
-		wg.Add(1)
-		workerNBAMatchups <- matchup
-	}
-	wg.Wait()
-	close(workerNBAMatchups)
-	close(BoxScoreStats)
-
-	var allBoxScoreStats []interface{}
-	for boxScoreStats := range BoxScoreStats {
-		allBoxScoreStats = append(allBoxScoreStats, boxScoreStats...)
-
-	}
-	return allBoxScoreStats
 }

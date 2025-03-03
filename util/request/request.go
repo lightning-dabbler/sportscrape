@@ -68,7 +68,7 @@ func WithDebug(debug bool) RetrieverOption {
 // which can be overridden by the provided options.
 //
 // By default, the retriever uses:
-//   - 30 second timeout
+//   - 1 minute timeout
 //   - Debug logging disabled
 //   - Standard chromedp.Run for Chrome operations
 //   - Standard goquery document parser
@@ -80,7 +80,7 @@ func WithDebug(debug bool) RetrieverOption {
 func NewDocumentRetriever(options ...RetrieverOption) *DocumentRetriever {
 	// Set defaults
 	dr := &DocumentRetriever{
-		Timeout:        30 * time.Second,
+		Timeout:        1 * time.Minute,
 		Debug:          false,
 		ChromeRun:      chromedp.Run,
 		DocumentReader: goquery.NewDocumentFromReader,

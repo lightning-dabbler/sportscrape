@@ -105,8 +105,108 @@ func TestGetIntegrationTests(t *testing.T) {
 	}
 }
 
+// TestWithTimeoutOption tests the WithTimeout option function
+func TestWithTimeoutOption(t *testing.T) {
+	// Test cases with different timeout values
+	timeouts := []time.Duration{
+		500 * time.Millisecond,
+		1 * time.Second,
+		5 * time.Minute,
+	}
+
+	for _, timeout := range timeouts {
+		dr := &DocumentRetriever{}
+
+		// Apply the option
+		option := WithTimeout(timeout)
+		option(dr)
+
+		// Verify timeout was set correctly
+		assert.Equal(t, timeout, dr.Timeout, "Timeout should be set to the specified value")
+	}
+}
+
+// TestWithDebugOption tests the WithDebug option function
+func TestWithDebugOption(t *testing.T) {
+	testCases := []struct {
+		name       string
+		debugValue bool
+	}{
+		{"Enable Debug", true},
+		{"Disable Debug", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			dr := &DocumentRetriever{}
+
+			// Apply the option
+			option := WithDebug(tc.debugValue)
+			option(dr)
+
+			// Verify debug was set correctly
+			assert.Equal(t, tc.debugValue, dr.Debug, "Debug should be set to the specified value")
+		})
+	}
+}
+
+// TestNewDocumentRetrieverWithOptions tests the NewDocumentRetriever function with different options
+func TestNewDocumentRetrieverWithOptions(t *testing.T) {
+	testCases := []struct {
+		name          string
+		options       []RetrieverOption
+		expectTimeout time.Duration
+		expectDebug   bool
+	}{
+		{
+			name:          "Default configuration",
+			options:       []RetrieverOption{},
+			expectTimeout: 1 * time.Minute, // Default timeout
+			expectDebug:   false,           // Debug off by default
+		},
+		{
+			name:          "With timeout option",
+			options:       []RetrieverOption{WithTimeout(30 * time.Second)},
+			expectTimeout: 30 * time.Second,
+			expectDebug:   false,
+		},
+		{
+			name:          "With debug option",
+			options:       []RetrieverOption{WithDebug(true)},
+			expectTimeout: 1 * time.Minute, // Default timeout
+			expectDebug:   true,
+		},
+		{
+			name:          "With multiple options",
+			options:       []RetrieverOption{WithTimeout(2 * time.Minute), WithDebug(true)},
+			expectTimeout: 2 * time.Minute,
+			expectDebug:   true,
+		},
+		{
+			name:          "Options order should matter (last one wins)",
+			options:       []RetrieverOption{WithTimeout(5 * time.Minute), WithTimeout(10 * time.Second)},
+			expectTimeout: 10 * time.Second,
+			expectDebug:   false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			dr := NewDocumentRetriever(tc.options...)
+
+			// Verify configuration
+			assert.Equal(t, tc.expectTimeout, dr.Timeout, "Timeout should be set correctly")
+			assert.Equal(t, tc.expectDebug, dr.Debug, "Debug should be set correctly")
+
+			// Verify functions are set
+			assert.NotNil(t, dr.ChromeRun, "ChromeRun should be set")
+			assert.NotNil(t, dr.DocumentReader, "DocumentReader should be set")
+		})
+	}
+}
+
 func TestNewDocumentRetriever(t *testing.T) {
-	timeout := 30 * time.Second
+	timeout := 1 * time.Minute
 	dr := NewDocumentRetriever()
 
 	assert.Equal(t, timeout, dr.Timeout)
@@ -179,6 +279,39 @@ func TestRetrieveDocument(t *testing.T) {
 	}
 }
 
+// TestRetrieveDocumentWithTimeout tests that the timeout option works correctly
+func TestRetrieveDocumentWithTimeout(t *testing.T) {
+	timeoutCalled := false
+
+	dr := &DocumentRetriever{
+		Timeout: 50 * time.Millisecond, // Very short timeout
+		ChromeRun: func(ctx context.Context, actions ...chromedp.Action) error {
+			// Create a goroutine to check if context timeouts correctly
+			done := make(chan struct{})
+			go func() {
+				// Wait until the context is canceled or times out
+				<-ctx.Done()
+				timeoutCalled = true
+				close(done)
+			}()
+
+			// Sleep longer than the timeout to trigger deadline exceeded
+			time.Sleep(100 * time.Millisecond)
+			<-done
+			return context.DeadlineExceeded
+		},
+		DocumentReader: func(r io.Reader) (*goquery.Document, error) {
+			return goquery.NewDocumentFromReader(strings.NewReader("<html><body>Test</body></html>"))
+		},
+	}
+
+	_, err := dr.RetrieveDocument("https://example.com", nil, "body")
+
+	assert.Error(t, err)
+	assert.True(t, timeoutCalled, "Context timeout should have been triggered")
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
+}
+
 func TestRetrieveDocument_VerifiesActions(t *testing.T) {
 	url := "https://example.com"
 	headers := network.Headers{"User-Agent": "test-agent"}
@@ -188,7 +321,7 @@ func TestRetrieveDocument_VerifiesActions(t *testing.T) {
 	actionsExecuted := false
 
 	dr := &DocumentRetriever{
-		timeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 		ChromeRun: func(ctx context.Context, actions ...chromedp.Action) error {
 			actionsExecuted = true
 			// Since we can't reliably identify the action types,
@@ -217,6 +350,25 @@ func TestDocumentRetriever_Integration(t *testing.T) {
 	}
 
 	dr := NewDocumentRetriever(WithTimeout(10 * time.Second))
+	doc, err := dr.RetrieveDocument("https://example.com", nil, "body")
+	assert.NoError(t, err)
+	assert.NotNil(t, doc)
+
+	html, err := doc.Html()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, html)
+}
+
+// TestDocumentRetriever_IntegrationWithDebug tests integration with debug mode on
+func TestDocumentRetriever_IntegrationWithDebug(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	dr := NewDocumentRetriever(
+		WithTimeout(10*time.Second),
+		WithDebug(true),
+	)
 	doc, err := dr.RetrieveDocument("https://example.com", nil, "body")
 	assert.NoError(t, err)
 	assert.NotNil(t, doc)

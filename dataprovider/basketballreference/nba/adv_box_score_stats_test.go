@@ -4,6 +4,7 @@ package nba
 
 import (
 	"testing"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/stretchr/testify/assert"
@@ -14,8 +15,15 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 	date := "2025-02-19"
-	matchups := GetMatchups(date)
-	advBoxScoreStats := GetAdvBoxScoreStats(1, matchups...)
+	matchupRunner := NewMatchupRunner(
+		WithMatchupTimeout(2 * time.Minute),
+	)
+	matchups := matchupRunner.GetMatchups(date)
+	boxScoreRunner := NewAdvBoxScoreRunner(
+		WithAdvBoxScoreTimeout(4*time.Minute),
+		WithAdvBoxScoreConcurrency(1),
+	)
+	advBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
 	numAwayPlayers := 0
 	numHomePlayers := 0
 	numAwayDNP := 0

@@ -8,7 +8,6 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	"github.com/lightning-dabbler/sportscrape/util/request"
 	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
 
 	"time"
@@ -39,10 +38,47 @@ const (
 	matchupsQuarterHeadersSelector = "table:nth-child(2) > thead > tr > th:nth-child(%d)"
 )
 
-// GetMatchups accepts a date string in the form of 2024-01-25
-// It fetches NBA matchup details that've occured on the date of interest
-// Returns an array of model.NBAMatchup in the form of interface{}
-func GetMatchups(date string) []interface{} {
+// MatchupOption defines a configuration option for MatchupRunner
+type MatchupOption func(*MatchupRunner)
+
+// WithMatchupTimeout sets the timeout duration for matchup runner
+func WithMatchupTimeout(timeout time.Duration) MatchupOption {
+	return func(mr *MatchupRunner) {
+		mr.Timeout = timeout
+	}
+}
+
+// WithMatchupDebug enables or disables debug mode for matchup runner
+func WithMatchupDebug(debug bool) MatchupOption {
+	return func(mr *MatchupRunner) {
+		mr.Debug = debug
+	}
+}
+
+// NewMatchupRunner creates a new MatchupRunner with the provided options
+func NewMatchupRunner(options ...MatchupOption) *MatchupRunner {
+	mr := &MatchupRunner{}
+
+	// Apply all options
+	for _, option := range options {
+		option(mr)
+	}
+
+	return mr
+}
+
+// MatchupRunner specialized Runner for retrieving NBA matchup information.
+type MatchupRunner struct {
+	sportsreferenceutil.MatchupRunner
+}
+
+// GetMatchups retrieves NBA matchups for the specified date.
+//
+// Parameter:
+//   - date: The date for which to retrieve matchups
+//
+// Returns a slice of NBA matchup data as interface{} values
+func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 	var matchups []interface{}
 	timestamp, err := sportsreferenceutil.DateStrToTime(date)
 	if err != nil {
@@ -57,15 +93,13 @@ func GetMatchups(date string) []interface{} {
 	}
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
-	fmt.Println("Scraping Matchups: " + url)
+	log.Println("Scraping Matchups: " + url)
 
 	EventDate, err := sportsreferenceutil.EventDate(date)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	dr := request.NewDocumentRetriever(request.WithTimeout(60 * time.Second))
-
-	doc, err := dr.RetrieveDocument(url, networkHeaders, matchupsGameSummariesSelector)
+	doc, err := matchupRunner.RetrieveDocument(url, networkHeaders, matchupsGameSummariesSelector)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -280,10 +314,10 @@ func GetMatchups(date string) []interface{} {
 	})
 
 	if len(matchups) == 0 {
-		fmt.Printf("No Data Scraped @ %s\n", url)
+		log.Printf("No Data Scraped @ %s\n", url)
 	} else {
 		diff := time.Now().UTC().Sub(start)
-		fmt.Printf("Scraping of %s Completed in %s\n", url, diff)
+		log.Printf("Scraping of %s Completed in %s\n", url, diff)
 	}
 	return matchups
 }
