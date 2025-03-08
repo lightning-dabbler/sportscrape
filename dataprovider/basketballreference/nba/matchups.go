@@ -182,7 +182,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		matchup.BoxScoreLink = basketballreference.URL + urlPath
 
 		// EventID
-		eventID, err := sportsreferenceutil.PlayerID(matchup.BoxScoreLink)
+		eventID, err := sportsreferenceutil.EventID(matchup.BoxScoreLink)
 		if err != nil {
 			log.Fatalln(err)
 		}
