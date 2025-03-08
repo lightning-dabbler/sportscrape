@@ -3,7 +3,6 @@
 package mlb
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -42,7 +41,6 @@ func TestGetMatchups(t *testing.T) {
 			matchups := runner.GetMatchups(tt.date)
 			for _, matchup := range matchups {
 				structured_matchup := matchup.(model.MLBMatchup)
-				fmt.Printf("%#v\n", structured_matchup)
 				assert.Equal(t, tt.playoff, structured_matchup.PlayoffMatch)
 			}
 			assert.Equal(t, tt.expectedNumMatches, len(matchups))

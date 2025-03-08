@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added EventID to sportsreference util and updated `MatchupRunner.GetMatchups(...)` to use it.
 ### Changed
 - Moved local extractPlayerID to sportsreference util and renamed it PlayerID
+- Changed `headerValues` type from map to slice of string
 
 ## [0.1.0-beta] - 2025-03-02
 ### Added

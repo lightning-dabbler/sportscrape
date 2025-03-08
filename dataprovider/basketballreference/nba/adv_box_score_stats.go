@@ -20,44 +20,44 @@ const (
 
 // advBoxScoreStarterHeaderValues represents the headers in sequential order for the starter team members
 var advBoxScoreStarterHeaderValues headerValues = headerValues{
-	"Starters": struct{}{},
-	"MP":       struct{}{},
-	"TS%":      struct{}{},
-	"eFG%":     struct{}{},
-	"3PAr":     struct{}{},
-	"FTr":      struct{}{},
-	"ORB%":     struct{}{},
-	"DRB%":     struct{}{},
-	"TRB%":     struct{}{},
-	"AST%":     struct{}{},
-	"STL%":     struct{}{},
-	"BLK%":     struct{}{},
-	"TOV%":     struct{}{},
-	"USG%":     struct{}{},
-	"ORtg":     struct{}{},
-	"DRtg":     struct{}{},
-	"BPM":      struct{}{},
+	"Starters",
+	"MP",
+	"TS%",
+	"eFG%",
+	"3PAr",
+	"FTr",
+	"ORB%",
+	"DRB%",
+	"TRB%",
+	"AST%",
+	"STL%",
+	"BLK%",
+	"TOV%",
+	"USG%",
+	"ORtg",
+	"DRtg",
+	"BPM",
 }
 
 // advBoxScoreReservesHeaderValues represents the headers in sequential order for the reserve team members
 var advBoxScoreReservesHeaderValues headerValues = headerValues{
-	"Reserves": struct{}{},
-	"MP":       struct{}{},
-	"TS%":      struct{}{},
-	"eFG%":     struct{}{},
-	"3PAr":     struct{}{},
-	"FTr":      struct{}{},
-	"ORB%":     struct{}{},
-	"DRB%":     struct{}{},
-	"TRB%":     struct{}{},
-	"AST%":     struct{}{},
-	"STL%":     struct{}{},
-	"BLK%":     struct{}{},
-	"TOV%":     struct{}{},
-	"USG%":     struct{}{},
-	"ORtg":     struct{}{},
-	"DRtg":     struct{}{},
-	"BPM":      struct{}{},
+	"Reserves",
+	"MP",
+	"TS%",
+	"eFG%",
+	"3PAr",
+	"FTr",
+	"ORB%",
+	"DRB%",
+	"TRB%",
+	"AST%",
+	"STL%",
+	"BLK%",
+	"TOV%",
+	"USG%",
+	"ORtg",
+	"DRtg",
+	"BPM",
 }
 
 // AdvBoxScoreOption defines a configuration option for advanced box score runners
@@ -123,14 +123,12 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 	doc.Find(advBoxScoreSelector).Each(func(i int, s *goquery.Selection) {
 		var starterHeader string
 		var reserveHeader string
-		s.Find(boxScoreStarterHeaders).Each(func(_ int, s *goquery.Selection) {
-
+		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {
 			starterHeader = util.CleanTextDatum(s.Text())
-			_, ok := advBoxScoreStarterHeaderValues[starterHeader]
-			if !ok {
-				log.Fatalf("%s is not a valid Starters Header @ %s\n", starterHeader, url)
+			expectedHeader := advBoxScoreStarterHeaderValues[idx]
+			if starterHeader != expectedHeader {
+				log.Fatalf("Starter header '%s' at position %d does not equal expected header '%s' @ %s\n", starterHeader, idx, expectedHeader, url)
 			}
-
 		})
 
 		s.Find(boxScoreStatsRecordsSelector).Each(func(j int, s *goquery.Selection) {
@@ -307,12 +305,12 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 
 				advNBABoxScoreStats = append(advNBABoxScoreStats, boxScoreStats)
 			} else {
-				s.Find(boxScoreReserveHeaders).Each(func(_ int, s *goquery.Selection) {
+				s.Find(boxScoreReserveHeaders).Each(func(idx int, s *goquery.Selection) {
 
 					reserveHeader = util.CleanTextDatum(s.Text())
-					_, ok := advBoxScoreReservesHeaderValues[reserveHeader]
-					if !ok {
-						log.Fatalf("%s is not a valid Reserves Header @ %s\n", reserveHeader, url)
+					expectedHeader := advBoxScoreReservesHeaderValues[idx]
+					if reserveHeader != expectedHeader {
+						log.Fatalf("Reserve header '%s' at position %d does not equal expected header '%s' @ %s\n", reserveHeader, idx, expectedHeader, url)
 					}
 				})
 			}
