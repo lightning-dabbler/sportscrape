@@ -22,9 +22,9 @@ func TestGetMatchups(t *testing.T) {
 		playoff            bool
 	}{
 		{
-			name:               "2024-10-30 MLB matches",
-			date:               "2024-10-30",
-			expectedNumMatches: 1,
+			name:               "2024-10-02 MLB matches",
+			date:               "2024-10-02",
+			expectedNumMatches: 4,
 			playoff:            true,
 		},
 		{

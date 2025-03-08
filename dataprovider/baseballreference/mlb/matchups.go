@@ -3,6 +3,7 @@ package mlb
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
@@ -104,7 +105,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		})
 		var awayTeamSelection, homeTeamSelection *goquery.Selection
 		n := len(teamSection)
-		if n == 3 {
+		if n == 3 && strings.HasPrefix(strings.ToLower(teamSection[0].Find("td").Text()), "game") {
 			matchup.PlayoffMatch = true
 			awayTeamSelection = teamSection[1]
 			homeTeamSelection = teamSection[2]
