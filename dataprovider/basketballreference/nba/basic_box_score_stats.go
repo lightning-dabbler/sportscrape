@@ -162,7 +162,7 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 				}
 				boxScoreStats.PlayerLink = basketballreference.URL + util.CleanTextDatum(s.Find(boxScorePlayerLinkSelector).AttrOr("href", ""))
 				boxScoreStats.Player = util.CleanTextDatum(s.Find(boxScorePlayerSelector).Text())
-				playerID, err := extractPlayerID(boxScoreStats.PlayerLink)
+				playerID, err := sportsreferenceutil.PlayerID(boxScoreStats.PlayerLink)
 				if err != nil {
 					log.Fatalln(err)
 				}

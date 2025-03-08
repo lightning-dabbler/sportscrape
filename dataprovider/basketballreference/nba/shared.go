@@ -35,16 +35,6 @@ const (
 	boxScorePlayerLinkSelector       = boxScorePlayerSelector + " > a"
 )
 
-// extractPlayerID extracts PlayerID from PlayerLink
-func extractPlayerID(playerLink string) (string, error) {
-	playerLinkSplit := strings.Split(playerLink, "/")
-	result := strings.Split(playerLinkSplit[len(playerLinkSplit)-1], ".")[0]
-	if result == "" {
-		return "", fmt.Errorf("Error: Player ID is an empty string when parsing %s", playerLink)
-	}
-	return result, nil
-}
-
 func transformMinutesPlayed(minutesPlayed string) (float32, error) {
 	minutesPlayedSplit := strings.Split(minutesPlayed, ":")
 	minutes, err := util.TextToInt(minutesPlayedSplit[0])
