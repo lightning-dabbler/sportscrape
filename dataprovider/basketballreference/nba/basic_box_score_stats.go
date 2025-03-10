@@ -19,8 +19,8 @@ const (
 	basicBoxScoreSelector = `table[id$='game-basic']`
 )
 
-// basicBoxScoreStarterHeaderValues represents the headers in sequential order for the starter team members
-var basicBoxScoreStarterHeaderValues headerValues = headerValues{
+// basicBoxScoreStarterHeaders represents the headers in sequential order for the starter team members
+var basicBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
 	"Starters",
 	"MP",
 	"FG",
@@ -45,8 +45,8 @@ var basicBoxScoreStarterHeaderValues headerValues = headerValues{
 	"+/-",
 }
 
-// basicBoxScoreReservesHeaderValues represents the headers in sequential order for the reserve team members
-var basicBoxScoreReservesHeaderValues headerValues = headerValues{
+// basicBoxScoreReservesHeaders represents the headers in sequential order for the reserve team members
+var basicBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
 	"Reserves",
 	"MP",
 	"FG",
@@ -136,7 +136,7 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 		var reserveHeader string
 		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {
 			starterHeader = util.CleanTextDatum(s.Text())
-			expectedHeader := basicBoxScoreStarterHeaderValues[idx]
+			expectedHeader := basicBoxScoreStarterHeaders[idx]
 			if starterHeader != expectedHeader {
 				log.Fatalf("Starter header '%s' at position %d does not equal expected header '%s' @ %s\n", starterHeader, idx, expectedHeader, url)
 			}
@@ -339,7 +339,7 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 			} else {
 				s.Find(boxScoreReserveHeaders).Each(func(idx int, s *goquery.Selection) {
 					reserveHeader = util.CleanTextDatum(s.Text())
-					expectedHeader := basicBoxScoreReservesHeaderValues[idx]
+					expectedHeader := basicBoxScoreReservesHeaders[idx]
 					if reserveHeader != expectedHeader {
 						log.Fatalf("Reserve header '%s' at position %d does not equal expected header '%s' @ %s\n", reserveHeader, idx, expectedHeader, url)
 					}

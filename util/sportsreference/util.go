@@ -88,6 +88,8 @@ type loserValues map[string]struct{}
 // LoserValueExists is a helper to determine losers and winners in a matchup
 var LoserValueExists loserValues = loserValues{"loser": struct{}{}, "winner": struct{}{}}
 
+type Headers []string
+
 // ReturnUnemptyField validates that the extracted field from a selector is not an empty string
 //
 // Paramater:

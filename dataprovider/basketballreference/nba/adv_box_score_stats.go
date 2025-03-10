@@ -18,8 +18,8 @@ const (
 	advBoxScoreSelector = `table[id$='game-advanced']`
 )
 
-// advBoxScoreStarterHeaderValues represents the headers in sequential order for the starter team members
-var advBoxScoreStarterHeaderValues headerValues = headerValues{
+// advBoxScoreStarterHeaders represents the headers in sequential order for the starter team members
+var advBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
 	"Starters",
 	"MP",
 	"TS%",
@@ -39,8 +39,8 @@ var advBoxScoreStarterHeaderValues headerValues = headerValues{
 	"BPM",
 }
 
-// advBoxScoreReservesHeaderValues represents the headers in sequential order for the reserve team members
-var advBoxScoreReservesHeaderValues headerValues = headerValues{
+// advBoxScoreReservesHeaders represents the headers in sequential order for the reserve team members
+var advBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
 	"Reserves",
 	"MP",
 	"TS%",
@@ -125,7 +125,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 		var reserveHeader string
 		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {
 			starterHeader = util.CleanTextDatum(s.Text())
-			expectedHeader := advBoxScoreStarterHeaderValues[idx]
+			expectedHeader := advBoxScoreStarterHeaders[idx]
 			if starterHeader != expectedHeader {
 				log.Fatalf("Starter header '%s' at position %d does not equal expected header '%s' @ %s\n", starterHeader, idx, expectedHeader, url)
 			}
@@ -308,7 +308,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 				s.Find(boxScoreReserveHeaders).Each(func(idx int, s *goquery.Selection) {
 
 					reserveHeader = util.CleanTextDatum(s.Text())
-					expectedHeader := advBoxScoreReservesHeaderValues[idx]
+					expectedHeader := advBoxScoreReservesHeaders[idx]
 					if reserveHeader != expectedHeader {
 						log.Fatalf("Reserve header '%s' at position %d does not equal expected header '%s' @ %s\n", reserveHeader, idx, expectedHeader, url)
 					}

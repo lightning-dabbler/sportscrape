@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Moved local extractPlayerID to sportsreference util and renamed it PlayerID
 - Changed `headerValues` type from map to slice of string
+- renamed `headerValues` to `Headers`
+- Moved `Headers` to sportsreferenceutil package
 
 ## [0.1.0-beta] - 2025-03-02
 ### Added
