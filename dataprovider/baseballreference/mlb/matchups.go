@@ -134,7 +134,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayTeamLink = baseballreference.URI + urlPath
+		matchup.AwayTeamLink = baseballreference.URL + urlPath
 
 		// AwayScore
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, awayLocation, teamScoreSelector)
@@ -162,7 +162,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeTeamLink = baseballreference.URI + urlPath
+		matchup.HomeTeamLink = baseballreference.URL + urlPath
 
 		// HomeScore
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, homeLocation, teamScoreSelector)
@@ -195,7 +195,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.BoxScoreLink = baseballreference.URI + urlPath
+		matchup.BoxScoreLink = baseballreference.URL + urlPath
 
 		// EventID
 		eventID, err := sportsreferenceutil.EventID(matchup.BoxScoreLink)
