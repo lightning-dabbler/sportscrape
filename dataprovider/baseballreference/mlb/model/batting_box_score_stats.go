@@ -4,6 +4,7 @@ import "time"
 
 // MLBBattingBoxScoreStats represents the data model for MLB batting box score stats scraped from baseball-reference.com
 // https://www.mlb.com/glossary/standard-stats
+// https://www.mlb.com/glossary/advanced-stats
 type MLBBattingBoxScoreStats struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
@@ -51,7 +52,7 @@ type MLBBattingBoxScoreStats struct {
 	Strikes *int `json:"strikes"`
 	// WinProbabilityAdded (WPA) - https://www.mlb.com/glossary/advanced-stats/win-probability-added
 	WinProbabilityAdded *float32 `json:"win_probability_added"`
-	// AverageLeverageIndex - the average pressure the pitcher or batter saw in this game or season. 1.0 is average pressure, below 1.0 is low pressure and above 1.0 is high pressure. https://www.mlb.com/glossary/advanced-stats/leverage-index
+	// AverageLeverageIndex - the average pressure the batter saw in this game or season. 1.0 is average pressure, below 1.0 is low pressure and above 1.0 is high pressure. https://www.mlb.com/glossary/advanced-stats/leverage-index
 	AverageLeverageIndex *float32 `json:"average_leverage_index"`
 	// SumPositiveWinProbabilityAdded (WPA+) - Sum of positive events for batter
 	SumPositiveWinProbabilityAdded *float32 `json:"sum_positive_win_probability_added"`
@@ -59,7 +60,7 @@ type MLBBattingBoxScoreStats struct {
 	SumNegativeWinProbabilityAdded *float32 `json:"sum_negative_win_probability_added"`
 	// ChampionshipWinProbabilityAdded (cWPA) in percentage notation- https://www.reddit.com/r/baseball/comments/1agut0c/comment/kojk7c4
 	ChampionshipWinProbabilityAdded *float32 `json:"championship_win_probability_added"`
-	// AverageChampionshipLeverageIndex - the average pressure the pitcher or batter saw in this game or season. 1.0 is average pressure, below 1.0 is low pressure and above 1.0 is high pressure. https://www.mlb.com/glossary/advanced-stats/leverage-index
+	// AverageChampionshipLeverageIndex - the average pressure the batter saw in this game or season. 1.0 is average pressure, below 1.0 is low pressure and above 1.0 is high pressure. https://www.mlb.com/glossary/advanced-stats/leverage-index
 	AverageChampionshipLeverageIndex *float32 `json:"average_championship_leverage_index"`
 	// BaseOutRunsAdded (RE24) - Given the bases occupied/out situation, how many runs did the batter or baserunner add in the resulting play. Compared to average, so 0 is average, and above 0 is better than average
 	BaseOutRunsAdded *float32 `json:"base_out_runs_added"`
