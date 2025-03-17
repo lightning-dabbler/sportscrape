@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Created `MLBPitchingBoxScoreStats` model
-- Added `MLBMatchup` model and `MatchupRunner` to scrape MLB matchups from https://baseball-reference.com
-- Added `MLBBattingBoxScoreStats` and `BattingBoxScoreRunner` to scrape MLB batting box score data from https://baseball-reference.com
 - Added EventID to sportsreference util and updated `MatchupRunner.GetMatchups(...)` to use it.
+- Created `MLBMatchup` model and `MatchupRunner` to scrape MLB matchups from https://baseball-reference.com
+- Created `MLBBattingBoxScoreStats` and `BattingBoxScoreRunner` to scrape MLB batting box score data from https://baseball-reference.com
+- Created `MLBPitchingBoxScoreStats` model and `PitchingBoxScoreRunner` to scrape MLB pitching box score data from https://baseball-reference.com
 ### Changed
 - Moved local extractPlayerID to sportsreference util and renamed it PlayerID
 - Changed `headerValues` type from map to slice of string

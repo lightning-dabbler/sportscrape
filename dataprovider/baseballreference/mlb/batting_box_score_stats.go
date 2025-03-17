@@ -173,10 +173,11 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 		return nil
 	}
 	var statline model.MLBBattingBoxScoreStats
+	// Position
 	position := util.CleanTextDatum(s.Find(positionSelector).Text())
 	positionSplit := strings.Split(position, " ")
-
 	statline.Position = positionSplit[len(positionSplit)-1]
+	// Player, PlayerLink, & PlayerID
 	player := s.Find(playerSelector)
 	statline.PlayerLink = baseballreference.URL + util.CleanTextDatum(player.AttrOr("href", ""))
 	statline.Player = util.CleanTextDatum(player.Text())
@@ -189,56 +190,49 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 	atBatText := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
 	atBat, err := util.TextToInt(atBatText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for atBatText to int - %w; defaulting to 0.", atBatText, err))
-		atBat = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for atBatText to int - %w", atBatText, err))
 	}
 	statline.AtBat = atBat
 	// Runs
 	runsText := util.CleanTextDatum(s.Find("td:nth-child(3)").Text())
 	runs, err := util.TextToInt(runsText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for runsText to int - %w; defaulting to 0.", runsText, err))
-		runs = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for runsText to int - %w", runsText, err))
 	}
 	statline.Runs = runs
 	// Hits
 	hitsText := util.CleanTextDatum(s.Find("td:nth-child(4)").Text())
 	hits, err := util.TextToInt(hitsText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for hitsText to int - %w; defaulting to 0.", hitsText, err))
-		hits = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for hitsText to int - %w", hitsText, err))
 	}
 	statline.Hits = hits
 	// RunsBattedIn
 	runsBattedInText := util.CleanTextDatum(s.Find("td:nth-child(5)").Text())
 	runsBattedIn, err := util.TextToInt(runsBattedInText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for runsBattedInText to int - %w; defaulting to 0.", runsBattedInText, err))
-		runsBattedIn = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for runsBattedInText to int - %w", runsBattedInText, err))
 	}
 	statline.RunsBattedIn = runsBattedIn
 	// Walks
 	walksText := util.CleanTextDatum(s.Find("td:nth-child(6)").Text())
 	walks, err := util.TextToInt(walksText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for walksText to int - %w; defaulting to 0.", walksText, err))
-		walks = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for walksText to int - %w", walksText, err))
 	}
 	statline.Walks = walks
 	// Strikeouts
 	strikeoutsText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
 	strikeouts, err := util.TextToInt(strikeoutsText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for strikeoutsText to int - %w; defaulting to 0.", strikeoutsText, err))
-		strikeouts = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikeoutsText to int - %w", strikeoutsText, err))
 	}
 	statline.Strikeouts = strikeouts
 	// PlateAppearances
 	plateAppearancesText := util.CleanTextDatum(s.Find("td:nth-child(8)").Text())
 	plateAppearances, err := util.TextToInt(plateAppearancesText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for plateAppearancesText to int - %w; defaulting to 0.", plateAppearancesText, err))
-		plateAppearances = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for plateAppearancesText to int - %w", plateAppearancesText, err))
 	}
 	statline.PlateAppearances = plateAppearances
 	// BattingAverage
@@ -362,16 +356,14 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 	putoutText := util.CleanTextDatum(s.Find("td:nth-child(22)").Text())
 	putout, err := util.TextToInt(putoutText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for putoutText to int - %w; defaulting to 0.", putoutText, err))
-		putout = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for putoutText to int - %w", putoutText, err))
 	}
 	statline.Putout = putout
 	// Assist
 	assistText := util.CleanTextDatum(s.Find("td:nth-child(23)").Text())
 	assist, err := util.TextToInt(assistText)
 	if err != nil {
-		log.Println(fmt.Errorf("WARNING: Can't convert '%s' for assistText to int - %w; defaulting to 0.", assistText, err))
-		assist = 0
+		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for assistText to int - %w", assistText, err))
 	}
 	statline.Assist = assist
 	return &statline
