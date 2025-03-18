@@ -160,3 +160,118 @@ func TestReturnUnemptyField(t *testing.T) {
 		})
 	}
 }
+
+func TestExtractID(t *testing.T) {
+	tests := []struct {
+		name        string
+		link        string
+		expectation string
+	}{
+		{
+			name:        "trae young player ID",
+			link:        "https://www.basketball-reference.com/players/y/youngtr01.html",
+			expectation: "youngtr01",
+		},
+		{
+			name:        "clint capela player ID",
+			link:        "https://www.basketball-reference.com/players/c/capelca01.html",
+			expectation: "capelca01",
+		},
+		{
+			name:        "cole anthony player ID",
+			link:        "https://www.basketball-reference.com/players/a/anthoco01.html",
+			expectation: "anthoco01",
+		},
+		{
+			name:        "empty string",
+			link:        "",
+			expectation: "",
+		},
+		{
+			name:        "baseball event id",
+			link:        "https://www.baseball-reference.com/boxes/MIL/MIL202409020.shtml",
+			expectation: "MIL202409020",
+		},
+		{
+			name:        "baseball player id",
+			link:        "https://www.baseball-reference.com/players/w/winnma01.shtml",
+			expectation: "winnma01",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := extractID(tt.link)
+			assert.Equal(t, tt.expectation, actual, "Equal id")
+		})
+	}
+}
+
+func TestPlayerID(t *testing.T) {
+	tests := []struct {
+		name        string
+		link        string
+		expectation string
+		isError     bool
+	}{
+		{
+			name:        "trae young player ID",
+			link:        "https://www.basketball-reference.com/players/y/youngtr01.html",
+			expectation: "youngtr01",
+		},
+		{
+			name:        "masyn winn player ID",
+			link:        "https://www.baseball-reference.com/players/w/winnma01.shtml",
+			expectation: "winnma01",
+		},
+		{
+			name:    "empty string",
+			link:    "",
+			isError: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := PlayerID(tt.link)
+			if tt.isError {
+				assert.Error(t, err)
+			} else {
+				assert.Equal(t, tt.expectation, actual, "Equal player id")
+			}
+		})
+	}
+}
+
+func TestEventID(t *testing.T) {
+	tests := []struct {
+		name        string
+		link        string
+		expectation string
+		isError     bool
+	}{
+		{
+			name:    "empty string",
+			link:    "",
+			isError: true,
+		},
+		{
+			name:        "baseball event id",
+			link:        "https://www.baseball-reference.com/boxes/MIL/MIL202409020.shtml",
+			expectation: "MIL202409020",
+		},
+		{
+			name:        "baseball event id",
+			link:        "https://www.basketball-reference.com/boxscores/202503060ORL.html",
+			expectation: "202503060ORL",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := EventID(tt.link)
+			if tt.isError {
+				assert.Error(t, err)
+			} else {
+				assert.Equal(t, tt.expectation, actual, "Equal event id")
+			}
+		})
+	}
+}

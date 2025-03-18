@@ -3,7 +3,6 @@ package nba
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
@@ -183,8 +182,11 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		matchup.BoxScoreLink = basketballreference.URL + urlPath
 
 		// EventID
-		splitLink := strings.Split(matchup.BoxScoreLink, "/")
-		matchup.EventID = strings.Split(splitLink[len(splitLink)-1], ".")[0]
+		eventID, err := sportsreferenceutil.EventID(matchup.BoxScoreLink)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		matchup.EventID = eventID
 
 		// Quarter Headers check
 		var selector string

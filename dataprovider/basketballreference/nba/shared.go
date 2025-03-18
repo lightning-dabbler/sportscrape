@@ -23,8 +23,6 @@ var networkHeaders network.Headers = network.Headers(map[string]interface{}{
 	"user-agent":                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36",
 })
 
-type headerValues map[string]struct{}
-
 const (
 	// https://www.basketball-reference.com/boxscores/{event_id}.html
 	waitReadyBoxScoreContentSelector = `#content`
@@ -34,16 +32,6 @@ const (
 	boxScorePlayerSelector           = "th"
 	boxScorePlayerLinkSelector       = boxScorePlayerSelector + " > a"
 )
-
-// extractPlayerID extracts PlayerID from PlayerLink
-func extractPlayerID(playerLink string) (string, error) {
-	playerLinkSplit := strings.Split(playerLink, "/")
-	result := strings.Split(playerLinkSplit[len(playerLinkSplit)-1], ".")[0]
-	if result == "" {
-		return "", fmt.Errorf("Error: Player ID is an empty string when parsing %s", playerLink)
-	}
-	return result, nil
-}
 
 func transformMinutesPlayed(minutesPlayed string) (float32, error) {
 	minutesPlayedSplit := strings.Split(minutesPlayed, ":")

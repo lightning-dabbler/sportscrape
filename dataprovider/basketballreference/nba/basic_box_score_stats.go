@@ -19,56 +19,56 @@ const (
 	basicBoxScoreSelector = `table[id$='game-basic']`
 )
 
-// basicBoxScoreStarterHeaderValues represents the headers in sequential order for the starter team members
-var basicBoxScoreStarterHeaderValues headerValues = headerValues{
-	"Starters": struct{}{},
-	"MP":       struct{}{},
-	"FG":       struct{}{},
-	"FGA":      struct{}{},
-	"FG%":      struct{}{},
-	"3P":       struct{}{},
-	"3PA":      struct{}{},
-	"3P%":      struct{}{},
-	"FT":       struct{}{},
-	"FTA":      struct{}{},
-	"FT%":      struct{}{},
-	"ORB":      struct{}{},
-	"DRB":      struct{}{},
-	"TRB":      struct{}{},
-	"AST":      struct{}{},
-	"STL":      struct{}{},
-	"BLK":      struct{}{},
-	"TOV":      struct{}{},
-	"PF":       struct{}{},
-	"PTS":      struct{}{},
-	"GmSc":     struct{}{},
-	"+/-":      struct{}{},
+// basicBoxScoreStarterHeaders represents the headers in sequential order for the starter team members
+var basicBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+	"Starters",
+	"MP",
+	"FG",
+	"FGA",
+	"FG%",
+	"3P",
+	"3PA",
+	"3P%",
+	"FT",
+	"FTA",
+	"FT%",
+	"ORB",
+	"DRB",
+	"TRB",
+	"AST",
+	"STL",
+	"BLK",
+	"TOV",
+	"PF",
+	"PTS",
+	"GmSc",
+	"+/-",
 }
 
-// basicBoxScoreReservesHeaderValues represents the headers in sequential order for the reserve team members
-var basicBoxScoreReservesHeaderValues headerValues = headerValues{
-	"Reserves": struct{}{},
-	"MP":       struct{}{},
-	"FG":       struct{}{},
-	"FGA":      struct{}{},
-	"FG%":      struct{}{},
-	"3P":       struct{}{},
-	"3PA":      struct{}{},
-	"3P%":      struct{}{},
-	"FT":       struct{}{},
-	"FTA":      struct{}{},
-	"FT%":      struct{}{},
-	"ORB":      struct{}{},
-	"DRB":      struct{}{},
-	"TRB":      struct{}{},
-	"AST":      struct{}{},
-	"STL":      struct{}{},
-	"BLK":      struct{}{},
-	"TOV":      struct{}{},
-	"PF":       struct{}{},
-	"PTS":      struct{}{},
-	"GmSc":     struct{}{},
-	"+/-":      struct{}{},
+// basicBoxScoreReservesHeaders represents the headers in sequential order for the reserve team members
+var basicBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+	"Reserves",
+	"MP",
+	"FG",
+	"FGA",
+	"FG%",
+	"3P",
+	"3PA",
+	"3P%",
+	"FT",
+	"FTA",
+	"FT%",
+	"ORB",
+	"DRB",
+	"TRB",
+	"AST",
+	"STL",
+	"BLK",
+	"TOV",
+	"PF",
+	"PTS",
+	"GmSc",
+	"+/-",
 }
 
 // BasicBoxScoreOption defines a configuration option for basic box score runners
@@ -134,11 +134,11 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 	doc.Find(basicBoxScoreSelector).Each(func(i int, s *goquery.Selection) {
 		var starterHeader string
 		var reserveHeader string
-		s.Find(boxScoreStarterHeaders).Each(func(_ int, s *goquery.Selection) {
+		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {
 			starterHeader = util.CleanTextDatum(s.Text())
-			_, ok := basicBoxScoreStarterHeaderValues[starterHeader]
-			if !ok {
-				log.Fatalf("%s is not a valid Starters Header @ %s\n", starterHeader, url)
+			expectedHeader := basicBoxScoreStarterHeaders[idx]
+			if starterHeader != expectedHeader {
+				log.Fatalf("Starter header '%s' at position %d does not equal expected header '%s' @ %s\n", starterHeader, idx, expectedHeader, url)
 			}
 		})
 
@@ -162,7 +162,7 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 				}
 				boxScoreStats.PlayerLink = basketballreference.URL + util.CleanTextDatum(s.Find(boxScorePlayerLinkSelector).AttrOr("href", ""))
 				boxScoreStats.Player = util.CleanTextDatum(s.Find(boxScorePlayerSelector).Text())
-				playerID, err := extractPlayerID(boxScoreStats.PlayerLink)
+				playerID, err := sportsreferenceutil.PlayerID(boxScoreStats.PlayerLink)
 				if err != nil {
 					log.Fatalln(err)
 				}
@@ -337,14 +337,12 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 				}
 				basicNBABoxScoreStats = append(basicNBABoxScoreStats, boxScoreStats)
 			} else {
-				s.Find(boxScoreReserveHeaders).Each(func(_ int, s *goquery.Selection) {
-
+				s.Find(boxScoreReserveHeaders).Each(func(idx int, s *goquery.Selection) {
 					reserveHeader = util.CleanTextDatum(s.Text())
-					_, ok := basicBoxScoreReservesHeaderValues[reserveHeader]
-					if !ok {
-						log.Fatalf("%s is not a valid Reserves Header @ %s\n", reserveHeader, url)
+					expectedHeader := basicBoxScoreReservesHeaders[idx]
+					if reserveHeader != expectedHeader {
+						log.Fatalf("Reserve header '%s' at position %d does not equal expected header '%s' @ %s\n", reserveHeader, idx, expectedHeader, url)
 					}
-
 				})
 			}
 

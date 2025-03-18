@@ -8,7 +8,7 @@ import (
 type NBAMatchup struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
-	// EventID is the parsed event id from the response payload of the matchup
+	// EventID is the parsed event id from the box score link of the matchup
 	EventID string `json:"event_id"`
 	// EventDate is the timestamp associated with a given event
 	EventDate time.Time `json:"event_date"`

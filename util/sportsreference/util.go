@@ -2,6 +2,7 @@ package sportsreferenceutil
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -11,7 +12,11 @@ const (
 )
 
 // DateStrToTime takes in a date string in the form 2024-01-25
-// Returns a timestamp and error
+//
+// Parameter:
+//   - date: the date string to parse
+//
+// Returns a time.Time{} and nilable error
 func DateStrToTime(date string) (time.Time, error) {
 	dateParse, err := time.Parse(dateLayout, date)
 	if err != nil {
@@ -21,7 +26,11 @@ func DateStrToTime(date string) (time.Time, error) {
 }
 
 // EventDate takes in a date string in the form 2024-01-25
-// Returns a timezone (America/New_York) aware timestamp error
+//
+// Parameter:
+//   - date: The date associated with the event
+//
+// Returns the event date as time.Time{} with timezone (America/New_York) awareness and nilable error
 func EventDate(date string) (time.Time, error) {
 	loc, err := time.LoadLocation("America/New_York")
 	if err != nil {
@@ -35,13 +44,60 @@ func EventDate(date string) (time.Time, error) {
 	return dateParse, nil
 }
 
+// extractID extracts an arbitrary id from a sportsreference related link
+//
+// Parameter:
+//   - link: the url
+//
+// Returns the id parsed from the url
+func extractID(link string) string {
+	linkSplit := strings.Split(link, "/")
+	return strings.Split(linkSplit[len(linkSplit)-1], ".")[0]
+}
+
+// EventID extracts the event id from a boxscore link
+//
+// Parameter:
+//   - boxscoreLink: the boxscore link
+//
+// Returns the event id as a string and nilable error
+func EventID(boxscoreLink string) (string, error) {
+	id := extractID(boxscoreLink)
+	if id == "" {
+		return "", fmt.Errorf("Error: Event ID is an empty string when parsing %s", id)
+	}
+	return id, nil
+}
+
+// PlayerID extracts the player id from a player link
+//
+// Parameter:
+//   - playerLink: the player link
+//
+// Returns the player id as a string and nilable error
+func PlayerID(playerLink string) (string, error) {
+	id := extractID(playerLink)
+	if id == "" {
+		return "", fmt.Errorf("Error: Player ID is an empty string when parsing %s", id)
+	}
+	return id, nil
+}
+
 type loserValues map[string]struct{}
 
 // LoserValueExists is a helper to determine losers and winners in a matchup
 var LoserValueExists loserValues = loserValues{"loser": struct{}{}, "winner": struct{}{}}
 
+type Headers []string
+
 // ReturnUnemptyField validates that the extracted field from a selector is not an empty string
-// Returns the string if not empty else raises a logs an issue and fails the process
+//
+// Paramater:
+//   - str: the value to validate
+//   - location: selector
+//   - field: the model field
+//
+// Returns the string if not empty and nilable error
 func ReturnUnemptyField(str string, location string, field string) (string, error) {
 	if str == "" {
 		return "", fmt.Errorf("No value @ %s for %s", location, field)

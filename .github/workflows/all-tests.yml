@@ -4,9 +4,19 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'go.mod'
+      - 'go.sum'
+      - 'util/**'
+      - 'dataprovider/**'
   push:
     branches:
       - main
+    paths:
+      - 'go.mod'
+      - 'go.sum'
+      - 'util/**'
+      - 'dataprovider/**'
 
 jobs:
   all-tests:
