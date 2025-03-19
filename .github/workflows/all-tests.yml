@@ -40,6 +40,8 @@ jobs:
           version: v2.53.3
       - name: Install chromium
         run: sudo apt-get install chromium-browser
+      - name: Dir
+        run: ls -la
       - name: Run all tests
         run: make all-tests
       - name: Archive test output and coverage
