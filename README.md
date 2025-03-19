@@ -70,7 +70,7 @@ To run unit and integration tests:
 make all-tests
 ```
 
-Tests are also being ran as CI workflows in Github Actions.
+Tests are also being ran as CI workflows on Github Actions.
 
 ## License
 MIT
