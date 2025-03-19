@@ -48,5 +48,29 @@ func main() {
 | https://baseball-reference.com   | MLB    | Batting box score stats|[x]|
 | https://baseball-reference.com   | MLB    | Pitching box score stats|[x]|
 
+## Development
+### Prerequisites
+- Go 1.24 or higher
+
+OR
+
+- Docker
+    - In which case refer to the Makefile at root to build and shell into a development docker container
+
+### Testing
+This project is using [mockery](https://github.com/vektra/mockery) to mock interfaces.
+
+To run unit tests:
+```console
+make unit-tests
+```
+
+To run unit and integration tests:
+```console
+make all-tests
+```
+
+Tests are also being ran as CI workflows on Github Actions.
+
 ## License
 MIT
