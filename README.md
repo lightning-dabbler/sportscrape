@@ -58,7 +58,7 @@ OR
     - In which case refer to the Makefile at root to build and shell into a development docker container
 
 ### Testing
-This project is using using [mockery](https://github.com/vektra/mockery) to mock interfaces.
+This project is using [mockery](https://github.com/vektra/mockery) to mock interfaces.
 
 To run unit tests:
 ```console
