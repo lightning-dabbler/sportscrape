@@ -17,7 +17,7 @@ runs:
       run: |
         mockery_version=github.com/vektra/mockery/v2@${{inputs.version}}
         echo "Installing $mockery_version"
-        echo "CI_MOCKERY_VERSION=$mockery_version">> $GITHUB_ENV 
+        echo "CI_MOCKERY_VERSION=$mockery_version">> $GITHUB_ENV
     - name: Install vektra/mockery/v2
       shell: bash
       run: |
