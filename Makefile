@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-PACKAGE_VERSION=v0.1.0-beta.1
+PACKAGE_VERSION=v0.1.0-beta.2
 
 help: # generate annotations of each target
 	@grep -hE '^[a-zA-Z_-]+:.*?#+ .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?#+ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
