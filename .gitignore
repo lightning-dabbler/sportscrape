@@ -30,3 +30,6 @@ coverage.html
 
 # pyenv virtual environment
 .python-version
+
+# Mocks
+mocks/

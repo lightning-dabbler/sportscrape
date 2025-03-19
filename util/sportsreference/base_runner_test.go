@@ -7,15 +7,11 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+
+	mocksportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference/mocks"
 )
-
-// Simple implementation of BoxScoreProcessor for testing
-type TestBoxScoreProcessor struct{}
-
-func (p *TestBoxScoreProcessor) GetSegmentBoxScoreStats(matchup interface{}) []interface{} {
-	// Simple implementation that returns the matchup in a slice
-	return []interface{}{matchup}
-}
 
 // TestMatchupRunnerStructure verifies MatchupRunner embeds Runner properly
 func TestMatchupRunnerStructure(t *testing.T) {
@@ -46,75 +42,84 @@ func TestMatchupRunnerStructure(t *testing.T) {
 
 // TestBoxScoreRunnerGetBoxScoresStats tests the BoxScoreRunner.GetBoxScoresStats method
 func TestBoxScoreRunnerGetBoxScoresStats(t *testing.T) {
-	processor := &TestBoxScoreProcessor{}
 
 	testCases := []struct {
-		name        string
-		concurrency int
-		matchups    []interface{}
-		expected    int
+		name           string
+		concurrency    int
+		matchups       []interface{}
+		expectedResult []interface{}
+		expectedLength int
 	}{
 		{
-			name:        "No matchups",
-			concurrency: 2,
-			matchups:    []interface{}{},
-			expected:    0,
+			name:           "No matchups",
+			concurrency:    2,
+			matchups:       []interface{}{},
+			expectedLength: 0,
 		},
 		{
-			name:        "Single matchup",
-			concurrency: 2,
-			matchups:    []interface{}{1},
-			expected:    1,
+			name:           "Single matchup",
+			concurrency:    2,
+			matchups:       []interface{}{1},
+			expectedResult: []interface{}{2, 2},
+			expectedLength: 2,
 		},
 		{
-			name:        "Multiple matchups",
-			concurrency: 2,
-			matchups:    []interface{}{1, 2, 3},
-			expected:    3,
+			name:           "Multiple matchups",
+			concurrency:    2,
+			matchups:       []interface{}{1, 2, 3},
+			expectedResult: []interface{}{2, 2, 4, 4, 6, 6},
+			expectedLength: 6,
 		},
 		{
-			name:        "Default concurrency",
-			concurrency: 0, // Should use runtime.NumCPU()
-			matchups:    []interface{}{1, 2, 3, 4},
-			expected:    4,
+			name:           "Default concurrency",
+			concurrency:    0, // Should use runtime.NumCPU()
+			matchups:       []interface{}{1, 2, 3, 4},
+			expectedResult: []interface{}{2, 2, 4, 4, 6, 6, 8, 8},
+			expectedLength: 8,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			mockprocessor := &mocksportsreferenceutil.MockBoxScoreProcessor{}
+			for _, matchup := range tc.matchups {
+				mockprocessor.EXPECT().GetSegmentBoxScoreStats(matchup).Return([]interface{}{2 * matchup.(int), 2 * matchup.(int)})
+			}
+
 			runner := &BoxScoreRunner{
 				Runner: Runner{
 					Timeout: 1 * time.Second,
 				},
 				Concurrency: tc.concurrency,
-				Processor:   processor,
+				Processor:   mockprocessor,
 			}
 
 			results := runner.GetBoxScoresStats(tc.matchups...)
 
-			if len(results) != tc.expected {
-				t.Errorf("Expected %d results, got %d", tc.expected, len(results))
+			if len(results) != tc.expectedLength {
+				t.Errorf("Expected %d results, got %d", tc.expectedLength, len(results))
+			}
+			if tc.expectedLength != 0 {
+				assert.Equal(t, tc.expectedResult, results, "Equal output")
 			}
 
-			// Verify each matchup was processed correctly
-			for i, matchup := range tc.matchups {
-				if i < len(results) && !reflect.DeepEqual(results[i], matchup) {
-					t.Errorf("Result %d doesn't match input: expected %v, got %v", i, matchup, results[i])
-				}
-			}
 		})
 	}
 }
 
 // TestBoxScoreRunnerWorker tests the BoxScoreRunner.Worker method directly
 func TestBoxScoreRunnerWorker(t *testing.T) {
-	processor := &TestBoxScoreProcessor{}
-	runner := &BoxScoreRunner{
-		Processor: processor,
-	}
-
 	// Test data
 	matchups := []interface{}{1, "test", map[string]string{"key": "value"}}
+
+	mockprocessor := &mocksportsreferenceutil.MockBoxScoreProcessor{}
+
+	for _, matchup := range matchups {
+		mockprocessor.EXPECT().GetSegmentBoxScoreStats(matchup).Return([]interface{}{matchup})
+	}
+	runner := &BoxScoreRunner{
+		Processor: mockprocessor,
+	}
 
 	// Setup channels and wait group
 	var wg sync.WaitGroup
