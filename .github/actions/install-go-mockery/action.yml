@@ -6,7 +6,9 @@ inputs:
     description: |
       The version of vektra/mockery/v2 to install
       refer to https://github.com/vektra/mockery/releases for versions
-    default: v2.53.3
+    default: "v2.53.3"
+    type: "string"
+
 runs:
   using: composite
   steps:

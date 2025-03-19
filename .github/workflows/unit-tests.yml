@@ -3,11 +3,11 @@ name: Unit tests
 on:
   push:
     branches-ignore: [main]
-  paths:
-    - 'go.mod'
-    - 'go.sum'
-    - 'util/**'
-    - 'dataprovider/**'
+    paths:
+      - 'go.mod'
+      - 'go.sum'
+      - 'util/**'
+      - 'dataprovider/**'
 
 jobs:
   unit-tests:
