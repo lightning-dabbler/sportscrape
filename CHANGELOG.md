@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0-beta.3] - 2025-03-19
 ### Changed
-- Minor update to `go.mod` and `go.sum` based on introduction of mockery
-- Documentation updates
+- Minor update to `go.mod` and `go.sum` based on introduction of mockery (https://github.com/lightning-dabbler/sportscrape/pull/16)
+- Documentation updates (https://github.com/lightning-dabbler/sportscrape/pull/17)
 
 ## [0.1.0-beta.2] - 2025-03-18
 ### Changed
