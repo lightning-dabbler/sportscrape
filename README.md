@@ -7,7 +7,7 @@ go get github.com/lightning-dabbler/sportscrape
 ```
 
 ## Quick start
-Retrieve and ouput `2025-02-20` NBA matchups from https://basketball-reference.com
+Retrieve and output `2025-02-20` NBA matchups from https://basketball-reference.com
 ```go
 package main
 
