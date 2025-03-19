@@ -6,9 +6,36 @@ A Go package for collecting and transforming sports statistics from various sour
 go get github.com/lightning-dabbler/sportscrape
 ```
 
+## Quick start
+Retrieve and ouput `2025-02-20` NBA matchups from https://basketball-reference.com
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+)
+
+func main() {
+	date := "2025-02-20"
+	// Instantiate MatchupRunner
+	runner := nba.NewMatchupRunner(
+		nba.WithMatchupTimeout(2 * time.Minute),
+	)
+	// Retrieve NBA matchups associated with date
+	matchups := runner.GetMatchups(date)
+	for _, matchup := range matchups {
+		fmt.Printf("%#v\n", matchup.(model.NBAMatchup))
+	}
+}
+```
+
 ## Usage
 - [basketball-reference.com NBA scrape examples](dataprovider/basketballreference/nba/example_test.go)
-- [baseball-reference.com NBA scrape examples](dataprovider/baseballreference/mlb/example_test.go)
+- [baseball-reference.com MLB scrape examples](dataprovider/baseballreference/mlb/example_test.go)
 
 ## Data providers
 
