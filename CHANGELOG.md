@@ -6,14 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.0-beta.1] - 2025-03-18
 ### Added
-- Added EventID to sportsreference util and updated `MatchupRunner.GetMatchups(...)` to use it.
+- Added `EventID` to sportsreference util and updated `MatchupRunner.GetMatchups(...)` to use it.
 - Created `MLBMatchup` model and `MatchupRunner` to scrape MLB matchups from https://baseball-reference.com
 - Created `MLBBattingBoxScoreStats` and `BattingBoxScoreRunner` to scrape MLB batting box score data from https://baseball-reference.com
 - Created `MLBPitchingBoxScoreStats` model and `PitchingBoxScoreRunner` to scrape MLB pitching box score data from https://baseball-reference.com
 ### Changed
-- Moved local extractPlayerID to sportsreference util and renamed it PlayerID
-- Changed `headerValues` type from map to slice of string
+- Moved local `extractPlayerID` to sportsreference util and renamed it `PlayerID`
+- Changed `headerValues` type from `map[string]string` to `[]string`
 - renamed `headerValues` to `Headers`
 - Moved `Headers` to sportsreferenceutil package
 
