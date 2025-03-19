@@ -1,0 +1,22 @@
+name: Install vektra/mockery/v2
+description: Installs vektra/mockery/v2
+
+inputs:
+  version:
+    description: |
+      The version of vektra/mockery/v2 to install
+      refer to https://github.com/vektra/mockery/releases for versions
+    default: v2.53.3
+runs:
+  using: composite
+  steps:
+    - name: Log version to be installed
+      shell: bash
+      run: |
+        mockery_version=github.com/vektra/mockery/v2@${{inputs.version}}
+        echo "Installing $mockery_version"
+        echo "MOCKERY_VERSION=$mockery_version">> $GITHUB_ENV
+    - name: Install vektra/mockery/v2
+      shell: bash
+      run: |
+        go install ${{env.MOCKERY_VERSION}}
