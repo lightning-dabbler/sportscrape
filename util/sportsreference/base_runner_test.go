@@ -4,6 +4,7 @@ package sportsreferenceutil
 
 import (
 	"reflect"
+	"sort"
 	"sync"
 	"testing"
 	"time"
@@ -47,7 +48,7 @@ func TestBoxScoreRunnerGetBoxScoresStats(t *testing.T) {
 		name           string
 		concurrency    int
 		matchups       []interface{}
-		expectedResult []interface{}
+		expectedResult []int
 		expectedLength int
 	}{
 		{
@@ -60,21 +61,21 @@ func TestBoxScoreRunnerGetBoxScoresStats(t *testing.T) {
 			name:           "Single matchup",
 			concurrency:    2,
 			matchups:       []interface{}{1},
-			expectedResult: []interface{}{2, 2},
+			expectedResult: []int{2, 2},
 			expectedLength: 2,
 		},
 		{
 			name:           "Multiple matchups",
 			concurrency:    2,
 			matchups:       []interface{}{1, 2, 3},
-			expectedResult: []interface{}{2, 2, 4, 4, 6, 6},
+			expectedResult: []int{2, 2, 4, 4, 6, 6},
 			expectedLength: 6,
 		},
 		{
 			name:           "Default concurrency",
 			concurrency:    0, // Should use runtime.NumCPU()
 			matchups:       []interface{}{1, 2, 3, 4},
-			expectedResult: []interface{}{2, 2, 4, 4, 6, 6, 8, 8},
+			expectedResult: []int{2, 2, 4, 4, 6, 6, 8, 8},
 			expectedLength: 8,
 		},
 	}
@@ -95,12 +96,18 @@ func TestBoxScoreRunnerGetBoxScoresStats(t *testing.T) {
 			}
 
 			results := runner.GetBoxScoresStats(tc.matchups...)
+			n_results := len(results)
+			ints := make([]int, n_results)
+			for idx, item := range results {
+				ints[idx] = item.(int)
+			}
+			sort.Ints(ints)
 
-			if len(results) != tc.expectedLength {
-				t.Errorf("Expected %d results, got %d", tc.expectedLength, len(results))
+			if n_results != tc.expectedLength {
+				t.Errorf("Expected %d results, got %d", tc.expectedLength, n_results)
 			}
 			if tc.expectedLength != 0 {
-				assert.Equal(t, tc.expectedResult, results, "Equal output")
+				assert.Equal(t, tc.expectedResult, ints, "Equal output")
 			}
 
 		})
