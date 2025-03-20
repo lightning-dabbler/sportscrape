@@ -1,0 +1,23 @@
+name: Release Go Package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  deploy-package:
+    name: Deploy package to pkg.go.dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Log version to update with
+        run: |
+        echo "Uploading ${{ github.ref_name }}"
+      - name: Update pkg.go.dev with version
+        run: |
+          curl https://sum.golang.org/lookup/github.com/lightning-dabbler/sportscrape@${{ github.ref_name }}
