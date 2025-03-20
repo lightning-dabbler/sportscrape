@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Documentation updates
 ### Fixed
-- `ERROR: unhandled page event *page.EventFrameStartedNavigating` fixed in `github.com/chromedp/chromedp@v0.13.2`
+- `ERROR: unhandled page event *page.EventFrameStartedNavigating` fixed in `github.com/chromedp/chromedp@v0.13.2` (https://github.com/lightning-dabbler/sportscrape/pull/19)
 
 ## [0.1.0-beta.3] - 2025-03-19
 ### Changed
