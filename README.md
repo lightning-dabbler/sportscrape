@@ -1,6 +1,10 @@
 # sportscrape
 A Go package for collecting and transforming sports statistics from various sources into standardized formats.
 
+[![All Tests][sportscrape-ci-status]][sportscrape-ci]
+[![Go Reference][goref-sportscrape-status]][goref-sportscrape]
+[![Releases][release-status]][releases]
+
 ## Installation
 ```console
 go get github.com/lightning-dabbler/sportscrape
@@ -74,3 +78,10 @@ Tests are also being ran as CI workflows on Github Actions.
 
 ## License
 MIT
+
+[sportscrape-ci]: https://github.com/lightning-dabbler/sportscrape/actions/workflows/all-tests.yml (Test CI)
+[sportscrape-ci-status]: https://github.com/lightning-dabbler/sportscrape/actions/workflows/all-tests.yml/badge.svg (Test CI)
+[goref-sportscrape]: https://pkg.go.dev/github.com/lightning-dabbler/sportscrape
+[goref-sportscrape-status]: https://pkg.go.dev/badge/github.com/lightning-dabbler/sportscrape.svg
+[release-status]: https://img.shields.io/github/v/release/lightning-dabbler/sportscrape?display_name=tag&sort=semver (Latest Release)
+[releases]: https://github.com/lightning-dabbler/sportscrape/releases (Releases)
