@@ -4,8 +4,8 @@ go 1.24.0
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.2
-	github.com/chromedp/cdproto v0.0.0-20250222051814-50c6cb17f10a
-	github.com/chromedp/chromedp v0.13.0
+	github.com/chromedp/cdproto v0.0.0-20250319231242-a755498943c8
+	github.com/chromedp/chromedp v0.13.2
 	github.com/stretchr/testify v1.10.0
 )
 
