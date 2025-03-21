@@ -88,4 +88,3 @@ MIT
 [releases]: https://github.com/lightning-dabbler/sportscrape/releases (Releases)
 [go-report]: https://goreportcard.com/report/github.com/lightning-dabbler/sportscrape (Go report)
 [go-report-status]: https://goreportcard.com/badge/github.com/lightning-dabbler/sportscrape (Go report Badge)
-
