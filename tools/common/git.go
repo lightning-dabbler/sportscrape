@@ -19,7 +19,7 @@ func LoadGitRepositoryCurrentDir() (*git.Repository, error) {
 }
 
 // GetGitTags retrieves all tags from the repository.
-// Params:
+// Parameters:
 //   - r: The repository to get tags from
 //
 // Returns: An iterator for repository tags or an error.
@@ -28,7 +28,7 @@ func GetGitTags(r *git.Repository) (storer.ReferenceIter, error) {
 }
 
 // CheckTagExists verifies if a specific tag exists in the repository.
-// Params:
+// Parameters:
 //   - r: The repository to check
 //   - versionStr: The tag name to check for
 //
@@ -46,7 +46,7 @@ func CheckTagExists(r *git.Repository, versionStr string) (bool, error) {
 }
 
 // FindMaximumSemVerTag finds the highest semantic version tag.
-// Params:
+// Parameters:
 //   - tags: Iterator containing repository tags
 //
 // Returns: The highest semantic version found (defaults to "0.0.0") or an error.
@@ -75,7 +75,7 @@ func FindMaximumSemVerTag(tags storer.ReferenceIter) (*semver.Version, error) {
 }
 
 // CreateTag creates a new tag at the current HEAD.
-// Params:
+// Parameters:
 //   - r: The repository where the tag will be created
 //   - v: The version to use for the tag name
 //   - opts: Options for creating the tag (message, tagger) (nilable argument)
@@ -110,7 +110,7 @@ func CreateTag(r *git.Repository, v *semver.Version, opts *git.CreateTagOptions)
 }
 
 // PushTag pushes a specific tag to the origin remote.
-// Params:
+// Parameters:
 //   - r: The repository containing the tag
 //   - v: The version/tag to push
 //   - force: Indicator to force push
