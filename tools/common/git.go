@@ -12,9 +12,9 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/storer"
 )
 
-// LoadRootRepository opens the git repository in the current directory.
+// LoadGitRepositoryCurrentDir opens the git repository in the current directory.
 // Returns the repository object or an error if opening fails.
-func LoadRootRepository() (*git.Repository, error) {
+func LoadGitRepositoryCurrentDir() (*git.Repository, error) {
 	return git.PlainOpen(".")
 }
 
@@ -78,7 +78,7 @@ func FindMaximumSemVerTag(tags storer.ReferenceIter) (*semver.Version, error) {
 // Params:
 //   - r: The repository where the tag will be created
 //   - v: The version to use for the tag name
-//   - opts: Options for creating the tag (message, tagger)
+//   - opts: Options for creating the tag (message, tagger) (nilable argument)
 //
 // Returns: true if created, false if tag exists or on error.
 func CreateTag(r *git.Repository, v *semver.Version, opts *git.CreateTagOptions) (bool, error) {
@@ -113,9 +113,10 @@ func CreateTag(r *git.Repository, v *semver.Version, opts *git.CreateTagOptions)
 // Params:
 //   - r: The repository containing the tag
 //   - v: The version/tag to push
+//   - force: Indicator to force push
 //
 // Returns: An error if the push operation fails.
-func PushTag(r *git.Repository, v *semver.Version) error {
+func PushTag(r *git.Repository, v *semver.Version, force bool) error {
 	// Tag to push
 	originalVersion := v.Original()
 	ref, err := r.Tag(originalVersion)
@@ -130,6 +131,7 @@ func PushTag(r *git.Repository, v *semver.Version) error {
 		RefSpecs: []config.RefSpec{
 			config.RefSpec(fmt.Sprintf("%s:%s", refName, refName)),
 		},
+		Force: force,
 	}
 	return r.Push(pushOptions)
 }
