@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
+	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/lightning-dabbler/sportscrape/tools/common"
 	"github.com/lightning-dabbler/sportscrape/version"
 	"github.com/spf13/cobra"
@@ -131,6 +134,30 @@ func createGitPushTagCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			// --use-github-token
+			useGithubToken, err := cmd.Flags().GetBool("use-github-token")
+			if err != nil {
+				return err
+			}
+			// --ssh-key-path
+			sshPath, err := cmd.Flags().GetString("ssh-key-path")
+			if err != nil {
+				return err
+			}
+			// --ssh
+			useSSH, err := cmd.Flags().GetBool("ssh")
+			if err != nil {
+				return err
+			}
+			// --https
+			useHTTPS, err := cmd.Flags().GetBool("https")
+			if err != nil {
+				return err
+			}
+			// Validate auth flags
+			if !useSSH && !useGithubToken && !useHTTPS {
+				return fmt.Errorf("Either one of the following must be set: --ssh, --https, --use-github-token")
+			}
 			// Load repository
 			r, err := common.LoadGitRepository(directory)
 			if err != nil {
@@ -141,8 +168,45 @@ func createGitPushTagCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			// Authentication
+			var auth transport.AuthMethod
+			// SSH
+			if useSSH {
+				// Auth with ssh
+				fmt.Println("Authenticating with SSH")
+				if sshPath == "" {
+					home, err := os.UserHomeDir()
+					if err != nil {
+						return err
+					}
+					sshPath = filepath.Join(home, ".ssh", "id_ed25519")
+					fmt.Printf("--ssh-key-path unset. Using %s as a fallback.\n", sshPath)
+				}
+				auth, err = common.PromptSSHAuth(sshPath)
+				if err != nil {
+					return err
+				}
+			}
+			// HTTPS
+			if useHTTPS {
+				// Auth with https
+				fmt.Println("Authenticating with HTTPS")
+				auth, err = common.PromptHTTPSAuth()
+				if err != nil {
+					return err
+				}
+			}
+			// GitHub Token
+			if useGithubToken {
+				// Auth with token
+				fmt.Println("Authenticating with GITHUB_TOKEN")
+				auth, err = common.GitHubTokenAuth()
+				if err != nil {
+					return err
+				}
+			}
 			// Push tag to remote origin
-			err = common.PushTag(r, semVer, force)
+			err = common.PushTag(r, semVer, auth, force)
 			if err != nil {
 				fmt.Println("Issue pushing to remote origin!")
 			}
@@ -151,5 +215,10 @@ func createGitPushTagCmd() *cobra.Command {
 		SilenceUsage: true,
 	}
 	pushTag.Flags().BoolP("force", "f", false, "Indicator push the git tag by force.")
+	pushTag.Flags().StringP("ssh-key-path", "k", "", "SSH key path")
+	pushTag.Flags().Bool("ssh", false, "Indicator to use SSH auth")
+	pushTag.Flags().Bool("https", false, "Indicator to use https auth")
+	pushTag.Flags().BoolP("use-github-token", "t", false, "Usually set in GitHub Actions. It tells the program to look for $GITHUB_TOKEN in the environment and authenticate with it.")
+
 	return pushTag
 }

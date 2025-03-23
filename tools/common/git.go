@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"syscall"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/storer"
+	"github.com/go-git/go-git/v5/plumbing/transport"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
+	"golang.org/x/term"
 )
 
 // LoadGitRepository opens the git repository in a chosen directory.
@@ -116,10 +121,11 @@ func CreateTag(r *git.Repository, v *semver.Version, opts *git.CreateTagOptions)
 // Parameters:
 //   - r: The repository containing the tag
 //   - v: The version/tag to push
+//   - auth: Authentication
 //   - force: Indicator to force push
 //
 // Returns: An error if the push operation fails.
-func PushTag(r *git.Repository, v *semver.Version, force bool) error {
+func PushTag(r *git.Repository, v *semver.Version, auth transport.AuthMethod, force bool) error {
 	// Tag to push
 	originalVersion := v.Original()
 	ref, err := r.Tag(originalVersion)
@@ -128,14 +134,83 @@ func PushTag(r *git.Repository, v *semver.Version, force bool) error {
 		return err
 	}
 	refName := ref.Name()
-	// TODO: Add authentication support. It's required
 	pushOptions := &git.PushOptions{
 		RemoteName: "origin",
 		Progress:   os.Stdout,
 		RefSpecs: []config.RefSpec{
 			config.RefSpec(fmt.Sprintf("%s:%s", refName, refName)),
 		},
+		Auth:  auth,
 		Force: force,
 	}
 	return r.Push(pushOptions)
+}
+
+// PromptHTTPSAuth prompts the user for GitHub credentials to use with HTTPS authentication.
+// Returns:
+//   - transport.AuthMethod: The authentication method for Git operations
+//   - error: An error if authentication creation fails
+func PromptHTTPSAuth() (transport.AuthMethod, error) {
+	// Enter username
+	fmt.Print("GitHub Username: ")
+	var username string
+	fmt.Scanln(&username)
+
+	// Enter password
+	fmt.Print("GitHub Password/Token: ")
+	password, err := term.ReadPassword(int(syscall.Stdin))
+	fmt.Println()
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read password: %w", err)
+	}
+
+	return &http.BasicAuth{
+		Username: username,
+		Password: string(password),
+	}, nil
+}
+
+// PromptSSHAuth creates an SSH authentication method using the provided SSH key.
+// Parameters:
+//   - keyPath: The file path to the SSH private key
+//
+// Returns:
+//   - transport.AuthMethod: The authentication method for Git operations
+//   - error: An error if the key isn't found or authentication creation fails
+func PromptSSHAuth(keyPath string) (transport.AuthMethod, error) {
+	// Check if key exists
+	if _, err := os.Stat(keyPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("SSH key not found at: %s", keyPath)
+	}
+	// Prompt to enter passphrase
+	fmt.Print("Enter SSH key password (leave empty if none): ")
+	password, err := term.ReadPassword(int(syscall.Stdin))
+	fmt.Println() // Newline
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read password, %w", err)
+	}
+
+	auth, err := ssh.NewPublicKeysFromFile("git", keyPath, string(password))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create SSH authentication, %w", err)
+	}
+
+	return auth, nil
+}
+
+// GitHubTokenAuth creates an authentication method using a GitHub token from environment variables.
+// Returns:
+//   - transport.AuthMethod: The authentication method for Git operations
+//   - error: An error if the GITHUB_TOKEN environment variable is not set
+func GitHubTokenAuth() (transport.AuthMethod, error) {
+	token, found := os.LookupEnv("GITHUB_TOKEN")
+	if !found {
+		return nil, fmt.Errorf("GITHUB_TOKEN is unset. It needs to be set in the environment to authenticate with a token")
+	}
+	auth := &http.TokenAuth{
+		Token: token,
+	}
+	return auth, nil
 }
