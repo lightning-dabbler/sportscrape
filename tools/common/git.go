@@ -12,14 +12,17 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/storer"
 )
 
-// LoadGitRepositoryCurrentDir opens the git repository in the current directory.
+// LoadGitRepository opens the git repository in a chosen directory.
+// Parameter:
+//   - directory: The directory with that houses the .git folder
+//
 // Returns the repository object or an error if opening fails.
-func LoadGitRepositoryCurrentDir() (*git.Repository, error) {
-	return git.PlainOpen(".")
+func LoadGitRepository(directory string) (*git.Repository, error) {
+	return git.PlainOpen(directory)
 }
 
 // GetGitTags retrieves all tags from the repository.
-// Parameters:
+// Parameter:
 //   - r: The repository to get tags from
 //
 // Returns: An iterator for repository tags or an error.
@@ -46,7 +49,7 @@ func CheckTagExists(r *git.Repository, versionStr string) (bool, error) {
 }
 
 // FindMaximumSemVerTag finds the highest semantic version tag.
-// Parameters:
+// Parameter:
 //   - tags: Iterator containing repository tags
 //
 // Returns: The highest semantic version found (defaults to "0.0.0") or an error.
@@ -58,9 +61,9 @@ func FindMaximumSemVerTag(tags storer.ReferenceIter) (*semver.Version, error) {
 	}
 	err = tags.ForEach(func(ref *plumbing.Reference) error {
 		tag := ref.Name().Short()
-		tagVersion, semverError := semver.StrictNewVersion(tag)
+		tagVersion, semverError := semver.NewVersion(tag)
 		if semverError != nil {
-			log.Printf("Issue parsing tag semver %s with semver.StrictNewVersion\n", tag)
+			log.Printf("Issue parsing tag semver %s with semver.NewVersion\n", tag)
 			return semverError
 		}
 		if tagVersion.GreaterThan(baseVersion) {
@@ -125,6 +128,7 @@ func PushTag(r *git.Repository, v *semver.Version, force bool) error {
 		return err
 	}
 	refName := ref.Name()
+	// TODO: Add authentication support. It's required
 	pushOptions := &git.PushOptions{
 		RemoteName: "origin",
 		Progress:   os.Stdout,

@@ -33,3 +33,6 @@ coverage.html
 
 # Mocks
 mocks/
+
+# binary toools
+tools/bin/

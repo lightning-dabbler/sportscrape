@@ -41,3 +41,6 @@ unit-tests: mocks-gen # Run unit tests
 all-tests: mocks-gen # Run all tests regardless of tags
 	go test -v -tags="unit integration" -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html
+
+build-tools: # Compile binary for tools
+	go build -v -tags="tools" -o tools/bin/tools tools/cli/*.go
