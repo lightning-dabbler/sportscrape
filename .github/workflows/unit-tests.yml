@@ -9,7 +9,7 @@ on:
       - 'util/**'
       - 'dataprovider/**'
       - '.github/workflows/unit-tests.yml'
-      - '.github/action/setup-go/actions.yml'
+      - '.github/actions/setup-go/actions.yml'
 
 jobs:
   unit-tests:
