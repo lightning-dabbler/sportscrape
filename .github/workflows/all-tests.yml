@@ -9,19 +9,18 @@ on:
       - 'go.sum'
       - 'util/**'
       - 'dataprovider/**'
-  push:
-    branches:
-      - main
-    paths:
-      - 'go.mod'
-      - 'go.sum'
-      - 'util/**'
-      - 'dataprovider/**'
 
+  workflow_call:
+    outputs:
+      successful_run:
+        description: "Indication that all tests have succeeded"
+        value: ${{ jobs.all-tests.outputs.successful_run }}
 jobs:
   all-tests:
     name: Run all tests
     runs-on: ubuntu-latest
+    outputs:
+      successful_run: ${{steps.output.outputs.successful_run}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,6 +40,7 @@ jobs:
       - name: Install chromium
         run: sudo apt-get install chromium-browser
       - name: Run all tests
+        id: test_run
         run: make all-tests
       - name: Archive test output and coverage
         uses: actions/upload-artifact@v4
@@ -49,3 +49,16 @@ jobs:
           path: |
             coverage.out
             coverage.html
+      - name: outputs
+        id: output
+        if: ${{!cancelled()}}
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.test_run.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "successful_run=true"
+            echo "successful_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "successful_run=false"
+            echo "successful_run=false" >> $GITHUB_OUTPUT
+          fi
