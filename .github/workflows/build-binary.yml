@@ -1,0 +1,50 @@
+name: Build binary
+
+on:
+  workflow_call:
+    outputs:
+      tool_binary_successfully_built:
+        description: "Indication that the tools binary was built and uploaded"
+        value: ${{ jobs.all-tests.outputs.tool_binary_built }}
+
+jobs:
+  build-tools-binary:
+    name: Build and upload tools binary
+    runs-on: ubuntu-latest
+    outputs:
+      tool_binary_successfully_built: ${{steps.output.outputs.tool_binary_successfully_built}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Install Go
+        uses: ./.github/actions/setup-go
+        with:
+          go-version: '1.24.0'
+      - name: Build tools binary
+        run: |
+          make build-tools
+      - name: Output tools binary version
+        run: |
+          tools/bin/tools version
+      - name: Upload tools binary
+        id: upload_tools_binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: tools-artifact
+          path: tools/bin/tools
+      - name: outputs
+        id: output
+        if: ${{!cancelled()}}
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.upload_tools_binary.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "tool_binary_successfully_built=true"
+            echo "tool_binary_successfully_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "tool_binary_successfully_built=false"
+            echo "tool_binary_successfully_built=false" >> $GITHUB_OUTPUT
+          fi
