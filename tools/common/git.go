@@ -154,7 +154,10 @@ func PromptHTTPSAuth() (transport.AuthMethod, error) {
 	// Enter username
 	fmt.Print("GitHub Username: ")
 	var username string
-	fmt.Scanln(&username)
+	_, err := fmt.Scanln(&username)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read username: %w", err)
+	}
 
 	// Enter password
 	fmt.Print("GitHub Password/Token: ")
@@ -162,7 +165,7 @@ func PromptHTTPSAuth() (transport.AuthMethod, error) {
 	fmt.Println()
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to read password: %w", err)
+		return nil, fmt.Errorf("Failed to read password: %w", err)
 	}
 
 	return &http.BasicAuth{
@@ -189,12 +192,12 @@ func PromptSSHAuth(keyPath string) (transport.AuthMethod, error) {
 	fmt.Println() // Newline
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to read password, %w", err)
+		return nil, fmt.Errorf("Failed to read password, %w", err)
 	}
 
 	auth, err := ssh.NewPublicKeysFromFile("git", keyPath, string(password))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create SSH authentication, %w", err)
+		return nil, fmt.Errorf("Failed to create SSH authentication, %w", err)
 	}
 
 	return auth, nil
