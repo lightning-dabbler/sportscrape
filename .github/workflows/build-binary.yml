@@ -5,7 +5,7 @@ on:
     outputs:
       tool_binary_successfully_built:
         description: "Indication that the tools binary was built and uploaded"
-        value: ${{ jobs.all-tests.outputs.tool_binary_built }}
+        value: ${{ jobs.build-tools-binary.outputs.tool_binary_successfully_built }}
 
 jobs:
   build-tools-binary:
