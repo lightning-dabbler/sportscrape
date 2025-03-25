@@ -15,3 +15,4 @@ runs:
         go-version: ${{inputs.go-version}}
     - name: Go version
       run: go version
+      shell: bash
