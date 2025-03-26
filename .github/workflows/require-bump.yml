@@ -6,11 +6,12 @@ on:
     #   - release/v*.*.*
 
   workflow_call:
-    is_bumped_already:
-      description: |
-        Indication that the proposed version is already bumped higher than
-        the highest git tag
-      value: ${{ jobs.require-bump.outputs.is_bumped_already }}
+    outputs:
+      is_bumped_already:
+        description: |
+          Indication that the proposed version is already bumped higher than
+          the highest git tag
+        value: ${{ jobs.require-bump.outputs.is_bumped_already }}
 
 
 
