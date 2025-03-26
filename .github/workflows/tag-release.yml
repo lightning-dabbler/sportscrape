@@ -1,35 +1,21 @@
 name: Tag and release
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
 
 jobs:
-  tests:
-    uses: ./.github/workflows/all-tests.yml
-
-  validate:
-    uses: ./.github/workflows/validate.yml
-
   build-binary:
-    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
-    environment: tag-release
-    needs:
-      - tests
-      - validate
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
     if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
     needs: build-binary
-    environment: tag-release
     uses: ./github/workflows/require-bump.yml
 
   tag-release:
     if: ${{ needs.require-bump.outputs.is_bumped_already }}
     needs: require-bump
     runs-on: ubuntu-latest
-    environment: tag-release
     name: Tag and release
     steps:
       - name: Checkout code
