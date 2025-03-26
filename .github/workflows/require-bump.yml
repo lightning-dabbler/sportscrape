@@ -4,20 +4,20 @@ on:
   push:
     # branch:
     #   - release/v*.*.*
-  
+
   workflow_call:
     is_bumped_already:
       description: |
         Indication that the proposed version is already bumped higher than
         the highest git tag
       value: ${{ jobs.require-bump.outputs.is_bumped_already }}
-      
+
 
 
 jobs:
   build-binary:
     uses: ./.github/workflows/build-binary.yml
-  
+
   require-bump:
     name: Validate version
     runs-on: ubuntu-latest
