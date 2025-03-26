@@ -102,7 +102,7 @@ func createGitCreateTagCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Version %s was successfully tagged locally.\n", v)
+			fmt.Printf("Version %s was successfully tagged.\n", v)
 			return nil
 		},
 		SilenceUsage: true,
@@ -170,9 +170,8 @@ func createGitPushTagCmd() *cobra.Command {
 			}
 			// Authentication
 			var auth transport.AuthMethod
-			// SSH
 			if useSSH {
-				// Auth with ssh
+				// Auth with SSH
 				fmt.Println("Authenticating with SSH")
 				if sshPath == "" {
 					home, err := os.UserHomeDir()
@@ -186,19 +185,15 @@ func createGitPushTagCmd() *cobra.Command {
 				if err != nil {
 					return err
 				}
-			}
-			// HTTPS
-			if useHTTPS {
-				// Auth with https
+			} else if useHTTPS {
+				// Auth with HTTPS
 				fmt.Println("Authenticating with HTTPS")
 				auth, err = common.PromptHTTPSAuth()
 				if err != nil {
 					return err
 				}
-			}
-			// GitHub Token
-			if useGithubToken {
-				// Auth with token
+			} else if useGithubToken {
+				// Auth with GitHub Token
 				fmt.Println("Authenticating with GITHUB_TOKEN")
 				auth, err = common.GitHubTokenAuth()
 				if err != nil {

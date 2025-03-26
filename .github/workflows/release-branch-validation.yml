@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/require-bump.yml
     needs:
       - build-binary
-  
+
   validate-branch-semver:
     name: Check branch SemVer matches version
     if: ${{ needs.require-bump.outputs.is_bumped_already }}
@@ -48,10 +48,10 @@ jobs:
         run: |
           BRANCH_VERSION="${{ needs.validate-release-branch-format.branch_version }}"
           TOOL_VERSION=$(tools/bin/tools version | tr -d '\n\r')
-          
+
           echo "Branch version: $BRANCH_VERSION"
           echo "Tool version: $TOOL_VERSION"
-          
+
           if [[ "$TOOL_VERSION" == "$BRANCH_VERSION" ]]; then
             echo "✅ Version match confirmed"
           else

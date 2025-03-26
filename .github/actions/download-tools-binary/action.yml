@@ -4,10 +4,10 @@ runs:
   using: composite
   steps:
     - name: Download tools binary
-        uses: actions/download-artifact@v4
-        with:
-          name: tools-artifact
-          path: tools/bin/
-      - name: Make binary executable
-        run: chmod +x tools/bin/tools
-        shell: bash
+      uses: actions/download-artifact@v4
+      with:
+        name: tools-artifact
+        path: tools/bin/
+    - name: Make binary executable
+      run: chmod +x tools/bin/tools
+      shell: bash
