@@ -49,6 +49,7 @@ jobs:
           path: |
             coverage.out
             coverage.html
+          retention-days: 30
       - name: outputs
         id: output
         if: ${{!cancelled()}}
