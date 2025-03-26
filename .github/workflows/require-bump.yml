@@ -1,10 +1,6 @@
 name: Require bump
 
 on:
-  push:
-    # branch:
-    #   - release/v*.*.*
-
   workflow_call:
     outputs:
       is_bumped_already:
@@ -13,18 +9,10 @@ on:
           the highest git tag
         value: ${{ jobs.require-bump.outputs.is_bumped_already }}
 
-
-
 jobs:
-  build-binary:
-    uses: ./.github/workflows/build-binary.yml
-
   require-bump:
     name: Validate version
     runs-on: ubuntu-latest
-    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
-    needs:
-      - build-binary
     outputs:
       is_bumped_already: ${{steps.output.outputs.is_bumped_already}}
     steps:
@@ -34,12 +22,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - name: Download tools binary
-        uses: actions/download-artifact@v4
-        with:
-          name: tools-artifact
-          path: tools/bin/
-      - name: Make binary executable
-        run: chmod +x tools/bin/tools
+        uses: ./.github/actions/download-tools-binary
       - name: Validate bump is not required
         id: require_bump
         run: |

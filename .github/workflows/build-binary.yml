@@ -35,6 +35,7 @@ jobs:
         with:
           name: tools-artifact
           path: tools/bin/tools
+          retention-days: 7
       - name: outputs
         id: output
         if: ${{!cancelled()}}

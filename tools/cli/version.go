@@ -23,7 +23,7 @@ func createVersionCmd() *cobra.Command {
 				log.Printf("Issue parsing project semver %s", version.Version)
 				return err
 			}
-			fmt.Printf("Version %s\n", v.Original())
+			fmt.Printf("%s\n", v.Original())
 			return nil
 		},
 	}
