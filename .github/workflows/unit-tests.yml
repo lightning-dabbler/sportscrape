@@ -8,6 +8,8 @@ on:
       - 'go.sum'
       - 'util/**'
       - 'dataprovider/**'
+      - '.github/workflows/unit-tests.yml'
+      - '.github/actions/setup-go/actions.yml'
 
 jobs:
   unit-tests:
@@ -19,12 +21,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - name: Install go 1.24.0
-        uses: actions/setup-go@v5
+      - name: Install Go
+        uses: ./.github/actions/setup-go
         with:
           go-version: '1.24.0'
-      - name: Go version
-        run: go version
       - name: Install Mockery
         uses: ./.github/actions/install-go-mockery
         with:
@@ -38,3 +38,4 @@ jobs:
           path: |
             coverage.out
             coverage.html
+          retention-days: 30

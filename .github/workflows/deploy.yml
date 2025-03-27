@@ -1,0 +1,20 @@
+name: Tag and release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    uses: ./.github/workflows/all-tests.yml
+
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  tag-release:
+    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
+    needs:
+      - tests
+      - validate
+    environment: tag-release
+    uses: ./.github/workflows/tag-release.yml

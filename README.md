@@ -2,6 +2,7 @@
 A Go package for collecting and transforming sports statistics from various sources into standardized formats.
 
 [![All Tests][sportscrape-ci-status]][sportscrape-ci]
+[![Go Report Card][go-report-status]][go-report]
 [![Go Reference][goref-sportscrape-status]][goref-sportscrape]
 [![Releases][release-status]][releases]
 
@@ -85,3 +86,5 @@ MIT
 [goref-sportscrape-status]: https://pkg.go.dev/badge/github.com/lightning-dabbler/sportscrape.svg
 [release-status]: https://img.shields.io/github/v/release/lightning-dabbler/sportscrape?display_name=tag&sort=semver (Latest Release)
 [releases]: https://github.com/lightning-dabbler/sportscrape/releases (Releases)
+[go-report]: https://goreportcard.com/report/github.com/lightning-dabbler/sportscrape (Go report)
+[go-report-status]: https://goreportcard.com/badge/github.com/lightning-dabbler/sportscrape (Go report Badge)

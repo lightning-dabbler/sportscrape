@@ -1,0 +1,42 @@
+name: Require bump
+
+on:
+  workflow_call:
+    outputs:
+      is_bumped_already:
+        description: |
+          Indication that the proposed version is already bumped higher than
+          the highest git tag
+        value: ${{ jobs.require-bump.outputs.is_bumped_already }}
+
+jobs:
+  require-bump:
+    name: Validate version
+    runs-on: ubuntu-latest
+    outputs:
+      is_bumped_already: ${{steps.output.outputs.is_bumped_already}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Download tools binary
+        uses: ./.github/actions/download-tools-binary
+      - name: Validate bump is not required
+        id: require_bump
+        run: |
+          tools/bin/tools git validate-version --require-bump
+      - name: outputs
+        id: output
+        if: ${{!cancelled()}}
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.require_bump.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "is_bumped_already=true"
+            echo "is_bumped_already=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_bumped_already=false"
+            echo "is_bumped_already=false" >> $GITHUB_OUTPUT
+          fi

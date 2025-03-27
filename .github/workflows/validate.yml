@@ -2,11 +2,22 @@ name: Validate files
 
 on:
   push:
-
+    branches-ignore:
+      - main
+  workflow_call:
+    outputs:
+      successful_pre_commit_run:
+        description: "Indication that pre-commit has succeeded"
+        value: ${{ jobs.pre-commit.outputs.successful_pre_commit_run }}
+      successful_go_lint_run:
+        description: "Indication that go linting has succeeded"
+        value: ${{ jobs.go-lint.outputs.successful_go_lint_run }}
 jobs:
   pre-commit:
     name: run pre-commit on all files
     runs-on: ubuntu-latest
+    outputs:
+      successful_pre_commit_run: ${{steps.output.outputs.successful_pre_commit_run}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,25 +37,55 @@ jobs:
           path: ~/.cache/pre-commit
           key: ${{ runner.os }}-precommit-${{ hashFiles('.pre-commit-config.yaml') }}
       - name: run --all-files
+        id: pre_commit
         run: |
           make pre-commit-all
+      - name: outputs
+        id: output
+        if: ${{!cancelled()}}
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.pre_commit.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "successful_pre_commit_run=true"
+            echo "successful_pre_commit_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "successful_pre_commit_run=false"
+            echo "successful_pre_commit_run=false" >> $GITHUB_OUTPUT
+          fi
+
   go-lint:
     name: Lint Go project
     runs-on: ubuntu-latest
+    outputs:
+      successful_go_lint_run: ${{steps.output.outputs.successful_go_lint_run}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - name: Install go 1.24.0
-        uses: actions/setup-go@v5
+      - name: Install Go
+        uses: ./.github/actions/setup-go
         with:
           go-version: '1.24.0'
-      - run: go version
       - name: Install golangci-lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.5
           golangci-lint --version
       - name: Run golangci-lint
+        id: golangci_lint
         run: golangci-lint run
+      - name: outputs
+        id: output
+        if: ${{!cancelled()}}
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.golangci_lint.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "successful_go_lint_run=true"
+            echo "successful_go_lint_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "successful_go_lint_run=false"
+            echo "successful_go_lint_run=false" >> $GITHUB_OUTPUT
+          fi

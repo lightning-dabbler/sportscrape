@@ -1,0 +1,35 @@
+name: Tag and release
+
+on:
+  workflow_call:
+
+jobs:
+  build-binary:
+    uses: ./.github/workflows/build-binary.yml
+
+  require-bump:
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
+    needs: build-binary
+    uses: ./github/workflows/require-bump.yml
+
+  tag-release:
+    if: ${{ needs.require-bump.outputs.is_bumped_already }}
+    needs: require-bump
+    runs-on: ubuntu-latest
+    name: Tag and release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Download tools binary
+        uses: ./.github/actions/download-tools-binary
+      - name: Create tag
+        run: |
+          tools/bin/tools git create-tag
+      - name: Push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tools/bin/tools git push-tag --use-github-token

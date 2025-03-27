@@ -1,16 +1,7 @@
 .DEFAULT_GOAL := help
 
-PACKAGE_VERSION=v0.1.0-beta.4
-
 help: # generate annotations of each target
 	@grep -hE '^[a-zA-Z_-]+:.*?#+ .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?#+ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
-version: # Print package version
-	echo $(PACKAGE_VERSION)
-
-release: # Release current code
-	git tag $(PACKAGE_VERSION)
-	git push origin $(PACKAGE_VERSION)
 
 build: # Build sportscrape-development docker image
 	docker compose -p sportscrape -f docker-compose.yml --project-directory . build --force-rm sportscrape-local
@@ -41,3 +32,6 @@ unit-tests: mocks-gen # Run unit tests
 all-tests: mocks-gen # Run all tests regardless of tags
 	go test -v -tags="unit integration" -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html
+
+build-tools: # Compile binary for tools
+	go build -v -tags="tools" -o tools/bin/tools tools/cli/*.go
