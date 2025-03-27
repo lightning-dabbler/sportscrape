@@ -1,4 +1,4 @@
-name: Tag and release
+name: Validate and deploy
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     needs:
       - tests
       - validate
-    name: Approval gate for tag release
+    name: Approval gate for tag and release
     environment: tag-release
     runs-on: ubuntu-latest
     outputs:
