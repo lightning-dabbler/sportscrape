@@ -2,7 +2,7 @@ name: Release branch validation
 
 on:
   pull_request:
-    branch:
+    branches:
       - main
 
 jobs:
@@ -15,8 +15,10 @@ jobs:
     steps:
       - id: extract_version
         name: Extract version from branch name
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          BRANCH_VERSION=$(echo ${{ github.head_ref }} | cut -d'/' -f2)
+          BRANCH_VERSION=$(echo "$HEAD_REF" | cut -d'/' -f2)
           echo "version=$BRANCH_VERSION" >> $GITHUB_OUTPUT
           echo "Branch version: $BRANCH_VERSION"
 
@@ -36,6 +38,7 @@ jobs:
     needs:
       - require-bump
       - validate-release-branch-format
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +49,7 @@ jobs:
         uses: ./.github/actions/download-tools-binary
       - name: Validate version matches
         run: |
-          BRANCH_VERSION="${{ needs.validate-release-branch-format.branch_version }}"
+          BRANCH_VERSION="${{ needs.validate-release-branch-format.outputs.branch_version }}"
           TOOL_VERSION=$(tools/bin/tools version | tr -d '\n\r')
 
           echo "Branch version: $BRANCH_VERSION"

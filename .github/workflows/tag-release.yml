@@ -10,7 +10,7 @@ jobs:
   require-bump:
     if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
     needs: build-binary
-    uses: ./github/workflows/require-bump.yml
+    uses: ./.github/workflows/require-bump.yml
 
   tag-release:
     if: ${{ needs.require-bump.outputs.is_bumped_already }}

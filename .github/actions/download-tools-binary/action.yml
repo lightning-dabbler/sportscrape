@@ -1,4 +1,5 @@
 name: Download tools binary
+description: Download tools binary
 
 runs:
   using: composite
