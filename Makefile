@@ -1,16 +1,7 @@
 .DEFAULT_GOAL := help
 
-PACKAGE_VERSION=v0.1.0-beta.4
-
 help: # generate annotations of each target
 	@grep -hE '^[a-zA-Z_-]+:.*?#+ .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?#+ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
-version: # Print package version
-	echo $(PACKAGE_VERSION)
-
-release: # Release current code
-	git tag $(PACKAGE_VERSION)
-	git push origin $(PACKAGE_VERSION)
 
 build: # Build sportscrape-development docker image
 	docker compose -p sportscrape -f docker-compose.yml --project-directory . build --force-rm sportscrape-local
