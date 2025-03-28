@@ -2,8 +2,7 @@ name: Validate and deploy
 
 on:
   push:
-  #   branches: [main]
-  # pull_request:
+    branches: [main]
 
 jobs:
   tests:
@@ -12,27 +11,27 @@ jobs:
   validate:
     uses: ./.github/workflows/validate.yml
 
-  # approval:
-  #   if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
-  #   needs:
-  #     - tests
-  #     - validate
-  #   name: Approval gate for tag and release
-  #   environment: tag-release
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     green_light: ${{steps.output.outputs.green_light}}
-  #   steps:
-  #     - name: outputs
-  #       id: output
-  #       run: |
-  #         echo "green_light=true"
-  #         echo "green_light=true" >> $GITHUB_OUTPUT
+  approval:
+    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
+    needs:
+      - tests
+      - validate
+    name: Approval gate for tag and release
+    environment: tag-release
+    runs-on: ubuntu-latest
+    outputs:
+      green_light: ${{steps.output.outputs.green_light}}
+    steps:
+      - name: outputs
+        id: output
+        run: |
+          echo "green_light=true"
+          echo "green_light=true" >> $GITHUB_OUTPUT
 
   tag-release:
-    # if: ${{ needs.approval.outputs.green_light }}
-    # needs:
-    #   - approval
+    if: ${{ needs.approval.outputs.green_light }}
+    needs:
+      - approval
     uses: ./.github/workflows/tag-release.yml
     permissions:
       contents: write # Needed to push tag
