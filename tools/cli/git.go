@@ -204,8 +204,10 @@ func createGitPushTagCmd() *cobra.Command {
 			err = common.PushTag(r, semVer, auth, force)
 			if err != nil {
 				fmt.Println("Issue pushing to remote origin!")
+				return err
 			}
-			return err
+			fmt.Printf("Tag %s successfully pushed", v)
+			return nil
 		},
 		SilenceUsage: true,
 	}
