@@ -17,6 +17,8 @@ jobs:
     needs: require-bump
     runs-on: ubuntu-latest
     name: Tag and release
+    permissions:
+      contents: write # Needed to push tag
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
