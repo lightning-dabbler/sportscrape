@@ -17,6 +17,8 @@ jobs:
     needs: require-bump
     runs-on: ubuntu-latest
     name: Tag and release
+    outputs:
+      successful_tag_release: ${{steps.output.outputs.successful_tag_release}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,7 +31,42 @@ jobs:
         run: |
           tools/bin/tools git create-tag
       - name: Push tag
+        id: push_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tools/bin/tools git push-tag --use-github-token
+      - name: outputs
+        id: output
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.push_tag.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "successful_tag_release=true"
+            echo "successful_tag_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "successful_tag_release=false"
+            echo "successful_tag_release=false" >> $GITHUB_OUTPUT
+          fi
+
+  go-package-deploy:
+    if: ${{ needs.tag-release.outputs.successful_tag_release }}
+    needs: tag-release
+    name: Deploy package to pkg.go.dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Download tools binary
+        uses: ./.github/actions/download-tools-binary
+      - name: Set TOOLS_PACKAGE_VERSION in environment
+        run: echo "TOOLS_PACKAGE_VERSION=$(tools/bin/tools version)" >> $GITHUB_ENV
+      - name: Log version to update with
+        run: |
+          echo "Uploading $TOOLS_PACKAGE_VERSION"
+      - name: Update pkg.go.dev with version
+        run: |
+          curl https://sum.golang.org/lookup/github.com/lightning-dabbler/sportscrape@$TOOLS_PACKAGE_VERSION
