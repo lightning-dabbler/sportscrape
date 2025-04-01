@@ -1,8 +1,7 @@
 name: Tag and release
 
 on:
-  # workflow_call:
-  push:
+  workflow_call:
 
 jobs:
   build-binary:
