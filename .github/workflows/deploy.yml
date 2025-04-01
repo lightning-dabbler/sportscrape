@@ -32,4 +32,6 @@ jobs:
     if: ${{ needs.approval.outputs.green_light }}
     needs:
       - approval
+    permissions:
+      contents: write
     uses: ./.github/workflows/tag-release.yml
