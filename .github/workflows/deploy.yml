@@ -28,7 +28,7 @@ jobs:
           echo "green_light=true"
           echo "green_light=true" >> $GITHUB_OUTPUT
 
-  tag-release:
+  deploy:
     if: ${{ needs.approval.outputs.green_light }}
     needs:
       - approval
