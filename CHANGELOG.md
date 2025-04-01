@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2025-03-27
+## [0.1.0] - 2025-04-01
 ### Added
 - Dependencies for tooling (#21):
     - github.com/go-git/go-git/v5
