@@ -33,5 +33,3 @@ jobs:
     needs:
       - approval
     uses: ./.github/workflows/tag-release.yml
-    permissions:
-      contents: write # Needed to push tag
