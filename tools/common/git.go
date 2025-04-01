@@ -212,8 +212,9 @@ func GitHubTokenAuth() (transport.AuthMethod, error) {
 	if !found {
 		return nil, fmt.Errorf("GITHUB_TOKEN is unset. It needs to be set in the environment to authenticate with a token")
 	}
-	auth := &http.TokenAuth{
-		Token: token,
+	auth := &http.BasicAuth{
+		Username: "x-access-token",
+		Password: token,
 	}
 	return auth, nil
 }
