@@ -6,12 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.0] - 2025-04-03
 ### Added
-- Created `Round` util function
-- Support for scraping all periods to NBA `BasicBoxScoreRunner`
+- Created `Round` util function (#30)
+- Support for scraping all periods to NBA `BasicBoxScoreRunner` (#30)
 ### Changed
-- 2 decimal place precision for `transformMinutesPlayed`
-- Documentation updates
+- 2 decimal place precision for `transformMinutesPlayed` (#30)
+- Documentation updates (#30)
 
 ## [0.1.0] - 2025-04-01
 ### Added
