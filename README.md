@@ -44,14 +44,14 @@ func main() {
 
 ## Data providers
 
-| Source                           | League | Feed                  | Requires Chromium|
-|----------------------------------|--------|-----------------------|:----------------:|
-| https://basketball-reference.com | NBA    | Matchup               |[x]|
-| https://basketball-reference.com | NBA    | Basic box score stats |[x]|
-| https://basketball-reference.com | NBA    | Advanced box score stats|[x]|
-| https://baseball-reference.com   | MLB    | Matchup                |[x]|
-| https://baseball-reference.com   | MLB    | Batting box score stats|[x]|
-| https://baseball-reference.com   | MLB    | Pitching box score stats|[x]|
+| Source                           | League | Feed                  | Periods Available       | Requires Chromium|
+|----------------------------------|--------|------------------------|:----------------------:|:----------------:|
+| https://basketball-reference.com | NBA    | Matchup                | Full                   |[x]|
+| https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |[x]|
+| https://basketball-reference.com | NBA    | Advanced box score stats| Full                  |[x]|
+| https://baseball-reference.com   | MLB    | Matchup                | Full                   |[x]|
+| https://baseball-reference.com   | MLB    | Batting box score stats| Full                   |[x]|
+| https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |[x]|
 
 ## Development
 ### Prerequisites

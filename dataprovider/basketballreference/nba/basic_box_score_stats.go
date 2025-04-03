@@ -14,10 +14,61 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// Period enum for different stat periods of basic NBA basic box score stats
+type Period int
+
 const (
-	// Selector for Basic Box Score stats tables
-	basicBoxScoreSelector = `table[id$='game-basic']`
+	Full Period = iota
+	Q1
+	Q2
+	Q3
+	Q4
+	H1
+	H2
 )
+
+func (p Period) String() string {
+	switch p {
+	case Full:
+		return "Full"
+	case Q1:
+		return "Q1"
+	case Q2:
+		return "Q2"
+	case Q3:
+		return "Q3"
+	case Q4:
+		return "Q4"
+	case H1:
+		return "H1"
+	case H2:
+		return "H2"
+	default:
+		return "?"
+	}
+}
+
+func (p Period) TableSelector() string {
+	baseSelector := `table[id$='%s-basic']`
+	switch p {
+	case Full:
+		return fmt.Sprintf(baseSelector, "game")
+	case Q1:
+		return fmt.Sprintf(baseSelector, "q1")
+	case Q2:
+		return fmt.Sprintf(baseSelector, "q2")
+	case Q3:
+		return fmt.Sprintf(baseSelector, "q3")
+	case Q4:
+		return fmt.Sprintf(baseSelector, "q4")
+	case H1:
+		return fmt.Sprintf(baseSelector, "h1")
+	case H2:
+		return fmt.Sprintf(baseSelector, "h2")
+	default:
+		return "?"
+	}
+}
 
 // basicBoxScoreStarterHeaders represents the headers in sequential order for the starter team members
 var basicBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
@@ -95,10 +146,19 @@ func WithBasicBoxScoreConcurrency(n int) BasicBoxScoreOption {
 	}
 }
 
+// WithBasicBoxScorePeriod sets the period of data to scrape
+func WithBasicBoxScorePeriod(period Period) BasicBoxScoreOption {
+	return func(bsr *BasicBoxScoreRunner) {
+		bsr.Period = period
+	}
+}
+
 // NewBasicBoxScoreRunner creates a new BasicBoxScoreRunner with the provided options
 func NewBasicBoxScoreRunner(options ...BasicBoxScoreOption) *BasicBoxScoreRunner {
 	bsr := &BasicBoxScoreRunner{}
 	bsr.Processor = bsr
+	// default period
+	bsr.Period = Full
 
 	// Apply all options
 	for _, option := range options {
@@ -112,6 +172,7 @@ func NewBasicBoxScoreRunner(options ...BasicBoxScoreOption) *BasicBoxScoreRunner
 // with support for concurrent processing.
 type BasicBoxScoreRunner struct {
 	sportsreferenceutil.BoxScoreRunner
+	Period Period
 }
 
 // GetSegmentBoxScoreStats retrieves NBA basic box score statistics for a single matchup.
@@ -126,12 +187,12 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	var basicNBABoxScoreStats []interface{}
-	log.Println("Scraping Basic Box Score: " + url)
+	log.Printf("Scraping %s Basic Box Score: %s\n", boxScoreRunner.Period.String(), url)
 	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	doc.Find(basicBoxScoreSelector).Each(func(i int, s *goquery.Selection) {
+	doc.Find(boxScoreRunner.Period.TableSelector()).Each(func(i int, s *goquery.Selection) {
 		var starterHeader string
 		var reserveHeader string
 		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {

@@ -22,8 +22,8 @@ func ExampleMatchupRunner() {
 	}
 }
 
-// Example for nba.BasicBoxScoreRunner
-func ExampleBasicBoxScoreRunner() {
+// Example for nba.BasicBoxScoreRunner Full basic box score stats
+func ExampleBasicBoxScoreRunner_full() {
 	date := "2025-02-19"
 	// Instantiate MatchupRunner
 	matchupRunner := nba.NewMatchupRunner(
@@ -35,6 +35,52 @@ func ExampleBasicBoxScoreRunner() {
 	boxScoreRunner := nba.NewBasicBoxScoreRunner(
 		nba.WithBasicBoxScoreTimeout(4*time.Minute),
 		nba.WithBasicBoxScoreConcurrency(1),
+	)
+	// Retrieve NBA basic box score stats associated with matchups
+	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+
+	for _, stats := range basicBoxScoreStats {
+		fmt.Printf("%#v\n", stats.(model.NBABasicBoxScoreStats))
+	}
+}
+
+// Example for nba.BasicBoxScoreRunner Q2 basic box score stats
+func ExampleBasicBoxScoreRunner_q2() {
+	date := "2025-02-19"
+	// Instantiate MatchupRunner
+	matchupRunner := nba.NewMatchupRunner(
+		nba.WithMatchupTimeout(2 * time.Minute),
+	)
+	// Retrieve NBA matchups associated with date
+	matchups := matchupRunner.GetMatchups(date)
+	// Instantiate BasicBoxScoreRunner
+	boxScoreRunner := nba.NewBasicBoxScoreRunner(
+		nba.WithBasicBoxScoreTimeout(4*time.Minute),
+		nba.WithBasicBoxScoreConcurrency(1),
+		nba.WithBasicBoxScorePeriod(nba.Q2),
+	)
+	// Retrieve NBA basic box score stats associated with matchups
+	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+
+	for _, stats := range basicBoxScoreStats {
+		fmt.Printf("%#v\n", stats.(model.NBABasicBoxScoreStats))
+	}
+}
+
+// Example for nba.BasicBoxScoreRunner H2 basic box score stats
+func ExampleBasicBoxScoreRunner_h2() {
+	date := "2025-02-19"
+	// Instantiate MatchupRunner
+	matchupRunner := nba.NewMatchupRunner(
+		nba.WithMatchupTimeout(2 * time.Minute),
+	)
+	// Retrieve NBA matchups associated with date
+	matchups := matchupRunner.GetMatchups(date)
+	// Instantiate BasicBoxScoreRunner
+	boxScoreRunner := nba.NewBasicBoxScoreRunner(
+		nba.WithBasicBoxScoreTimeout(4*time.Minute),
+		nba.WithBasicBoxScoreConcurrency(1),
+		nba.WithBasicBoxScorePeriod(nba.H2),
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
