@@ -45,6 +45,6 @@ func transformMinutesPlayed(minutesPlayed string) (float32, error) {
 		return 0, fmt.Errorf("Could not convert seconds %s to integer: %w", minutesPlayedSplit[1], err)
 	}
 
-	totalMinutes := float32(minutes) + (float32(seconds) / float32(60))
+	totalMinutes := float32(minutes) + float32(util.Round((float64(seconds)/float64(60)), 2))
 	return totalMinutes, nil
 }
