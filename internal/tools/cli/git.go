@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/lightning-dabbler/sportscrape/tools/common"
+	"github.com/lightning-dabbler/sportscrape/internal/tools/common"
 	"github.com/lightning-dabbler/sportscrape/version"
 	"github.com/spf13/cobra"
 )
