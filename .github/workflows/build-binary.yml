@@ -28,13 +28,13 @@ jobs:
           make build-tools
       - name: Output tools binary version
         run: |
-          tools/bin/tools version
+          bin/tools version
       - name: Upload tools binary
         id: upload_tools_binary
         uses: actions/upload-artifact@v4
         with:
           name: tools-artifact
-          path: tools/bin/tools
+          path: bin/tools
           retention-days: 7
       - name: outputs
         id: output

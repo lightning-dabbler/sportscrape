@@ -5,7 +5,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
-	"github.com/lightning-dabbler/sportscrape/tools/common"
+	"github.com/lightning-dabbler/sportscrape/internal/tools/common"
 )
 
 // validateVersion compares a version to the maximum git repository's tag
