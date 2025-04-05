@@ -56,7 +56,7 @@ type Team struct {
 	// Score should be ubiquitous e.g. 116
 	Score int32 `json:"score"`
 	// Rank isn't always available. Using it for NCAAB. e.g. 22
-	Rank string `json:"rank"`
+	Rank *string `json:"rank"`
 	// Team who lost e.g. true
 	IsLoser bool `json:"isLoser"`
 	// URI to extract team ID e.g. basketball/nba/teams/12
