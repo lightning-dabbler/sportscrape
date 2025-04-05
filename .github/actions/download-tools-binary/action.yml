@@ -8,7 +8,7 @@ runs:
       uses: actions/download-artifact@v4
       with:
         name: tools-artifact
-        path: tools/bin/
+        path: bin/
     - name: Make binary executable
-      run: chmod +x tools/bin/tools
+      run: chmod +x bin/tools
       shell: bash

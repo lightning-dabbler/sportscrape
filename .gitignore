@@ -35,4 +35,4 @@ coverage.html
 mocks/
 
 # binary toools
-tools/bin/
+bin/

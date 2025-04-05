@@ -50,7 +50,7 @@ jobs:
       - name: Validate version matches
         run: |
           BRANCH_VERSION="${{ needs.validate-release-branch-format.outputs.branch_version }}"
-          TOOL_VERSION=$(tools/bin/tools version | tr -d '\n\r')
+          TOOL_VERSION=$(bin/tools version | tr -d '\n\r')
 
           echo "Branch version: $BRANCH_VERSION"
           echo "Tool version: $TOOL_VERSION"

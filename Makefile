@@ -34,4 +34,4 @@ all-tests: mocks-gen # Run all tests regardless of tags
 	$(MAKE) coverage-html
 
 build-tools: # Compile binary for tools
-	go build -v -tags="tools" -o tools/bin/tools tools/cli/*.go
+	go build -v -o bin/tools internal/tools/cli/*.go

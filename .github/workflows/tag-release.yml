@@ -29,13 +29,13 @@ jobs:
         uses: ./.github/actions/download-tools-binary
       - name: Create tag
         run: |
-          tools/bin/tools git create-tag
+          bin/tools git create-tag
       - name: Push tag
         id: push_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tools/bin/tools git push-tag --use-github-token
+          bin/tools git push-tag --use-github-token
       - name: outputs
         id: output
         env:
@@ -63,7 +63,7 @@ jobs:
       - name: Download tools binary
         uses: ./.github/actions/download-tools-binary
       - name: Set TOOLS_PACKAGE_VERSION in environment
-        run: echo "TOOLS_PACKAGE_VERSION=$(tools/bin/tools version)" >> $GITHUB_ENV
+        run: echo "TOOLS_PACKAGE_VERSION=$(bin/tools version)" >> $GITHUB_ENV
       - name: Log version to update with
         run: |
           echo "Uploading $TOOLS_PACKAGE_VERSION"

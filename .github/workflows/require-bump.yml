@@ -26,7 +26,7 @@ jobs:
       - name: Validate bump is not required
         id: require_bump
         run: |
-          tools/bin/tools git validate-version --require-bump
+          bin/tools git validate-version --require-bump
       - name: outputs
         id: output
         if: ${{!cancelled()}}
