@@ -4,6 +4,7 @@ package util
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -243,4 +244,30 @@ func TestTextToFloat32(t *testing.T) {
 	}
 }
 
-// TODO: Write TestRFC3339ToTime
+func TestRFC3339ToTime(t *testing.T) {
+	tests := []struct {
+		name    string
+		isError bool
+		input   string
+	}{
+		{
+			name:    "exception case",
+			isError: true,
+			input:   time.DateOnly,
+		},
+		{
+			name:    "valid RFC 3339",
+			isError: false,
+			input:   "2025-02-09T23:30:00Z",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := RFC3339ToTime(tt.input)
+			if tt.isError {
+				assert.Error(t, err)
+			}
+		})
+	}
+}
