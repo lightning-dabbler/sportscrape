@@ -78,7 +78,7 @@ func (l League) String() string {
 func (l League) SetParams(params map[string]string) {
 	_, exists := params["apikey"]
 	if !exists {
-		params["apikey"] = APIKey
+		params["apikey"] = APIKey // Default
 	}
 	_, exists = params["groupId"]
 	if l == NCAAB && !exists {
