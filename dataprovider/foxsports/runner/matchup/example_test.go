@@ -1,4 +1,4 @@
-package runner_test
+package matchup_test
 
 import (
 	"encoding/json"
@@ -6,14 +6,14 @@ import (
 	"log"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
 )
 
-// Example for runner.GeneralMatchupRunner NBA
+// Example for matchup.GeneralMatchupRunner NBA
 func ExampleGeneralMatchupRunner_nba() {
-	matchupRunner := runner.NewGeneralMatchupRunner(
-		runner.GeneralMatchupLeague(foxsports.NBA),
-		runner.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
+	matchupRunner := matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.NBA),
+		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
@@ -27,11 +27,11 @@ func ExampleGeneralMatchupRunner_nba() {
 	}
 }
 
-// Example for runner.GeneralMatchupRunner MLB
+// Example for matchup.GeneralMatchupRunner MLB
 func ExampleGeneralMatchupRunner_mlb() {
-	matchupRunner := runner.NewGeneralMatchupRunner(
-		runner.GeneralMatchupLeague(foxsports.MLB),
-		runner.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
+	matchupRunner := matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.MLB),
+		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
@@ -45,11 +45,11 @@ func ExampleGeneralMatchupRunner_mlb() {
 	}
 }
 
-// Example for runner.GeneralMatchupRunner NCAAB
+// Example for matchup.GeneralMatchupRunner NCAAB
 func ExampleGeneralMatchupRunner_ncaab() {
-	matchupRunner := runner.NewGeneralMatchupRunner(
-		runner.GeneralMatchupLeague(foxsports.NCAAB),
-		runner.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
+	matchupRunner := matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.NCAAB),
+		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
@@ -63,11 +63,11 @@ func ExampleGeneralMatchupRunner_ncaab() {
 	}
 }
 
-// Example for runner.GeneralMatchupRunner NFL
+// Example for matchup.GeneralMatchupRunner NFL
 func ExampleGeneralMatchupRunner_nfl() {
-	matchupRunner := runner.NewGeneralMatchupRunner(
-		runner.GeneralMatchupLeague(foxsports.NFL),
-		runner.GeneralMatchupSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
+	matchupRunner := matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.NFL),
+		matchup.GeneralMatchupSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
 	)
 
 	matchups := matchupRunner.GetMatchups()

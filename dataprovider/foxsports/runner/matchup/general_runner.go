@@ -1,4 +1,4 @@
-package runner
+package matchup
 
 import (
 	"encoding/json"

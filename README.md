@@ -41,7 +41,7 @@ func main() {
 ## Usage
 - [basketball-reference.com NBA scrape examples](dataprovider/basketballreference/nba/example_test.go)
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreference/mlb/example_test.go)
-- [foxsports.com scraping matchups examples](dataprovider/foxsports/runner/example_matchup_test.go)
+- [foxsports.com scraping matchups examples](dataprovider/foxsports/runner/matchup/example_test.go)
 
 ## Data providers
 
