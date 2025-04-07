@@ -57,3 +57,31 @@ func (l League) V1MatchupURL(selectionId string) (*url.URL, error) {
 		return nil, fmt.Errorf("Unknown League identified: %#v", l)
 	}
 }
+
+// String outputs the string abbreviation of the league
+func (l League) String() string {
+	switch l {
+	case NBA:
+		return "NBA"
+	case MLB:
+		return "MLB"
+	case NCAAB:
+		return "NCAAB"
+	case NFL:
+		return "NFL"
+	default:
+		return "?"
+	}
+}
+
+// SetParams updates params with relevant query parameters
+func (l League) SetParams(params map[string]string) {
+	_, exists := params["apikey"]
+	if !exists {
+		params["apikey"] = APIKey
+	}
+	_, exists = params["groupId"]
+	if l == NCAAB && !exists {
+		params["groupId"] = "2" // All D1 matchups
+	}
+}

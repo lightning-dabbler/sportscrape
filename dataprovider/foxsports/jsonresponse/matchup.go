@@ -3,7 +3,7 @@ package jsonresponse
 // NCAAB example: https://api.foxsports.com/bifrost/v1/cbk/scoreboard/segment/20250110?groupId=2&apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 // NBA example: https://api.foxsports.com/bifrost/v1/nba/scoreboard/segment/20230110?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 // MLB example: https://api.foxsports.com/bifrost/v1/mlb/scoreboard/segment/20230802?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
-// NFL example: https://api.foxsports.com/bifrost/v1/nfl/league/scores-segment/2024-4-2?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
+// NFL example: https://api.foxsports.com/bifrost/v1/nfl/scoreboard/segment/2024-4-2?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 
 // Matchup contains cherry-picked fields from the matchup JSON response payload.
 type Matchup struct {
@@ -36,10 +36,10 @@ type Event struct {
 	StatusLine string `json:"statusLine"`
 	// League e.g. NBA
 	League string `json:"league"`
-	// UpperTeam is the away team
-	UpperTeam Team `json:"upperTeam"`
-	// LowerTeam is the home team
-	LowerTeam Team `json:"lowerTeam"`
+	// upperTeam is the away team
+	AwayTeam Team `json:"upperTeam"`
+	// lowerTeam is the home team
+	HomeTeam Team `json:"lowerTeam"`
 }
 
 type Team struct {

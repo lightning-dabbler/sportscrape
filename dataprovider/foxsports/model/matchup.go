@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// Matchup represents the data model for NBA, MLB, and NCAAB matchups scraped from foxsports.com
+// Matchup represents the data model for NBA, MLB, NFL, and NCAAB matchups scraped from foxsports.com
 type Matchup struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
@@ -15,7 +15,7 @@ type Matchup struct {
 	// StatusLine the string representation of the event status e.g. FINAL
 	StatusLine string `json:"status_line"`
 	// HomeTeamId is the home team's ID e.g. 21
-	HomeTeamId int32 `json:"home_team_id"`
+	HomeTeamId int64 `json:"home_team_id"`
 	// HomeTeamAbbreviation is the abbreviation of the home team's name e.g. ATL
 	HomeTeamAbbreviation string `json:"home_team_abbreviation"`
 	// HomeTeamNameLong is the home team's longer name but not the full name e.g. Braves
@@ -29,9 +29,9 @@ type Matchup struct {
 	// HomeRank is an optional rank. The values are expected for some NCAAB teams
 	HomeRank *int32 `json:"home_rank"`
 	// AwayTeamId is the away team's ID e.g. 8
-	AwayTeamId int32 `json:"away_team_id"`
-	// AwayTeambbreviation is the abbreviation of the away team's name e.g. LAA
-	AwayTeambbreviation string `json:"away_team_abbreviation"`
+	AwayTeamId int64 `json:"away_team_id"`
+	// AwayTeamAbbreviation is the abbreviation of the away team's name e.g. LAA
+	AwayTeamAbbreviation string `json:"away_team_abbreviation"`
 	// AwayTeamNameLong is the away team's longer name but not the full name e.g. Angels
 	AwayTeamNameLong string `json:"away_team_name_long"`
 	// AwayTeamNameFull is the away team's full name e.g. Los Angeles Angels
@@ -43,7 +43,7 @@ type Matchup struct {
 	// AwayRank is an optional rank. The values are expected for some NCAAB teams
 	AwayRank *int32 `json:"away_rank"`
 	// Loser is an optional team id associated with the loser. Optional because some games could be live a loser will not be determined until the matchup is complete.
-	Loser *int32 `json:"loser"`
-	// IsPlayoff indicates whether the matchup is a playoff game (optional)
-	IsPlayoff *bool `json:"is_playoff"`
+	Loser *int64 `json:"loser"`
+	// IsPlayoff indicates whether the matchup is a playoff game
+	IsPlayoff bool `json:"is_playoff"`
 }

@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // re is the regex compilation of one or more spaces
@@ -71,4 +72,13 @@ func TextToFloat32(str string) (float32, error) {
 		return 0, fmt.Errorf("Could not convert %s to float32: %w", str, err)
 	}
 	return float32(val), nil
+}
+
+// RFC3339ToTime converts a RFC 3339 timestamp string to time.Time
+func RFC3339ToTime(str string) (time.Time, error) {
+	timestamp, err := time.Parse(time.RFC3339, str)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("Could not convert RFC3339 string %s to time.Time: %w", str, err)
+	}
+	return timestamp, nil
 }
