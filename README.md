@@ -41,17 +41,22 @@ func main() {
 ## Usage
 - [basketball-reference.com NBA scrape examples](dataprovider/basketballreference/nba/example_test.go)
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreference/mlb/example_test.go)
+- [foxsports.com scraping matchups examples](dataprovider/foxsports/runner/example_matchup_test.go)
 
 ## Data providers
 
-| Source                           | League | Feed                  | Periods Available       | Requires Chromium|
+| Source                           | League | Feed                  | Periods Available       | Chromium Dependency |
 |----------------------------------|--------|------------------------|:----------------------:|:----------------:|
-| https://basketball-reference.com | NBA    | Matchup                | Full                   |[x]|
-| https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |[x]|
-| https://basketball-reference.com | NBA    | Advanced box score stats| Full                  |[x]|
-| https://baseball-reference.com   | MLB    | Matchup                | Full                   |[x]|
-| https://baseball-reference.com   | MLB    | Batting box score stats| Full                   |[x]|
-| https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |[x]|
+| https://basketball-reference.com | NBA    | Matchup                | Full                   |☑️|
+| https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |☑️|
+| https://basketball-reference.com | NBA    | Advanced box score stats| Full                  |☑️|
+| https://baseball-reference.com   | MLB    | Matchup                | Full                   |☑️|
+| https://baseball-reference.com   | MLB    | Batting box score stats| Full                   |☑️|
+| https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |☑️|
+| https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | |
+| https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | |
+| https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |
+| https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |
 
 ## Development
 ### Prerequisites

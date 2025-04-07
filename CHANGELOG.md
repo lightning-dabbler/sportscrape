@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a JSON representation of the response payload when requesting fox sports matchup data
 - Created a data model that represents fox sports matchup
 
+### Changed
+- Documentation updates
+
 ## [0.3.0] - 2025-04-04
 ### Changed
 - Moved `tools/` to `internal/tools/` to avoid exporting (#32)
