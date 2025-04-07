@@ -4,11 +4,11 @@ import (
 	"time"
 )
 
-type GeneralSementer struct {
+type GeneralSegmenter struct {
 	Date string
 }
 
-func (cs *GeneralSementer) GetSegmentId() (string, error) {
+func (cs *GeneralSegmenter) GetSegmentId() (string, error) {
 	date, err := time.Parse(time.DateOnly, cs.Date)
 	if err != nil {
 		return "", err
@@ -16,12 +16,12 @@ func (cs *GeneralSementer) GetSegmentId() (string, error) {
 	return date.Format("20060102"), nil
 }
 
-type NFLSementer struct {
+type NFLSegmenter struct {
 	Season SeasonType
 	Year   int32
 	Week   int32
 }
 
-func (nfls *NFLSementer) GetSegmentId() (string, error) {
+func (nfls *NFLSegmenter) GetSegmentId() (string, error) {
 	return nfls.Season.SelectionId(nfls.Year, nfls.Week), nil
 }

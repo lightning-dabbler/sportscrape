@@ -13,7 +13,7 @@ import (
 func ExampleGeneralMatchupRunner_nba() {
 	matchupRunner := runner.NewGeneralMatchupRunner(
 		runner.GeneralMatchupLeague(foxsports.NBA),
-		runner.GeneralMatchupSegmenter(&foxsports.GeneralSementer{Date: "2023-01-10"}),
+		runner.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
@@ -31,7 +31,7 @@ func ExampleGeneralMatchupRunner_nba() {
 func ExampleGeneralMatchupRunner_mlb() {
 	matchupRunner := runner.NewGeneralMatchupRunner(
 		runner.GeneralMatchupLeague(foxsports.MLB),
-		runner.GeneralMatchupSegmenter(&foxsports.GeneralSementer{Date: "2023-08-02"}),
+		runner.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
@@ -49,7 +49,7 @@ func ExampleGeneralMatchupRunner_mlb() {
 func ExampleGeneralMatchupRunner_ncaab() {
 	matchupRunner := runner.NewGeneralMatchupRunner(
 		runner.GeneralMatchupLeague(foxsports.NCAAB),
-		runner.GeneralMatchupSegmenter(&foxsports.GeneralSementer{Date: "2025-01-10"}),
+		runner.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
@@ -67,7 +67,7 @@ func ExampleGeneralMatchupRunner_ncaab() {
 func ExampleGeneralMatchupRunner_nfl() {
 	matchupRunner := runner.NewGeneralMatchupRunner(
 		runner.GeneralMatchupLeague(foxsports.NFL),
-		runner.GeneralMatchupSegmenter(&foxsports.NFLSementer{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
+		runner.GeneralMatchupSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
 	)
 
 	matchups := matchupRunner.GetMatchups()
