@@ -9,7 +9,7 @@ type GeneralSementer struct {
 }
 
 func (cs *GeneralSementer) GetSegmentId() (string, error) {
-	date, err := time.Parse("2006-01-02", cs.Date)
+	date, err := time.Parse(time.DateOnly, cs.Date)
 	if err != nil {
 		return "", err
 	}
