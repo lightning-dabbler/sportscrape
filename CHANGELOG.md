@@ -7,12 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Created fox sports matchup scraper for NBA, NFL, NCAAB, and MLB called `GeneralMatchupRunner`
-- Added a JSON representation of the response payload when requesting fox sports matchup data
-- Created a data model that represents fox sports matchup
+- Created fox sports matchup scraper for NBA, NFL, NCAAB, and MLB called `GeneralMatchupRunner` (#34)
+- Added a JSON representation of the response payload when requesting fox sports matchup data (#34)
+- Created a data model that represents fox sports matchup (#34)
 
 ### Changed
-- Documentation updates
+- Documentation updates (#34)
 
 ## [0.3.0] - 2025-04-04
 ### Changed
