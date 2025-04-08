@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
-    if: ${{ inputs.skip-binary-build || needs.build-binary.outputs.tool_binary_successfully_built }}
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built || inputs.skip-binary-build }}
     needs: build-binary
     uses: ./.github/workflows/require-bump.yml
 
