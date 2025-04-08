@@ -11,11 +11,11 @@ on:
 
 jobs:
   build-binary:
-    if: ${{ !inputs.skip-binary-build }}
+    if: ${{ inputs.skip-binary-build == false }}
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
-    if: ${{ inputs.skip-binary-build || needs.build-binary.outputs.tool_binary_successfully_built }}
+    if: ${{ inputs.skip-binary-build == true || needs.build-binary.outputs.tool_binary_successfully_built }}
     needs: build-binary
     uses: ./.github/workflows/require-bump.yml
 
