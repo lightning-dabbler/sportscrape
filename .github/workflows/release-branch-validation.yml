@@ -48,7 +48,6 @@ jobs:
       - name: Download tools binary
         uses: ./.github/actions/download-tools-binary
       - name: Validate version matches
-        id: validate_version
         run: |
           BRANCH_VERSION="${{ needs.validate-release-branch-format.outputs.branch_version }}"
           TOOL_VERSION=$(bin/tools version | tr -d '\n\r')

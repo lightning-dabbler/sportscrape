@@ -4,7 +4,12 @@ on:
   workflow_call:
 
 jobs:
+  build-binary:
+    uses: ./.github/workflows/build-binary.yml
+
   require-bump:
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
+    needs: build-binary
     uses: ./.github/workflows/require-bump.yml
 
   tag-release:
