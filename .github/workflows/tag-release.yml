@@ -2,13 +2,20 @@ name: Tag and release
 
 on:
   workflow_call:
+    inputs:
+      skip-binary-build:
+        description: 'Skip build-binary indicator'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build-binary:
+    if: ${{ !inputs.skip-binary-build }}
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
-    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built || inputs.skip-binary-build }}
     needs: build-binary
     uses: ./.github/workflows/require-bump.yml
 
