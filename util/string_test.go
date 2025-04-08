@@ -246,9 +246,10 @@ func TestTextToFloat32(t *testing.T) {
 
 func TestRFC3339ToTime(t *testing.T) {
 	tests := []struct {
-		name    string
-		isError bool
-		input   string
+		name     string
+		isError  bool
+		input    string
+		expected time.Time
 	}{
 		{
 			name:    "exception case",
@@ -256,17 +257,20 @@ func TestRFC3339ToTime(t *testing.T) {
 			input:   time.DateOnly,
 		},
 		{
-			name:    "valid RFC 3339",
-			isError: false,
-			input:   "2025-02-09T23:30:00Z",
+			name:     "valid RFC 3339",
+			isError:  false,
+			input:    "2025-02-09T23:30:00Z",
+			expected: time.Date(2025, time.February, 9, 23, 30, 0, 0, time.UTC),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := RFC3339ToTime(tt.input)
+			timestamp, err := RFC3339ToTime(tt.input)
 			if tt.isError {
 				assert.Error(t, err)
+			} else {
+				assert.Equal(t, tt.expected, timestamp)
 			}
 		})
 	}
