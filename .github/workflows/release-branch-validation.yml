@@ -1,0 +1,64 @@
+name: Release branch validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-release-branch-format:
+    name: Validate branch format release/v*.*.*
+    if: startsWith(github.head_ref, 'release/v') && contains(github.head_ref, '.')
+    runs-on: ubuntu-latest
+    outputs:
+      branch_version: ${{ steps.extract_version.outputs.version }}
+    steps:
+      - id: extract_version
+        name: Extract version from branch name
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          BRANCH_VERSION=$(echo "$HEAD_REF" | cut -d'/' -f2)
+          echo "version=$BRANCH_VERSION" >> $GITHUB_OUTPUT
+          echo "Branch version: $BRANCH_VERSION"
+
+  build-binary:
+    needs: validate-release-branch-format
+    uses: ./.github/workflows/build-binary.yml
+
+  require-bump:
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
+    uses: ./.github/workflows/require-bump.yml
+    needs:
+      - build-binary
+
+  validate-branch-semver:
+    name: Check branch SemVer matches version
+    if: ${{ needs.require-bump.outputs.is_bumped_already }}
+    needs:
+      - require-bump
+      - validate-release-branch-format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Download tools binary
+        uses: ./.github/actions/download-tools-binary
+      - name: Validate version matches
+        id: validate_version
+        run: |
+          BRANCH_VERSION="${{ needs.validate-release-branch-format.outputs.branch_version }}"
+          TOOL_VERSION=$(bin/tools version | tr -d '\n\r')
+
+          echo "Branch version: $BRANCH_VERSION"
+          echo "Tool version: $TOOL_VERSION"
+
+          if [[ "$TOOL_VERSION" == "$BRANCH_VERSION" ]]; then
+            echo "✅ Version match confirmed"
+          else
+            echo "❌ Version mismatch"
+            exit 1
+          fi
