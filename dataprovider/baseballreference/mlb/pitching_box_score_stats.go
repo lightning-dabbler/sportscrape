@@ -43,42 +43,42 @@ var pitchingBoxScoreHeaders sportsreferenceutil.Headers = sportsreferenceutil.He
 	"RE24",
 }
 
-// PitchingBoxScoreOption defines a configuration option for pitching box score runners
+// PitchingBoxScoreOption defines a configuration option for the pitching box score runner
 type PitchingBoxScoreOption func(*PitchingBoxScoreRunner)
 
 // WithPitchingBoxScoreTimeout sets the timeout duration for pitching box score runner
 func WithPitchingBoxScoreTimeout(timeout time.Duration) PitchingBoxScoreOption {
-	return func(absr *PitchingBoxScoreRunner) {
-		absr.Timeout = timeout
+	return func(bsr *PitchingBoxScoreRunner) {
+		bsr.Timeout = timeout
 	}
 }
 
-// WithPitchingBoxScoreDebug enables or disables debug mode for pitching box score runner
+// WithPitchingBoxScoreDebug enables or disables debug mode for the pitching box score runner
 func WithPitchingBoxScoreDebug(debug bool) PitchingBoxScoreOption {
-	return func(absr *PitchingBoxScoreRunner) {
-		absr.Debug = debug
+	return func(bsr *PitchingBoxScoreRunner) {
+		bsr.Debug = debug
 	}
 }
 
 // WithPitchingBoxScoreConcurrency sets the number of concurrent workers
 func WithPitchingBoxScoreConcurrency(n int) PitchingBoxScoreOption {
-	return func(absr *PitchingBoxScoreRunner) {
-		absr.Concurrency = n
+	return func(bsr *PitchingBoxScoreRunner) {
+		bsr.Concurrency = n
 	}
 }
 
 // NewPitchingBoxScoreRunner creates a new PitchingBoxScoreRunner with the provided options
 func NewPitchingBoxScoreRunner(options ...PitchingBoxScoreOption) *PitchingBoxScoreRunner {
-	absr := &PitchingBoxScoreRunner{}
-	absr.Processor = absr
+	bsr := &PitchingBoxScoreRunner{}
+	bsr.Processor = bsr
 	//
 
 	// Apply all options
 	for _, option := range options {
-		option(absr)
+		option(bsr)
 	}
 
-	return absr
+	return bsr
 }
 
 // PitchingBoxScoreRunner specialized Runner for retrieving MLB pitching box score statistics

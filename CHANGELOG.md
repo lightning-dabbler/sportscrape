@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Created fox sports matchup scraper for NBA, NFL, NCAAB, and MLB called `GeneralMatchupRunner` (#34)
+- Added a JSON representation of the response payload when requesting fox sports matchup data (#34)
+- Created a data model that represents fox sports matchup (#34)
+
+### Changed
+- Documentation updates (#34)
 
 ## [0.3.0] - 2025-04-04
 ### Changed

@@ -45,37 +45,37 @@ type BattingBoxScoreOption func(*BattingBoxScoreRunner)
 
 // WithBattingBoxScoreTimeout sets the timeout duration for batting box score runner
 func WithBattingBoxScoreTimeout(timeout time.Duration) BattingBoxScoreOption {
-	return func(absr *BattingBoxScoreRunner) {
-		absr.Timeout = timeout
+	return func(bsr *BattingBoxScoreRunner) {
+		bsr.Timeout = timeout
 	}
 }
 
 // WithBattingBoxScoreDebug enables or disables debug mode for batting box score runner
 func WithBattingBoxScoreDebug(debug bool) BattingBoxScoreOption {
-	return func(absr *BattingBoxScoreRunner) {
-		absr.Debug = debug
+	return func(bsr *BattingBoxScoreRunner) {
+		bsr.Debug = debug
 	}
 }
 
 // WithBattingBoxScoreConcurrency sets the number of concurrent workers
 func WithBattingBoxScoreConcurrency(n int) BattingBoxScoreOption {
-	return func(absr *BattingBoxScoreRunner) {
-		absr.Concurrency = n
+	return func(bsr *BattingBoxScoreRunner) {
+		bsr.Concurrency = n
 	}
 }
 
 // NewBattingBoxScoreRunner creates a new BattingBoxScoreRunner with the provided options
 func NewBattingBoxScoreRunner(options ...BattingBoxScoreOption) *BattingBoxScoreRunner {
-	absr := &BattingBoxScoreRunner{}
-	absr.Processor = absr
+	bsr := &BattingBoxScoreRunner{}
+	bsr.Processor = bsr
 	//
 
 	// Apply all options
 	for _, option := range options {
-		option(absr)
+		option(bsr)
 	}
 
-	return absr
+	return bsr
 }
 
 // BattingBoxScoreRunner specialized Runner for retrieving MLB batting box score statistics
