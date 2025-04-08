@@ -130,5 +130,3 @@ jobs:
     permissions:
       contents: write
     uses: ./.github/workflows/tag-release.yml
-    with:
-      skip-binary-build: true
