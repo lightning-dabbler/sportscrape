@@ -1,56 +1,29 @@
 name: Release deploy
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: [closed]
 
 jobs:
-  tests:
-    uses: ./.github/workflows/all-tests.yml
-
-  validate:
-    uses: ./.github/workflows/validate.yml
-
   validate-release-branch-format:
     name: Validate branch format release/v*.*.*
-    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
-    needs:
-      - tests
-      - validate
+    if: startsWith(github.head_ref, 'release/v') && contains(github.head_ref, '.')
     runs-on: ubuntu-latest
     outputs:
       branch_version: ${{ steps.extract_version.outputs.version }}
-      green_light: ${{steps.validated-branch.outputs.green_light}}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - name: Set merged branch env var
-        run: echo "MERGED_BRANCH=$(git show --pretty=%P -s HEAD | cut -d' ' -f2 | xargs git name-rev --name-only)" >> $GITHUB_ENV
-      - name: validate merged branch is release branch
-        id: validated-branch
-        run: |
-          if [[ "$BRANCH_NAME" =~ ^release/v\d+\.\d+\.\d+.* ]]; then
-            echo "Branch name $MERGED_BRANCH starts with 'release/v' and contains semver"
-            echo "green_light=true" >> $GITHUB_OUTPUT
-          else
-            echo "Branch name $MERGED_BRANCH either doesn't start with 'release/v' or doesn't contain semver"
-            echo "Skipping..."
-            echo "green_light=false" >> $GITHUB_OUTPUT
-          fi
       - id: extract_version
         name: Extract version from branch name
-        if: ${{steps.validated-branch.outputs.green_light}}
+        env:
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          BRANCH_VERSION=$(echo "$MERGED_BRANCH" | cut -d'/' -f2)
+          BRANCH_VERSION=$(echo "$HEAD_REF" | cut -d'/' -f2)
           echo "version=$BRANCH_VERSION" >> $GITHUB_OUTPUT
           echo "Branch version: $BRANCH_VERSION"
 
   build-binary:
-    if: ${{ needs.validate-release-branch-format.outputs.green_light }}
     needs: validate-release-branch-format
     uses: ./.github/workflows/build-binary.yml
 
@@ -64,7 +37,7 @@ jobs:
     name: Check branch SemVer matches version
     outputs:
       green_light: ${{steps.output.outputs.green_light}}
-    if: ${{ needs.require-bump.outputs.is_bumped_already && needs.validate-release-branch-format.outputs.green_light }}
+    if: ${{ needs.require-bump.outputs.is_bumped_already }}
     needs:
       - require-bump
       - validate-release-branch-format
@@ -106,10 +79,38 @@ jobs:
             echo "green_light=false" >> $GITHUB_OUTPUT
           fi
 
-  approval:
-    if: ${{ needs.validate-branch-semver.outputs.green_light }}
+  on-merge-job:
+    if: ${{github.event.pull_request.merged == true && needs.validate-branch-semver.outputs.green_light}}
     needs:
       - validate-branch-semver
+    runs-on: ubuntu-latest
+    name: Release branch deploy on merge
+    outputs:
+      green_light: ${{steps.output.outputs.green_light}}
+    steps:
+      - name: outputs
+        id: output
+        run: |
+          echo "green_light=true"
+          echo "green_light=true" >> $GITHUB_OUTPUT
+
+  tests:
+    if: ${{needs.on-merge-job.outputs.green_light}}
+    needs:
+      - on-merge-job
+    uses: ./.github/workflows/all-tests.yml
+
+  validate:
+    if: ${{needs.on-merge-job.outputs.green_light}}
+    needs:
+      - on-merge-job
+    uses: ./.github/workflows/validate.yml
+
+  approval:
+    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
+    needs:
+      - tests
+      - validate
     name: Approval gate for tag and release
     environment: tag-release
     runs-on: ubuntu-latest
