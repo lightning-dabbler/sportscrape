@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Created `Runner` and `Scraper` abstractions to retrieve and parse event data
+- Created `Runner` and `Scraper` abstractions to retrieve and parse event data.
+- Created `NBAEventData` JSON response payload for event data.
 
 ## [0.4.0] - 2025-04-07
 ### Added
