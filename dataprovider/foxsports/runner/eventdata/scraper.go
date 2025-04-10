@@ -13,7 +13,6 @@ type Scraper interface {
 }
 
 type EventDataScraper struct {
-	Name string
 	// League - The league of interest to fetch matchups data
 	League foxsports.League
 	// Params - URL Query parameters
@@ -43,5 +42,8 @@ func (e *EventDataScraper) FetchEventData(url string) ([]byte, error) {
 }
 
 func (e *EventDataScraper) SetParams() {
+	if e.Params == nil {
+		e.Params = map[string]string{}
+	}
 	e.League.SetParams(e.Params)
 }

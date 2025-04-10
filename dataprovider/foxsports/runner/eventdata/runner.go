@@ -15,10 +15,13 @@ type OutputWrapper struct {
 }
 
 type Context struct {
-	EventID  int64
-	URL      string
-	AwayTeam string
-	HomeTeam string
+	PullTimestamp time.Time
+	EventID       int64
+	URL           string
+	AwayID        int64
+	AwayTeam      string
+	HomeID        int64
+	HomeTeam      string
 }
 
 // RunnerOption
@@ -63,7 +66,7 @@ type Runner struct {
 	Scraper     Scraper
 }
 
-func (t *Runner) RunEventsDataScraper(matchups ...[]interface{}) []interface{} {
+func (t *Runner) RunEventsDataScraper(matchups ...interface{}) []interface{} {
 	start := time.Now().UTC()
 	concurrency := t.Concurrency
 	if concurrency <= 0 {

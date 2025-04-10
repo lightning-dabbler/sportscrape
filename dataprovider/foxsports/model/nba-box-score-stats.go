@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// NBABoxScoreStats - data model for NBA box score stats
 type NBABoxScoreStats struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
@@ -19,10 +20,12 @@ type NBABoxScoreStats struct {
 	PlayerID int64 `json:"player_id"`
 	// Player is the player's name
 	Player string `json:"player"`
+	// Position is the player's position
+	Position string `json:"position"`
 	// Starter is whether the player was apart of the team's starting five during the event or not
 	Starter bool `json:"starter"`
 	// MinutesPlayed is minutes played during the event
-	MinutesPlayed bool `json:"minutes_played"`
+	MinutesPlayed int `json:"minutes_played"`
 	// FieldGoalsMade is the number of field goals made
 	FieldGoalsMade int `json:"field_goals_made"`
 	// FieldGoalAttempts is the number of field goals attempted

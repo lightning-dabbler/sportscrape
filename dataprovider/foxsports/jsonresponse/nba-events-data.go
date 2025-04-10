@@ -46,7 +46,7 @@ type NBABoxScoreStats struct {
 					Index       int     `json:"index"`       // "index": 0
 					Superscript *string `json:"superscript"` // "superscript": "SG"
 				} `json:"columns"`
-				EntityLink struct {
+				EntityLink *struct {
 					Title  string `json:"title"`
 					Player string `json:"imageAltText"` // "imageAltText": "Payton Pritchard"
 					Layout struct {

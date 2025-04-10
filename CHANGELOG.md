@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Created `Runner` and `Scraper` abstractions to retrieve and parse event data.
-- Created `NBAEventData` JSON response payload for event data.
+- Created `Runner` and `Scraper` abstractions to retrieve and parse fox sports event data.
+- Created `NBAEventData` JSON response payload for fox sports NBA event data.
 - Created `NBABoxScoreStats` data model
+- Created `NBABoxScoreScraper` interface to scrape fox sports NBA box score data
+
 ### Changed
 - renamed `selectionId` to `segmentID`, `Id` to `ID`, and `SelectionId` to `SegmentID`
 
