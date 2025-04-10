@@ -29,7 +29,7 @@ func TestGeneralSegmenter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			segmenter := GeneralSegmenter{Date: tt.date}
-			actual, err := segmenter.GetSegmentId()
+			actual, err := segmenter.GetSegmentID()
 			if tt.isError {
 				assert.Error(t, err)
 			} else {
@@ -65,7 +65,7 @@ func TestNFLSegmenter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			segmenter := NFLSegmenter{Year: tt.year, Week: tt.week, Season: tt.season}
-			actual, _ := segmenter.GetSegmentId()
+			actual, _ := segmenter.GetSegmentID()
 			assert.Equal(t, tt.expected, actual)
 		})
 	}

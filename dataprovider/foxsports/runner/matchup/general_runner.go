@@ -63,28 +63,28 @@ type GeneralMatchupRunner struct {
 	Params map[string]string
 	// Segmenter - The interface for constructing segment IDs
 	Segmenter Segmenter
-	// segmentId - The base subdirectory in url used to fetch the point-in-time dataset
-	segmentId string
+	// segmentID - The base subdirectory in url used to fetch the point-in-time dataset
+	segmentID string
 	// pullTimestamp - approximate timestamp for when the request to fetch matchups was made
 	pullTimestamp time.Time
 }
 
 // Segmenter is the interface for constructing Segment IDs
 type Segmenter interface {
-	// GetSegmentId returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
-	GetSegmentId() (string, error)
+	// GetSegmentID returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
+	GetSegmentID() (string, error)
 }
 
 // ConstructFullURL constructs the full url (query params included) to retrieve matchup data
 func (mr *GeneralMatchupRunner) ConstructFullURL() (string, error) {
-	if mr.segmentId == "" {
-		segmentId, err := mr.Segmenter.GetSegmentId()
+	if mr.segmentID == "" {
+		segmentID, err := mr.Segmenter.GetSegmentID()
 		if err != nil {
 			return "", err
 		}
-		mr.segmentId = segmentId
+		mr.segmentID = segmentID
 	}
-	url, err := mr.League.V1MatchupURL(mr.segmentId)
+	url, err := mr.League.V1MatchupURL(mr.segmentID)
 	if err != nil {
 		return "", err
 	}
@@ -130,7 +130,7 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 	}
 	matchup.EventTime = eventTime
 	matchup.PullTimestamp = mr.pullTimestamp
-	event_id, err := util.TextToInt64(eventPayload.EntityLink.Layout.Tokens.Id)
+	event_id, err := util.TextToInt64(eventPayload.EntityLink.Layout.Tokens.ID)
 	if err != nil {
 		return matchup, err
 	}
@@ -139,7 +139,7 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 	matchup.StatusLine = eventPayload.StatusLine
 	// Home team
 	homeURISplit := strings.Split(eventPayload.HomeTeam.URI, "/")
-	matchup.HomeTeamId, err = util.TextToInt64(homeURISplit[len(homeURISplit)-1])
+	matchup.HomeTeamID, err = util.TextToInt64(homeURISplit[len(homeURISplit)-1])
 	if err != nil {
 		return matchup, err
 	}
@@ -158,7 +158,7 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 	}
 	// Away team
 	awayURISplit := strings.Split(eventPayload.AwayTeam.URI, "/")
-	matchup.AwayTeamId, err = util.TextToInt64(awayURISplit[len(awayURISplit)-1])
+	matchup.AwayTeamID, err = util.TextToInt64(awayURISplit[len(awayURISplit)-1])
 	if err != nil {
 		return matchup, err
 	}
@@ -178,10 +178,10 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 
 	// Loser
 	if eventPayload.AwayTeam.IsLoser {
-		matchup.Loser = &matchup.AwayTeamId
+		matchup.Loser = &matchup.AwayTeamID
 
 	} else if eventPayload.HomeTeam.IsLoser {
-		matchup.Loser = &matchup.HomeTeamId
+		matchup.Loser = &matchup.HomeTeamID
 	}
 
 	// IsPlayoff
@@ -206,7 +206,7 @@ func (mr *GeneralMatchupRunner) GetMatchups() []interface{} {
 
 	// Fetch matchups data
 	mr.pullTimestamp = time.Now().UTC()
-	log.Printf("Fetching %s Matchups at segment %s: %s\n", mr.League.String(), mr.segmentId, url)
+	log.Printf("Fetching %s Matchups at segment %s: %s\n", mr.League.String(), mr.segmentID, url)
 	jsonPayload, err := mr.FetchMatchups(url)
 	if err != nil {
 		log.Println("Issue fetching matchups")
@@ -238,6 +238,6 @@ func (mr *GeneralMatchupRunner) GetMatchups() []interface{} {
 		log.Printf("%d/%d events were skipped and %d/%d events errored out\n", skipped, nEvents, errors, nEvents)
 	}
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of %s Matchups at segment %s completed in %s: %s\n", mr.League.String(), mr.segmentId, diff, url)
+	log.Printf("Scraping of %s Matchups at segment %s completed in %s: %s\n", mr.League.String(), mr.segmentID, diff, url)
 	return matchups
 }

@@ -21,8 +21,8 @@ type Event struct {
 	EntityLink  struct {
 		Layout struct {
 			Tokens struct {
-				// Id is the event id
-				Id string `json:"id"`
+				// ID is the event id
+				ID string `json:"id"`
 			} `json:"tokens"`
 		} `json:"layout"`
 	} `json:"entityLink"`
