@@ -8,7 +8,7 @@ type GeneralSegmenter struct {
 	Date string
 }
 
-func (cs *GeneralSegmenter) GetSegmentId() (string, error) {
+func (cs *GeneralSegmenter) GetSegmentID() (string, error) {
 	date, err := time.Parse(time.DateOnly, cs.Date)
 	if err != nil {
 		return "", err
@@ -22,6 +22,6 @@ type NFLSegmenter struct {
 	Week   int32
 }
 
-func (nfls *NFLSegmenter) GetSegmentId() (string, error) {
-	return nfls.Season.SelectionId(nfls.Year, nfls.Week), nil
+func (nfls *NFLSegmenter) GetSegmentID() (string, error) {
+	return nfls.Season.SegmentID(nfls.Year, nfls.Week), nil
 }

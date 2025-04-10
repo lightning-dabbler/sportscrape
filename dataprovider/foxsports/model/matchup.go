@@ -14,8 +14,8 @@ type Matchup struct {
 	EventStatus int32 `json:"event_status"`
 	// StatusLine the string representation of the event status e.g. FINAL
 	StatusLine string `json:"status_line"`
-	// HomeTeamId is the home team's ID e.g. 21
-	HomeTeamId int64 `json:"home_team_id"`
+	// HomeTeamID is the home team's ID e.g. 21
+	HomeTeamID int64 `json:"home_team_id"`
 	// HomeTeamAbbreviation is the abbreviation of the home team's name e.g. ATL
 	HomeTeamAbbreviation string `json:"home_team_abbreviation"`
 	// HomeTeamNameLong is the home team's longer name but not the full name e.g. Braves
@@ -28,8 +28,8 @@ type Matchup struct {
 	HomeScore int32 `json:"home_score"`
 	// HomeRank is an optional rank. The values are expected for some NCAAB teams
 	HomeRank *int32 `json:"home_rank"`
-	// AwayTeamId is the away team's ID e.g. 8
-	AwayTeamId int64 `json:"away_team_id"`
+	// AwayTeamID is the away team's ID e.g. 8
+	AwayTeamID int64 `json:"away_team_id"`
 	// AwayTeamAbbreviation is the abbreviation of the away team's name e.g. LAA
 	AwayTeamAbbreviation string `json:"away_team_abbreviation"`
 	// AwayTeamNameLong is the away team's longer name but not the full name e.g. Angels

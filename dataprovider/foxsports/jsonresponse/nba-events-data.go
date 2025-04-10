@@ -51,7 +51,7 @@ type NBABoxScoreStats struct {
 					Player string `json:"imageAltText"` // "imageAltText": "Payton Pritchard"
 					Layout struct {
 						Tokens struct {
-							Id string `json:"id"` // "id": "3414"
+							ID string `json:"id"` // "id": "3414"
 						} `json:"tokens"`
 					} `json:"layout"`
 				} `json:"entityLink"`

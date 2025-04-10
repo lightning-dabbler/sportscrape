@@ -20,8 +20,8 @@ type EventDataScraper struct {
 	Params map[string]string
 }
 
-func (e *EventDataScraper) ConstructEventDataURL(eventId int64) (string, error) {
-	url, err := e.League.V1EventDataURL(eventId)
+func (e *EventDataScraper) ConstructEventDataURL(eventID int64) (string, error) {
+	url, err := e.League.V1EventDataURL(eventID)
 	if err != nil {
 		return "", err
 	}
