@@ -40,25 +40,27 @@ type NBABoxScoreStats struct {
 					Index int    `json:"index"` // "index": 0
 				} `json:"columns"`
 			} `json:"headers"`
-			Rows []struct {
-				Columns []struct {
-					Text        string  `json:"text"`        // "text": "P. Pritchard"
-					Index       int     `json:"index"`       // "index": 0
-					Superscript *string `json:"superscript"` // "superscript": "SG"
-				} `json:"columns"`
-				EntityLink *struct {
-					Title  string `json:"title"`
-					Player string `json:"imageAltText"` // "imageAltText": "Payton Pritchard"
-					Layout struct {
-						Tokens struct {
-							ID string `json:"id"` // "id": "3414"
-						} `json:"tokens"`
-					} `json:"layout"`
-				} `json:"entityLink"`
-			} `json:"rows"`
+			Rows []NBABoxScoreStatline `json:"rows"`
 		} `json:"boxscoreTable"`
 	} `json:"boxscoreItems"`
 	ContentURI string `json:"contentUri"` // basketball/nba/teams/5 -- Extract team id for validation
+}
+
+type NBABoxScoreStatline struct {
+	Columns []struct {
+		Text        string  `json:"text"`        // "text": "P. Pritchard"
+		Index       int     `json:"index"`       // "index": 0
+		Superscript *string `json:"superscript"` // "superscript": "SG"
+	} `json:"columns"`
+	EntityLink *struct {
+		Title  string `json:"title"`
+		Player string `json:"imageAltText"` // "imageAltText": "Payton Pritchard"
+		Layout struct {
+			Tokens struct {
+				ID string `json:"id"` // "id": "3414"
+			} `json:"tokens"`
+		} `json:"layout"`
+	} `json:"entityLink"`
 }
 
 // https://stackoverflow.com/questions/48697961/unmarshal-2-different-structs-in-a-slice

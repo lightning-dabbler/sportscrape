@@ -219,45 +219,7 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			OpponentID:    context.AwayID,
 			Opponent:      context.AwayTeam,
 		}
-		playerMap[playerID].Player = record.EntityLink.Player
-		playerMap[playerID].Position = *record.Columns[0].Superscript
-		playerMap[playerID].MinutesPlayed, err = util.TextToInt(record.Columns[1].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].OffensiveRebounds, err = util.TextToInt(record.Columns[2].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].DefensiveRebounds, err = util.TextToInt(record.Columns[3].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].TotalRebounds, err = util.TextToInt(record.Columns[4].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Assists, err = util.TextToInt(record.Columns[5].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Steals, err = util.TextToInt(record.Columns[6].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Blocks, err = util.TextToInt(record.Columns[7].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Turnovers, err = util.TextToInt(record.Columns[8].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].PersonalFouls, err = util.TextToInt(record.Columns[9].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Points, err = util.TextToInt(record.Columns[10].Text)
+		err = s.parseRawMetrics(playerMap[playerID], record)
 		if err != nil {
 			return playerMap, err
 		}
@@ -282,97 +244,9 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			OpponentID:    context.AwayID,
 			Opponent:      context.AwayTeam,
 		}
-		playerMap[playerID].Player = record.EntityLink.Player
-		playerMap[playerID].Position = *record.Columns[0].Superscript
-		// MinutesPlayed
-		if record.Columns[1].Text == "-" {
-			playerMap[playerID].MinutesPlayed = 0
-		} else {
-			playerMap[playerID].MinutesPlayed, err = util.TextToInt(record.Columns[1].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// OffensiveRebounds
-		if record.Columns[2].Text == "-" {
-			playerMap[playerID].OffensiveRebounds = 0
-		} else {
-			playerMap[playerID].OffensiveRebounds, err = util.TextToInt(record.Columns[2].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// DefensiveRebounds
-		if record.Columns[3].Text == "-" {
-			playerMap[playerID].DefensiveRebounds = 0
-		} else {
-			playerMap[playerID].DefensiveRebounds, err = util.TextToInt(record.Columns[3].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// TotalRebounds
-		if record.Columns[4].Text == "-" {
-			playerMap[playerID].TotalRebounds = 0
-		} else {
-			playerMap[playerID].TotalRebounds, err = util.TextToInt(record.Columns[4].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Assists
-		if record.Columns[5].Text == "-" {
-			playerMap[playerID].Assists = 0
-		} else {
-			playerMap[playerID].Assists, err = util.TextToInt(record.Columns[5].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Steals
-		if record.Columns[6].Text == "-" {
-			playerMap[playerID].Steals = 0
-		} else {
-			playerMap[playerID].Steals, err = util.TextToInt(record.Columns[6].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Blocks
-		if record.Columns[7].Text == "-" {
-			playerMap[playerID].Blocks = 0
-		} else {
-			playerMap[playerID].Blocks, err = util.TextToInt(record.Columns[7].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Turnovers
-		if record.Columns[8].Text == "-" {
-			playerMap[playerID].Turnovers = 0
-		} else {
-			playerMap[playerID].Turnovers, err = util.TextToInt(record.Columns[8].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// PersonalFouls
-		if record.Columns[9].Text == "-" {
-			playerMap[playerID].PersonalFouls = 0
-		} else {
-			playerMap[playerID].PersonalFouls, err = util.TextToInt(record.Columns[9].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Points
-		if record.Columns[10].Text == "-" {
-			playerMap[playerID].Points = 0
-		} else {
-			playerMap[playerID].Points, err = util.TextToInt(record.Columns[10].Text)
-			if err != nil {
-				return playerMap, err
-			}
+		err = s.parseRawMetrics(playerMap[playerID], record)
+		if err != nil {
+			return playerMap, err
 		}
 	}
 
@@ -389,33 +263,7 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 		if !exists {
 			return playerMap, fmt.Errorf("Shooting stats are unavailable for player id, %d, on team, %s. This is unexpected and should not be a realistic scenario.", playerID, context.HomeTeam)
 		}
-		// Field goals
-		fgSplit := strings.Split(record.Columns[1].Text, "-")
-		playerMap[playerID].FieldGoalsMade, err = util.TextToInt(fgSplit[0])
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].FieldGoalAttempts, err = util.TextToInt(fgSplit[1])
-		if err != nil {
-			return playerMap, err
-		}
-		// Threes
-		threesSplit := strings.Split(record.Columns[2].Text, "-")
-		playerMap[playerID].ThreePointsMade, err = util.TextToInt(threesSplit[0])
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].ThreePointAttempts, err = util.TextToInt(threesSplit[1])
-		if err != nil {
-			return playerMap, err
-		}
-		// Freethrows
-		freeThrowsSplit := strings.Split(record.Columns[3].Text, "-")
-		playerMap[playerID].FreeThrowsMade, err = util.TextToInt(freeThrowsSplit[0])
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].FreeThrowAttempts, err = util.TextToInt(freeThrowsSplit[1])
+		err = s.parseShooting(playerMap[playerID], record)
 		if err != nil {
 			return playerMap, err
 		}
@@ -442,45 +290,7 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			TeamID:        context.AwayID,
 			Team:          context.AwayTeam,
 		}
-		playerMap[playerID].Player = record.EntityLink.Player
-		playerMap[playerID].Position = *record.Columns[0].Superscript
-		playerMap[playerID].MinutesPlayed, err = util.TextToInt(record.Columns[1].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].OffensiveRebounds, err = util.TextToInt(record.Columns[2].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].DefensiveRebounds, err = util.TextToInt(record.Columns[3].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].TotalRebounds, err = util.TextToInt(record.Columns[4].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Assists, err = util.TextToInt(record.Columns[5].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Steals, err = util.TextToInt(record.Columns[6].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Blocks, err = util.TextToInt(record.Columns[7].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Turnovers, err = util.TextToInt(record.Columns[8].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].PersonalFouls, err = util.TextToInt(record.Columns[9].Text)
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].Points, err = util.TextToInt(record.Columns[10].Text)
+		err = s.parseRawMetrics(playerMap[playerID], record)
 		if err != nil {
 			return playerMap, err
 		}
@@ -505,97 +315,9 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			TeamID:        context.AwayID,
 			Team:          context.AwayTeam,
 		}
-		playerMap[playerID].Player = record.EntityLink.Player
-		playerMap[playerID].Position = *record.Columns[0].Superscript
-		// MinutesPlayed
-		if record.Columns[1].Text == "-" {
-			playerMap[playerID].MinutesPlayed = 0
-		} else {
-			playerMap[playerID].MinutesPlayed, err = util.TextToInt(record.Columns[1].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// OffensiveRebounds
-		if record.Columns[2].Text == "-" {
-			playerMap[playerID].OffensiveRebounds = 0
-		} else {
-			playerMap[playerID].OffensiveRebounds, err = util.TextToInt(record.Columns[2].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// DefensiveRebounds
-		if record.Columns[3].Text == "-" {
-			playerMap[playerID].DefensiveRebounds = 0
-		} else {
-			playerMap[playerID].DefensiveRebounds, err = util.TextToInt(record.Columns[3].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// TotalRebounds
-		if record.Columns[4].Text == "-" {
-			playerMap[playerID].TotalRebounds = 0
-		} else {
-			playerMap[playerID].TotalRebounds, err = util.TextToInt(record.Columns[4].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Assists
-		if record.Columns[5].Text == "-" {
-			playerMap[playerID].Assists = 0
-		} else {
-			playerMap[playerID].Assists, err = util.TextToInt(record.Columns[5].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Steals
-		if record.Columns[6].Text == "-" {
-			playerMap[playerID].Steals = 0
-		} else {
-			playerMap[playerID].Steals, err = util.TextToInt(record.Columns[6].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Blocks
-		if record.Columns[7].Text == "-" {
-			playerMap[playerID].Blocks = 0
-		} else {
-			playerMap[playerID].Blocks, err = util.TextToInt(record.Columns[7].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Turnovers
-		if record.Columns[8].Text == "-" {
-			playerMap[playerID].Turnovers = 0
-		} else {
-			playerMap[playerID].Turnovers, err = util.TextToInt(record.Columns[8].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// PersonalFouls
-		if record.Columns[9].Text == "-" {
-			playerMap[playerID].PersonalFouls = 0
-		} else {
-			playerMap[playerID].PersonalFouls, err = util.TextToInt(record.Columns[9].Text)
-			if err != nil {
-				return playerMap, err
-			}
-		}
-		// Points
-		if record.Columns[10].Text == "-" {
-			playerMap[playerID].Points = 0
-		} else {
-			playerMap[playerID].Points, err = util.TextToInt(record.Columns[10].Text)
-			if err != nil {
-				return playerMap, err
-			}
+		err = s.parseRawMetrics(playerMap[playerID], record)
+		if err != nil {
+			return playerMap, err
 		}
 	}
 
@@ -612,33 +334,8 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 		if !exists {
 			return playerMap, fmt.Errorf("Shooting stats are unavailable for player id, %d, on team, %s. This is unexpected and should not be a realistic scenario.", playerID, context.AwayTeam)
 		}
-		// Field goals
-		fgSplit := strings.Split(record.Columns[1].Text, "-")
-		playerMap[playerID].FieldGoalsMade, err = util.TextToInt(fgSplit[0])
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].FieldGoalAttempts, err = util.TextToInt(fgSplit[1])
-		if err != nil {
-			return playerMap, err
-		}
-		// Threes
-		threesSplit := strings.Split(record.Columns[2].Text, "-")
-		playerMap[playerID].ThreePointsMade, err = util.TextToInt(threesSplit[0])
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].ThreePointAttempts, err = util.TextToInt(threesSplit[1])
-		if err != nil {
-			return playerMap, err
-		}
-		// Freethrows
-		freeThrowsSplit := strings.Split(record.Columns[3].Text, "-")
-		playerMap[playerID].FreeThrowsMade, err = util.TextToInt(freeThrowsSplit[0])
-		if err != nil {
-			return playerMap, err
-		}
-		playerMap[playerID].FreeThrowAttempts, err = util.TextToInt(freeThrowsSplit[1])
+
+		err = s.parseShooting(playerMap[playerID], record)
 		if err != nil {
 			return playerMap, err
 		}
@@ -646,4 +343,135 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 
 	return playerMap, nil
 
+}
+func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statline jsonresponse.NBABoxScoreStatline) error {
+	// Field goals
+	var err error
+	fgSplit := strings.Split(statline.Columns[1].Text, "-")
+	stats.FieldGoalsMade, err = util.TextToInt(fgSplit[0])
+	if err != nil {
+		return err
+	}
+	stats.FieldGoalAttempts, err = util.TextToInt(fgSplit[1])
+	if err != nil {
+		return err
+	}
+	// Threes
+	threesSplit := strings.Split(statline.Columns[2].Text, "-")
+	stats.ThreePointsMade, err = util.TextToInt(threesSplit[0])
+	if err != nil {
+		return err
+	}
+	stats.ThreePointAttempts, err = util.TextToInt(threesSplit[1])
+	if err != nil {
+		return err
+	}
+	// Freethrows
+	freeThrowsSplit := strings.Split(statline.Columns[3].Text, "-")
+	stats.FreeThrowsMade, err = util.TextToInt(freeThrowsSplit[0])
+	if err != nil {
+		return err
+	}
+	stats.FreeThrowAttempts, err = util.TextToInt(freeThrowsSplit[1])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, statline jsonresponse.NBABoxScoreStatline) error {
+	var err error
+	stats.Player = statline.EntityLink.Player
+	stats.Position = *statline.Columns[0].Superscript
+	// MinutesPlayed
+	if statline.Columns[1].Text == "-" {
+		stats.MinutesPlayed = 0
+	} else {
+		stats.MinutesPlayed, err = util.TextToInt(statline.Columns[1].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// OffensiveRebounds
+	if statline.Columns[2].Text == "-" {
+		stats.OffensiveRebounds = 0
+	} else {
+		stats.OffensiveRebounds, err = util.TextToInt(statline.Columns[2].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// DefensiveRebounds
+	if statline.Columns[3].Text == "-" {
+		stats.DefensiveRebounds = 0
+	} else {
+		stats.DefensiveRebounds, err = util.TextToInt(statline.Columns[3].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// TotalRebounds
+	if statline.Columns[4].Text == "-" {
+		stats.TotalRebounds = 0
+	} else {
+		stats.TotalRebounds, err = util.TextToInt(statline.Columns[4].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// Assists
+	if statline.Columns[5].Text == "-" {
+		stats.Assists = 0
+	} else {
+		stats.Assists, err = util.TextToInt(statline.Columns[5].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// Steals
+	if statline.Columns[6].Text == "-" {
+		stats.Steals = 0
+	} else {
+		stats.Steals, err = util.TextToInt(statline.Columns[6].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// Blocks
+	if statline.Columns[7].Text == "-" {
+		stats.Blocks = 0
+	} else {
+		stats.Blocks, err = util.TextToInt(statline.Columns[7].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// Turnovers
+	if statline.Columns[8].Text == "-" {
+		stats.Turnovers = 0
+	} else {
+		stats.Turnovers, err = util.TextToInt(statline.Columns[8].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// PersonalFouls
+	if statline.Columns[9].Text == "-" {
+		stats.PersonalFouls = 0
+	} else {
+		stats.PersonalFouls, err = util.TextToInt(statline.Columns[9].Text)
+		if err != nil {
+			return err
+		}
+	}
+	// Points
+	if statline.Columns[10].Text == "-" {
+		stats.Points = 0
+	} else {
+		stats.Points, err = util.TextToInt(statline.Columns[10].Text)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
