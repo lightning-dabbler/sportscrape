@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created `Runner` and `Scraper` abstractions to retrieve and parse event data.
 - Created `NBAEventData` JSON response payload for event data.
+- Created `NBABoxScoreStats` data model
 ### Changed
 - renamed `selectionId` to `segmentID`, `Id` to `ID`, and `SelectionId` to `SegmentID`
 
