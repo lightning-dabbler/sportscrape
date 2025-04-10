@@ -46,19 +46,19 @@ func main() {
 
 ## Data providers
 
-| Source                           | League | Feed                  | Periods Available       | Chromium Dependency |	Source Content Type	|
-|----------------------------------|--------|------------------------|:----------------------:|:----------------:|:----------:|
-| https://basketball-reference.com | NBA    | Matchup                | Full                   |☑️|	text/html	|
-| https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |☑️|	text/html	|
-| https://basketball-reference.com | NBA    | Advanced box score stats| Full                  |☑️|text/html|
-| https://baseball-reference.com   | MLB    | Matchup                | Full                   |☑️|text/html|
-| https://baseball-reference.com   | MLB    | Batting box score stats| Full                   |☑️|text/html|
-| https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |☑️|text/html|
-| https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | |application/json|
-| https://www.foxsports.com		   | NBA	| Box score stats		 | Live, Full			  | |application/json|
-| https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | |application/json|
-| https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|
-| https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|
+| Source                           | League | Feed                  | Periods Available       | Chromium Dependency |	Source Content Type	| Point-in-time|
+|----------------------------------|--------|------------------------|:----------------------:|:-------------------:|:---------------------:|:------------:|
+| https://basketball-reference.com | NBA    | Matchup                | Full                   |☑️|	text/html	|✅|
+| https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |☑️|	text/html	|✅|
+| https://basketball-reference.com | NBA    | Advanced box score stats| Full                  |☑️|text/html|✅|
+| https://baseball-reference.com   | MLB    | Matchup                | Full                   |☑️|text/html|✅|
+| https://baseball-reference.com   | MLB    | Batting box score stats| Full                   |☑️|text/html|✅|
+| https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |☑️|text/html|✅|
+| https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | NBA	| Box score stats		 | Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|✅|
 
 
 ## Development
