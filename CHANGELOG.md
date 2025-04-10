@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created `NBABoxScoreScraper` interface to scrape fox sports NBA box score data
 
 ### Changed
-- renamed `selectionId` to `segmentID`, `Id` to `ID`, and `SelectionId` to `SegmentID`
+- Renamed `selectionId` to `segmentID`, `Id` to `ID`, and `SelectionId` to `SegmentID`
+- Documentation updates
 
 ## [0.4.0] - 2025-04-07
 ### Added
