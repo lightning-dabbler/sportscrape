@@ -46,7 +46,7 @@ func main() {
 
 ## Data providers
 
-| Source                           | League | Feed                  | Periods Available       | Chromium Dependency |	Content Type	|
+| Source                           | League | Feed                  | Periods Available       | Chromium Dependency |	Source Content Type	|
 |----------------------------------|--------|------------------------|:----------------------:|:----------------:|:----------:|
 | https://basketball-reference.com | NBA    | Matchup                | Full                   |☑️|	text/html	|
 | https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |☑️|	text/html	|
