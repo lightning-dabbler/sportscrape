@@ -2,7 +2,7 @@ package jsonresponse
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 )
 
 // https://api.foxsports.com/bifrost/v1/nba/event/43197/data?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
@@ -11,8 +11,8 @@ type NBAEventData struct {
 		AwayTeam NBAEventDataTeam `json:"leftTeam"`
 		HomeTeam NBAEventDataTeam `json:"rightTeam"`
 	} `json:"header"`
-	BoxScore struct {
-		BoxScoreSections NBABoxScoreSection `json:"boxscoreSections"`
+	BoxScore *struct {
+		BoxScoreSections *NBABoxScoreSection `json:"boxscoreSections"`
 	} `json:"boxScore"`
 }
 
@@ -26,8 +26,8 @@ type NBAEventDataTeam struct {
 }
 
 type NBABoxScoreSection struct {
-	AwayPlayerStats NBABoxScoreStats
-	HomePlayerStats NBABoxScoreStats
+	AwayPlayerStats *NBABoxScoreStats
+	HomePlayerStats *NBABoxScoreStats
 }
 
 type NBABoxScoreStats struct {
@@ -58,6 +58,7 @@ type NBABoxScoreStats struct {
 			} `json:"rows"`
 		} `json:"boxscoreTable"`
 	} `json:"boxscoreItems"`
+	ContentURI string `json:"contentUri"` // basketball/nba/teams/5 -- Extract team id for validation
 }
 
 // https://stackoverflow.com/questions/48697961/unmarshal-2-different-structs-in-a-slice
@@ -69,8 +70,7 @@ func (boxscoreSection *NBABoxScoreSection) UnmarshalJSON(b []byte) error {
 	}
 	nSections := len(sections)
 	if nSections != 3 && nSections != 0 {
-		log.Printf("WARNING: There're %d NBABoxScoreSections detected. Expected 3 or 0.\n", nSections)
-		return nil
+		return fmt.Errorf("Error: There're %d NBABoxScoreSection(s) detected. Expected 3 or 0.", nSections)
 	}
 
 	if nSections == 3 {
