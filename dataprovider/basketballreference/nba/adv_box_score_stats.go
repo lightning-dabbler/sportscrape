@@ -11,6 +11,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 const (
@@ -135,6 +136,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 			var boxScoreStats model.NBAAdvBoxScoreStats
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
+				boxScoreStats.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
 				boxScoreStats.EventID = matchupModel.EventID
 				if i == 0 {
 					boxScoreStats.Team = matchupModel.AwayTeam
@@ -144,6 +146,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					boxScoreStats.Opponent = matchupModel.AwayTeam
 				}
 				boxScoreStats.EventDate = matchupModel.EventDate
+				boxScoreStats.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
 				if j < 5 {
 					boxScoreStats.Starter = true
 				} else {
@@ -274,7 +277,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 
 					// OffensiveRating
 					offensiveRatingText := util.CleanTextDatum(s.Find("td:nth-child(15)").Text())
-					offensiveRating, err := util.TextToInt(offensiveRatingText)
+					offensiveRating, err := util.TextToInt32(offensiveRatingText)
 					if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for offensiveRatingText to float32 - %w; defaulting to 0.", offensiveRatingText, err))
 						offensiveRating = 0
@@ -283,7 +286,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 
 					// DefensiveRating
 					defensiveRatingText := util.CleanTextDatum(s.Find("td:nth-child(16)").Text())
-					defensiveRating, err := util.TextToInt(defensiveRatingText)
+					defensiveRating, err := util.TextToInt32(defensiveRatingText)
 					if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for defensiveRatingText to float32 - %w; defaulting to 0.", defensiveRatingText, err))
 						defensiveRating = 0

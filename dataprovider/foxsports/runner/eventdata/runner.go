@@ -16,6 +16,7 @@ type OutputWrapper struct {
 
 type Context struct {
 	PullTimestamp time.Time
+	EventTime     time.Time
 	EventID       int64
 	URL           string
 	AwayID        int64

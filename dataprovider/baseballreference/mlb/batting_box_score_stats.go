@@ -11,6 +11,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 var battingBoxScoreHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
@@ -135,6 +136,8 @@ func (boxScoreRunner *BattingBoxScoreRunner) GetSegmentBoxScoreStats(matchup int
 		statline.Team = matchupModel.HomeTeam
 		statline.Opponent = matchupModel.AwayTeam
 		statline.EventDate = matchupModel.EventDate
+		statline.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
+		statline.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
 		boxScoreStats = append(boxScoreStats, *statline)
 		return true
 	})
@@ -149,6 +152,8 @@ func (boxScoreRunner *BattingBoxScoreRunner) GetSegmentBoxScoreStats(matchup int
 		statline.Team = matchupModel.AwayTeam
 		statline.Opponent = matchupModel.HomeTeam
 		statline.EventDate = matchupModel.EventDate
+		statline.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
+		statline.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
 		boxScoreStats = append(boxScoreStats, *statline)
 		return true
 	})
@@ -188,49 +193,49 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 	statline.PlayerID = playerID
 	// AtBat
 	atBatText := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
-	atBat, err := util.TextToInt(atBatText)
+	atBat, err := util.TextToInt32(atBatText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for atBatText to int - %w", atBatText, err))
 	}
 	statline.AtBat = atBat
 	// Runs
 	runsText := util.CleanTextDatum(s.Find("td:nth-child(3)").Text())
-	runs, err := util.TextToInt(runsText)
+	runs, err := util.TextToInt32(runsText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for runsText to int - %w", runsText, err))
 	}
 	statline.Runs = runs
 	// Hits
 	hitsText := util.CleanTextDatum(s.Find("td:nth-child(4)").Text())
-	hits, err := util.TextToInt(hitsText)
+	hits, err := util.TextToInt32(hitsText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for hitsText to int - %w", hitsText, err))
 	}
 	statline.Hits = hits
 	// RunsBattedIn
 	runsBattedInText := util.CleanTextDatum(s.Find("td:nth-child(5)").Text())
-	runsBattedIn, err := util.TextToInt(runsBattedInText)
+	runsBattedIn, err := util.TextToInt32(runsBattedInText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for runsBattedInText to int - %w", runsBattedInText, err))
 	}
 	statline.RunsBattedIn = runsBattedIn
 	// Walks
 	walksText := util.CleanTextDatum(s.Find("td:nth-child(6)").Text())
-	walks, err := util.TextToInt(walksText)
+	walks, err := util.TextToInt32(walksText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for walksText to int - %w", walksText, err))
 	}
 	statline.Walks = walks
 	// Strikeouts
 	strikeoutsText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
-	strikeouts, err := util.TextToInt(strikeoutsText)
+	strikeouts, err := util.TextToInt32(strikeoutsText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikeoutsText to int - %w", strikeoutsText, err))
 	}
 	statline.Strikeouts = strikeouts
 	// PlateAppearances
 	plateAppearancesText := util.CleanTextDatum(s.Find("td:nth-child(8)").Text())
-	plateAppearances, err := util.TextToInt(plateAppearancesText)
+	plateAppearances, err := util.TextToInt32(plateAppearancesText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for plateAppearancesText to int - %w", plateAppearancesText, err))
 	}
@@ -274,7 +279,7 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 	// PitchesPerPlateAppearance
 	pitchesPerPlateAppearanceText := util.CleanTextDatum(s.Find("td:nth-child(13)").Text())
 	if pitchesPerPlateAppearanceText != "" {
-		pitchesPerPlateAppearance, err := util.TextToInt(pitchesPerPlateAppearanceText)
+		pitchesPerPlateAppearance, err := util.TextToInt32(pitchesPerPlateAppearanceText)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for pitchesPerPlateAppearanceText to int - %w!", pitchesPerPlateAppearanceText, err))
 		}
@@ -283,7 +288,7 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 	// Strikes
 	strikesText := util.CleanTextDatum(s.Find("td:nth-child(14)").Text())
 	if strikesText != "" {
-		strikes, err := util.TextToInt(strikesText)
+		strikes, err := util.TextToInt32(strikesText)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikesText to int - %w!", strikesText, err))
 		}
@@ -354,14 +359,14 @@ func parseBattingBoxScore(s *goquery.Selection) *model.MLBBattingBoxScoreStats {
 	}
 	// Putout
 	putoutText := util.CleanTextDatum(s.Find("td:nth-child(22)").Text())
-	putout, err := util.TextToInt(putoutText)
+	putout, err := util.TextToInt32(putoutText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for putoutText to int - %w", putoutText, err))
 	}
 	statline.Putout = putout
 	// Assist
 	assistText := util.CleanTextDatum(s.Find("td:nth-child(23)").Text())
-	assist, err := util.TextToInt(assistText)
+	assist, err := util.TextToInt32(assistText)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for assistText to int - %w", assistText, err))
 	}

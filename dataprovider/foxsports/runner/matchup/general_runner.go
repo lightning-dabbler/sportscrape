@@ -13,6 +13,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/lightning-dabbler/sportscrape/util/request"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 // MatchupOption defines a configuration option for the general matchup runner
@@ -128,7 +129,9 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 	if err != nil {
 		return matchup, err
 	}
+	matchup.EventTimeParquet = types.TimeToTIMESTAMP_MILLIS(eventTime, true)
 	matchup.EventTime = eventTime
+	matchup.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(mr.pullTimestamp, true)
 	matchup.PullTimestamp = mr.pullTimestamp
 	event_id, err := util.TextToInt64(eventPayload.EntityLink.Layout.Tokens.ID)
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/xitongsys/parquet-go/types"
 
 	"time"
 
@@ -97,7 +98,9 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		var matchup model.MLBMatchup
 		var location, homeLocation, awayLocation string
 		matchup.PullTimestamp = PullTimestamp
+		matchup.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
 		matchup.EventDate = EventDate
+		matchup.EventDateParquet = util.TimeToDays(EventDate)
 		// Teams
 		var teamSection []*goquery.Selection
 		s.Find(matchupTeamsSelector).Each(func(_ int, s *goquery.Selection) {
@@ -142,7 +145,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayScore, err = util.TextToInt(rawAwayScore)
+		matchup.AwayScore, err = util.TextToInt32(rawAwayScore)
 		if err != nil {
 			log.Printf("Cannot convert '%s' for rawAwayScore into Int\n", rawAwayScore)
 			log.Fatalln(err)
@@ -170,7 +173,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeScore, err = util.TextToInt(rawHomeScore)
+		matchup.HomeScore, err = util.TextToInt32(rawHomeScore)
 		if err != nil {
 			log.Printf("Cannot convert '%s' for rawHomeScore into Int\n", rawHomeScore)
 			log.Fatalln(err)

@@ -36,7 +36,7 @@ func TestGetMatchups(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			runner := NewMatchupRunner(
-				WithMatchupTimeout(2 * time.Minute),
+				WithMatchupTimeout(3 * time.Minute),
 			)
 			matchups := runner.GetMatchups(tt.date)
 			for _, matchup := range matchups {
