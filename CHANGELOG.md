@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Changed `int` type instances in data models to `int32` to match parquet writer type expectations
+- Less noise in logging for NBA basic box score stats and advanced box score stats when parsed text is empty string.
+
+### Fixed
+- Correct default assignment for `threePointAttempts` of basketball reference NBA basic box score stats
 
 ## [0.5.0] - 2025-04-10
 ### Added
