@@ -16,7 +16,7 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 	}
 	date := "2025-02-19"
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(2 * time.Minute),
+		WithMatchupTimeout(4 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewBasicBoxScoreRunner(

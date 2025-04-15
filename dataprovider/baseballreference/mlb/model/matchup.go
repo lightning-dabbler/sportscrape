@@ -7,7 +7,7 @@ type MLBMatchup struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
-	PullTimestampParquet int64 `parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP_MILLIS, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	PullTimestampParquet int64 `parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventID is the parsed event id from the box score link of the matchup
 	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY"`
 	// EventDate is the timestamp associated with a given event
@@ -29,7 +29,7 @@ type MLBMatchup struct {
 	// AwayTeamLink is the link to the away team's baseball-reference profile page
 	AwayTeamLink string `json:"away_team_link" parquet:"name=away_team_link, type=BYTE_ARRAY"`
 	// Loser is the losing team's name
-	Loser string `json:"loser" parquet:"name=loser, type=BOOLEAN"`
+	Loser string `json:"loser" parquet:"name=loser, type=BYTE_ARRAY"`
 	// PlayoffMatch is whether or not the matchup was a playoff game
 	PlayoffMatch bool `json:"playoff_match" parquet:"name=playoff_match, type=BOOLEAN"`
 }

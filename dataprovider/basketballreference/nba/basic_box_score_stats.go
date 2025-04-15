@@ -241,13 +241,17 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 
 					fieldGoalsMadeText := util.CleanTextDatum(s.Find("td:nth-child(3)").Text())
 					fieldGoalsMade, err := util.TextToInt32(fieldGoalsMadeText)
-					if err != nil {
+					if fieldGoalsMadeText == "" {
+						fieldGoalsMade = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for fieldGoalsMadeText to Int - %w; defaulting to 0.", fieldGoalsMadeText, err))
 						fieldGoalsMade = 0
 					}
 					fieldGoalAttemptsText := util.CleanTextDatum(s.Find("td:nth-child(4)").Text())
 					fieldGoalAttempts, err := util.TextToInt32(fieldGoalAttemptsText)
-					if err != nil {
+					if fieldGoalAttemptsText == "" {
+						fieldGoalAttempts = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for fieldGoalAttemptsText to Int - %w; defaulting to 0.", fieldGoalAttemptsText, err))
 						fieldGoalAttempts = 0
 					}
@@ -265,15 +269,19 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 
 					threePointsMadeText := util.CleanTextDatum(s.Find("td:nth-child(6)").Text())
 					threePointsMade, err := util.TextToInt32(threePointsMadeText)
-					if err != nil {
+					if threePointsMadeText == "" {
+						threePointsMade = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for threePointsMadeText to Int - %w; defaulting to 0.", threePointsMadeText, err))
 						threePointsMade = 0
 					}
 					threePointAttemptsText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
 					threePointAttempts, err := util.TextToInt32(threePointAttemptsText)
-					if err != nil {
+					if threePointAttemptsText == "" {
+						threePointAttempts = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for threePointAttemptsText to Int - %w; defaulting to 0.", threePointAttemptsText, err))
-						threePointsMade = 0
+						threePointAttempts = 0
 					}
 					rawthreePointPercentage := util.CleanTextDatum(s.Find("td:nth-child(8)").Text())
 					var threePointPercentage float32
@@ -289,13 +297,17 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 
 					freeThrowsMadeText := util.CleanTextDatum(s.Find("td:nth-child(9)").Text())
 					freeThrowsMade, err := util.TextToInt32(freeThrowsMadeText)
-					if err != nil {
+					if freeThrowsMadeText == "" {
+						freeThrowsMade = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for freeThrowsMadeText to Int - %w; defaulting to 0.", freeThrowsMadeText, err))
 						freeThrowsMade = 0
 					}
 					freeThrowAttemptsText := util.CleanTextDatum(s.Find("td:nth-child(10)").Text())
 					freeThrowAttempts, err := util.TextToInt32(freeThrowAttemptsText)
-					if err != nil {
+					if freeThrowAttemptsText == "" {
+						freeThrowAttempts = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for freeThrowAttemptsText to Int - %w; defaulting to 0.", freeThrowAttemptsText, err))
 						freeThrowAttempts = 0
 					}
@@ -322,77 +334,99 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 
 					OffensiveReboundsText := util.CleanTextDatum(s.Find("td:nth-child(12)").Text())
 					boxScoreStats.OffensiveRebounds, err = util.TextToInt32(OffensiveReboundsText)
-					if err != nil {
+					if OffensiveReboundsText == "" {
+						boxScoreStats.OffensiveRebounds = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for OffensiveReboundsText to Int - %w; defaulting to 0.", OffensiveReboundsText, err))
 						boxScoreStats.OffensiveRebounds = 0
 					}
 
 					DefensiveReboundsText := util.CleanTextDatum(s.Find("td:nth-child(13)").Text())
 					boxScoreStats.DefensiveRebounds, err = util.TextToInt32(DefensiveReboundsText)
-					if err != nil {
+					if DefensiveReboundsText == "" {
+						boxScoreStats.DefensiveRebounds = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for DefensiveReboundsText to Int - %w; defaulting to 0.", DefensiveReboundsText, err))
 						boxScoreStats.DefensiveRebounds = 0
 					}
 
 					TotalReboundsText := util.CleanTextDatum(s.Find("td:nth-child(14)").Text())
 					boxScoreStats.TotalRebounds, err = util.TextToInt32(TotalReboundsText)
-					if err != nil {
+					if TotalReboundsText == "" {
+						boxScoreStats.TotalRebounds = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for TotalReboundsText to Int - %w; defaulting to 0.", TotalReboundsText, err))
 						boxScoreStats.TotalRebounds = 0
 					}
 
 					AssistsText := util.CleanTextDatum(s.Find("td:nth-child(15)").Text())
 					boxScoreStats.Assists, err = util.TextToInt32(AssistsText)
-					if err != nil {
+					if AssistsText == "" {
+						boxScoreStats.Assists = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for AssistsText to Int - %w; defaulting to 0.", AssistsText, err))
 						boxScoreStats.Assists = 0
 					}
 
 					StealsText := util.CleanTextDatum(s.Find("td:nth-child(16)").Text())
 					boxScoreStats.Steals, err = util.TextToInt32(StealsText)
-					if err != nil {
+					if StealsText == "" {
+						boxScoreStats.Steals = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for StealsText to Int - %w; defaulting to 0.", StealsText, err))
 						boxScoreStats.Steals = 0
 					}
 
 					BlocksText := util.CleanTextDatum(s.Find("td:nth-child(17)").Text())
 					boxScoreStats.Blocks, err = util.TextToInt32(BlocksText)
-					if err != nil {
+					if BlocksText == "" {
+						boxScoreStats.Blocks = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for BlocksText to Int - %w; defaulting to 0.", BlocksText, err))
 						boxScoreStats.Blocks = 0
 					}
 
 					TurnoversText := util.CleanTextDatum(s.Find("td:nth-child(18)").Text())
 					boxScoreStats.Turnovers, err = util.TextToInt32(TurnoversText)
-					if err != nil {
+					if TurnoversText == "" {
+						boxScoreStats.Turnovers = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for TurnoversText to In - %w; defaulting to 0.", TurnoversText, err))
 						boxScoreStats.Turnovers = 0
 					}
 
 					PersonalFoulsText := util.CleanTextDatum(s.Find("td:nth-child(19)").Text())
 					boxScoreStats.PersonalFouls, err = util.TextToInt32(PersonalFoulsText)
-					if err != nil {
+					if PersonalFoulsText == "" {
+						boxScoreStats.PersonalFouls = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for PersonalFoulsText to Int - %w; defaulting to 0.", PersonalFoulsText, err))
 						boxScoreStats.PersonalFouls = 0
 					}
 
 					PointsText := util.CleanTextDatum(s.Find("td:nth-child(20)").Text())
 					boxScoreStats.Points, err = util.TextToInt32(PointsText)
-					if err != nil {
+					if PointsText == "" {
+						boxScoreStats.Points = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for PointsText to Int - %w; defaulting to 0.", PointsText, err))
 						boxScoreStats.Points = 0
 					}
 
 					GameScoreText := util.CleanTextDatum(s.Find("td:nth-child(21)").Text())
 					boxScoreStats.GameScore, err = util.TextToFloat32(GameScoreText)
-					if err != nil {
+					if GameScoreText == "" {
+						boxScoreStats.GameScore = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for GameScoreText to Float64 - %w; defaulting to 0.", GameScoreText, err))
 						boxScoreStats.GameScore = 0
 					}
 
 					PlusMinusText := util.CleanTextDatum(s.Find("td:nth-child(22)").Text())
 					boxScoreStats.PlusMinus, err = util.TextToInt32(PlusMinusText)
-					if err != nil {
+					if PlusMinusText == "" {
+						boxScoreStats.PlusMinus = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Cannot convert '%s' for PlusMinusText to Int - %w; defaulting to 0.", PlusMinusText, err))
 						boxScoreStats.PlusMinus = 0
 					}

@@ -7,13 +7,13 @@ type Matchup struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
-	PullTimestampParquet int64 `parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP_MILLIS, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	PullTimestampParquet int64 `parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventID is a unique ID that maps to the matchup e.g. 86833
 	EventID int64 `json:"event_id" parquet:"name=event_id, type=INT64"`
 	// EventTime is the timestamp associated with the matchup
 	EventTime time.Time `json:"event_time"`
 	// EventTimeParquet is the timestamp associated with the matchup (in milliseconds)
-	EventTimeParquet int64 `parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP_MILLIS, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	EventTimeParquet int64 `parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventStatus the numerical representation of the event status e.g. 3
 	EventStatus int32 `json:"event_status" parquet:"name=event_status, type=INT32"`
 	// StatusLine the string representation of the event status e.g. FINAL
