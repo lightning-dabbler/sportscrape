@@ -7,22 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added `github.com/xitongsys/parquet-go` dependency
-- Added parquet tags to data models
-- Added `EventTime` field to fox sports `NBABoxScoreStats`
-- Added `PullTimestampParquet` field to all data models for parquet conversion
-- Data models with `EventTime` also include `EventTimeParquet` for parquet conversion
-- Data models with `EventDate` also include `EventDateParquet` for parquet conversion
-- Added utility function `TimeToDays`
-- Created `TextToInt32` utility function
+- Added `github.com/xitongsys/parquet-go` dependency (#52)
+- Added parquet tags to data models (#52)
+- Added `EventTime` field to fox sports `NBABoxScoreStats` (#52)
+- Added `PullTimestampParquet` field to all data models for parquet conversion (#52)
+- Data models with `EventTime` also include `EventTimeParquet` for parquet conversion (#52)
+- Data models with `EventDate` also include `EventDateParquet` for parquet conversion (#52)
+- Added utility function `TimeToDays` (#52)
+- Created `TextToInt32` utility function (#52)
 
 ### Changed
-- Changed `int` type instances in data models to `int32` to match parquet writer type expectations
-- Less noise in logging for NBA basic box score stats and advanced box score stats when parsed text is empty string.
-- Update to documentation to included supported file formats to export/import.
+- Changed `int` type instances in data models to `int32` to match parquet writer type expectations (#52)
+- Less noise in logging for NBA basic box score stats and advanced box score stats when parsed text is empty string. (#52)
+- Update to documentation to included supported file formats to export/import. (#52)
 
 ### Fixed
-- Correct default assignment for `threePointAttempts` of basketball reference NBA basic box score stats
+- Correct default assignment for `threePointAttempts` of basketball reference NBA basic box score stats (#52)
 
 ## [0.5.0] - 2025-04-10
 ### Added
