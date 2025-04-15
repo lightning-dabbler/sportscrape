@@ -60,6 +60,12 @@ func main() {
 | https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|✅|
 
+## Supported Formats
+File formats the constructed data models support on export and import.
+|Format|Export|Import|
+|:------|:----:|:-----:|
+|Parquet|✅|✅|
+|JSON|✅|✅|
 
 ## Development
 ### Prerequisites
