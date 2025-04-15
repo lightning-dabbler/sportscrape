@@ -62,10 +62,10 @@ func main() {
 
 ## Supported Formats
 File formats the constructed data models support on export and import.
-|Format|Export|Import|
-|:------|:----:|:-----:|
-|Parquet|✅|✅|
-|JSON|✅|✅|
+|Format|Export|Import|Go Package|
+|:------|:----:|:-----:|:-----|
+|Parquet|✅|✅|[xitongsys/parquet-go](https://pkg.go.dev/github.com/xitongsys/parquet-go)|
+|JSON|✅|✅|[encoding/json](https://pkg.go.dev/encoding/json)|
 
 ## Development
 ### Prerequisites
