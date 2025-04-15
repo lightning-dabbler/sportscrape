@@ -60,6 +60,12 @@ func main() {
 | https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|✅|
 
+## Supported Formats
+File formats the constructed data models support on export and import.
+|Format|Export|Import|Go Package|
+|:------|:----:|:-----:|:-----|
+|Parquet|✅|✅|[xitongsys/parquet-go](https://pkg.go.dev/github.com/xitongsys/parquet-go)|
+|JSON|✅|✅|[encoding/json](https://pkg.go.dev/encoding/json)|
 
 ## Development
 ### Prerequisites

@@ -8,6 +8,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/xitongsys/parquet-go/types"
 
 	"time"
 
@@ -107,7 +108,9 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		var matchup model.NBAMatchup
 		var location string
 		matchup.PullTimestamp = PullTimestamp
+		matchup.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
 		matchup.EventDate = EventDate
+		matchup.EventDateParquet = util.TimeToDays(EventDate)
 		// AwayTeam
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsAwayTeamNameSelector)
 
@@ -129,7 +132,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayScore, err = util.TextToInt(rawAwayScore)
+		matchup.AwayScore, err = util.TextToInt32(rawAwayScore)
 		if err != nil {
 			log.Printf("Cannot convert '%s' for rawAwayScore into Int\n", rawAwayScore)
 			log.Fatalln(err)
@@ -154,7 +157,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeScore, err = util.TextToInt(rawHomeScore)
+		matchup.HomeScore, err = util.TextToInt32(rawHomeScore)
 		if err != nil {
 			log.Printf("Conversion issue detected for rawHomeScore ('%s') to Int\n", rawHomeScore)
 			log.Fatalln(err)
@@ -207,7 +210,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayQ1Total, err = util.TextToInt(AwayQ1TotalText)
+		matchup.AwayQ1Total, err = util.TextToInt32(AwayQ1TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ1TotalText to Int\n", AwayQ1TotalText)
 			log.Fatalln(err)
@@ -221,7 +224,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayQ2Total, err = util.TextToInt(AwayQ2TotalText)
+		matchup.AwayQ2Total, err = util.TextToInt32(AwayQ2TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ2TotalText to Int\n", AwayQ2TotalText)
 			log.Fatalln(err)
@@ -235,7 +238,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayQ3Total, err = util.TextToInt(AwayQ3TotalText)
+		matchup.AwayQ3Total, err = util.TextToInt32(AwayQ3TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ3TotalText to Int\n", AwayQ3TotalText)
 			log.Fatalln(err)
@@ -249,7 +252,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.AwayQ4Total, err = util.TextToInt(AwayQ4TotalText)
+		matchup.AwayQ4Total, err = util.TextToInt32(AwayQ4TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ4TotalText to Int\n", AwayQ4TotalText)
 			log.Fatalln(err)
@@ -263,7 +266,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeQ1Total, err = util.TextToInt(HomeQ1TotalText)
+		matchup.HomeQ1Total, err = util.TextToInt32(HomeQ1TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ1TotalText to Int\n", HomeQ1TotalText)
 			log.Fatalln(err)
@@ -277,7 +280,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeQ2Total, err = util.TextToInt(HomeQ2TotalText)
+		matchup.HomeQ2Total, err = util.TextToInt32(HomeQ2TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ2TotalText to Int\n", HomeQ2TotalText)
 			log.Fatalln(err)
@@ -291,7 +294,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeQ3Total, err = util.TextToInt(HomeQ3TotalText)
+		matchup.HomeQ3Total, err = util.TextToInt32(HomeQ3TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ3TotalText to Int\n", HomeQ3TotalText)
 			log.Fatalln(err)
@@ -305,7 +308,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		matchup.HomeQ4Total, err = util.TextToInt(HomeQ4TotalText)
+		matchup.HomeQ4Total, err = util.TextToInt32(HomeQ4TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ4TotalText to Int\n", HomeQ4TotalText)
 			log.Fatalln(err)

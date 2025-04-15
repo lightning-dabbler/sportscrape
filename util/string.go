@@ -44,6 +44,15 @@ func TextToInt(str string) (int, error) {
 	return val, nil
 }
 
+// TextToInt32
+func TextToInt32(str string) (int32, error) {
+	val, err := TextToInt(str)
+	if err != nil {
+		return 0, err
+	}
+	return int32(val), nil
+}
+
 // TextToInt64 attempts to convert a string to an int64
 // Returns an 64-bit integer and error (nil if the transformation was successful)
 func TextToInt64(str string) (int64, error) {

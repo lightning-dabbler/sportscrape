@@ -10,6 +10,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/util"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 var NBABoxscoreStatsHeaders map[string][]string = map[string][]string{
@@ -31,6 +32,8 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	context.HomeTeam = matchupModel.HomeTeamNameFull
 	context.HomeID = matchupModel.HomeTeamID
 	context.EventID = matchupModel.EventID
+	context.EventTime = matchupModel.EventTime
+
 	var data []interface{}
 	// Construct event data URL
 	log.Println("Constructing event data URL")
@@ -210,14 +213,17 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 		}
 
 		playerMap[playerID] = &model.NBABoxScoreStats{
-			PullTimestamp: context.PullTimestamp,
-			PlayerID:      playerID,
-			EventID:       context.EventID,
-			Starter:       true,
-			TeamID:        context.HomeID,
-			Team:          context.HomeTeam,
-			OpponentID:    context.AwayID,
-			Opponent:      context.AwayTeam,
+			PullTimestamp:        context.PullTimestamp,
+			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
+			EventTime:            context.EventTime,
+			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
+			PlayerID:             playerID,
+			EventID:              context.EventID,
+			Starter:              true,
+			TeamID:               context.HomeID,
+			Team:                 context.HomeTeam,
+			OpponentID:           context.AwayID,
+			Opponent:             context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
 		if err != nil {
@@ -236,13 +242,16 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 		}
 
 		playerMap[playerID] = &model.NBABoxScoreStats{
-			PullTimestamp: context.PullTimestamp,
-			PlayerID:      playerID,
-			EventID:       context.EventID,
-			TeamID:        context.HomeID,
-			Team:          context.HomeTeam,
-			OpponentID:    context.AwayID,
-			Opponent:      context.AwayTeam,
+			PullTimestamp:        context.PullTimestamp,
+			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
+			EventTime:            context.EventTime,
+			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
+			PlayerID:             playerID,
+			EventID:              context.EventID,
+			TeamID:               context.HomeID,
+			Team:                 context.HomeTeam,
+			OpponentID:           context.AwayID,
+			Opponent:             context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
 		if err != nil {
@@ -281,14 +290,17 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 		}
 
 		playerMap[playerID] = &model.NBABoxScoreStats{
-			PullTimestamp: context.PullTimestamp,
-			PlayerID:      playerID,
-			EventID:       context.EventID,
-			Starter:       true,
-			OpponentID:    context.HomeID,
-			Opponent:      context.HomeTeam,
-			TeamID:        context.AwayID,
-			Team:          context.AwayTeam,
+			PullTimestamp:        context.PullTimestamp,
+			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
+			EventTime:            context.EventTime,
+			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
+			PlayerID:             playerID,
+			EventID:              context.EventID,
+			Starter:              true,
+			OpponentID:           context.HomeID,
+			Opponent:             context.HomeTeam,
+			TeamID:               context.AwayID,
+			Team:                 context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
 		if err != nil {
@@ -307,13 +319,16 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 		}
 
 		playerMap[playerID] = &model.NBABoxScoreStats{
-			PullTimestamp: context.PullTimestamp,
-			PlayerID:      playerID,
-			EventID:       context.EventID,
-			OpponentID:    context.HomeID,
-			Opponent:      context.HomeTeam,
-			TeamID:        context.AwayID,
-			Team:          context.AwayTeam,
+			PullTimestamp:        context.PullTimestamp,
+			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
+			EventTime:            context.EventTime,
+			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
+			PlayerID:             playerID,
+			EventID:              context.EventID,
+			OpponentID:           context.HomeID,
+			Opponent:             context.HomeTeam,
+			TeamID:               context.AwayID,
+			Team:                 context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
 		if err != nil {
@@ -348,31 +363,31 @@ func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statli
 	// Field goals
 	var err error
 	fgSplit := strings.Split(statline.Columns[1].Text, "-")
-	stats.FieldGoalsMade, err = util.TextToInt(fgSplit[0])
+	stats.FieldGoalsMade, err = util.TextToInt32(fgSplit[0])
 	if err != nil {
 		return err
 	}
-	stats.FieldGoalAttempts, err = util.TextToInt(fgSplit[1])
+	stats.FieldGoalAttempts, err = util.TextToInt32(fgSplit[1])
 	if err != nil {
 		return err
 	}
 	// Threes
 	threesSplit := strings.Split(statline.Columns[2].Text, "-")
-	stats.ThreePointsMade, err = util.TextToInt(threesSplit[0])
+	stats.ThreePointsMade, err = util.TextToInt32(threesSplit[0])
 	if err != nil {
 		return err
 	}
-	stats.ThreePointAttempts, err = util.TextToInt(threesSplit[1])
+	stats.ThreePointAttempts, err = util.TextToInt32(threesSplit[1])
 	if err != nil {
 		return err
 	}
 	// Freethrows
 	freeThrowsSplit := strings.Split(statline.Columns[3].Text, "-")
-	stats.FreeThrowsMade, err = util.TextToInt(freeThrowsSplit[0])
+	stats.FreeThrowsMade, err = util.TextToInt32(freeThrowsSplit[0])
 	if err != nil {
 		return err
 	}
-	stats.FreeThrowAttempts, err = util.TextToInt(freeThrowsSplit[1])
+	stats.FreeThrowAttempts, err = util.TextToInt32(freeThrowsSplit[1])
 	if err != nil {
 		return err
 	}
@@ -387,7 +402,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[1].Text == "-" {
 		stats.MinutesPlayed = 0
 	} else {
-		stats.MinutesPlayed, err = util.TextToInt(statline.Columns[1].Text)
+		stats.MinutesPlayed, err = util.TextToInt32(statline.Columns[1].Text)
 		if err != nil {
 			return err
 		}
@@ -396,7 +411,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[2].Text == "-" {
 		stats.OffensiveRebounds = 0
 	} else {
-		stats.OffensiveRebounds, err = util.TextToInt(statline.Columns[2].Text)
+		stats.OffensiveRebounds, err = util.TextToInt32(statline.Columns[2].Text)
 		if err != nil {
 			return err
 		}
@@ -405,7 +420,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[3].Text == "-" {
 		stats.DefensiveRebounds = 0
 	} else {
-		stats.DefensiveRebounds, err = util.TextToInt(statline.Columns[3].Text)
+		stats.DefensiveRebounds, err = util.TextToInt32(statline.Columns[3].Text)
 		if err != nil {
 			return err
 		}
@@ -414,7 +429,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[4].Text == "-" {
 		stats.TotalRebounds = 0
 	} else {
-		stats.TotalRebounds, err = util.TextToInt(statline.Columns[4].Text)
+		stats.TotalRebounds, err = util.TextToInt32(statline.Columns[4].Text)
 		if err != nil {
 			return err
 		}
@@ -423,7 +438,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[5].Text == "-" {
 		stats.Assists = 0
 	} else {
-		stats.Assists, err = util.TextToInt(statline.Columns[5].Text)
+		stats.Assists, err = util.TextToInt32(statline.Columns[5].Text)
 		if err != nil {
 			return err
 		}
@@ -432,7 +447,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[6].Text == "-" {
 		stats.Steals = 0
 	} else {
-		stats.Steals, err = util.TextToInt(statline.Columns[6].Text)
+		stats.Steals, err = util.TextToInt32(statline.Columns[6].Text)
 		if err != nil {
 			return err
 		}
@@ -441,7 +456,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[7].Text == "-" {
 		stats.Blocks = 0
 	} else {
-		stats.Blocks, err = util.TextToInt(statline.Columns[7].Text)
+		stats.Blocks, err = util.TextToInt32(statline.Columns[7].Text)
 		if err != nil {
 			return err
 		}
@@ -450,7 +465,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[8].Text == "-" {
 		stats.Turnovers = 0
 	} else {
-		stats.Turnovers, err = util.TextToInt(statline.Columns[8].Text)
+		stats.Turnovers, err = util.TextToInt32(statline.Columns[8].Text)
 		if err != nil {
 			return err
 		}
@@ -459,7 +474,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[9].Text == "-" {
 		stats.PersonalFouls = 0
 	} else {
-		stats.PersonalFouls, err = util.TextToInt(statline.Columns[9].Text)
+		stats.PersonalFouls, err = util.TextToInt32(statline.Columns[9].Text)
 		if err != nil {
 			return err
 		}
@@ -468,7 +483,7 @@ func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, stat
 	if statline.Columns[10].Text == "-" {
 		stats.Points = 0
 	} else {
-		stats.Points, err = util.TextToInt(statline.Columns[10].Text)
+		stats.Points, err = util.TextToInt32(statline.Columns[10].Text)
 		if err != nil {
 			return err
 		}

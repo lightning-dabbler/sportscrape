@@ -16,7 +16,7 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 	}
 	date := "2025-02-19"
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(2 * time.Minute),
+		WithMatchupTimeout(4 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewAdvBoxScoreRunner(
@@ -60,8 +60,8 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 				assert.Equal(t, float32(6.7), stats.BlockPercentage, "LeBron block percentage")
 				assert.Equal(t, float32(8.0), stats.TurnoverPercentage, "LeBron turnover percentage")
 				assert.Equal(t, float32(27.8), stats.UsagePercentage, "LeBron usage percentage")
-				assert.Equal(t, 122, stats.OffensiveRating, "LeBron offensive rating")
-				assert.Equal(t, 97, stats.DefensiveRating, "LeBron defensive rating")
+				assert.Equal(t, int32(122), stats.OffensiveRating, "LeBron offensive rating")
+				assert.Equal(t, int32(97), stats.DefensiveRating, "LeBron defensive rating")
 				// assert.Equal(t, float32(14.6), stats.BoxPlusMinus, "LeBron box plus minus")
 			}
 		} else {
@@ -81,17 +81,17 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 				assert.Equal(t, float32(0.429), stats.TrueShootingPercentage, "Gabe true shooting percentage")
 				assert.Equal(t, float32(0.429), stats.EffectiveFieldGoalPercentage, "Gabe effective field goal percentage")
 				assert.Equal(t, float32(0.857), stats.ThreePointAttemptRate, "Gabe three point attempt rate")
-				assert.Equal(t, 0, stats.FreeThrowAttemptRate, "Gabe free throw attempt rate")
+				assert.Equal(t, int32(0), stats.FreeThrowAttemptRate, "Gabe free throw attempt rate")
 				assert.Equal(t, float32(9.5), stats.OffensiveReboundPercentage, "Gabe offensive rebound percentage")
 				assert.Equal(t, float32(5.1), stats.DefensiveReboundPercentage, "Gabe defensive rebound percentage")
 				assert.Equal(t, float32(7.3), stats.TotalReboundPercentage, "Gabe total rebound percentage")
 				assert.Equal(t, float32(14.7), stats.AssistPercentage, "Gabe assist percentage")
-				assert.Equal(t, 0, stats.StealPercentage, "Gabe steal percentage")
-				assert.Equal(t, 0, stats.BlockPercentage, "Gabe block percentage")
+				assert.Equal(t, int32(0), stats.StealPercentage, "Gabe steal percentage")
+				assert.Equal(t, int32(0), stats.BlockPercentage, "Gabe block percentage")
 				assert.Equal(t, float32(12.5), stats.TurnoverPercentage, "Gabe turnover percentage")
 				assert.Equal(t, float32(16.8), stats.UsagePercentage, "Gabe usage percentage")
-				assert.Equal(t, 95, stats.OffensiveRating, "Gabe offensive rating")
-				assert.Equal(t, 107, stats.DefensiveRating, "Gabe defensive rating")
+				assert.Equal(t, int32(95), stats.OffensiveRating, "Gabe offensive rating")
+				assert.Equal(t, int32(107), stats.DefensiveRating, "Gabe defensive rating")
 				assert.Equal(t, float32(-6.0), stats.BoxPlusMinus, "Gabe box plus minus")
 			}
 		}

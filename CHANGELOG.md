@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `github.com/xitongsys/parquet-go` dependency
+- Added parquet tags to data models
+- Added `EventTime` field to fox sports `NBABoxScoreStats`
+- Added `PullTimestampParquet` field to all data models for parquet conversion
+- Data models with `EventTime` also include `EventTimeParquet` for parquet conversion
+- Data models with `EventDate` also include `EventDateParquet` for parquet conversion
+- Added utility function `TimeToDays`
+- Created `TextToInt32` utility function
+
+### Changed
+- Changed `int` type instances in data models to `int32` to match parquet writer type expectations
+- Less noise in logging for NBA basic box score stats and advanced box score stats when parsed text is empty string.
+- Update to documentation to included supported file formats to export/import.
+
+### Fixed
+- Correct default assignment for `threePointAttempts` of basketball reference NBA basic box score stats
 
 ## [0.5.0] - 2025-04-10
 ### Added

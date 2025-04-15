@@ -11,6 +11,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 const (
@@ -135,6 +136,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 			var boxScoreStats model.NBAAdvBoxScoreStats
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
+				boxScoreStats.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
 				boxScoreStats.EventID = matchupModel.EventID
 				if i == 0 {
 					boxScoreStats.Team = matchupModel.AwayTeam
@@ -144,6 +146,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					boxScoreStats.Opponent = matchupModel.AwayTeam
 				}
 				boxScoreStats.EventDate = matchupModel.EventDate
+				boxScoreStats.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
 				if j < 5 {
 					boxScoreStats.Starter = true
 				} else {
@@ -167,7 +170,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// TrueShootingPercentage
 					trueShootingPercentageText := util.CleanTextDatum(s.Find("td:nth-child(3)").Text())
 					trueShootingPercentage, err := util.TextToFloat32(trueShootingPercentageText)
-					if err != nil {
+					if trueShootingPercentageText == "" {
+						trueShootingPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for trueShootingPercentageText to float32 - %w; defaulting to 0.", trueShootingPercentageText, err))
 						trueShootingPercentage = 0
 					}
@@ -176,7 +181,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// EffectiveFieldGoalPercentage
 					effectiveFieldGoalPercentageText := util.CleanTextDatum(s.Find("td:nth-child(4)").Text())
 					effectiveFieldGoalPercentage, err := util.TextToFloat32(effectiveFieldGoalPercentageText)
-					if err != nil {
+					if effectiveFieldGoalPercentageText == "" {
+						effectiveFieldGoalPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for effectiveFieldGoalPercentageText to float32 - %w; defaulting to 0.", effectiveFieldGoalPercentageText, err))
 						effectiveFieldGoalPercentage = 0
 					}
@@ -185,7 +192,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// ThreePointAttemptRate
 					threePointAttemptRateText := util.CleanTextDatum(s.Find("td:nth-child(5)").Text())
 					threePointAttemptRate, err := util.TextToFloat32(threePointAttemptRateText)
-					if err != nil {
+					if threePointAttemptRateText == "" {
+						threePointAttemptRate = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for threePointAttemptRateText to float32 - %w; defaulting to 0.", threePointAttemptRateText, err))
 						threePointAttemptRate = 0
 					}
@@ -194,7 +203,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// FreeThrowAttemptRate
 					freeThrowAttemptRateText := util.CleanTextDatum(s.Find("td:nth-child(6)").Text())
 					freeThrowAttemptRate, err := util.TextToFloat32(freeThrowAttemptRateText)
-					if err != nil {
+					if freeThrowAttemptRateText == "" {
+						freeThrowAttemptRate = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for freeThrowAttemptRateText to float32 - %w; defaulting to 0.", freeThrowAttemptRateText, err))
 						freeThrowAttemptRate = 0
 					}
@@ -203,7 +214,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// OffensiveReboundPercentage
 					offensiveReboundPercentageText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
 					offensiveReboundPercentage, err := util.TextToFloat32(offensiveReboundPercentageText)
-					if err != nil {
+					if offensiveReboundPercentageText == "" {
+						offensiveReboundPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for offensiveReboundPercentageText to float32 - %w; defaulting to 0.", offensiveReboundPercentageText, err))
 						offensiveReboundPercentage = 0
 					}
@@ -212,7 +225,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// DefensiveReboundPercentage
 					defensiveReboundPercentageText := util.CleanTextDatum(s.Find("td:nth-child(8)").Text())
 					defensiveReboundPercentage, err := util.TextToFloat32(defensiveReboundPercentageText)
-					if err != nil {
+					if defensiveReboundPercentageText == "" {
+						defensiveReboundPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for defensiveReboundPercentageText to float32 - %w; defaulting to 0.", defensiveReboundPercentageText, err))
 						defensiveReboundPercentage = 0
 					}
@@ -221,7 +236,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// TotalReboundPercentage
 					totalReboundPercentageText := util.CleanTextDatum(s.Find("td:nth-child(9)").Text())
 					totalReboundPercentage, err := util.TextToFloat32(totalReboundPercentageText)
-					if err != nil {
+					if totalReboundPercentageText == "" {
+						totalReboundPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for totalReboundPercentageText to float32 - %w; defaulting to 0.", totalReboundPercentageText, err))
 						totalReboundPercentage = 0
 					}
@@ -230,7 +247,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// AssistPercentage
 					assistPercentageText := util.CleanTextDatum(s.Find("td:nth-child(10)").Text())
 					assistPercentage, err := util.TextToFloat32(assistPercentageText)
-					if err != nil {
+					if assistPercentageText == "" {
+						assistPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for assistPercentageText to float32 - %w; defaulting to 0.", assistPercentageText, err))
 						assistPercentage = 0
 					}
@@ -239,7 +258,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// StealPercentage
 					stealPercentageText := util.CleanTextDatum(s.Find("td:nth-child(11)").Text())
 					stealPercentage, err := util.TextToFloat32(stealPercentageText)
-					if err != nil {
+					if stealPercentageText == "" {
+						stealPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for stealPercentageText to float32 - %w; defaulting to 0.", stealPercentageText, err))
 						stealPercentage = 0
 					}
@@ -248,7 +269,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// BlockPercentage
 					blockPercentageText := util.CleanTextDatum(s.Find("td:nth-child(12)").Text())
 					blockPercentage, err := util.TextToFloat32(blockPercentageText)
-					if err != nil {
+					if blockPercentageText == "" {
+						blockPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for blockPercentageText to float32 - %w; defaulting to 0.", blockPercentageText, err))
 						blockPercentage = 0
 					}
@@ -257,7 +280,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// TurnoverPercentage
 					turnoverPercentageText := util.CleanTextDatum(s.Find("td:nth-child(13)").Text())
 					turnoverPercentage, err := util.TextToFloat32(turnoverPercentageText)
-					if err != nil {
+					if turnoverPercentageText == "" {
+						turnoverPercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for turnoverPercentageText to float32 - %w; defaulting to 0.", turnoverPercentageText, err))
 						turnoverPercentage = 0
 					}
@@ -266,7 +291,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// UsagePercentage
 					usagePercentageText := util.CleanTextDatum(s.Find("td:nth-child(14)").Text())
 					usagePercentage, err := util.TextToFloat32(usagePercentageText)
-					if err != nil {
+					if usagePercentageText == "" {
+						usagePercentage = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for usagePercentageText to float32 - %w; defaulting to 0.", usagePercentageText, err))
 						usagePercentage = 0
 					}
@@ -274,8 +301,10 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 
 					// OffensiveRating
 					offensiveRatingText := util.CleanTextDatum(s.Find("td:nth-child(15)").Text())
-					offensiveRating, err := util.TextToInt(offensiveRatingText)
-					if err != nil {
+					offensiveRating, err := util.TextToInt32(offensiveRatingText)
+					if offensiveRatingText == "" {
+						offensiveRating = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for offensiveRatingText to float32 - %w; defaulting to 0.", offensiveRatingText, err))
 						offensiveRating = 0
 					}
@@ -283,8 +312,10 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 
 					// DefensiveRating
 					defensiveRatingText := util.CleanTextDatum(s.Find("td:nth-child(16)").Text())
-					defensiveRating, err := util.TextToInt(defensiveRatingText)
-					if err != nil {
+					defensiveRating, err := util.TextToInt32(defensiveRatingText)
+					if defensiveRatingText == "" {
+						defensiveRating = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for defensiveRatingText to float32 - %w; defaulting to 0.", defensiveRatingText, err))
 						defensiveRating = 0
 					}
@@ -293,7 +324,9 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 					// BoxPlusMinus
 					boxPlusMinusText := util.CleanTextDatum(s.Find("td:nth-child(17)").Text())
 					boxPlusMinus, err := util.TextToFloat32(boxPlusMinusText)
-					if err != nil {
+					if boxPlusMinusText == "" {
+						boxPlusMinus = 0
+					} else if err != nil {
 						log.Println(fmt.Errorf("WARNING: Can't convert '%s' for boxPlusMinusText to float32 - %w; defaulting to 0.", boxPlusMinusText, err))
 						boxPlusMinus = 0
 					}

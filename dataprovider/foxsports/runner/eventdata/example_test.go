@@ -10,7 +10,7 @@ import (
 )
 
 // Example for eventdata.NBABoxScoreScraper
-func ExampleNBABoxScoreScraper_nba() {
+func ExampleNBABoxScoreScraper() {
 	// Get matchups
 	matchupRunner := matchup.NewGeneralMatchupRunner(
 		matchup.GeneralMatchupLeague(foxsports.NBA),
