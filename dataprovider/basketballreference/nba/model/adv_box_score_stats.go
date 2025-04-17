@@ -7,13 +7,13 @@ type NBAAdvBoxScoreStats struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
-	PullTimestampParquet int64 `parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	PullTimestampParquet int64 `json:"-" parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventID is the parsed event id from the box score link of the matchup
 	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY"`
 	// EventDate is the timestamp associated with a given event
 	EventDate time.Time `json:"event_date"`
 	// EventDateParquet is the timestamp associated with a given event (in days)
-	EventDateParquet int32 `parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
+	EventDateParquet int32 `json:"-" parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
 	// Team is the player's team name
 	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY"`
 	// Opponent is the opposing team name
