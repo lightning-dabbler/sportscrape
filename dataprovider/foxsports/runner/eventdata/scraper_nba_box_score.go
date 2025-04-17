@@ -359,7 +359,7 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 	return playerMap, nil
 
 }
-func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statline jsonresponse.NBABoxScoreStatline) error {
+func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
 	// Field goals
 	var err error
 	fgSplit := strings.Split(statline.Columns[1].Text, "-")
@@ -394,7 +394,7 @@ func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statli
 	return nil
 }
 
-func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, statline jsonresponse.NBABoxScoreStatline) error {
+func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
 	var err error
 	stats.Player = statline.EntityLink.Player
 	stats.Position = *statline.Columns[0].Superscript
