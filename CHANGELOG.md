@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created fox sports `MLBEventData` jsonresponse
 - Created fox sports `MLBPitchingBoxScoreStats` and `MLBBattingBoxScoreStats` data models
+- Created `MLBBattingBoxScoreScraper` to scrape fox sports MLB batting box score data
 
 ### Changed
 - Generalized fox sports jsonresponse `BoxScoreStatline` and `BoxScoreStats` for mlb and nba use cases

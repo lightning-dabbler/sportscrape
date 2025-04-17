@@ -197,7 +197,6 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 }
 
 func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBAEventData, context Context) (map[int64]*model.NBABoxScoreStats, error) {
-	// var playerMap map[int64]*model.NBABoxScoreStats
 	playerMap := make(map[int64]*model.NBABoxScoreStats)
 
 	// Home

@@ -34,3 +34,29 @@ func ExampleNBABoxScoreScraper() {
 		fmt.Printf("%#v\n", statline.(model.NBABoxScoreStats))
 	}
 }
+
+// Example for eventdata.MLBBattingBoxScoreScraper
+func ExampleMLBBattingBoxScoreScraper() {
+	// Get matchups
+	matchupRunner := matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.MLB),
+		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
+	)
+
+	matchups := matchupRunner.GetMatchups()
+
+	// Get boxscore data
+	scraper := eventdata.MLBBattingBoxScoreScraper{}
+	scraper.League = foxsports.MLB
+	runner := eventdata.NewRunner(
+		eventdata.RunnerName("MLB Batting box score stats"),
+		eventdata.RunnerConcurrency(4),
+		eventdata.RunnerScraper(
+			&scraper,
+		),
+	)
+	boxScoreStats := runner.RunEventsDataScraper(matchups...)
+	for _, statline := range boxScoreStats {
+		fmt.Printf("%#v\n", statline.(model.NBABoxScoreStats))
+	}
+}

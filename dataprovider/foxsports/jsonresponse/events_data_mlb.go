@@ -13,8 +13,8 @@ type MLBEventData struct {
 }
 
 type MLBBoxScoreSection struct {
-	AwayPlayerStats *BoxScoreStats
-	HomePlayerStats *BoxScoreStats
+	AwayStats *BoxScoreStats
+	HomeStats *BoxScoreStats
 }
 
 func (boxscoreSection *MLBBoxScoreSection) UnmarshalJSON(b []byte) error {
@@ -28,11 +28,11 @@ func (boxscoreSection *MLBBoxScoreSection) UnmarshalJSON(b []byte) error {
 	}
 
 	if nSections == 2 {
-		if err := json.Unmarshal(sections[0], &boxscoreSection.AwayPlayerStats); err != nil {
+		if err := json.Unmarshal(sections[0], &boxscoreSection.AwayStats); err != nil {
 			return err
 		}
 
-		if err := json.Unmarshal(sections[1], &boxscoreSection.HomePlayerStats); err != nil {
+		if err := json.Unmarshal(sections[1], &boxscoreSection.HomeStats); err != nil {
 			return err
 		}
 	}
