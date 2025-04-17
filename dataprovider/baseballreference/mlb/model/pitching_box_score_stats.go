@@ -9,13 +9,13 @@ type MLBPitchingBoxScoreStats struct {
 	// PullTimestamp is the fetch timestamp for when the request was made to the API
 	PullTimestamp time.Time `json:"pull_timestamp"`
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
-	PullTimestampParquet int64 `parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	PullTimestampParquet int64 `json:"-" parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventID is the parsed event id from the box score link of the matchup
 	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY"`
 	// EventDate is the timestamp associated with a given event
 	EventDate time.Time `json:"event_date"`
 	// EventDateParquet is the timestamp associated with a given event (in days)
-	EventDateParquet int32 `parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
+	EventDateParquet int32 `json:"-" parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
 	// Team is the player's team name
 	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY"`
 	// Opponent is the opposing team name
@@ -26,7 +26,7 @@ type MLBPitchingBoxScoreStats struct {
 	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY"`
 	// PlayerLink is the link to the player's baseball-reference profile
 	PlayerLink string `json:"player_link" parquet:"name=player_link, type=BYTE_ARRAY"`
-	// PitchingOrder - The sequence of pitchers who played during the event per team
+	// PitchingOrder - The sequence of pitchers who played during the event per team (starting from 1)
 	PitchingOrder int32 `json:"pitching_order" parquet:"name=pitching_order, type=INT32"`
 	// InningsPitched (IP) - https://www.mlb.com/glossary/standard-stats/innings-pitched
 	InningsPitched float32 `json:"innings_pitched" parquet:"name=innings_pitched, type=FLOAT"`

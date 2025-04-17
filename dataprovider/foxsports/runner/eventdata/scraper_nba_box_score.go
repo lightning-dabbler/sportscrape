@@ -197,7 +197,6 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 }
 
 func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBAEventData, context Context) (map[int64]*model.NBABoxScoreStats, error) {
-	// var playerMap map[int64]*model.NBABoxScoreStats
 	playerMap := make(map[int64]*model.NBABoxScoreStats)
 
 	// Home
@@ -359,7 +358,7 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 	return playerMap, nil
 
 }
-func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statline jsonresponse.NBABoxScoreStatline) error {
+func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
 	// Field goals
 	var err error
 	fgSplit := strings.Split(statline.Columns[1].Text, "-")
@@ -394,7 +393,7 @@ func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statli
 	return nil
 }
 
-func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, statline jsonresponse.NBABoxScoreStatline) error {
+func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
 	var err error
 	stats.Player = statline.EntityLink.Player
 	stats.Position = *statline.Columns[0].Superscript

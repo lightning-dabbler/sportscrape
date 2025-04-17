@@ -47,7 +47,6 @@ func TestGetMatchups(t *testing.T) {
 			matchups := runner.GetMatchups(tt.date)
 			assert.Equal(t, tt.expectedNumMatches, len(matchups))
 			filePath := filepath.Join(tmpDir, "foo.parquet")
-			// file, err := fs.Create("/tmp/test-dir/foo.parquet")
 
 			// Write parquet
 			fw, err := local.NewLocalFileWriter(filePath)

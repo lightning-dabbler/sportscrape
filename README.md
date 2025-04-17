@@ -57,6 +57,8 @@ func main() {
 | https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NBA	| Box score stats		 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | MLB	| Batting Box score stats| Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | MLB	| Pitching Box score stats| Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|✅|
 
@@ -69,12 +71,7 @@ File formats the constructed data models support on export and import.
 
 ## Development
 ### Prerequisites
-- Go 1.24 or higher
-
-OR
-
-- Docker
-    - In which case refer to the Makefile at root to build and shell into a development docker container
+Go 1.24 or higher
 
 ### Testing
 This project is using [mockery](https://github.com/vektra/mockery) to mock interfaces.

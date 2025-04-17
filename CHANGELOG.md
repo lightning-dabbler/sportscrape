@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Created fox sports `MLBEventData` jsonresponse (#56)
+- Created fox sports `MLBPitchingBoxScoreStats` and `MLBBattingBoxScoreStats` data models (#56)
+- Created `MLBBattingBoxScoreScraper` to scrape fox sports MLB batting box score data (#56)
+- Created `MLBPitchingBoxScoreScraper` to scrape fox sports MLB pitching box score data (#56)
+
+### Changed
+- Generalized fox sports jsonresponse `BoxScoreStatline` and `BoxScoreStats` for mlb and nba use cases (#56)
+- json omit fields ending in "Parquet" (#56)
 
 ## [0.6.0] - 2025-04-15
 ### Added
