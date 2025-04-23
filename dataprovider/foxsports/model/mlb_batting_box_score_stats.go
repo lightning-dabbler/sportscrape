@@ -17,17 +17,17 @@ type MLBBattingBoxScoreStats struct {
 	// TeamID is the player's team's ID e.g. 21
 	TeamID int64 `json:"team_id" parquet:"name=team_id, type=INT64"`
 	// Team is the player's team name e.g. Atlanta Braves
-	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY"`
+	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// OpponentID is the opposing team's team id
 	OpponentID int64 `json:"opponent_id" parquet:"name=opponent_id, type=INT64"`
 	// Opponent is the opposing team name
-	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY"`
+	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerID is the player's id
 	PlayerID int64 `json:"player_id" parquet:"name=player_id, type=INT64"`
 	// Player is the player's name
-	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY"`
+	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Position is the player's position
-	Position string `json:"position" parquet:"name=position, type=BYTE_ARRAY"`
+	Position string `json:"position" parquet:"name=position, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AtBat (AB) - https://www.mlb.com/glossary/standard-stats/at-bat
 	AtBat int32 `json:"at_bat" parquet:"name=at_bat, type=INT32"`
 	// Runs (R) - https://www.mlb.com/glossary/standard-stats/run
