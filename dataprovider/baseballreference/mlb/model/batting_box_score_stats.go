@@ -11,23 +11,23 @@ type MLBBattingBoxScoreStats struct {
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
 	PullTimestampParquet int64 `json:"-" parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventID is the parsed event id from the box score link of the matchup
-	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY"`
+	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// EventDate is the timestamp associated with a given event
 	EventDate time.Time `json:"event_date"`
 	// EventDateParquet is the timestamp associated with a given event (in days)
 	EventDateParquet int32 `json:"-" parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
 	// Team is the player's team name e.g. Atlanta Braves
-	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY"`
+	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Opponent is the opposing team name
-	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY"`
+	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerID is the player's id
-	PlayerID string `json:"player_id" parquet:"name=player_id, type=BYTE_ARRAY"`
+	PlayerID string `json:"player_id" parquet:"name=player_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Player is the player's name
-	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY"`
+	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerLink is the link to the player's baseball-reference profile
-	PlayerLink string `json:"player_link" parquet:"name=player_link, type=BYTE_ARRAY"`
+	PlayerLink string `json:"player_link" parquet:"name=player_link, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Position is the player's position
-	Position string `json:"position" parquet:"name=position, type=BYTE_ARRAY"`
+	Position string `json:"position" parquet:"name=position, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AtBat (AB) - https://www.mlb.com/glossary/standard-stats/at-bat
 	AtBat int32 `json:"at_bat" parquet:"name=at_bat, type=INT32"`
 	// Runs (R) - https://www.mlb.com/glossary/standard-stats/run

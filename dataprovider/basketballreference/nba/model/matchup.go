@@ -9,21 +9,21 @@ type NBAMatchup struct {
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
 	PullTimestampParquet int64 `json:"-" parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// EventID is the parsed event id from the box score link of the matchup
-	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY"`
+	EventID string `json:"event_id" parquet:"name=event_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// EventDate is the timestamp associated with a given event
 	EventDate time.Time `json:"event_date"`
 	// EventDateParquet is the timestamp associated with a given event (in days)
 	EventDateParquet int32 `json:"-" parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
 	// AwayTeam is the away team's name
-	AwayTeam string `json:"away_team" parquet:"name=away_team, type=BYTE_ARRAY"`
+	AwayTeam string `json:"away_team" parquet:"name=away_team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeTeam is the home team's name
-	HomeTeam string `json:"home_team" parquet:"name=home_team, type=BYTE_ARRAY"`
+	HomeTeam string `json:"home_team" parquet:"name=home_team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeScore is the home team's final score
 	HomeScore int32 `json:"home_score" parquet:"name=home_score, type=INT32"`
 	// AwayScore is the away team's final score
 	AwayScore int32 `json:"away_score" parquet:"name=away_score, type=INT32"`
 	// BoxScoreLink is the link to box score for related to the event
-	BoxScoreLink string `json:"box_score_link" parquet:"name=box_score_link, type=BYTE_ARRAY"`
+	BoxScoreLink string `json:"box_score_link" parquet:"name=box_score_link, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayQ1Total is the away team's Q1 points scored
 	AwayQ1Total int32 `json:"away_q1_total" parquet:"name=away_q1_total, type=INT32"`
 	// AwayQ2Total is the away team's Q2 points scored
@@ -41,9 +41,9 @@ type NBAMatchup struct {
 	// HomeQ4Total is the home team's Q4 points scored
 	HomeQ4Total int32 `json:"home_q4_total" parquet:"name=home_q4_total, type=INT32"`
 	// HomeTeamLink is the link to the home team's basketball-reference profile page
-	HomeTeamLink string `json:"home_team_link" parquet:"name=home_team_link, type=BYTE_ARRAY"`
+	HomeTeamLink string `json:"home_team_link" parquet:"name=home_team_link, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayTeamLink is the link to the away team's basketball-reference profile page
-	AwayTeamLink string `json:"away_team_link" parquet:"name=away_team_link, type=BYTE_ARRAY"`
+	AwayTeamLink string `json:"away_team_link" parquet:"name=away_team_link, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Loser is the losing team's name
-	Loser string `json:"loser" parquet:"name=loser, type=BYTE_ARRAY"`
+	Loser string `json:"loser" parquet:"name=loser, type=BYTE_ARRAY, convertedtype=UTF8"`
 }

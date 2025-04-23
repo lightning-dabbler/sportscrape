@@ -17,17 +17,17 @@ type MLBPitchingBoxScoreStats struct {
 	// TeamID is the player's team's ID e.g. 21
 	TeamID int64 `json:"team_id" parquet:"name=team_id, type=INT64"`
 	// Team is the player's team name e.g. Atlanta Braves
-	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY"`
+	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// OpponentID is the opposing team's team id
 	OpponentID int64 `json:"opponent_id" parquet:"name=opponent_id, type=INT64"`
 	// Opponent is the opposing team name
-	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY"`
+	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerID is the player's id
 	PlayerID int64 `json:"player_id" parquet:"name=player_id, type=INT64"`
 	// Player is the player's name
-	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY"`
+	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Record is starting pitcher's record
-	Record *string `json:"record" parquet:"name=record, type=BYTE_ARRAY"`
+	Record *string `json:"record" parquet:"name=record, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PitchingOrder - The sequence of pitchers who played during the event per team (starting from 1)
 	PitchingOrder int32 `json:"pitching_order" parquet:"name=pitching_order, type=INT32"`
 	// InningsPitched (IP) - https://www.mlb.com/glossary/standard-stats/innings-pitched
