@@ -18,11 +18,11 @@ func TestGetBattingBoxScoreStats(t *testing.T) {
 	date := "2024-10-13"
 
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(3 * time.Minute),
+		WithMatchupTimeout(5 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewBattingBoxScoreRunner(
-		WithBattingBoxScoreTimeout(4*time.Minute),
+		WithBattingBoxScoreTimeout(5*time.Minute),
 		WithBattingBoxScoreConcurrency(1),
 	)
 	boxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
