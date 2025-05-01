@@ -25,11 +25,11 @@ coverage-html: # Converts coverage.out to coverage.html
 mocks-gen: # Generates mocks using mockery
 	mockery
 
-unit-tests: mocks-gen # Run unit tests
+unit-tests: # Run unit tests
 	go test -v -short -tags=unit -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html
 
-all-tests: mocks-gen # Run all tests regardless of tags
+all-tests: # Run all tests regardless of tags
 	go test -v -tags="unit integration" -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html
 

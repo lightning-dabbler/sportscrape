@@ -1,6 +1,6 @@
 //go:build unit
 
-package sportsreferenceutil_test
+package sportsreferenceutil
 
 import (
 	"reflect"
@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	mocksportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,8 +16,8 @@ import (
 // TestMatchupRunnerStructure verifies MatchupRunner embeds Runner properly
 func TestMatchupRunnerStructure(t *testing.T) {
 	// Verify MatchupRunner embeds Runner
-	runner := sportsreferenceutil.MatchupRunner{
-		Runner: sportsreferenceutil.Runner{
+	runner := MatchupRunner{
+		Runner: Runner{
 			Timeout: 5 * time.Second,
 			Debug:   true,
 		},
@@ -87,8 +86,8 @@ func TestBoxScoreRunnerGetBoxScoresStats(t *testing.T) {
 				mockprocessor.EXPECT().GetSegmentBoxScoreStats(matchup).Return([]interface{}{2 * matchup.(int), 2 * matchup.(int)})
 			}
 
-			runner := &sportsreferenceutil.BoxScoreRunner{
-				Runner: sportsreferenceutil.Runner{
+			runner := &BoxScoreRunner{
+				Runner: Runner{
 					Timeout: 1 * time.Second,
 				},
 				Concurrency: tc.concurrency,
@@ -124,7 +123,7 @@ func TestBoxScoreRunnerWorker(t *testing.T) {
 	for _, matchup := range matchups {
 		mockprocessor.EXPECT().GetSegmentBoxScoreStats(matchup).Return([]interface{}{matchup})
 	}
-	runner := &sportsreferenceutil.BoxScoreRunner{
+	runner := &BoxScoreRunner{
 		Processor: mockprocessor,
 	}
 
@@ -181,7 +180,7 @@ func TestRunnerStructureAndOptions(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			runner := sportsreferenceutil.Runner{
+			runner := Runner{
 				Timeout: tc.timeout,
 				Debug:   tc.debug,
 			}
