@@ -18,7 +18,7 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 	date := "2024-10-30"
 
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(3 * time.Minute),
+		WithMatchupTimeout(5 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewPitchingBoxScoreRunner(

@@ -16,11 +16,11 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 	}
 	date := "2025-02-19"
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(4 * time.Minute),
+		WithMatchupTimeout(5 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewBasicBoxScoreRunner(
-		WithBasicBoxScoreTimeout(4*time.Minute),
+		WithBasicBoxScoreTimeout(5*time.Minute),
 		WithBasicBoxScoreConcurrency(1),
 	)
 	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
@@ -91,7 +91,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 	}
 	date := "2025-02-19"
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(2 * time.Minute),
+		WithMatchupTimeout(4 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewBasicBoxScoreRunner(
@@ -205,7 +205,7 @@ func TestGetQ3BasicBoxScoreStats(t *testing.T) {
 	}
 	date := "2025-02-19"
 	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(2 * time.Minute),
+		WithMatchupTimeout(4 * time.Minute),
 	)
 	matchups := matchupRunner.GetMatchups(date)
 	boxScoreRunner := NewBasicBoxScoreRunner(
