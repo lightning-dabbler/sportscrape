@@ -396,7 +396,7 @@ func (s *NBABoxScoreScraper) parseShooting(stats *model.NBABoxScoreStats, statli
 func (s *NBABoxScoreScraper) parseRawMetrics(stats *model.NBABoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
 	var err error
 	stats.Player = statline.EntityLink.Player
-	stats.Position = *statline.Columns[0].Superscript
+	stats.Position = statline.Columns[0].Superscript
 	// MinutesPlayed
 	if statline.Columns[1].Text == "-" {
 		stats.MinutesPlayed = 0

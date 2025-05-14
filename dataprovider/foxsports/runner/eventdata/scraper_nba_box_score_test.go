@@ -59,7 +59,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 			assert.Equal(t, "Detroit Pistons", s.Opponent, "Opponent")
 			assert.Equal(t, int64(3708), s.PlayerID, "PlayerID")
 			assert.Equal(t, "Keon Ellis", s.Player, "Player")
-			assert.Equal(t, "SG", s.Position, "Position")
+			assert.Equal(t, "SG", *s.Position, "Position")
 			assert.Equal(t, true, s.Starter, "Starter")
 			assert.Equal(t, int32(37), s.MinutesPlayed, "MinutesPlayed")
 			assert.Equal(t, int32(1), s.FieldGoalsMade, "FieldGoalsMade")
@@ -85,4 +85,27 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		assert.True(t, exists, fmt.Sprintf("Event ID %d is in expected list", eventID))
 		assert.Equal(t, val, count)
 	}
+	// 2019-10-06
+	// Issue: https://github.com/lightning-dabbler/sportscrape/issues/64
+
+	matchupRunner = matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.NBA),
+		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2019-10-06"}),
+	)
+
+	matchups = matchupRunner.GetMatchups()
+
+	// Get boxscore data
+	scraper = NBABoxScoreScraper{}
+	scraper.League = foxsports.NBA
+	runner = NewRunner(
+		RunnerName("NBA Box score stats"),
+		RunnerConcurrency(2),
+		RunnerScraper(
+			&scraper,
+		),
+	)
+	boxScoreStats = runner.RunEventsDataScraper(matchups...)
+	n_stats = len(boxScoreStats)
+	assert.Equal(t, 69, n_stats, "69 statlines")
 }

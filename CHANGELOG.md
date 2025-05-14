@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed "invalid memory address or nil pointer dereference" in foxsports nba box score stats scraper (#65)
+### Changed
+- fox sports `NBABoxScoreStats.Position` is now optional (#65)
 
 ## [0.7.3] - 2025-04-30
 ### Changed
