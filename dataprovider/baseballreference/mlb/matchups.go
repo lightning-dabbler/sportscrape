@@ -108,12 +108,23 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		})
 		var awayTeamSelection, homeTeamSelection *goquery.Selection
 		n := len(teamSection)
-		if n == 3 && strings.HasPrefix(strings.ToLower(teamSection[0].Find("td").Text()), "game") {
-			matchup.PlayoffMatch = true
-			awayTeamSelection = teamSection[1]
-			homeTeamSelection = teamSection[2]
-			awayLocation = fmt.Sprintf(directTeamSelectorTemplate, 2)
-			homeLocation = fmt.Sprintf(directTeamSelectorTemplate, 3)
+		if n == 3 {
+			if strings.HasPrefix(strings.ToLower(teamSection[0].Find("td").Text()), "game") {
+				// playoff event
+				matchup.PlayoffMatch = true
+				awayTeamSelection = teamSection[1]
+				homeTeamSelection = teamSection[2]
+				awayLocation = fmt.Sprintf(directTeamSelectorTemplate, 2)
+				homeLocation = fmt.Sprintf(directTeamSelectorTemplate, 3)
+			} else if strings.HasPrefix(strings.ToLower(teamSection[2].Find("td").Text()), "completed on") {
+				// The game completed at a later date
+				awayTeamSelection = teamSection[0]
+				homeTeamSelection = teamSection[1]
+				awayLocation = fmt.Sprintf(directTeamSelectorTemplate, 1)
+				homeLocation = fmt.Sprintf(directTeamSelectorTemplate, 2)
+			} else {
+				log.Fatalf("Game summary table #%d has %d table rows with unfamiliar record order!\n", idx+1, n)
+			}
 		} else if n == 2 {
 			awayTeamSelection = teamSection[0]
 			homeTeamSelection = teamSection[1]
