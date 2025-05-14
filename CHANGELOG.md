@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.1] - 2025-05-14
 ### Fixed
-- Fixed error when scraping mlb matchup summary tables with events that completed at later dates on baseball reference
+- Fixed error when scraping mlb matchup summary tables with events that completed at later dates on baseball reference (#68)
 
 ## [0.8.0] - 2025-05-14
 ### Fixed
