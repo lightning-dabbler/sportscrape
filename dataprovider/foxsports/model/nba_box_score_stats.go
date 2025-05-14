@@ -27,7 +27,7 @@ type NBABoxScoreStats struct {
 	// Player is the player's name
 	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Position is the player's position
-	Position string `json:"position" parquet:"name=position, type=BYTE_ARRAY, convertedtype=UTF8"`
+	Position *string `json:"position" parquet:"name=position, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Starter is whether the player was apart of the team's starting five during the event or not
 	Starter bool `json:"starter" parquet:"name=starter, type=BOOLEAN"`
 	// MinutesPlayed is minutes played during the event
