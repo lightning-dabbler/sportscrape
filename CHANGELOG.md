@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.2] - 2025-05-17
 ### Fixed
-- Optimize extraction of matchups on baseball-reference and basketball-reference
+- Optimize extraction of matchups on baseball-reference and basketball-reference (#70)
 
 ## [0.8.1] - 2025-05-14
 ### Fixed
