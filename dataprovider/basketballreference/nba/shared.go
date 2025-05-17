@@ -25,12 +25,12 @@ var networkHeaders network.Headers = network.Headers(map[string]interface{}{
 
 const (
 	// https://www.basketball-reference.com/boxscores/{event_id}.html
-	waitReadyBoxScoreContentSelector = `#content`
-	boxScoreStatsRecordsSelector     = `tbody > tr`
-	boxScoreStarterHeaders           = `thead > tr:nth-child(2) th`
-	boxScoreReserveHeaders           = `th`
-	boxScorePlayerSelector           = "th"
-	boxScorePlayerLinkSelector       = boxScorePlayerSelector + " > a"
+	contentReadySelector         = "#content"
+	boxScoreStatsRecordsSelector = `tbody > tr`
+	boxScoreStarterHeaders       = `thead > tr:nth-child(2) th`
+	boxScoreReserveHeaders       = `th`
+	boxScorePlayerSelector       = "th"
+	boxScorePlayerLinkSelector   = boxScorePlayerSelector + " > a"
 )
 
 func transformMinutesPlayed(minutesPlayed string) (float32, error) {

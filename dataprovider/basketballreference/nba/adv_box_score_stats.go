@@ -117,7 +117,7 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 	start := time.Now().UTC()
 	var advNBABoxScoreStats []interface{}
 	log.Println("Scraping Advanced Box Score: " + url)
-	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
+	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -101,7 +101,7 @@ func (boxScoreRunner *PitchingBoxScoreRunner) GetSegmentBoxScoreStats(matchup in
 	start := time.Now().UTC()
 	var boxScoreStats []interface{}
 	log.Println("Scraping pitching Box Score: " + url)
-	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
+	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
 		log.Fatalln(err)
 	}

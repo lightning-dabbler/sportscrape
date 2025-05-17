@@ -189,7 +189,7 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 	start := time.Now().UTC()
 	var basicNBABoxScoreStats []interface{}
 	log.Printf("Scraping %s Basic Box Score: %s\n", boxScoreRunner.Period.String(), url)
-	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, waitReadyBoxScoreContentSelector)
+	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
 		log.Fatalln(err)
 	}
