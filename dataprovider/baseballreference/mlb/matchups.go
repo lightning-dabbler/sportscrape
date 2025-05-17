@@ -89,7 +89,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	doc, err := matchupRunner.RetrieveDocument(url, networkHeaders, matchupsGameSummariesSelector)
+	doc, err := matchupRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
 		log.Fatalln(err)
 	}

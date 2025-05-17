@@ -32,11 +32,11 @@ const (
 )
 
 const (
-	waitReadyBoxScoreContentSelector = "#content"
-	headersSelector                  = "thead > tr th"
-	recordSelector                   = "tbody > tr"
-	positionSelector                 = "th"
-	playerSelector                   = positionSelector + " a"
+	contentReadySelector = "#content"
+	headersSelector      = "thead > tr th"
+	recordSelector       = "tbody > tr"
+	positionSelector     = "th"
+	playerSelector       = positionSelector + " a"
 )
 
 func (st StatType) String() string {
