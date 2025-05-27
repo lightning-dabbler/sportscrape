@@ -101,7 +101,7 @@ func (t *Runner) RunEventsDataScraper(matchups ...interface{}) []interface{} {
 	for ow := range eventData {
 		if ow.Error != nil {
 			errors += 1
-			log.Println(fmt.Errorf("Issue Scraping %d (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
+			log.Println(fmt.Errorf("issue Scraping %d (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
 			continue
 		} else {
 			log.Printf("%d (%s vs %s) scraped for %d records for %s at url: %s\n", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, len(ow.Output), t.Name, ow.Context.URL)

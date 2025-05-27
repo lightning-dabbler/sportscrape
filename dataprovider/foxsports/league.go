@@ -54,7 +54,7 @@ func (l League) V1MatchupURL(segmentID string) (*url.URL, error) {
 	case NFL:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), scoreboardPath))
 	default:
-		return nil, fmt.Errorf("Unknown League identified: %#v", l)
+		return nil, fmt.Errorf("unknown League identified: %#v", l)
 	}
 }
 
@@ -76,7 +76,29 @@ func (l League) V1EventDataURL(eventID int64) (*url.URL, error) {
 	case NFL:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
 	default:
-		return nil, fmt.Errorf("Unknown League identified: %#v", l)
+		return nil, fmt.Errorf("unknown League identified: %#v", l)
+	}
+}
+
+// V1MatchupComparisonURL generates the full path for matchup comparison based on league and eventID
+//
+// Parameter:
+//   - eventID: The integer identifier for the event
+//
+// Returns the parsed URL for the path for event data
+func (l League) V1MatchupComparisonURL(eventID int64) (*url.URL, error) {
+	eventPath := fmt.Sprintf("event/%d/matchup", eventID)
+	switch l {
+	case NBA:
+		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
+	case MLB:
+		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
+	case NCAAB:
+		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
+	case NFL:
+		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
+	default:
+		return nil, fmt.Errorf("unknown League identified: %#v", l)
 	}
 }
 

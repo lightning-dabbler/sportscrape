@@ -2,19 +2,16 @@ package jsonresponse
 
 // https://api.foxsports.com/bifrost/v1/mlb/event/91988/matchup?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 type MLBMatchupComparison struct {
-	FeaturedPairing struct {
-		Title    string `json:"title"`
-		SubTitle string `json:"subTitle"`
+	FeaturedPairing *struct {
+		Title       string                     `json:"title"`
+		SubTitle    string                     `json:"subTitle"`
+		HomePitcher MLBProbableStartingPitcher `json:"rightEntity"`
+		AwayPitcher MLBProbableStartingPitcher `json:"leftEntity"`
 	} `json:"featuredPairing"`
-	BoxScore *struct {
-		BoxScoreSections *MLBBoxScoreSection `json:"boxscoreSections"`
-	} `json:"boxScore"`
-	HomePitcher MLBProbableStartingPitcher `json:"rightEntity"`
-	AwayPitcher MLBProbableStartingPitcher `json:"leftEntity"`
 }
 
 type MLBProbableStartingPitcher struct {
-	EntityLink *struct {
+	EntityLink struct {
 		Title string `json:"title"`
 
 		Layout struct {

@@ -41,7 +41,7 @@ func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
 	// Fetch event data
-	responseBody, err := s.FetchEventData(url)
+	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
 		return OutputWrapper{Error: err, Context: context}
