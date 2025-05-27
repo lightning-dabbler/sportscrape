@@ -59,6 +59,7 @@ func main() {
 | https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | MLB	| Batting Box score stats| Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | MLB	| Pitching Box score stats| Live, Full			  | |application/json|✅|
+| https://www.foxsports.com		   | MLB	| Probable starting pitcher| Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|✅|
 
