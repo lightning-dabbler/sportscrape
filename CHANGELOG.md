@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- `MLBMatchupComparison` for fox sports json response for probable starting pitchers
-- `MLBProbableStartingPitcher` fox sports data model for probable starting pitcher
-- Scraping fox sports MLB probable starting pitcher using `MLBProbableStartingPitcherScraper`
+- `MLBMatchupComparison` for fox sports json response for probable starting pitchers (#73)
+- `MLBProbableStartingPitcher` fox sports data model for probable starting pitcher (#73)
+- Scraping fox sports MLB probable starting pitcher using `MLBProbableStartingPitcherScraper` (#73)
 
 ## [0.8.2] - 2025-05-17
 ### Fixed
