@@ -93,3 +93,29 @@ func ExampleMLBPitchingBoxScoreScraper() {
 		fmt.Println(string(jsonBytes))
 	}
 }
+
+// Example for eventdata.MLBProbableStartingPitcherScraper
+func ExampleMLBProbableStartingPitcherScraper() {
+	// Get matchups
+	matchupRunner := matchup.NewGeneralMatchupRunner(
+		matchup.GeneralMatchupLeague(foxsports.MLB),
+		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-17"}),
+	)
+
+	matchups := matchupRunner.GetMatchups()
+
+	// Get starting pitcher data
+	scraper := eventdata.MLBProbableStartingPitcherScraper{}
+	scraper.League = foxsports.MLB
+	runner := eventdata.NewRunner(
+		eventdata.RunnerName("MLB probable starting pitchers"),
+		eventdata.RunnerConcurrency(4),
+		eventdata.RunnerScraper(
+			&scraper,
+		),
+	)
+	probablePitchers := runner.RunEventsDataScraper(matchups...)
+	for _, event := range probablePitchers {
+		fmt.Printf("%#v\n", event.(model.MLBProbableStartingPitcher))
+	}
+}

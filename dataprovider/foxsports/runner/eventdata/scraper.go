@@ -32,7 +32,20 @@ func (e *EventDataScraper) ConstructEventDataURL(eventID int64) (string, error) 
 	return url.String(), nil
 }
 
-func (e *EventDataScraper) FetchEventData(url string) ([]byte, error) {
+func (e *EventDataScraper) ConstructMatchupComparisonURL(eventID int64) (string, error) {
+	url, err := e.League.V1MatchupComparisonURL(eventID)
+	if err != nil {
+		return "", err
+	}
+	queryValues := url.Query()
+	for k, v := range e.Params {
+		queryValues.Add(k, v)
+	}
+	url.RawQuery = queryValues.Encode()
+	return url.String(), nil
+}
+
+func (e *EventDataScraper) FetchData(url string) ([]byte, error) {
 	response, err := request.Get(url)
 	if err != nil {
 		return []byte{}, err

@@ -26,7 +26,7 @@ func (boxscoreSection *NBABoxScoreSection) UnmarshalJSON(b []byte) error {
 	}
 	nSections := len(sections)
 	if nSections != 3 && nSections != 0 {
-		return fmt.Errorf("Error: There're %d NBABoxScoreSection(s) detected. Expected 3 or 0.", nSections)
+		return fmt.Errorf("error: There're %d NBABoxScoreSection(s) detected. Expected 3 or 0", nSections)
 	}
 
 	if nSections == 3 {
