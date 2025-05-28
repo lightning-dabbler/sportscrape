@@ -94,7 +94,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		log.Fatalln(err)
 	}
 
-	doc.Find(mlbGameSummarySelector).Each(func(idx int, s *goquery.Selection) {
+	doc.Find(mlbGameSummarySelector).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 		var matchup model.MLBMatchup
 		var location, homeLocation, awayLocation string
 		matchup.PullTimestamp = PullTimestamp
@@ -140,6 +140,10 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		if err != nil {
 			log.Fatalln(err)
 		}
+		if awayName == "National League" || awayName == "American League" {
+			log.Printf("%s is a team associated with an all-star event. Skipping event date, %s, entirely", awayName, date)
+			return false
+		}
 		matchup.AwayTeam = awayName
 
 		// AwayTeamLink
@@ -167,6 +171,10 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		homeName, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum((homeTeamSelection.Find(teamNameSelector).Text())), location, "HomeTeam")
 		if err != nil {
 			log.Fatalln(err)
+		}
+		if homeName == "National League" || homeName == "American League" {
+			log.Printf("%s is a team associated with an all-star event. Skipping event date, %s, entirely", homeName, date)
+			return false
 		}
 		matchup.HomeTeam = homeName
 
@@ -219,6 +227,7 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		matchup.EventID = eventID
 
 		matchups = append(matchups, matchup)
+		return true
 	})
 
 	if len(matchups) == 0 {
