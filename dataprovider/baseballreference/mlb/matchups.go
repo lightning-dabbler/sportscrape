@@ -231,10 +231,10 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 	})
 
 	if len(matchups) == 0 {
-		fmt.Printf("No Data Scraped @ %s\n", url)
+		log.Printf("No relevant data scraped @ %s\n", url)
 	} else {
 		diff := time.Now().UTC().Sub(start)
-		fmt.Printf("Scraping of %s Completed in %s\n", url, diff)
+		log.Printf("Scraping of %s Completed in %s\n", url, diff)
 	}
 	return matchups
 }
