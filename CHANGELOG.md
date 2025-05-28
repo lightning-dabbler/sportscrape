@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MLBProbableStartingPitcher` fox sports data model for probable starting pitcher (#73)
 - Scraping fox sports MLB probable starting pitcher using `MLBProbableStartingPitcherScraper` (#73)
 ### Fixed
-- Ignore baseball-reference MLB all-star matchups
+- Ignore baseball-reference MLB all-star matchups (#74)
 
 ## [0.8.2] - 2025-05-17
 ### Fixed
