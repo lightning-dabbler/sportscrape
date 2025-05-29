@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.10.0] - 2025-05-27
+## [0.10.0] - 2025-05-29
 ### Changed
 - Update `MLBProbableStartingPitcher` fields (#77)
 - Update `MLBProbableStartingPitcher` composite key from `EventID` to `EventID` and `TeamID` (#77)
