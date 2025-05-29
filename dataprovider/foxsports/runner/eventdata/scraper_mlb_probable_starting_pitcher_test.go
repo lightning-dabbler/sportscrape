@@ -33,16 +33,19 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 	)
 
 	probablePitchers := runner.RunEventsDataScraper(matchups...)
-	n_stats := len(probablePitchers)
-	n_expected := 1
-	assert.Equal(t, n_expected, n_stats, "1 set of opposing pitchers")
-	result := probablePitchers[0].(model.MLBProbableStartingPitcher)
-	assert.Equal(t, "Jack Flaherty", result.HomeStartingPitcher)
-	assert.Equal(t, "1-2", result.HomeStartingPitcherRecord)
-	assert.Equal(t, float32(7.36), result.HomeStartingPitcherERA)
-	assert.Equal(t, int64(8249), result.HomeStartingPitcherID)
-	assert.Equal(t, "Gerrit Cole", result.AwayStartingPitcher)
-	assert.Equal(t, "1-0", result.AwayStartingPitcherRecord)
-	assert.Equal(t, float32(2.17), result.AwayStartingPitcherERA)
-	assert.Equal(t, int64(5539), result.AwayStartingPitcherID)
+	n_records := len(probablePitchers)
+	n_expected := 2
+	assert.Equal(t, n_expected, n_records, "2 starting pitchers")
+	homeStartingPitcher := probablePitchers[0].(model.MLBProbableStartingPitcher)
+	awayStartingPitcher := probablePitchers[1].(model.MLBProbableStartingPitcher)
+
+	assert.Equal(t, "Jack Flaherty", homeStartingPitcher.StartingPitcher)
+	assert.Equal(t, "1-2", homeStartingPitcher.StartingPitcherRecord)
+	assert.Equal(t, float32(7.36), homeStartingPitcher.StartingPitcherERA)
+	assert.Equal(t, int64(8249), homeStartingPitcher.StartingPitcherID)
+
+	assert.Equal(t, "Gerrit Cole", awayStartingPitcher.StartingPitcher)
+	assert.Equal(t, "1-0", awayStartingPitcher.StartingPitcherRecord)
+	assert.Equal(t, float32(2.17), awayStartingPitcher.StartingPitcherERA)
+	assert.Equal(t, int64(5539), awayStartingPitcher.StartingPitcherID)
 }

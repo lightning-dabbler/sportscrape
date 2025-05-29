@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2025-05-27
+### Changed
+- Update `MLBProbableStartingPitcher` fields (#77)
+- Update `MLBProbableStartingPitcher` composite key from `EventID` to `EventID` and `TeamID` (#77)
+### Fixed
+- Skip TBD probable starting pitchers (#77)
+
 ## [0.9.0] - 2025-05-27
 ### Added
 - `MLBMatchupComparison` for fox sports json response for probable starting pitchers (#73)
