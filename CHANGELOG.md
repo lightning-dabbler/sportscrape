@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Update `MLBProbableStartingPitcher` fields
-- Update `MLBProbableStartingPitcher` composite key from `EventID` to `EventID` and `TeamID`
+- Update `MLBProbableStartingPitcher` fields (#77)
+- Update `MLBProbableStartingPitcher` composite key from `EventID` to `EventID` and `TeamID` (#77)
 ### Fixed
-- Skip TBD probable starting pitchers
+- Skip TBD probable starting pitchers (#77)
 
 ## [0.9.0] - 2025-05-27
 ### Added
