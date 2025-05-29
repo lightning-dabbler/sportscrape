@@ -104,7 +104,7 @@ func (t *Runner) RunEventsDataScraper(matchups ...interface{}) []interface{} {
 			log.Println(fmt.Errorf("issue Scraping %d (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
 			continue
 		} else {
-			log.Printf("%d (%s vs %s) scraped for %d records for %s at url: %s\n", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, len(ow.Output), t.Name, ow.Context.URL)
+			log.Printf("%d (%s vs %s) scraped for %d record(s) for %s at url: %s\n", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, len(ow.Output), t.Name, ow.Context.URL)
 		}
 		output = append(output, ow.Output...)
 	}
@@ -113,7 +113,7 @@ func (t *Runner) RunEventsDataScraper(matchups ...interface{}) []interface{} {
 		log.Printf("WARNING: %d/%d events errored out\n", errors, matchupsCount)
 	}
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of %s with %d records completed in %s\n", t.Name, outputCount, diff)
+	log.Printf("Scraping of %s with %d record(s) completed in %s\n", t.Name, outputCount, diff)
 
 	return output
 }
