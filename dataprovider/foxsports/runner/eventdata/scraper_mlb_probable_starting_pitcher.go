@@ -67,47 +67,22 @@ func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) OutputWr
 		return OutputWrapper{Error: err, Context: context}
 	}
 
-	probablePitchers := model.MLBProbableStartingPitcher{
-		PullTimestamp:             context.PullTimestamp,
-		PullTimestampParquet:      types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
-		EventID:                   context.EventID,
-		EventTime:                 context.EventTime,
-		EventTimeParquet:          types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
-		HomeTeamID:                context.HomeID,
-		HomeTeamNameFull:          context.HomeTeam,
-		HomeStartingPitcher:       responsePayload.FeaturedPairing.HomePitcher.Player,
-		HomeStartingPitcherRecord: responsePayload.FeaturedPairing.HomePitcher.StatLine1,
-		AwayTeamID:                context.AwayID,
-		AwayTeamNameFull:          context.AwayTeam,
-		AwayStartingPitcher:       responsePayload.FeaturedPairing.AwayPitcher.Player,
-		AwayStartingPitcherRecord: responsePayload.FeaturedPairing.AwayPitcher.StatLine1,
-	}
-	// HomeStartingPitcherID
-	playerID, err := util.TextToInt64(responsePayload.FeaturedPairing.HomePitcher.EntityLink.Layout.Tokens.ID)
+	pitcher, err := s.pitcher("home", responsePayload, context)
 	if err != nil {
 		return OutputWrapper{Error: err, Context: context}
 	}
-	probablePitchers.HomeStartingPitcherID = playerID
-	// AwayStartingPitcherID
-	playerID, err = util.TextToInt64(responsePayload.FeaturedPairing.AwayPitcher.EntityLink.Layout.Tokens.ID)
-	if err != nil {
-		return OutputWrapper{Error: err, Context: context}
+	if pitcher != nil {
+		data = append(data, *pitcher)
 	}
-	probablePitchers.AwayStartingPitcherID = playerID
-	// HomeStartingPitcherERA
-	era, err := s.era(responsePayload.FeaturedPairing.HomePitcher.StatLine2)
-	if err != nil {
-		return OutputWrapper{Error: err, Context: context}
-	}
-	probablePitchers.HomeStartingPitcherERA = era
-	// AwayStartingPitcherERA
-	era, err = s.era(responsePayload.FeaturedPairing.AwayPitcher.StatLine2)
-	if err != nil {
-		return OutputWrapper{Error: err, Context: context}
-	}
-	probablePitchers.AwayStartingPitcherERA = era
 
-	data = append(data, probablePitchers)
+	pitcher, err = s.pitcher("away", responsePayload, context)
+	if err != nil {
+		return OutputWrapper{Error: err, Context: context}
+	}
+	if pitcher != nil {
+		data = append(data, *pitcher)
+	}
+
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
 	return OutputWrapper{Output: data, Context: context}
@@ -123,4 +98,61 @@ func (s *MLBProbableStartingPitcherScraper) era(rawStatline string) (float32, er
 		return 0, err
 	}
 	return era, nil
+}
+
+func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload jsonresponse.MLBMatchupComparison, context Context) (*model.MLBProbableStartingPitcher, error) {
+	var name, era, playerid, teamName string
+
+	switch team {
+	case "home":
+		name = responsePayload.FeaturedPairing.HomePitcher.Name
+		teamName = context.HomeTeam
+	default:
+		name = responsePayload.FeaturedPairing.AwayPitcher.Name
+		teamName = context.AwayTeam
+	}
+
+	if name == "TBD" {
+		log.Printf("Skipping: %s starting pitcher not announced at %s", teamName, context.URL)
+	} else {
+		probablePitchers := &model.MLBProbableStartingPitcher{
+			PullTimestamp:        context.PullTimestamp,
+			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
+			EventID:              context.EventID,
+			EventTime:            context.EventTime,
+			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
+			TeamNameFull:         teamName,
+		}
+
+		switch team {
+		case "home":
+			probablePitchers.TeamID = context.HomeID
+			probablePitchers.StartingPitcherRecord = responsePayload.FeaturedPairing.HomePitcher.StatLine1
+			probablePitchers.StartingPitcher = responsePayload.FeaturedPairing.HomePitcher.Player
+			playerid = responsePayload.FeaturedPairing.HomePitcher.EntityLink.Layout.Tokens.ID
+			era = responsePayload.FeaturedPairing.HomePitcher.StatLine2
+		default:
+			probablePitchers.TeamID = context.AwayID
+			probablePitchers.StartingPitcherRecord = responsePayload.FeaturedPairing.AwayPitcher.StatLine1
+			probablePitchers.StartingPitcher = responsePayload.FeaturedPairing.AwayPitcher.Player
+			playerid = responsePayload.FeaturedPairing.AwayPitcher.EntityLink.Layout.Tokens.ID
+			era = responsePayload.FeaturedPairing.AwayPitcher.StatLine2
+		}
+		// StartingPitcherID
+		playerID, err := util.TextToInt64(playerid)
+		if err != nil {
+			return nil, err
+		}
+		probablePitchers.StartingPitcherID = playerID
+
+		// StartingPitcherERA
+		era, err := s.era(era)
+		if err != nil {
+			return nil, err
+		}
+		probablePitchers.StartingPitcherERA = era
+		return probablePitchers, nil
+	}
+
+	return nil, nil
 }
