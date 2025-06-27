@@ -9,6 +9,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,10 +29,10 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	// Get boxscore data
 	scraper := NBABoxScoreScraper{}
 	scraper.League = foxsports.NBA
-	runner := NewRunner(
-		RunnerName("NBA Box score stats"),
-		RunnerConcurrency(2),
-		RunnerScraper(
+	runner := eventdata.NewRunner(
+		eventdata.RunnerName("NBA Box score stats"),
+		eventdata.RunnerConcurrency(2),
+		eventdata.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -98,10 +99,10 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	// Get boxscore data
 	scraper = NBABoxScoreScraper{}
 	scraper.League = foxsports.NBA
-	runner = NewRunner(
-		RunnerName("NBA Box score stats"),
-		RunnerConcurrency(2),
-		RunnerScraper(
+	runner = eventdata.NewRunner(
+		eventdata.RunnerName("NBA Box score stats"),
+		eventdata.RunnerConcurrency(2),
+		eventdata.RunnerScraper(
 			&scraper,
 		),
 	)

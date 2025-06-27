@@ -10,6 +10,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/util"
+	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 	"github.com/xitongsys/parquet-go/types"
 )
 
@@ -19,10 +20,10 @@ type MLBBattingBoxScoreScraper struct {
 	EventDataScraper
 }
 
-func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
+func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	var context Context
+	var context eventdata.Context
 	context.AwayTeam = matchupModel.AwayTeamNameFull
 	context.AwayID = matchupModel.AwayTeamID
 	context.HomeTeam = matchupModel.HomeTeamNameFull
@@ -36,7 +37,7 @@ func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	url, err := s.ConstructEventDataURL(matchupModel.EventID)
 	if err != nil {
 		log.Println("Issue constructing event data URL")
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -44,30 +45,30 @@ func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.MLBEventData
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 	// Check for box score data
 	if responsePayload.BoxScore == nil || responsePayload.BoxScore.BoxScoreSections == nil {
 		log.Printf("No MLB batting box score data available for event id: %d\n", matchupModel.EventID)
-		return OutputWrapper{Output: data, Context: context}
+		return eventdata.OutputWrapper{Output: data, Context: context}
 	}
 
 	// Check that both Away and Home team box score stats are populated
 	if responsePayload.BoxScore.BoxScoreSections.AwayStats == nil {
 		log.Printf("No MLB batting box score data available for away team (%s) for event id: %d\n", matchupModel.AwayTeamNameFull, matchupModel.EventID)
-		return OutputWrapper{Output: data, Context: context}
+		return eventdata.OutputWrapper{Output: data, Context: context}
 	}
 
 	if responsePayload.BoxScore.BoxScoreSections.AwayStats == nil {
 		log.Printf("No MLB batting box score data available for home team (%s) for event id: %d\n", matchupModel.HomeTeamNameFull, matchupModel.EventID)
-		return OutputWrapper{Output: data, Context: context}
+		return eventdata.OutputWrapper{Output: data, Context: context}
 	}
 
 	// validate MLBBattingBoxScoreStats home and away positions
@@ -75,14 +76,14 @@ func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	actualHomeID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
 	if actualHomeID != matchupModel.HomeTeamID {
 		log.Printf("Home team ID, %d (%s), does not match expected, %d (%s)\n", actualHomeID, responsePayload.BoxScore.BoxScoreSections.HomeStats.Title, matchupModel.HomeTeamID, matchupModel.HomeTeamNameFull)
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 
 	uriSplit = strings.Split(responsePayload.BoxScore.BoxScoreSections.AwayStats.ContentURI, "/")
 	actualAwayID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
 	if actualAwayID != matchupModel.AwayTeamID {
 		log.Printf("Away team ID, %d (%s), does not match expected, %d (%s)\n", actualAwayID, responsePayload.BoxScore.BoxScoreSections.AwayStats.Title, matchupModel.AwayTeamID, matchupModel.AwayTeamNameFull)
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 
 	// validate headers
@@ -93,12 +94,12 @@ func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	actualHeaderSize := len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
 		err = fmt.Errorf("Home team batting headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != battingHeaders[idx] {
 			err = fmt.Errorf("Home team batting header '%s' unexpect at index %d. Expected %s", column.Text, idx, battingHeaders[idx])
-			return OutputWrapper{Error: err, Context: context}
+			return eventdata.OutputWrapper{Error: err, Context: context}
 		}
 	}
 
@@ -107,27 +108,27 @@ func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) OutputWrapper {
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
 		err = fmt.Errorf("Away team batting headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != battingHeaders[idx] {
 			err = fmt.Errorf("Away team batting header '%s' unexpect at index %d. Expected %s", column.Text, idx, battingHeaders[idx])
-			return OutputWrapper{Error: err, Context: context}
+			return eventdata.OutputWrapper{Error: err, Context: context}
 		}
 	}
 	stats, err := s.parseBattingStats(responsePayload, context)
 	if err != nil {
-		return OutputWrapper{Error: err, Context: context}
+		return eventdata.OutputWrapper{Error: err, Context: context}
 	}
 	for _, obj := range stats {
 		data = append(data, *obj)
 	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return OutputWrapper{Output: data, Context: context}
+	return eventdata.OutputWrapper{Output: data, Context: context}
 }
 
-func (s *MLBBattingBoxScoreScraper) parseBattingStats(responsePayload jsonresponse.MLBEventData, context Context) ([]*model.MLBBattingBoxScoreStats, error) {
+func (s *MLBBattingBoxScoreScraper) parseBattingStats(responsePayload jsonresponse.MLBEventData, context eventdata.Context) ([]*model.MLBBattingBoxScoreStats, error) {
 	var stats []*model.MLBBattingBoxScoreStats
 
 	// Home

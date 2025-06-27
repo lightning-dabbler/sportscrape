@@ -10,6 +10,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go-source/local"
@@ -34,10 +35,10 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	// Get boxscore data
 	scraper := MLBPitchingBoxScoreScraper{}
 	scraper.League = foxsports.MLB
-	runner := NewRunner(
-		RunnerName("MLB pitching box score stats"),
-		RunnerConcurrency(1),
-		RunnerScraper(
+	runner := eventdata.NewRunner(
+		eventdata.RunnerName("MLB pitching box score stats"),
+		eventdata.RunnerConcurrency(1),
+		eventdata.RunnerScraper(
 			&scraper,
 		),
 	)

@@ -8,6 +8,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,10 +25,10 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 	matchups := matchupRunner.GetMatchups()
 	scraper := MLBProbableStartingPitcherScraper{}
 	scraper.League = foxsports.MLB
-	runner := NewRunner(
-		RunnerName("MLB probable starting pitcher"),
-		RunnerConcurrency(1),
-		RunnerScraper(
+	runner := eventdata.NewRunner(
+		eventdata.RunnerName("MLB probable starting pitcher"),
+		eventdata.RunnerConcurrency(1),
+		eventdata.RunnerScraper(
 			&scraper,
 		),
 	)

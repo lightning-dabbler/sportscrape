@@ -9,6 +9,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/eventdata"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	eventdatautil "github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 )
 
 // Example for eventdata.NBABoxScoreScraper
@@ -24,10 +25,10 @@ func ExampleNBABoxScoreScraper() {
 	// Get boxscore data
 	scraper := eventdata.NBABoxScoreScraper{}
 	scraper.League = foxsports.NBA
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("NBA Box score stats"),
-		eventdata.RunnerConcurrency(4),
-		eventdata.RunnerScraper(
+	runner := eventdatautil.NewRunner(
+		eventdatautil.RunnerName("NBA Box score stats"),
+		eventdatautil.RunnerConcurrency(4),
+		eventdatautil.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -50,10 +51,10 @@ func ExampleMLBBattingBoxScoreScraper() {
 	// Get boxscore data
 	scraper := eventdata.MLBBattingBoxScoreScraper{}
 	scraper.League = foxsports.MLB
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("MLB Batting box score stats"),
-		eventdata.RunnerConcurrency(4),
-		eventdata.RunnerScraper(
+	runner := eventdatautil.NewRunner(
+		eventdatautil.RunnerName("MLB Batting box score stats"),
+		eventdatautil.RunnerConcurrency(4),
+		eventdatautil.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -76,10 +77,10 @@ func ExampleMLBPitchingBoxScoreScraper() {
 	// Get boxscore data
 	scraper := eventdata.MLBPitchingBoxScoreScraper{}
 	scraper.League = foxsports.MLB
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("MLB Pitching box score stats"),
-		eventdata.RunnerConcurrency(4),
-		eventdata.RunnerScraper(
+	runner := eventdatautil.NewRunner(
+		eventdatautil.RunnerName("MLB Pitching box score stats"),
+		eventdatautil.RunnerConcurrency(4),
+		eventdatautil.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -107,10 +108,10 @@ func ExampleMLBProbableStartingPitcherScraper() {
 	// Get starting pitcher data
 	scraper := eventdata.MLBProbableStartingPitcherScraper{}
 	scraper.League = foxsports.MLB
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("MLB probable starting pitchers"),
-		eventdata.RunnerConcurrency(4),
-		eventdata.RunnerScraper(
+	runner := eventdatautil.NewRunner(
+		eventdatautil.RunnerName("MLB probable starting pitchers"),
+		eventdatautil.RunnerConcurrency(4),
+		eventdatautil.RunnerScraper(
 			&scraper,
 		),
 	)

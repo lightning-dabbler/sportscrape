@@ -57,7 +57,7 @@ func NewRunner(options ...RunnerOption) *Runner {
 		option(r)
 	}
 
-	r.Scraper.SetParams()
+	r.Scraper.Init()
 	return r
 }
 

@@ -7,16 +7,19 @@ import (
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
-type Scraper interface {
-	Scrape(matchup interface{}) OutputWrapper
-	SetParams()
-}
-
 type EventDataScraper struct {
 	// League - The league of interest to fetch matchups data
 	League foxsports.League
 	// Params - URL Query parameters
 	Params map[string]string
+}
+
+func (e *EventDataScraper) Init() {
+	// Params
+	if e.Params == nil {
+		e.Params = map[string]string{}
+	}
+	e.League.SetParams(e.Params)
 }
 
 func (e *EventDataScraper) ConstructEventDataURL(eventID int64) (string, error) {
@@ -52,11 +55,4 @@ func (e *EventDataScraper) FetchData(url string) ([]byte, error) {
 	}
 	defer response.Body.Close()
 	return io.ReadAll(response.Body)
-}
-
-func (e *EventDataScraper) SetParams() {
-	if e.Params == nil {
-		e.Params = map[string]string{}
-	}
-	e.League.SetParams(e.Params)
 }
