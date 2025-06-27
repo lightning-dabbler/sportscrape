@@ -7,16 +7,22 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 )
 
-// Example for matchup.GeneralMatchupRunner NBA
-func ExampleGeneralMatchupRunner_nba() {
-	matchupRunner := matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.NBA),
-		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
+// Example for matchup.Runner NBA
+func ExampleRunner_nba() {
+	matchupScraper := matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.NBA),
+		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	matchuprunner := matchuputil.NewRunner(
+		matchuputil.RunnerName("NBA Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups := matchuprunner.RunMatchupsScraper()
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
 		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
@@ -27,14 +33,19 @@ func ExampleGeneralMatchupRunner_nba() {
 	}
 }
 
-// Example for matchup.GeneralMatchupRunner MLB
-func ExampleGeneralMatchupRunner_mlb() {
-	matchupRunner := matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.MLB),
-		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
+// Example for matchup.Runner MLB
+func ExampleRunner_mlb() {
+	matchupScraper := matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.MLB),
+		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	matchuprunner := matchuputil.NewRunner(
+		matchuputil.RunnerName("MLB Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups := matchuprunner.RunMatchupsScraper()
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
 		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
@@ -45,14 +56,19 @@ func ExampleGeneralMatchupRunner_mlb() {
 	}
 }
 
-// Example for matchup.GeneralMatchupRunner NCAAB
-func ExampleGeneralMatchupRunner_ncaab() {
-	matchupRunner := matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.NCAAB),
-		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
+// Example for matchup.Runner NCAAB
+func ExampleRunner_ncaab() {
+	matchupScraper := matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.NCAAB),
+		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	matchuprunner := matchuputil.NewRunner(
+		matchuputil.RunnerName("NCAAB Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups := matchuprunner.RunMatchupsScraper()
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
 		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
@@ -63,14 +79,19 @@ func ExampleGeneralMatchupRunner_ncaab() {
 	}
 }
 
-// Example for matchup.GeneralMatchupRunner NFL
-func ExampleGeneralMatchupRunner_nfl() {
-	matchupRunner := matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.NFL),
-		matchup.GeneralMatchupSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
+// Example for matchup.Runner NFL
+func ExampleRunner_nfl() {
+	matchupScraper := matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.NFL),
+		matchup.ScraperSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	matchuprunner := matchuputil.NewRunner(
+		matchuputil.RunnerName("NCAAB Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups := matchuprunner.RunMatchupsScraper()
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
 		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")

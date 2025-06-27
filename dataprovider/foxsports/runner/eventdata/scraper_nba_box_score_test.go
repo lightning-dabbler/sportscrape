@@ -10,6 +10,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
 	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
+	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,12 +20,17 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	}
 
 	// Get matchups
-	matchupRunner := matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.NBA),
-		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-07"}),
+	matchupScraper := matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.NBA),
+		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-07"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	matchuprunner := matchuputil.NewRunner(
+		matchuputil.RunnerName("NBA Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups := matchuprunner.RunMatchupsScraper()
 
 	// Get boxscore data
 	scraper := NBABoxScoreScraper{}
@@ -89,12 +95,17 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	// 2019-10-06
 	// Issue: https://github.com/lightning-dabbler/sportscrape/issues/64
 
-	matchupRunner = matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.NBA),
-		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2019-10-06"}),
+	matchupScraper = matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.NBA),
+		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2019-10-06"}),
 	)
 
-	matchups = matchupRunner.GetMatchups()
+	matchuprunner = matchuputil.NewRunner(
+		matchuputil.RunnerName("NBA Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups = matchuprunner.RunMatchupsScraper()
 
 	// Get boxscore data
 	scraper = NBABoxScoreScraper{}

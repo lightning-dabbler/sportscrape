@@ -8,6 +8,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,12 +17,17 @@ func TestGetNBAMatchup(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
-	matchupRunner := NewGeneralMatchupRunner(
-		GeneralMatchupLeague(foxsports.NBA),
-		GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-06"}),
+	scraper := NewScraper(
+		ScraperLeague(foxsports.NBA),
+		ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-06"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	runner := matchup.NewRunner(
+		matchup.RunnerName("NBA Matchups"),
+		matchup.RunnerScraper(scraper),
+	)
+
+	matchups := runner.RunMatchupsScraper()
 	n_matchups := len(matchups)
 	assert.Equal(t, 11, n_matchups, "11 events")
 	testMatchup := matchups[4].(model.Matchup)
@@ -53,12 +59,18 @@ func TestGetMLBMatchup(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
-	matchupRunner := NewGeneralMatchupRunner(
-		GeneralMatchupLeague(foxsports.MLB),
-		GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-18"}),
+	scraper := NewScraper(
+		ScraperLeague(foxsports.MLB),
+		ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-18"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	runner := matchup.NewRunner(
+		matchup.RunnerName("MLB Matchups"),
+		matchup.RunnerScraper(scraper),
+	)
+
+	matchups := runner.RunMatchupsScraper()
+
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
 	testMatchup := matchups[0].(model.Matchup)
@@ -90,12 +102,18 @@ func TestGetNFLMatchup(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
-	matchupRunner := NewGeneralMatchupRunner(
-		GeneralMatchupLeague(foxsports.NFL),
-		GeneralMatchupSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 3, Season: foxsports.POSTSEASON}),
+
+	scraper := NewScraper(
+		ScraperLeague(foxsports.NFL),
+		ScraperSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 3, Season: foxsports.POSTSEASON}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	runner := matchup.NewRunner(
+		matchup.RunnerName("NFL Matchups"),
+		matchup.RunnerScraper(scraper),
+	)
+
+	matchups := runner.RunMatchupsScraper()
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
 	testMatchup := matchups[1].(model.Matchup)
@@ -126,12 +144,18 @@ func TestGetNCAABMatchup(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
-	matchupRunner := NewGeneralMatchupRunner(
-		GeneralMatchupLeague(foxsports.NCAAB),
-		GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-05"}),
+	scraper := NewScraper(
+		ScraperLeague(foxsports.NCAAB),
+		ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-05"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	runner := matchup.NewRunner(
+		matchup.RunnerName("NCAAB Matchup"),
+		matchup.RunnerScraper(scraper),
+	)
+
+	matchups := runner.RunMatchupsScraper()
+
 	n_matchups := len(matchups)
 	assert.Equal(t, 4, n_matchups, "4 events")
 	testMatchup := matchups[2].(model.Matchup)

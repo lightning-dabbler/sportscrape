@@ -11,6 +11,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
 	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
+	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go-source/local"
@@ -25,12 +26,17 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	}
 
 	// Get matchups
-	matchupRunner := matchup.NewGeneralMatchupRunner(
-		matchup.GeneralMatchupLeague(foxsports.MLB),
-		matchup.GeneralMatchupSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
+	matchupScraper := matchup.NewScraper(
+		matchup.ScraperLeague(foxsports.MLB),
+		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchups := matchupRunner.GetMatchups()
+	matchuprunner := matchuputil.NewRunner(
+		matchuputil.RunnerName("MLB Matchups"),
+		matchuputil.RunnerScraper(matchupScraper),
+	)
+
+	matchups := matchuprunner.RunMatchupsScraper()
 
 	// Get boxscore data
 	scraper := MLBPitchingBoxScoreScraper{}

@@ -13,51 +13,48 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/lightning-dabbler/sportscrape/util/request"
+	"github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 	"github.com/xitongsys/parquet-go/types"
 )
 
 // MatchupOption defines a configuration option for the general matchup runner
-type GeneralMatchupOption func(*GeneralMatchupRunner)
+type ScraperOption func(*Scraper)
 
-// GeneralMatchupLeague sets the League option for the general matchup runner
-func GeneralMatchupLeague(league foxsports.League) GeneralMatchupOption {
-	return func(gmr *GeneralMatchupRunner) {
-		gmr.League = league
+// ScraperLeague sets the League option for the general matchup runner
+func ScraperLeague(league foxsports.League) ScraperOption {
+	return func(s *Scraper) {
+		s.League = league
 	}
 }
 
-// GeneralMatchupParams sets the Params option for the general matchup runner
-func GeneralMatchupParams(params map[string]string) GeneralMatchupOption {
-	return func(gmr *GeneralMatchupRunner) {
-		gmr.Params = params
+// ScraperParams sets the Params option for the general matchup runner
+func ScraperParams(params map[string]string) ScraperOption {
+	return func(s *Scraper) {
+		s.Params = params
 	}
 }
 
-// GeneralMatchupSegmenter sets the Segmenter option for the general matchup runner
-func GeneralMatchupSegmenter(segmenter Segmenter) GeneralMatchupOption {
-	return func(gmr *GeneralMatchupRunner) {
-		gmr.Segmenter = segmenter
+// ScraperSegmenter sets the Segmenter option for the general matchup runner
+func ScraperSegmenter(segmenter Segmenter) ScraperOption {
+	return func(s *Scraper) {
+		s.Segmenter = segmenter
 	}
 }
 
-// NewGeneralMatchupRunner creates a new GeneralMatchupRunner with the provided options
-func NewGeneralMatchupRunner(options ...GeneralMatchupOption) *GeneralMatchupRunner {
-	gmr := &GeneralMatchupRunner{}
+// NewScraper creates a new Scraper with the provided options
+func NewScraper(options ...ScraperOption) *Scraper {
+	s := &Scraper{}
 
 	// Apply all options
 	for _, option := range options {
-		option(gmr)
+		option(s)
 	}
-	if gmr.Params == nil {
-		gmr.Params = map[string]string{}
-	}
-	gmr.League.SetParams(gmr.Params)
+	s.Init()
 
-	return gmr
+	return s
 }
 
-// GeneralMatchupRunner is a general matchup runner for scraping NBA, MLB, NCAAB, etc. matchup data.
-type GeneralMatchupRunner struct {
+type Scraper struct {
 	// League - The league of interest to fetch matchups data
 	League foxsports.League
 	// Params - URL Query parameters
@@ -70,6 +67,14 @@ type GeneralMatchupRunner struct {
 	pullTimestamp time.Time
 }
 
+func (s *Scraper) Init() {
+	// Params
+	if s.Params == nil {
+		s.Params = map[string]string{}
+	}
+	s.League.SetParams(s.Params)
+}
+
 // Segmenter is the interface for constructing Segment IDs
 type Segmenter interface {
 	// GetSegmentID returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
@@ -77,20 +82,20 @@ type Segmenter interface {
 }
 
 // ConstructFullURL constructs the full url (query params included) to retrieve matchup data
-func (mr *GeneralMatchupRunner) ConstructFullURL() (string, error) {
-	if mr.segmentID == "" {
-		segmentID, err := mr.Segmenter.GetSegmentID()
+func (s *Scraper) ConstructFullURL() (string, error) {
+	if s.segmentID == "" {
+		segmentID, err := s.Segmenter.GetSegmentID()
 		if err != nil {
 			return "", err
 		}
-		mr.segmentID = segmentID
+		s.segmentID = segmentID
 	}
-	url, err := mr.League.V1MatchupURL(mr.segmentID)
+	url, err := s.League.V1MatchupURL(s.segmentID)
 	if err != nil {
 		return "", err
 	}
 	queryValues := url.Query()
-	for k, v := range mr.Params {
+	for k, v := range s.Params {
 		queryValues.Add(k, v)
 	}
 	url.RawQuery = queryValues.Encode()
@@ -103,7 +108,7 @@ func (mr *GeneralMatchupRunner) ConstructFullURL() (string, error) {
 //   - url: The URL to fetch matchups from
 //
 // Returns the JSON struct and optional error
-func (mr *GeneralMatchupRunner) FetchMatchups(url string) (jsonresponse.Matchup, error) {
+func (s *Scraper) FetchMatchups(url string) (jsonresponse.Matchup, error) {
 	var responsePayload jsonresponse.Matchup
 	response, err := request.Get(url)
 	if err != nil {
@@ -122,7 +127,7 @@ func (mr *GeneralMatchupRunner) FetchMatchups(url string) (jsonresponse.Matchup,
 }
 
 // ParseMatchup parses a matchup event JSON object into a matchup data model
-func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (model.Matchup, error) {
+func (s *Scraper) ParseMatchup(eventPayload jsonresponse.Event) (model.Matchup, error) {
 	var matchup model.Matchup
 	//
 	eventTime, err := util.RFC3339ToTime(eventPayload.EventTime)
@@ -131,8 +136,8 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 	}
 	matchup.EventTimeParquet = types.TimeToTIMESTAMP_MILLIS(eventTime, true)
 	matchup.EventTime = eventTime
-	matchup.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(mr.pullTimestamp, true)
-	matchup.PullTimestamp = mr.pullTimestamp
+	matchup.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(s.pullTimestamp, true)
+	matchup.PullTimestamp = s.pullTimestamp
 	event_id, err := util.TextToInt64(eventPayload.EntityLink.Layout.Tokens.ID)
 	if err != nil {
 		return matchup, err
@@ -195,22 +200,21 @@ func (mr *GeneralMatchupRunner) ParseMatchup(eventPayload jsonresponse.Event) (m
 	return matchup, nil
 }
 
-// GetMatchups gets all matchups of a League and segment ID
-func (mr *GeneralMatchupRunner) GetMatchups() []interface{} {
-	start := time.Now().UTC()
+// Scrape gets all matchups of a League and segment ID
+func (s *Scraper) Scrape() matchup.OutputWrapper {
 	var matchups []interface{}
 	// Construct full url
 	log.Println("Constructing full URL")
-	url, err := mr.ConstructFullURL()
+	url, err := s.ConstructFullURL()
 	if err != nil {
 		log.Println("Issue constructing full URL")
 		log.Fatalln(err)
 	}
 
 	// Fetch matchups data
-	mr.pullTimestamp = time.Now().UTC()
-	log.Printf("Fetching %s Matchups at segment %s: %s\n", mr.League.String(), mr.segmentID, url)
-	jsonPayload, err := mr.FetchMatchups(url)
+	s.pullTimestamp = time.Now().UTC()
+	log.Printf("Fetching %s Matchups at segment %s: %s\n", s.League.String(), s.segmentID, url)
+	jsonPayload, err := s.FetchMatchups(url)
 	if err != nil {
 		log.Println("Issue fetching matchups")
 		log.Fatalln(err)
@@ -229,7 +233,7 @@ func (mr *GeneralMatchupRunner) GetMatchups() []interface{} {
 			skipped += 1
 			continue
 		}
-		parsedEvent, err := mr.ParseMatchup(event)
+		parsedEvent, err := s.ParseMatchup(event)
 		if err != nil {
 			log.Println(fmt.Errorf("WARNING: Error identified at event #%d - %w", idx, err))
 			errors += 1
@@ -237,10 +241,13 @@ func (mr *GeneralMatchupRunner) GetMatchups() []interface{} {
 		}
 		matchups = append(matchups, parsedEvent)
 	}
-	if errors != 0 || skipped != 0 {
-		log.Printf("%d/%d events were skipped and %d/%d events errored out\n", skipped, nEvents, errors, nEvents)
+	ou := matchup.OutputWrapper{
+		Output: matchups,
+		Context: matchup.Context{
+			Errors: errors,
+			Skips:  skipped,
+			Total:  len(matchups),
+		},
 	}
-	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of %s Matchups at segment %s completed in %s: %s\n", mr.League.String(), mr.segmentID, diff, url)
-	return matchups
+	return ou
 }
