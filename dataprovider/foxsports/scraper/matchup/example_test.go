@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
 	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 )
 

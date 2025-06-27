@@ -9,7 +9,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
 	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 	"github.com/spf13/afero"
@@ -20,7 +20,7 @@ import (
 	"github.com/xitongsys/parquet-go/writer"
 )
 
-func TestMLBPitchingBoxScoreScraper(t *testing.T) {
+func TestMLBBattingBoxScoreScraper(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
@@ -39,10 +39,10 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	matchups := matchuprunner.RunMatchupsScraper()
 
 	// Get boxscore data
-	scraper := MLBPitchingBoxScoreScraper{}
+	scraper := MLBBattingBoxScoreScraper{}
 	scraper.League = foxsports.MLB
 	runner := eventdata.NewRunner(
-		eventdata.RunnerName("MLB pitching box score stats"),
+		eventdata.RunnerName("MLB batting box score stats"),
 		eventdata.RunnerConcurrency(1),
 		eventdata.RunnerScraper(
 			&scraper,
@@ -50,9 +50,9 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	)
 	boxScoreStats := runner.RunEventsDataScraper(matchups...)
 	n_stats := len(boxScoreStats)
-	n_expected := 13
+	n_expected := 19
 	assert.Equal(t, n_expected, n_stats, "13 statlines")
-	LukeWeaverTested := false
+	GavinLuxTested := false
 	fs := afero.NewOsFs()
 	tmpDir, err := afero.TempDir(fs, "./", "test")
 	if err != nil {
@@ -68,33 +68,32 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	}
 	defer fw.Close()
 
-	pw, err := writer.NewParquetWriter(fw, new(model.MLBPitchingBoxScoreStats), 1)
+	pw, err := writer.NewParquetWriter(fw, new(model.MLBBattingBoxScoreStats), 1)
 	if err != nil {
 		t.Fatalf("Can't create parquet writer %v\n", err)
 	}
 	pw.CompressionType = parquet.CompressionCodec_SNAPPY
-
 	for _, statline := range boxScoreStats {
-		s := statline.(model.MLBPitchingBoxScoreStats)
-		if s.Player == "Luke Weaver" {
-			LukeWeaverTested = true
+		s := statline.(model.MLBBattingBoxScoreStats)
+		if s.Player == "Gavin Lux" {
+			GavinLuxTested = true
 			assert.Equal(t, int64(91226), s.EventID, "EventID")
-			assert.Equal(t, int64(6), s.TeamID, "TeamID")
-			assert.Equal(t, "New York Yankees", s.Team, "Team")
-			assert.Equal(t, int64(24), s.OpponentID, "OpponentID")
-			assert.Equal(t, "Los Angeles Dodgers", s.Opponent, "Opponent")
-			assert.Equal(t, int64(8034), s.PlayerID, "PlayerID")
-			assert.Equal(t, "Luke Weaver", s.Player, "Player")
-			assert.Equal(t, "BS (3)", *s.Record, "Record")
-			assert.Equal(t, int32(4), s.PitchingOrder, "PitchingOrder")
-			assert.Equal(t, float32(1.1), s.InningsPitched, "InningsPitched")
-			assert.Equal(t, int32(1), s.HitsAllowed, "HitsAllowed")
-			assert.Equal(t, int32(0), s.RunsAllowed, "RunsAllowed")
-			assert.Equal(t, int32(0), s.EarnedRunsAllowed, "EarnedRunsAllowed")
+			assert.Equal(t, int64(24), s.TeamID, "TeamID")
+			assert.Equal(t, int64(1730333280000), s.EventTimeParquet, "EventTimeParquet")
+			assert.Equal(t, "Los Angeles Dodgers", s.Team, "Team")
+			assert.Equal(t, int64(6), s.OpponentID, "OpponentID")
+			assert.Equal(t, "New York Yankees", s.Opponent, "Opponent")
+			assert.Equal(t, int64(8677), s.PlayerID, "PlayerID")
+			assert.Equal(t, "Gavin Lux", s.Player, "Player")
+			assert.Equal(t, "2B", s.Position, "Position")
+			assert.Equal(t, int32(2), s.AtBat, "AtBat")
+			assert.Equal(t, int32(0), s.Runs, "Runs")
+			assert.Equal(t, int32(0), s.Hits, "Hits")
+			assert.Equal(t, int32(1), s.RunsBattedIn, "RunsBattedIn")
 			assert.Equal(t, int32(1), s.Walks, "Walks")
 			assert.Equal(t, int32(1), s.Strikeouts, "Strikeouts")
-			assert.Equal(t, int32(0), s.HomeRunsAllowed, "HomeRunsAllowed")
-			assert.Equal(t, float32(1.76), s.EarnedRunAverage, "EarnedRunAverage")
+			assert.Equal(t, int32(3), s.LeftOnBase, "LeftOnBase")
+			assert.Equal(t, float32(0.176), s.BattingAverage, "BattingAverage")
 		}
 		if err = pw.Write(statline); err != nil {
 			t.Fatalf("Write error %v\n", err)
@@ -112,7 +111,7 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	}
 	defer fr.Close()
 
-	pr, err := reader.NewParquetReader(fr, new(model.MLBPitchingBoxScoreStats), 1)
+	pr, err := reader.NewParquetReader(fr, new(model.MLBBattingBoxScoreStats), 1)
 	if err != nil {
 		t.Fatalf("Can't create parquet reader %v\n", err)
 	}
@@ -120,5 +119,5 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 
 	num := int(pr.GetNumRows())
 	assert.Equal(t, n_expected, num)
-	assert.True(t, LukeWeaverTested, "Luke Weaver statline tested")
+	assert.True(t, GavinLuxTested, "Gavin Lux statline tested")
 }
