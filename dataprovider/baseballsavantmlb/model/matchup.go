@@ -58,4 +58,6 @@ type Matchup struct {
 	GamesInSeries int32 `json:"games_in_series" parquet:"name=games_in_series, type=INT32"`
 	// SeriesGameNumber is the series game number of the event
 	SeriesGameNumber int32 `json:"series_game_number" parquet:"name=series_game_number, type=INT32"`
+	// Season - e.g. 2025
+	Season int32 `json:"season" parquet:"name=season, type=INT32"`
 }
