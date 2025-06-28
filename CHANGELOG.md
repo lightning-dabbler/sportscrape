@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Added `Runner` and `Scraper` abstractions to util to be reused across all data providers
+- Added `Runner` and `Scraper` abstractions to be reused across all data providers
 
 ## [0.10.0] - 2025-05-29
 ### Changed
