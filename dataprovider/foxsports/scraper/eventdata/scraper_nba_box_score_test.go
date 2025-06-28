@@ -9,8 +9,8 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
-	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
-	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
+	mr "github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,9 +25,9 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-07"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("NBA Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("NBA Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -100,9 +100,9 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2019-10-06"}),
 	)
 
-	matchuprunner = matchuputil.NewRunner(
-		matchuputil.RunnerName("NBA Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner = mr.NewRunner(
+		mr.RunnerName("NBA Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups = matchuprunner.RunMatchupsScraper()

@@ -9,8 +9,8 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/eventdata"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
-	eventdatautil "github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
-	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
+	edr "github.com/lightning-dabbler/sportscrape/runner/eventdata"
+	mr "github.com/lightning-dabbler/sportscrape/runner/matchup"
 )
 
 // Example for eventdata.NBABoxScoreScraper
@@ -21,9 +21,9 @@ func ExampleNBABoxScoreScraper() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("NBA Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("NBA Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -31,10 +31,10 @@ func ExampleNBABoxScoreScraper() {
 	// Get boxscore data
 	scraper := eventdata.NBABoxScoreScraper{}
 	scraper.League = foxsports.NBA
-	runner := eventdatautil.NewRunner(
-		eventdatautil.RunnerName("NBA Box score stats"),
-		eventdatautil.RunnerConcurrency(4),
-		eventdatautil.RunnerScraper(
+	runner := edr.NewRunner(
+		edr.RunnerName("NBA Box score stats"),
+		edr.RunnerConcurrency(4),
+		edr.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -52,9 +52,9 @@ func ExampleMLBBattingBoxScoreScraper() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("MLB Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("MLB Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -62,10 +62,10 @@ func ExampleMLBBattingBoxScoreScraper() {
 	// Get boxscore data
 	scraper := eventdata.MLBBattingBoxScoreScraper{}
 	scraper.League = foxsports.MLB
-	runner := eventdatautil.NewRunner(
-		eventdatautil.RunnerName("MLB Batting box score stats"),
-		eventdatautil.RunnerConcurrency(4),
-		eventdatautil.RunnerScraper(
+	runner := edr.NewRunner(
+		edr.RunnerName("MLB Batting box score stats"),
+		edr.RunnerConcurrency(4),
+		edr.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -83,9 +83,9 @@ func ExampleMLBPitchingBoxScoreScraper() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("MLB Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("MLB Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -93,10 +93,10 @@ func ExampleMLBPitchingBoxScoreScraper() {
 	// Get boxscore data
 	scraper := eventdata.MLBPitchingBoxScoreScraper{}
 	scraper.League = foxsports.MLB
-	runner := eventdatautil.NewRunner(
-		eventdatautil.RunnerName("MLB Pitching box score stats"),
-		eventdatautil.RunnerConcurrency(4),
-		eventdatautil.RunnerScraper(
+	runner := edr.NewRunner(
+		edr.RunnerName("MLB Pitching box score stats"),
+		edr.RunnerConcurrency(4),
+		edr.RunnerScraper(
 			&scraper,
 		),
 	)
@@ -119,9 +119,9 @@ func ExampleMLBProbableStartingPitcherScraper() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-17"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("MLB Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("MLB Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -129,10 +129,10 @@ func ExampleMLBProbableStartingPitcherScraper() {
 	// Get starting pitcher data
 	scraper := eventdata.MLBProbableStartingPitcherScraper{}
 	scraper.League = foxsports.MLB
-	runner := eventdatautil.NewRunner(
-		eventdatautil.RunnerName("MLB probable starting pitchers"),
-		eventdatautil.RunnerConcurrency(4),
-		eventdatautil.RunnerScraper(
+	runner := edr.NewRunner(
+		edr.RunnerName("MLB probable starting pitchers"),
+		edr.RunnerConcurrency(4),
+		edr.RunnerScraper(
 			&scraper,
 		),
 	)

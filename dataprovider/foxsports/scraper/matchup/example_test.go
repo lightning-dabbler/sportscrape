@@ -7,7 +7,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
-	matchuputil "github.com/lightning-dabbler/sportscrape/util/runner/matchup"
+	mr "github.com/lightning-dabbler/sportscrape/runner/matchup"
 )
 
 // Example for matchup.Runner NBA
@@ -17,9 +17,9 @@ func ExampleRunner_nba() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("NBA Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("NBA Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -40,9 +40,9 @@ func ExampleRunner_mlb() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("MLB Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("MLB Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -63,9 +63,9 @@ func ExampleRunner_ncaab() {
 		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("NCAAB Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("NCAAB Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()
@@ -86,9 +86,9 @@ func ExampleRunner_nfl() {
 		matchup.ScraperSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
 	)
 
-	matchuprunner := matchuputil.NewRunner(
-		matchuputil.RunnerName("NCAAB Matchups"),
-		matchuputil.RunnerScraper(matchupScraper),
+	matchuprunner := mr.NewRunner(
+		mr.RunnerName("NCAAB Matchups"),
+		mr.RunnerScraper(matchupScraper),
 	)
 
 	matchups := matchuprunner.RunMatchupsScraper()

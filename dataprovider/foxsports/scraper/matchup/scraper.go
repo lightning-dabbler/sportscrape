@@ -11,30 +11,30 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/lightning-dabbler/sportscrape/util/request"
-	"github.com/lightning-dabbler/sportscrape/util/runner/matchup"
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// MatchupOption defines a configuration option for the general matchup runner
+// ScraperOption defines a configuration option for the scraper
 type ScraperOption func(*Scraper)
 
-// ScraperLeague sets the League option for the general matchup runner
+// ScraperLeague sets the League option
 func ScraperLeague(league foxsports.League) ScraperOption {
 	return func(s *Scraper) {
 		s.League = league
 	}
 }
 
-// ScraperParams sets the Params option for the general matchup runner
+// ScraperParams sets the Params option
 func ScraperParams(params map[string]string) ScraperOption {
 	return func(s *Scraper) {
 		s.Params = params
 	}
 }
 
-// ScraperSegmenter sets the Segmenter option for the general matchup runner
+// ScraperSegmenter sets the Segmenter option
 func ScraperSegmenter(segmenter Segmenter) ScraperOption {
 	return func(s *Scraper) {
 		s.Segmenter = segmenter

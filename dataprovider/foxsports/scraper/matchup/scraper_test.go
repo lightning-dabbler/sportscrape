@@ -8,7 +8,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/util/runner/matchup"
+	"github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -9,8 +9,8 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
 	"github.com/lightning-dabbler/sportscrape/util"
-	"github.com/lightning-dabbler/sportscrape/util/runner/eventdata"
 	"github.com/xitongsys/parquet-go/types"
 )
 
