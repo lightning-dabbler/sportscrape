@@ -1,8 +1,9 @@
-package eventdata
+package scraper
 
 import (
 	"io"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
@@ -55,4 +56,8 @@ func (e *EventDataScraper) FetchData(url string) ([]byte, error) {
 	}
 	defer response.Body.Close()
 	return io.ReadAll(response.Body)
+}
+
+func (e EventDataScraper) Provider() sportscrape.Provider {
+	return sportscrape.FS
 }

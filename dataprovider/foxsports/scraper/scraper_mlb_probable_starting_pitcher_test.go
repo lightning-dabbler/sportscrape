@@ -1,15 +1,13 @@
 //go:build integration
 
-package eventdata
+package scraper
 
 import (
 	"testing"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
-	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
-	mr "github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,29 +17,32 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 	}
 
 	// Get matchups
-	matchupScraper := matchup.NewScraper(
-		matchup.ScraperLeague(foxsports.MLB),
-		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-25"}),
+	matchupScraper := NewMatchupScraper(
+		MatchupScraperLeague(foxsports.MLB),
+		MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-25"}),
 	)
 
-	matchuprunner := mr.NewRunner(
-		mr.RunnerName("MLB Matchups"),
-		mr.RunnerScraper(matchupScraper),
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.RunMatchupsScraper()
+	if err != nil {
+		t.Error(err)
+	}
 
-	scraper := MLBProbableStartingPitcherScraper{}
-	scraper.League = foxsports.MLB
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("MLB probable starting pitcher"),
-		eventdata.RunnerConcurrency(1),
-		eventdata.RunnerScraper(
-			&scraper,
+	boxscoreScraper := MLBProbableStartingPitcherScraper{}
+	boxscoreScraper.League = foxsports.MLB
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(
+			&boxscoreScraper,
 		),
 	)
-
-	probablePitchers := runner.RunEventsDataScraper(matchups...)
+	probablePitchers, err := runner.RunEventsDataScraper(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 	n_records := len(probablePitchers)
 	n_expected := 2
 	assert.Equal(t, n_expected, n_records, "2 starting pitchers")

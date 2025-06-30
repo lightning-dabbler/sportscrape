@@ -1,4 +1,4 @@
-package eventdata
+package scraper
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/xitongsys/parquet-go/types"
 )
@@ -24,10 +24,14 @@ type NBABoxScoreScraper struct {
 	EventDataScraper
 }
 
-func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper {
+func (s NBABoxScoreScraper) Feed() sportscrape.Feed {
+	return sportscrape.FSNBABoxScore
+}
+
+func (s *NBABoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	var context eventdata.Context
+	var context sportscrape.EventDataContext
 	context.AwayTeam = matchupModel.AwayTeamNameFull
 	context.AwayID = matchupModel.AwayTeamID
 	context.HomeTeam = matchupModel.HomeTeamNameFull
@@ -41,7 +45,7 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	url, err := s.ConstructEventDataURL(matchupModel.EventID)
 	if err != nil {
 		log.Println("Issue constructing event data URL")
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -49,30 +53,30 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.NBAEventData
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	// Check for box score data
 	if responsePayload.BoxScore == nil || responsePayload.BoxScore.BoxScoreSections == nil {
 		log.Printf("No NBA box score data available for event id: %d\n", matchupModel.EventID)
-		return eventdata.OutputWrapper{Output: data, Context: context}
+		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	// Check that both Away and Home team box score stats are populated
 	if responsePayload.BoxScore.BoxScoreSections.AwayPlayerStats == nil {
 		log.Printf("No NBA box score data available for away team (%s) for event id: %d\n", matchupModel.AwayTeamNameFull, matchupModel.EventID)
-		return eventdata.OutputWrapper{Output: data, Context: context}
+		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	if responsePayload.BoxScore.BoxScoreSections.AwayPlayerStats == nil {
 		log.Printf("No NBA box score data available for home team (%s) for event id: %d\n", matchupModel.HomeTeamNameFull, matchupModel.EventID)
-		return eventdata.OutputWrapper{Output: data, Context: context}
+		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	// validate NBABoxScoreStats home and away positions
@@ -80,14 +84,14 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHomeID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
 	if actualHomeID != matchupModel.HomeTeamID {
 		log.Printf("Home team ID, %d (%s), does not match expected, %d (%s)\n", actualHomeID, responsePayload.BoxScore.BoxScoreSections.HomePlayerStats.Title, matchupModel.HomeTeamID, matchupModel.HomeTeamNameFull)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
 	uriSplit = strings.Split(responsePayload.BoxScore.BoxScoreSections.AwayPlayerStats.ContentURI, "/")
 	actualAwayID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
 	if actualAwayID != matchupModel.AwayTeamID {
 		log.Printf("Away team ID, %d (%s), does not match expected, %d (%s)\n", actualAwayID, responsePayload.BoxScore.BoxScoreSections.AwayPlayerStats.Title, matchupModel.AwayTeamID, matchupModel.AwayTeamNameFull)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
 	// validate headers
@@ -103,12 +107,12 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHeaderSize := len(actualHeaders)
 	if actualHeaderSize != expectedStarterHeaderSize {
 		err = fmt.Errorf("Home team starter headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedStarterHeaderSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != expectedStartersHeaders[idx] {
 			err = fmt.Errorf("Home team starter header '%s' unexpect at index %d. Expected %s", column.Text, idx, expectedStartersHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
@@ -117,12 +121,12 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedBenchHeaderSize {
 		err = fmt.Errorf("Home team bench headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedBenchHeaderSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != expectedBenchHeaders[idx] {
 			err = fmt.Errorf("Home team bench header '%s' unexpect at index %d. Expected %s", column.Text, idx, expectedBenchHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
@@ -131,12 +135,12 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedShootingHeaderSize {
 		err = fmt.Errorf("Home team shooting headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedShootingHeaderSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != expectedShootingHeaders[idx] {
 			err = fmt.Errorf("Home team shooting header '%s' unexpect at index %d. Expected %s", column.Text, idx, expectedShootingHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
@@ -145,12 +149,12 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedStarterHeaderSize {
 		err = fmt.Errorf("Away team starter headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedStarterHeaderSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != expectedStartersHeaders[idx] {
 			err = fmt.Errorf("Away team starter header '%s' unexpect at index %d. Expected %s", column.Text, idx, expectedStartersHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
@@ -159,12 +163,12 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedBenchHeaderSize {
 		err = fmt.Errorf("Away team bench headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedBenchHeaderSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != expectedBenchHeaders[idx] {
 			err = fmt.Errorf("Away team bench header '%s' unexpect at index %d. Expected %s", column.Text, idx, expectedBenchHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
@@ -173,19 +177,19 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedShootingHeaderSize {
 		err = fmt.Errorf("Away team shooting headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedShootingHeaderSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != expectedShootingHeaders[idx] {
 			err = fmt.Errorf("Away team shooting header '%s' unexpect at index %d. Expected %s", column.Text, idx, expectedShootingHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
 	// parse and develop playerMap of relevant statlines
 	playerMap, err := s.parseBoxScoreStats(responsePayload, context)
 	if err != nil {
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
 	// Allocate each statline to data output
@@ -194,10 +198,10 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper
 	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return eventdata.OutputWrapper{Output: data, Context: context}
+	return sportscrape.EventDataOutput{Output: data, Context: context}
 }
 
-func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBAEventData, context eventdata.Context) (map[int64]*model.NBABoxScoreStats, error) {
+func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBAEventData, context sportscrape.EventDataContext) (map[int64]*model.NBABoxScoreStats, error) {
 	playerMap := make(map[int64]*model.NBABoxScoreStats)
 
 	// Home

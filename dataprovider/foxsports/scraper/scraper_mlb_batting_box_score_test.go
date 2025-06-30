@@ -1,17 +1,15 @@
 //go:build integration
 
-package eventdata
+package scraper
 
 import (
 	"log"
 	"path/filepath"
 	"testing"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
-	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
-	mr "github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go-source/local"
@@ -26,29 +24,33 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 	}
 
 	// Get matchups
-	matchupScraper := matchup.NewScraper(
-		matchup.ScraperLeague(foxsports.MLB),
-		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
+	matchupScraper := NewMatchupScraper(
+		MatchupScraperLeague(foxsports.MLB),
+		MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchuprunner := mr.NewRunner(
-		mr.RunnerName("MLB Matchups"),
-		mr.RunnerScraper(matchupScraper),
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.RunMatchupsScraper()
+	if err != nil {
+		t.Error(err)
+	}
 
 	// Get boxscore data
-	scraper := MLBBattingBoxScoreScraper{}
-	scraper.League = foxsports.MLB
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("MLB batting box score stats"),
-		eventdata.RunnerConcurrency(1),
-		eventdata.RunnerScraper(
-			&scraper,
+	boxscoreScraper := MLBBattingBoxScoreScraper{}
+	boxscoreScraper.League = foxsports.MLB
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(
+			&boxscoreScraper,
 		),
 	)
-	boxScoreStats := runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err := runner.RunEventsDataScraper(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 	n_stats := len(boxScoreStats)
 	n_expected := 19
 	assert.Equal(t, n_expected, n_stats, "13 statlines")

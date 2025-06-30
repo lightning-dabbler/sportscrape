@@ -1,16 +1,14 @@
 //go:build integration
 
-package eventdata
+package scraper
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper/matchup"
-	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
-	mr "github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,29 +18,33 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	}
 
 	// Get matchups
-	matchupScraper := matchup.NewScraper(
-		matchup.ScraperLeague(foxsports.NBA),
-		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-07"}),
+	matchupScraper := NewMatchupScraper(
+		MatchupScraperLeague(foxsports.NBA),
+		MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-04-07"}),
 	)
 
-	matchuprunner := mr.NewRunner(
-		mr.RunnerName("NBA Matchups"),
-		mr.RunnerScraper(matchupScraper),
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.RunMatchupsScraper()
+	if err != nil {
+		t.Error(err)
+	}
 
 	// Get boxscore data
-	scraper := NBABoxScoreScraper{}
-	scraper.League = foxsports.NBA
-	runner := eventdata.NewRunner(
-		eventdata.RunnerName("NBA Box score stats"),
-		eventdata.RunnerConcurrency(2),
-		eventdata.RunnerScraper(
-			&scraper,
+	boxscoreScraper := NBABoxScoreScraper{}
+	boxscoreScraper.League = foxsports.NBA
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(2),
+		sportscrape.EventDataRunnerScraper(
+			&boxscoreScraper,
 		),
 	)
-	boxScoreStats := runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err := runner.RunEventsDataScraper(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 	n_stats := len(boxScoreStats)
 	assert.Equal(t, 41, n_stats, "41 statlines")
 	// 43197 (Sacramento Kings vs Detroit Pistons) scraped for 20
@@ -95,29 +97,33 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	// 2019-10-06
 	// Issue: https://github.com/lightning-dabbler/sportscrape/issues/64
 
-	matchupScraper = matchup.NewScraper(
-		matchup.ScraperLeague(foxsports.NBA),
-		matchup.ScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2019-10-06"}),
+	matchupScraper = NewMatchupScraper(
+		MatchupScraperLeague(foxsports.NBA),
+		MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2019-10-06"}),
 	)
 
-	matchuprunner = mr.NewRunner(
-		mr.RunnerName("NBA Matchups"),
-		mr.RunnerScraper(matchupScraper),
+	matchuprunner = sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups = matchuprunner.RunMatchupsScraper()
+	matchups, err = matchuprunner.RunMatchupsScraper()
+	if err != nil {
+		t.Error(err)
+	}
 
 	// Get boxscore data
-	scraper = NBABoxScoreScraper{}
-	scraper.League = foxsports.NBA
-	runner = eventdata.NewRunner(
-		eventdata.RunnerName("NBA Box score stats"),
-		eventdata.RunnerConcurrency(2),
-		eventdata.RunnerScraper(
-			&scraper,
+	boxscoreScraper = NBABoxScoreScraper{}
+	boxscoreScraper.League = foxsports.NBA
+	runner = sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(2),
+		sportscrape.EventDataRunnerScraper(
+			&boxscoreScraper,
 		),
 	)
-	boxScoreStats = runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err = runner.RunEventsDataScraper(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 	n_stats = len(boxScoreStats)
 	assert.Equal(t, 69, n_stats, "69 statlines")
 }

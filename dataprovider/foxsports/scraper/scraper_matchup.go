@@ -1,4 +1,4 @@
-package matchup
+package scraper
 
 import (
 	"encoding/json"
@@ -8,42 +8,48 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/runner/matchup"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/lightning-dabbler/sportscrape/util/request"
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// ScraperOption defines a configuration option for the scraper
-type ScraperOption func(*Scraper)
+// Segmenter is the interface for constructing Segment IDs
+type Segmenter interface {
+	// GetSegmentID returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
+	GetSegmentID() (string, error)
+}
 
-// ScraperLeague sets the League option
-func ScraperLeague(league foxsports.League) ScraperOption {
-	return func(s *Scraper) {
+// MatchupScraperOption defines a configuration option for the scraper
+type MatchupScraperOption func(*MatchupScraper)
+
+// MatchupScraperLeague sets the League option
+func MatchupScraperLeague(league foxsports.League) MatchupScraperOption {
+	return func(s *MatchupScraper) {
 		s.League = league
 	}
 }
 
-// ScraperParams sets the Params option
-func ScraperParams(params map[string]string) ScraperOption {
-	return func(s *Scraper) {
+// MatchupScraperParams sets the Params option
+func MatchupScraperParams(params map[string]string) MatchupScraperOption {
+	return func(s *MatchupScraper) {
 		s.Params = params
 	}
 }
 
-// ScraperSegmenter sets the Segmenter option
-func ScraperSegmenter(segmenter Segmenter) ScraperOption {
-	return func(s *Scraper) {
+// MatchupScraperSegmenter sets the Segmenter option
+func MatchupScraperSegmenter(segmenter Segmenter) MatchupScraperOption {
+	return func(s *MatchupScraper) {
 		s.Segmenter = segmenter
 	}
 }
 
-// NewScraper creates a new Scraper with the provided options
-func NewScraper(options ...ScraperOption) *Scraper {
-	s := &Scraper{}
+// NewMatchupScraper creates a new MatchupScraper with the provided options
+func NewMatchupScraper(options ...MatchupScraperOption) *MatchupScraper {
+	s := &MatchupScraper{}
 
 	// Apply all options
 	for _, option := range options {
@@ -54,7 +60,7 @@ func NewScraper(options ...ScraperOption) *Scraper {
 	return s
 }
 
-type Scraper struct {
+type MatchupScraper struct {
 	// League - The league of interest to fetch matchups data
 	League foxsports.League
 	// Params - URL Query parameters
@@ -67,22 +73,33 @@ type Scraper struct {
 	pullTimestamp time.Time
 }
 
-func (s *Scraper) Init() {
+func (s *MatchupScraper) Init() {
 	// Params
 	if s.Params == nil {
 		s.Params = map[string]string{}
 	}
 	s.League.SetParams(s.Params)
 }
+func (s MatchupScraper) Provider() sportscrape.Provider {
+	return sportscrape.FS
+}
 
-// Segmenter is the interface for constructing Segment IDs
-type Segmenter interface {
-	// GetSegmentID returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
-	GetSegmentID() (string, error)
+func (s *MatchupScraper) Feed() sportscrape.Feed {
+	switch s.League {
+	case foxsports.NBA:
+		return sportscrape.FSNBAMatchup
+	case foxsports.MLB:
+		return sportscrape.FSMLBMatchup
+	case foxsports.NFL:
+		return sportscrape.FSNFLMatchup
+	case foxsports.NCAAB:
+		return sportscrape.FSNCAAMatchup
+	}
+	return sportscrape.FSNBAMatchup
 }
 
 // ConstructFullURL constructs the full url (query params included) to retrieve matchup data
-func (s *Scraper) ConstructFullURL() (string, error) {
+func (s *MatchupScraper) ConstructFullURL() (string, error) {
 	if s.segmentID == "" {
 		segmentID, err := s.Segmenter.GetSegmentID()
 		if err != nil {
@@ -108,7 +125,7 @@ func (s *Scraper) ConstructFullURL() (string, error) {
 //   - url: The URL to fetch matchups from
 //
 // Returns the JSON struct and optional error
-func (s *Scraper) FetchMatchups(url string) (jsonresponse.Matchup, error) {
+func (s *MatchupScraper) FetchMatchups(url string) (jsonresponse.Matchup, error) {
 	var responsePayload jsonresponse.Matchup
 	response, err := request.Get(url)
 	if err != nil {
@@ -127,7 +144,7 @@ func (s *Scraper) FetchMatchups(url string) (jsonresponse.Matchup, error) {
 }
 
 // ParseMatchup parses a matchup event JSON object into a matchup data model
-func (s *Scraper) ParseMatchup(eventPayload jsonresponse.Event) (model.Matchup, error) {
+func (s *MatchupScraper) ParseMatchup(eventPayload jsonresponse.Event) (model.Matchup, error) {
 	var matchup model.Matchup
 	//
 	eventTime, err := util.RFC3339ToTime(eventPayload.EventTime)
@@ -201,7 +218,7 @@ func (s *Scraper) ParseMatchup(eventPayload jsonresponse.Event) (model.Matchup, 
 }
 
 // Scrape gets all matchups of a League and segment ID
-func (s *Scraper) Scrape() matchup.OutputWrapper {
+func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
 	// Construct full url
 	log.Println("Constructing full URL")
@@ -241,9 +258,9 @@ func (s *Scraper) Scrape() matchup.OutputWrapper {
 		}
 		matchups = append(matchups, parsedEvent)
 	}
-	ou := matchup.OutputWrapper{
+	ou := sportscrape.MatchupOutput{
 		Output: matchups,
-		Context: matchup.Context{
+		Context: sportscrape.MatchupContext{
 			Errors: errors,
 			Skips:  skipped,
 			Total:  len(matchups),

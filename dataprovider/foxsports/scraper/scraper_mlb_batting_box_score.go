@@ -1,4 +1,4 @@
-package eventdata
+package scraper
 
 import (
 	"encoding/json"
@@ -7,23 +7,27 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/runner/eventdata"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/xitongsys/parquet-go/types"
 )
 
-var pitchingHeaders []string = []string{"PITCHERS", "IP", "H", "R", "ER", "BB", "SO", "HR", "ERA"}
+var battingHeaders []string = []string{"BATTERS", "AB", "R", "H", "RBI", "BB", "SO", "LOB", "AVG"}
 
-type MLBPitchingBoxScoreScraper struct {
+type MLBBattingBoxScoreScraper struct {
 	EventDataScraper
 }
 
-func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) eventdata.OutputWrapper {
+func (s MLBBattingBoxScoreScraper) Feed() sportscrape.Feed {
+	return sportscrape.FSMLBBattingBoxScore
+}
+
+func (s *MLBBattingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	var context eventdata.Context
+	var context sportscrape.EventDataContext
 	context.AwayTeam = matchupModel.AwayTeamNameFull
 	context.AwayID = matchupModel.AwayTeamID
 	context.HomeTeam = matchupModel.HomeTeamNameFull
@@ -37,7 +41,7 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) eventdata.Outpu
 	url, err := s.ConstructEventDataURL(matchupModel.EventID)
 	if err != nil {
 		log.Println("Issue constructing event data URL")
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -45,94 +49,94 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) eventdata.Outpu
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.MLBEventData
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	// Check for box score data
 	if responsePayload.BoxScore == nil || responsePayload.BoxScore.BoxScoreSections == nil {
-		log.Printf("No MLB pitching box score data available for event id: %d\n", matchupModel.EventID)
-		return eventdata.OutputWrapper{Output: data, Context: context}
+		log.Printf("No MLB batting box score data available for event id: %d\n", matchupModel.EventID)
+		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	// Check that both Away and Home team box score stats are populated
 	if responsePayload.BoxScore.BoxScoreSections.AwayStats == nil {
-		log.Printf("No MLB pitching box score data available for away team (%s) for event id: %d\n", matchupModel.AwayTeamNameFull, matchupModel.EventID)
-		return eventdata.OutputWrapper{Output: data, Context: context}
+		log.Printf("No MLB batting box score data available for away team (%s) for event id: %d\n", matchupModel.AwayTeamNameFull, matchupModel.EventID)
+		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	if responsePayload.BoxScore.BoxScoreSections.AwayStats == nil {
-		log.Printf("No MLB pitching box score data available for home team (%s) for event id: %d\n", matchupModel.HomeTeamNameFull, matchupModel.EventID)
-		return eventdata.OutputWrapper{Output: data, Context: context}
+		log.Printf("No MLB batting box score data available for home team (%s) for event id: %d\n", matchupModel.HomeTeamNameFull, matchupModel.EventID)
+		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
-	// validate MLBPitchingBoxScoreStats home and away positions
+	// validate MLBBattingBoxScoreStats home and away positions
 	uriSplit := strings.Split(responsePayload.BoxScore.BoxScoreSections.HomeStats.ContentURI, "/")
 	actualHomeID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
 	if actualHomeID != matchupModel.HomeTeamID {
 		log.Printf("Home team ID, %d (%s), does not match expected, %d (%s)\n", actualHomeID, responsePayload.BoxScore.BoxScoreSections.HomeStats.Title, matchupModel.HomeTeamID, matchupModel.HomeTeamNameFull)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
 	uriSplit = strings.Split(responsePayload.BoxScore.BoxScoreSections.AwayStats.ContentURI, "/")
 	actualAwayID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
 	if actualAwayID != matchupModel.AwayTeamID {
 		log.Printf("Away team ID, %d (%s), does not match expected, %d (%s)\n", actualAwayID, responsePayload.BoxScore.BoxScoreSections.AwayStats.Title, matchupModel.AwayTeamID, matchupModel.AwayTeamNameFull)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
 	// validate headers
-	expectedHeadersSize := len(pitchingHeaders)
+	expectedHeadersSize := len(battingHeaders)
 
-	// validate home pitching headers (index 2)
-	actualHeaders := responsePayload.BoxScore.BoxScoreSections.HomeStats.BoxscoreItems[2].BoxscoreTable.Headers[0].Columns
+	// validate home batting headers (index 0)
+	actualHeaders := responsePayload.BoxScore.BoxScoreSections.HomeStats.BoxscoreItems[0].BoxscoreTable.Headers[0].Columns
 	actualHeaderSize := len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
-		err = fmt.Errorf("Home team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		err = fmt.Errorf("Home team batting headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
-		if column.Text != pitchingHeaders[idx] {
-			err = fmt.Errorf("Home team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+		if column.Text != battingHeaders[idx] {
+			err = fmt.Errorf("Home team batting header '%s' unexpect at index %d. Expected %s", column.Text, idx, battingHeaders[idx])
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
 
-	// validate away pitching headers (index 2)
-	actualHeaders = responsePayload.BoxScore.BoxScoreSections.AwayStats.BoxscoreItems[2].BoxscoreTable.Headers[0].Columns
+	// validate away batting headers (index 0)
+	actualHeaders = responsePayload.BoxScore.BoxScoreSections.AwayStats.BoxscoreItems[0].BoxscoreTable.Headers[0].Columns
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
-		err = fmt.Errorf("Away team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		err = fmt.Errorf("Away team batting headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
-		if column.Text != pitchingHeaders[idx] {
-			err = fmt.Errorf("Away team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
-			return eventdata.OutputWrapper{Error: err, Context: context}
+		if column.Text != battingHeaders[idx] {
+			err = fmt.Errorf("Away team batting header '%s' unexpect at index %d. Expected %s", column.Text, idx, battingHeaders[idx])
+			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
-	stats, err := s.parsePitchingStats(responsePayload, context)
+	stats, err := s.parseBattingStats(responsePayload, context)
 	if err != nil {
-		return eventdata.OutputWrapper{Error: err, Context: context}
+		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for _, obj := range stats {
 		data = append(data, *obj)
 	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return eventdata.OutputWrapper{Output: data, Context: context}
+	return sportscrape.EventDataOutput{Output: data, Context: context}
 }
 
-func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresponse.MLBEventData, context eventdata.Context) ([]*model.MLBPitchingBoxScoreStats, error) {
-	var stats []*model.MLBPitchingBoxScoreStats
+func (s *MLBBattingBoxScoreScraper) parseBattingStats(responsePayload jsonresponse.MLBEventData, context sportscrape.EventDataContext) ([]*model.MLBBattingBoxScoreStats, error) {
+	var stats []*model.MLBBattingBoxScoreStats
 
 	// Home
-	for idx, record := range responsePayload.BoxScore.BoxScoreSections.HomeStats.BoxscoreItems[2].BoxscoreTable.Rows {
+	for _, record := range responsePayload.BoxScore.BoxScoreSections.HomeStats.BoxscoreItems[0].BoxscoreTable.Rows {
 		if record.EntityLink == nil {
 			continue
 		}
@@ -141,7 +145,7 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 			return stats, err
 		}
 
-		statline := &model.MLBPitchingBoxScoreStats{
+		statline := &model.MLBBattingBoxScoreStats{
 			PullTimestamp:        context.PullTimestamp,
 			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
 			EventTime:            context.EventTime,
@@ -152,7 +156,6 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 			Team:                 context.HomeTeam,
 			OpponentID:           context.AwayID,
 			Opponent:             context.AwayTeam,
-			PitchingOrder:        int32(idx + 1),
 		}
 		err = s.parseStatline(statline, record)
 		if err != nil {
@@ -162,7 +165,7 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 	}
 
 	// Away
-	for idx, record := range responsePayload.BoxScore.BoxScoreSections.AwayStats.BoxscoreItems[2].BoxscoreTable.Rows {
+	for _, record := range responsePayload.BoxScore.BoxScoreSections.AwayStats.BoxscoreItems[0].BoxscoreTable.Rows {
 		if record.EntityLink == nil {
 			continue
 		}
@@ -170,7 +173,7 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 		if err != nil {
 			return stats, err
 		}
-		statline := &model.MLBPitchingBoxScoreStats{
+		statline := &model.MLBBattingBoxScoreStats{
 			PullTimestamp:        context.PullTimestamp,
 			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
 			EventTime:            context.EventTime,
@@ -181,7 +184,6 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 			Opponent:             context.HomeTeam,
 			TeamID:               context.AwayID,
 			Team:                 context.AwayTeam,
-			PitchingOrder:        int32(idx + 1),
 		}
 		err = s.parseStatline(statline, record)
 		if err != nil {
@@ -193,43 +195,42 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 
 }
 
-func (s *MLBPitchingBoxScoreScraper) parseStatline(stats *model.MLBPitchingBoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
+func (s *MLBBattingBoxScoreScraper) parseStatline(stats *model.MLBBattingBoxScoreStats, statline jsonresponse.BoxScoreStatline) error {
 	var err error
 	stats.Player = statline.EntityLink.Player
-	stats.Record = statline.Columns[0].Superscript
-
-	// InningsPitched
+	stats.Position = *statline.Columns[0].Superscript
+	// AtBat
 	if statline.Columns[1].Text == "-" {
-		stats.InningsPitched = 0
+		stats.AtBat = 0
 	} else {
-		stats.InningsPitched, err = util.TextToFloat32(statline.Columns[1].Text)
+		stats.AtBat, err = util.TextToInt32(statline.Columns[1].Text)
 		if err != nil {
 			return err
 		}
 	}
-	// HitsAllowed
+	// Runs
 	if statline.Columns[2].Text == "-" {
-		stats.HitsAllowed = 0
+		stats.Runs = 0
 	} else {
-		stats.HitsAllowed, err = util.TextToInt32(statline.Columns[2].Text)
+		stats.Runs, err = util.TextToInt32(statline.Columns[2].Text)
 		if err != nil {
 			return err
 		}
 	}
-	// RunsAllowed
+	// Hits
 	if statline.Columns[3].Text == "-" {
-		stats.RunsAllowed = 0
+		stats.Hits = 0
 	} else {
-		stats.RunsAllowed, err = util.TextToInt32(statline.Columns[3].Text)
+		stats.Hits, err = util.TextToInt32(statline.Columns[3].Text)
 		if err != nil {
 			return err
 		}
 	}
-	// EarnedRunsAllowed
+	// RunsBattedIn
 	if statline.Columns[4].Text == "-" {
-		stats.EarnedRunsAllowed = 0
+		stats.RunsBattedIn = 0
 	} else {
-		stats.EarnedRunsAllowed, err = util.TextToInt32(statline.Columns[4].Text)
+		stats.RunsBattedIn, err = util.TextToInt32(statline.Columns[4].Text)
 		if err != nil {
 			return err
 		}
@@ -252,20 +253,20 @@ func (s *MLBPitchingBoxScoreScraper) parseStatline(stats *model.MLBPitchingBoxSc
 			return err
 		}
 	}
-	// HomeRunsAllowed
+	// LeftOnBase
 	if statline.Columns[7].Text == "-" {
-		stats.HomeRunsAllowed = 0
+		stats.LeftOnBase = 0
 	} else {
-		stats.HomeRunsAllowed, err = util.TextToInt32(statline.Columns[7].Text)
+		stats.LeftOnBase, err = util.TextToInt32(statline.Columns[7].Text)
 		if err != nil {
 			return err
 		}
 	}
-	// EarnedRunAverage
+	// BattingAverage
 	if statline.Columns[8].Text == "-" {
-		stats.EarnedRunAverage = 0
+		stats.BattingAverage = 0
 	} else {
-		stats.EarnedRunAverage, err = util.TextToFloat32(statline.Columns[8].Text)
+		stats.BattingAverage, err = util.TextToFloat32(statline.Columns[8].Text)
 		if err != nil {
 			return err
 		}
