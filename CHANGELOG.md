@@ -6,8 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
-- Added `Runner` and `Scraper` abstractions to be reused across all data providers
+### Added
+- Added `MatchupRunner`, `EventDataRunner`, `MatchupScraper`, and `EventDataScraper` abstractions to be reused across all data providers
+- Added `Feed` and `Provider` enums to catalog sources in code
 
 ## [0.10.0] - 2025-05-29
 ### Changed
