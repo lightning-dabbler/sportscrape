@@ -36,11 +36,6 @@ var (
 	BasketballReferenceNBABoxScoreQ4 Feed = Feed(string(BasketballReference) + " nba q4 box score")
 	BasketballReferenceNBABoxScoreH1 Feed = Feed(string(BasketballReference) + " nba h1 box score")
 	BasketballReferenceNBABoxScoreH2 Feed = Feed(string(BasketballReference) + " nba h2 box score")
-
-// baseball savant
-
-// Deprecation
-
 )
 
 func (p Provider) Deprecated() bool {
