@@ -69,7 +69,7 @@ func (t *EventDataRunner) Deprecated() bool {
 	return feed.Deprecated()
 }
 
-func (t *EventDataRunner) RunEventsDataScraper(matchups ...interface{}) ([]interface{}, error) {
+func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	if t.Deprecated() {
 		return nil, t.Scraper.Feed().Deprecation()
 	}
@@ -180,8 +180,8 @@ func (r *MatchupRunner) Deprecated() bool {
 	return feed.Deprecated()
 }
 
-// RunMatchupsScraper gets all matchups
-func (r *MatchupRunner) RunMatchupsScraper() ([]interface{}, error) {
+// Run gets all matchups
+func (r *MatchupRunner) Run() ([]interface{}, error) {
 	if r.Deprecated() {
 		return nil, r.Scraper.Feed().Deprecation()
 	}

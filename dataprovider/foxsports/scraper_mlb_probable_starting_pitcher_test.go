@@ -1,12 +1,11 @@
 //go:build integration
 
-package scraper
+package foxsports
 
 import (
 	"testing"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,28 +17,28 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 
 	// Get matchups
 	matchupScraper := NewMatchupScraper(
-		MatchupScraperLeague(foxsports.MLB),
-		MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-25"}),
+		MatchupScraperLeague(MLB),
+		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2024-10-25"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		t.Error(err)
 	}
 
 	boxscoreScraper := MLBProbableStartingPitcherScraper{}
-	boxscoreScraper.League = foxsports.MLB
+	boxscoreScraper.League = MLB
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
 		sportscrape.EventDataRunnerScraper(
 			&boxscoreScraper,
 		),
 	)
-	probablePitchers, err := runner.RunEventsDataScraper(matchups...)
+	probablePitchers, err := runner.Run(matchups...)
 	if err != nil {
 		t.Error(err)
 	}

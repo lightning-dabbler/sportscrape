@@ -1,6 +1,6 @@
 //go:build integration
 
-package scraper
+package foxsports
 
 import (
 	"log"
@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -25,29 +24,29 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 
 	// Get matchups
 	matchupScraper := NewMatchupScraper(
-		MatchupScraperLeague(foxsports.MLB),
-		MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
+		MatchupScraperLeague(MLB),
+		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		t.Error(err)
 	}
 
 	// Get boxscore data
 	boxscoreScraper := MLBBattingBoxScoreScraper{}
-	boxscoreScraper.League = foxsports.MLB
+	boxscoreScraper.League = MLB
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
 		sportscrape.EventDataRunnerScraper(
 			&boxscoreScraper,
 		),
 	)
-	boxScoreStats, err := runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err := runner.Run(matchups...)
 	if err != nil {
 		t.Error(err)
 	}

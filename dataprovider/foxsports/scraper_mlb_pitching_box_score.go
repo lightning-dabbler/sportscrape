@@ -1,4 +1,4 @@
-package scraper
+package foxsports
 
 import (
 	"encoding/json"

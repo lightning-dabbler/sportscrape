@@ -1,4 +1,4 @@
-package scraper_test
+package foxsports_test
 
 import (
 	"encoding/json"
@@ -8,20 +8,19 @@ import (
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/scraper"
 )
 
-// Example for scraper.MatchupScraper NBA
+// Example for foxsports.MatchupScraper NBA
 func ExampleMatchupScraper_nba() {
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.NBA),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.NBA),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -35,18 +34,18 @@ func ExampleMatchupScraper_nba() {
 	}
 }
 
-// Example for scraper.MatchupScraper MLB
+// Example for foxsports.MatchupScraper MLB
 func ExampleMatchupScraper_mlb() {
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.MLB),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.MLB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -60,18 +59,18 @@ func ExampleMatchupScraper_mlb() {
 	}
 }
 
-// Example for scraper.MatchupScraper NCAAB
+// Example for foxsports.MatchupScraper NCAAB
 func ExampleMatchupScraper_ncaab() {
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.NCAAB),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.NCAAB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -85,18 +84,18 @@ func ExampleMatchupScraper_ncaab() {
 	}
 }
 
-// Example for scraper.MatchupScraper NFL
+// Example for foxsports.MatchupScraper NFL
 func ExampleMatchupScraper_nfl() {
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.NFL),
-		scraper.MatchupScraperSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.NFL),
+		foxsports.MatchupScraperSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -110,25 +109,25 @@ func ExampleMatchupScraper_nfl() {
 	}
 }
 
-// Example for scraper.NBABoxScoreScraper
+// Example for foxsports.NBABoxScoreScraper
 func ExampleNBABoxScoreScraper() {
 	// Get matchups
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.NBA),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.NBA),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
 
 	// Get boxscore data
-	eventdatascraper := scraper.NBABoxScoreScraper{}
+	eventdatascraper := foxsports.NBABoxScoreScraper{}
 	eventdatascraper.League = foxsports.NBA
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
@@ -136,7 +135,7 @@ func ExampleNBABoxScoreScraper() {
 			&eventdatascraper,
 		),
 	)
-	boxScoreStats, err := runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err := runner.Run(matchups...)
 	if err != nil {
 		panic(err)
 	}
@@ -145,25 +144,25 @@ func ExampleNBABoxScoreScraper() {
 	}
 }
 
-// Example for scraper.MLBBattingBoxScoreScraper
+// Example for foxsports.MLBBattingBoxScoreScraper
 func ExampleMLBBattingBoxScoreScraper() {
 	// Get matchups
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.MLB),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.MLB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
 
 	// Get boxscore data
-	eventdatascraper := scraper.MLBBattingBoxScoreScraper{}
+	eventdatascraper := foxsports.MLBBattingBoxScoreScraper{}
 	eventdatascraper.League = foxsports.MLB
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
@@ -172,7 +171,7 @@ func ExampleMLBBattingBoxScoreScraper() {
 		),
 	)
 
-	boxScoreStats, err := runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err := runner.Run(matchups...)
 	if err != nil {
 		panic(err)
 	}
@@ -181,25 +180,25 @@ func ExampleMLBBattingBoxScoreScraper() {
 	}
 }
 
-// Example for scraper.MLBPitchingBoxScoreScraper
+// Example for foxsports.MLBPitchingBoxScoreScraper
 func ExampleMLBPitchingBoxScoreScraper() {
 	// Get matchups
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.MLB),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.MLB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
 
 	// Get boxscore data
-	eventdatascraper := scraper.MLBPitchingBoxScoreScraper{}
+	eventdatascraper := foxsports.MLBPitchingBoxScoreScraper{}
 	eventdatascraper.League = foxsports.MLB
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
@@ -208,7 +207,7 @@ func ExampleMLBPitchingBoxScoreScraper() {
 		),
 	)
 
-	boxScoreStats, err := runner.RunEventsDataScraper(matchups...)
+	boxScoreStats, err := runner.Run(matchups...)
 	if err != nil {
 		panic(err)
 	}
@@ -222,25 +221,25 @@ func ExampleMLBPitchingBoxScoreScraper() {
 	}
 }
 
-// Example for scraper.MLBProbableStartingPitcherScraper
+// Example for foxsports.MLBProbableStartingPitcherScraper
 func ExampleMLBProbableStartingPitcherScraper() {
 	// Get matchups
-	matchupScraper := scraper.NewMatchupScraper(
-		scraper.MatchupScraperLeague(foxsports.MLB),
-		scraper.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-17"}),
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.MLB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-17"}),
 	)
 
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupScraper),
 	)
 
-	matchups, err := matchuprunner.RunMatchupsScraper()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
 
 	// Get starting pitcher data
-	eventdatascraper := scraper.MLBProbableStartingPitcherScraper{}
+	eventdatascraper := foxsports.MLBProbableStartingPitcherScraper{}
 	eventdatascraper.League = foxsports.MLB
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
@@ -249,7 +248,7 @@ func ExampleMLBProbableStartingPitcherScraper() {
 		),
 	)
 
-	probablePitchers, err := runner.RunEventsDataScraper(matchups...)
+	probablePitchers, err := runner.Run(matchups...)
 	if err != nil {
 		panic(err)
 	}

@@ -1,17 +1,16 @@
-package scraper
+package foxsports
 
 import (
 	"io"
 	"log"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
 type EventDataScraper struct {
 	// League - The league of interest to fetch matchups data
-	League foxsports.League
+	League League
 	// Params - URL Query parameters
 	Params map[string]string
 }

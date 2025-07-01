@@ -1,4 +1,4 @@
-package scraper
+package foxsports
 
 import (
 	"encoding/json"
@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/util"
@@ -21,7 +20,7 @@ import (
 type MatchupScraperOption func(*MatchupScraper)
 
 // MatchupScraperLeague sets the League option
-func MatchupScraperLeague(league foxsports.League) MatchupScraperOption {
+func MatchupScraperLeague(league League) MatchupScraperOption {
 	return func(s *MatchupScraper) {
 		s.League = league
 	}
@@ -35,7 +34,7 @@ func MatchupScraperParams(params map[string]string) MatchupScraperOption {
 }
 
 // MatchupScraperSegmenter sets the Segmenter option
-func MatchupScraperSegmenter(segmenter foxsports.Segmenter) MatchupScraperOption {
+func MatchupScraperSegmenter(segmenter Segmenter) MatchupScraperOption {
 	return func(s *MatchupScraper) {
 		s.Segmenter = segmenter
 	}
@@ -56,11 +55,11 @@ func NewMatchupScraper(options ...MatchupScraperOption) *MatchupScraper {
 
 type MatchupScraper struct {
 	// League - The league of interest to fetch matchups data
-	League foxsports.League
+	League League
 	// Params - URL Query parameters
 	Params map[string]string
 	// Segmenter - The interface for constructing segment IDs
-	Segmenter foxsports.Segmenter
+	Segmenter Segmenter
 	// segmentID - The base subdirectory in url used to fetch the point-in-time dataset
 	segmentID string
 	// pullTimestamp - approximate timestamp for when the request to fetch matchups was made
@@ -88,13 +87,13 @@ func (s MatchupScraper) Provider() sportscrape.Provider {
 
 func (s *MatchupScraper) Feed() sportscrape.Feed {
 	switch s.League {
-	case foxsports.NBA:
+	case NBA:
 		return sportscrape.FSNBAMatchup
-	case foxsports.MLB:
+	case MLB:
 		return sportscrape.FSMLBMatchup
-	case foxsports.NFL:
+	case NFL:
 		return sportscrape.FSNFLMatchup
-	case foxsports.NCAAB:
+	case NCAAB:
 		return sportscrape.FSNCAAMatchup
 	}
 	return sportscrape.FSNBAMatchup
