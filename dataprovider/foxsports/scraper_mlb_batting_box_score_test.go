@@ -38,8 +38,7 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 	}
 
 	// Get boxscore data
-	boxscoreScraper := MLBBattingBoxScoreScraper{}
-	boxscoreScraper.League = MLB
+	boxscoreScraper := NewMLBBattingBoxScoreScraper()
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
 		sportscrape.EventDataRunnerScraper(

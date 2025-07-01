@@ -21,6 +21,30 @@ const (
 
 var re = regexp.MustCompile(regexExpr)
 
+// MLBProbableStartingPitcherScraperOption defines a configuration option for the scraper
+type MLBProbableStartingPitcherScraperOption func(*MLBProbableStartingPitcherScraper)
+
+// MLBProbableStartingPitcherScraperParams sets the Params option
+func MLBProbableStartingPitcherScraperParams(params map[string]string) MLBProbableStartingPitcherScraperOption {
+	return func(s *MLBProbableStartingPitcherScraper) {
+		s.Params = params
+	}
+}
+
+// NewMLBProbableStartingPitcherScraper creates a new MLBProbableStartingPitcherScraper with the provided options
+func NewMLBProbableStartingPitcherScraper(options ...MLBProbableStartingPitcherScraperOption) *MLBProbableStartingPitcherScraper {
+	s := &MLBProbableStartingPitcherScraper{}
+
+	// Apply all options
+	for _, option := range options {
+		option(s)
+	}
+	s.League = MLB
+	s.Init()
+
+	return s
+}
+
 type MLBProbableStartingPitcherScraper struct {
 	EventDataScraper
 }

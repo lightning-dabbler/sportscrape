@@ -16,6 +16,30 @@ import (
 
 var battingHeaders []string = []string{"BATTERS", "AB", "R", "H", "RBI", "BB", "SO", "LOB", "AVG"}
 
+// MLBBattingBoxScoreScraperOption defines a configuration option for the scraper
+type MLBBattingBoxScoreScraperOption func(*MLBBattingBoxScoreScraper)
+
+// MLBBattingBoxScoreScraperParams sets the Params option
+func MLBBattingBoxScoreScraperParams(params map[string]string) MLBBattingBoxScoreScraperOption {
+	return func(s *MLBBattingBoxScoreScraper) {
+		s.Params = params
+	}
+}
+
+// NewMLBBattingBoxScoreScraper creates a new MLBBattingBoxScoreScraper with the provided options
+func NewMLBBattingBoxScoreScraper(options ...MLBBattingBoxScoreScraperOption) *MLBBattingBoxScoreScraper {
+	s := &MLBBattingBoxScoreScraper{}
+
+	// Apply all options
+	for _, option := range options {
+		option(s)
+	}
+	s.League = MLB
+	s.Init()
+
+	return s
+}
+
 type MLBBattingBoxScoreScraper struct {
 	EventDataScraper
 }

@@ -127,12 +127,11 @@ func ExampleNBABoxScoreScraper() {
 	}
 
 	// Get boxscore data
-	eventdatascraper := foxsports.NBABoxScoreScraper{}
-	eventdatascraper.League = foxsports.NBA
+	eventdatascraper := foxsports.NewNBABoxScoreScraper()
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
 		sportscrape.EventDataRunnerScraper(
-			&eventdatascraper,
+			eventdatascraper,
 		),
 	)
 	boxScoreStats, err := runner.Run(matchups...)
@@ -162,12 +161,11 @@ func ExampleMLBBattingBoxScoreScraper() {
 	}
 
 	// Get boxscore data
-	eventdatascraper := foxsports.MLBBattingBoxScoreScraper{}
-	eventdatascraper.League = foxsports.MLB
+	eventdatascraper := foxsports.NewMLBBattingBoxScoreScraper()
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
 		sportscrape.EventDataRunnerScraper(
-			&eventdatascraper,
+			eventdatascraper,
 		),
 	)
 
@@ -198,12 +196,11 @@ func ExampleMLBPitchingBoxScoreScraper() {
 	}
 
 	// Get boxscore data
-	eventdatascraper := foxsports.MLBPitchingBoxScoreScraper{}
-	eventdatascraper.League = foxsports.MLB
+	eventdatascraper := foxsports.NewMLBPitchingBoxScoreScraper()
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
 		sportscrape.EventDataRunnerScraper(
-			&eventdatascraper,
+			eventdatascraper,
 		),
 	)
 
@@ -239,12 +236,11 @@ func ExampleMLBProbableStartingPitcherScraper() {
 	}
 
 	// Get starting pitcher data
-	eventdatascraper := foxsports.MLBProbableStartingPitcherScraper{}
-	eventdatascraper.League = foxsports.MLB
+	eventdatascraper := foxsports.NewMLBProbableStartingPitcherScraper()
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(4),
 		sportscrape.EventDataRunnerScraper(
-			&eventdatascraper,
+			eventdatascraper,
 		),
 	)
 

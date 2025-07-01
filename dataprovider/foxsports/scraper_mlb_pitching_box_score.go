@@ -16,6 +16,30 @@ import (
 
 var pitchingHeaders []string = []string{"PITCHERS", "IP", "H", "R", "ER", "BB", "SO", "HR", "ERA"}
 
+// MLBPitchingBoxScoreScraperOption defines a configuration option for the scraper
+type MLBPitchingBoxScoreScraperOption func(*MLBPitchingBoxScoreScraper)
+
+// MLBPitchingBoxScoreScraperParams sets the Params option
+func MLBPitchingBoxScoreScraperParams(params map[string]string) MLBPitchingBoxScoreScraperOption {
+	return func(s *MLBPitchingBoxScoreScraper) {
+		s.Params = params
+	}
+}
+
+// NewMLBPitchingBoxScoreScraper creates a new MLBPitchingBoxScoreScraper with the provided options
+func NewMLBPitchingBoxScoreScraper(options ...MLBPitchingBoxScoreScraperOption) *MLBPitchingBoxScoreScraper {
+	s := &MLBPitchingBoxScoreScraper{}
+
+	// Apply all options
+	for _, option := range options {
+		option(s)
+	}
+	s.League = MLB
+	s.Init()
+
+	return s
+}
+
 type MLBPitchingBoxScoreScraper struct {
 	EventDataScraper
 }
@@ -97,12 +121,12 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.Eve
 	actualHeaders := responsePayload.BoxScore.BoxScoreSections.HomeStats.BoxscoreItems[2].BoxscoreTable.Headers[0].Columns
 	actualHeaderSize := len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
-		err = fmt.Errorf("Home team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
+		err = fmt.Errorf("home team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != pitchingHeaders[idx] {
-			err = fmt.Errorf("Home team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
+			err = fmt.Errorf("home team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
 			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}
@@ -111,12 +135,12 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.Eve
 	actualHeaders = responsePayload.BoxScore.BoxScoreSections.AwayStats.BoxscoreItems[2].BoxscoreTable.Headers[0].Columns
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
-		err = fmt.Errorf("Away team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
+		err = fmt.Errorf("away team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != pitchingHeaders[idx] {
-			err = fmt.Errorf("Away team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
+			err = fmt.Errorf("away team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
 			return sportscrape.EventDataOutput{Error: err, Context: context}
 		}
 	}

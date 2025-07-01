@@ -20,6 +20,30 @@ var NBABoxscoreStatsHeaders map[string][]string = map[string][]string{
 	"shooting": {"SHOOTING", "FG", "3FG", "FT", "PTS"},
 }
 
+// NBABoxScoreScraperOption defines a configuration option for the scraper
+type NBABoxScoreScraperOption func(*NBABoxScoreScraper)
+
+// NBABoxScoreScraperParams sets the Params option
+func NBABoxScoreScraperParams(params map[string]string) NBABoxScoreScraperOption {
+	return func(s *NBABoxScoreScraper) {
+		s.Params = params
+	}
+}
+
+// NewNBABoxScoreScraper creates a new NBABoxScoreScraper with the provided options
+func NewNBABoxScoreScraper(options ...NBABoxScoreScraperOption) *NBABoxScoreScraper {
+	s := &NBABoxScoreScraper{}
+
+	// Apply all options
+	for _, option := range options {
+		option(s)
+	}
+	s.League = NBA
+	s.Init()
+
+	return s
+}
+
 type NBABoxScoreScraper struct {
 	EventDataScraper
 }

@@ -30,8 +30,7 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 		t.Error(err)
 	}
 
-	boxscoreScraper := MLBProbableStartingPitcherScraper{}
-	boxscoreScraper.League = MLB
+	boxscoreScraper := NewMLBProbableStartingPitcherScraper()
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
 		sportscrape.EventDataRunnerScraper(
