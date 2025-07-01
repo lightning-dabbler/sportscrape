@@ -17,12 +17,6 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// Segmenter is the interface for constructing Segment IDs
-type Segmenter interface {
-	// GetSegmentID returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
-	GetSegmentID() (string, error)
-}
-
 // MatchupScraperOption defines a configuration option for the scraper
 type MatchupScraperOption func(*MatchupScraper)
 
@@ -41,7 +35,7 @@ func MatchupScraperParams(params map[string]string) MatchupScraperOption {
 }
 
 // MatchupScraperSegmenter sets the Segmenter option
-func MatchupScraperSegmenter(segmenter Segmenter) MatchupScraperOption {
+func MatchupScraperSegmenter(segmenter foxsports.Segmenter) MatchupScraperOption {
 	return func(s *MatchupScraper) {
 		s.Segmenter = segmenter
 	}
@@ -66,7 +60,7 @@ type MatchupScraper struct {
 	// Params - URL Query parameters
 	Params map[string]string
 	// Segmenter - The interface for constructing segment IDs
-	Segmenter Segmenter
+	Segmenter foxsports.Segmenter
 	// segmentID - The base subdirectory in url used to fetch the point-in-time dataset
 	segmentID string
 	// pullTimestamp - approximate timestamp for when the request to fetch matchups was made
@@ -74,6 +68,14 @@ type MatchupScraper struct {
 }
 
 func (s *MatchupScraper) Init() {
+	// Ensure Segmenter is set
+	if s.Segmenter == nil {
+		log.Fatalln("Segmenter is a required argument for foxsports MatchupScraper")
+	}
+	// Ensure League is set
+	if s.League.Undefined() {
+		log.Fatalln("League is a required argument for foxsports MatchupScraper")
+	}
 	// Params
 	if s.Params == nil {
 		s.Params = map[string]string{}

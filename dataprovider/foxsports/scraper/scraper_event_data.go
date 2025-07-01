@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"io"
+	"log"
 
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
@@ -16,6 +17,10 @@ type EventDataScraper struct {
 }
 
 func (e *EventDataScraper) Init() {
+	// Ensure League is set
+	if e.League.Undefined() {
+		log.Fatalln("League is a required argument for foxsports EventDataScraper")
+	}
 	// Params
 	if e.Params == nil {
 		e.Params = map[string]string{}
