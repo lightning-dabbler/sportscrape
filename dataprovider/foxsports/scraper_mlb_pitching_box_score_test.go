@@ -42,7 +42,7 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
 		sportscrape.EventDataRunnerScraper(
-			&boxscoreScraper,
+			boxscoreScraper,
 		),
 	)
 	boxScoreStats, err := runner.Run(matchups...)

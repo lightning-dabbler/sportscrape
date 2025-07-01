@@ -36,7 +36,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(2),
 		sportscrape.EventDataRunnerScraper(
-			&boxscoreScraper,
+			boxscoreScraper,
 		),
 	)
 	boxScoreStats, err := runner.Run(matchups...)
@@ -114,7 +114,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	runner = sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(2),
 		sportscrape.EventDataRunnerScraper(
-			&boxscoreScraper,
+			boxscoreScraper,
 		),
 	)
 	boxScoreStats, err = runner.Run(matchups...)

@@ -34,7 +34,7 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 	runner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
 		sportscrape.EventDataRunnerScraper(
-			&boxscoreScraper,
+			boxscoreScraper,
 		),
 	)
 	probablePitchers, err := runner.Run(matchups...)
