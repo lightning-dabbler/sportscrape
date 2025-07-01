@@ -1,14 +1,14 @@
-package mlb
+package baseballreferencemlb
 
 import (
 	"fmt"
 	"log"
 	"strings"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	"github.com/xitongsys/parquet-go/types"
 
 	"time"
@@ -28,70 +28,95 @@ const (
 	boxScoreLinkSelector          = "td.right.gamelink > a"
 )
 
-// MatchupOption defines a configuration option for MatchupRunner
-type MatchupOption func(*MatchupRunner)
+// MatchupOption defines a configuration option for MatchupScraper
+type MatchupOption func(*MatchupScraper)
+
+// WithMatchupTimeout sets the timeout duration for matchup runner
+func WithMatchupDate(date string) MatchupOption {
+	return func(mr *MatchupScraper) {
+		mr.Date = date
+	}
+}
 
 // WithMatchupTimeout sets the timeout duration for matchup runner
 func WithMatchupTimeout(timeout time.Duration) MatchupOption {
-	return func(mr *MatchupRunner) {
+	return func(mr *MatchupScraper) {
 		mr.Timeout = timeout
 	}
 }
 
 // WithMatchupDebug enables or disables debug mode for matchup runner
 func WithMatchupDebug(debug bool) MatchupOption {
-	return func(mr *MatchupRunner) {
+	return func(mr *MatchupScraper) {
 		mr.Debug = debug
 	}
 }
 
-// NewMatchupRunner creates a new MatchupRunner with the provided options
-func NewMatchupRunner(options ...MatchupOption) *MatchupRunner {
-	mr := &MatchupRunner{}
+// NewMatchupScraper creates a new MatchupScraper with the provided options
+func NewMatchupScraper(options ...MatchupOption) *MatchupScraper {
+	mr := &MatchupScraper{}
 
 	// Apply all options
 	for _, option := range options {
 		option(mr)
 	}
+	mr.Init()
 
 	return mr
 }
 
-// MatchupRunner specialized Runner for retrieving MLB matchup information.
-type MatchupRunner struct {
-	sportsreferenceutil.MatchupRunner
+// MatchupScraper specialized Runner for retrieving MLB matchup information.
+type MatchupScraper struct {
+	sportsreference.BaseScraper
+	Date string
 }
 
-// GetMatchups retrieves MLB matchups for the specified date.
-//
-// Parameter:
-//   - date: The date for which to retrieve matchups
-//
-// Returns a slice of MLB matchup data as interface{} values
-func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
+func (ms MatchupScraper) Provider() sportscrape.Provider {
+	return sportscrape.BaseballReference
+}
+
+func (ms MatchupScraper) Init() {
+	ms.BaseScraper.Init()
+	if ms.Date == "" {
+		log.Fatalln("Date is a required argument")
+	}
+}
+
+func (ms MatchupScraper) Feed() sportscrape.Feed {
+	return sportscrape.BaseballReferenceMLBMatchup
+}
+
+// Scrape retrieves MLB matchups for the specified date.
+func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
-	timestamp, err := sportsreferenceutil.DateStrToTime(date)
+	output := sportscrape.MatchupOutput{}
+	var skips int
+	timestamp, err := sportsreference.DateStrToTime(ms.Date)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 	month := timestamp.Format("1")
 	day := timestamp.Format("2")
 	year := timestamp.Format("2006")
-	url, err := util.StrFormat(baseballreference.MatchupURL, "month", month, "year", year, "day", day)
+	url, err := util.StrFormat(sportsreference.BaseballRefMatchupURL, "month", month, "year", year, "day", day)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	log.Println("Scraping Matchups: " + url)
 
-	EventDate, err := sportsreferenceutil.EventDate(date)
+	EventDate, err := sportsreference.EventDate(ms.Date)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
-	doc, err := matchupRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := ms.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 
 	doc.Find(mlbGameSummarySelector).EachWithBreak(func(idx int, s *goquery.Selection) bool {
@@ -108,7 +133,8 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		})
 		var awayTeamSelection, homeTeamSelection *goquery.Selection
 		n := len(teamSection)
-		if n == 3 {
+		switch n {
+		case 3:
 			if strings.HasPrefix(strings.ToLower(teamSection[0].Find("td").Text()), "game") {
 				// playoff event
 				matchup.PlayoffMatch = true
@@ -123,87 +149,113 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 				awayLocation = fmt.Sprintf(directTeamSelectorTemplate, 1)
 				homeLocation = fmt.Sprintf(directTeamSelectorTemplate, 2)
 			} else {
-				log.Fatalf("Game summary table #%d has %d table rows with unfamiliar record order!\n", idx+1, n)
+				output.Error = fmt.Errorf("game summary table #%d has %d table rows with unfamiliar record order", idx+1, n)
+				return false
 			}
-		} else if n == 2 {
+		case 2:
 			awayTeamSelection = teamSection[0]
 			homeTeamSelection = teamSection[1]
 			awayLocation = fmt.Sprintf(directTeamSelectorTemplate, 1)
 			homeLocation = fmt.Sprintf(directTeamSelectorTemplate, 2)
-		} else {
-			log.Fatalf("Game summary table #%d has %d table rows. The expectation is either 2 or 3 rows!\n", idx+1, n)
+		default:
+			output.Error = fmt.Errorf("game summary table #%d has %d table rows. The expectation is either 2 or 3 rows", idx+1, n)
+			return false
 		}
-
 		// AwayTeam
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, awayLocation, teamNameSelector)
-		awayName, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum((awayTeamSelection.Find(teamNameSelector).Text())), location, "AwayTeam")
+		awayName, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum((awayTeamSelection.Find(teamNameSelector).Text())), location, "AwayTeam")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		if awayName == "National League" || awayName == "American League" {
-			log.Printf("%s is a team associated with an all-star event. Skipping event date, %s, entirely", awayName, date)
+			log.Printf("%s is a team associated with an all-star event. Skipping event date, %s, entirely\n", awayName, ms.Date)
+			skips += 1
 			return false
 		}
 		matchup.AwayTeam = awayName
 
 		// AwayTeamLink
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, awayLocation, teamLinkSelector)
-		urlPath, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(awayTeamSelection.Find(teamLinkSelector).AttrOr("href", "")), location, "AwayTeamLink")
+		urlPath, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum(awayTeamSelection.Find(teamLinkSelector).AttrOr("href", "")), location, "AwayTeamLink")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
-		matchup.AwayTeamLink = baseballreference.URL + urlPath
+		matchup.AwayTeamLink = sportsreference.BaseballRefURL + urlPath
+		// AwayTeamID
+		awayteamid, err := sportsreference.TeamID(urlPath)
+		if err != nil {
+			output.Error = err
+			return false
+		}
+		matchup.AwayTeamID = awayteamid
 
 		// AwayScore
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, awayLocation, teamScoreSelector)
-		rawAwayScore, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(awayTeamSelection.Find(teamScoreSelector).Text()), location, "AwayScore")
+		rawAwayScore, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum(awayTeamSelection.Find(teamScoreSelector).Text()), location, "AwayScore")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.AwayScore, err = util.TextToInt32(rawAwayScore)
 		if err != nil {
 			log.Printf("Cannot convert '%s' for rawAwayScore into Int\n", rawAwayScore)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		// HomeTeam
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, homeLocation, teamNameSelector)
-		homeName, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum((homeTeamSelection.Find(teamNameSelector).Text())), location, "HomeTeam")
+		homeName, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum((homeTeamSelection.Find(teamNameSelector).Text())), location, "HomeTeam")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		if homeName == "National League" || homeName == "American League" {
-			log.Printf("%s is a team associated with an all-star event. Skipping event date, %s, entirely", homeName, date)
+			log.Printf("%s is a team associated with an all-star event. Skipping event date, %s, entirely\n", homeName, ms.Date)
+			skips += 1
 			return false
 		}
 		matchup.HomeTeam = homeName
 
 		// HomeTeamLink
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, homeLocation, teamLinkSelector)
-		urlPath, err = sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(homeTeamSelection.Find(teamLinkSelector).AttrOr("href", "")), location, "HomeTeamLink")
+		urlPath, err = sportsreference.ReturnUnemptyField(util.CleanTextDatum(homeTeamSelection.Find(teamLinkSelector).AttrOr("href", "")), location, "HomeTeamLink")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
-		matchup.HomeTeamLink = baseballreference.URL + urlPath
+		matchup.HomeTeamLink = sportsreference.BaseballRefURL + urlPath
+		// HomeTeamID
+		hometeamid, err := sportsreference.TeamID(urlPath)
+		if err != nil {
+			output.Error = err
+			return false
+		}
+		matchup.HomeTeamID = hometeamid
 
 		// HomeScore
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, homeLocation, teamScoreSelector)
-		rawHomeScore, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(homeTeamSelection.Find(teamScoreSelector).Text()), location, "HomeScore")
+		rawHomeScore, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum(homeTeamSelection.Find(teamScoreSelector).Text()), location, "HomeScore")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.HomeScore, err = util.TextToInt32(rawHomeScore)
 		if err != nil {
 			log.Printf("Cannot convert '%s' for rawHomeScore into Int\n", rawHomeScore)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		// Loser
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, awayLocation)
 		rawLoser := util.CleanTextDatum(awayTeamSelection.AttrOr("class", ""))
-		_, ok := sportsreferenceutil.LoserValueExists[rawLoser]
+		_, ok := sportsreference.LoserValueExists[rawLoser]
 		if !ok {
-			log.Fatalf("Unrecognized attribute value @ %s for Loser\n", location)
+			output.Error = fmt.Errorf("unrecognized attribute value @ %s for Loser", location)
+			return false
 		}
 		if rawLoser == "loser" {
 			matchup.Loser = matchup.AwayTeam
@@ -213,16 +265,18 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 
 		//BoxScoreLink
 		location = fmt.Sprintf("%s %s %s %s", matchupsGameSummariesSelector, mlbGameSummarySelector, awayLocation, boxScoreLinkSelector)
-		urlPath, err = sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(awayTeamSelection.Find(boxScoreLinkSelector).AttrOr("href", "")), location, "BoxScoreLink")
+		urlPath, err = sportsreference.ReturnUnemptyField(util.CleanTextDatum(awayTeamSelection.Find(boxScoreLinkSelector).AttrOr("href", "")), location, "BoxScoreLink")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
-		matchup.BoxScoreLink = baseballreference.URL + urlPath
+		matchup.BoxScoreLink = sportsreference.BaseballRefURL + urlPath
 
 		// EventID
-		eventID, err := sportsreferenceutil.EventID(matchup.BoxScoreLink)
+		eventID, err := sportsreference.EventID(matchup.BoxScoreLink)
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.EventID = eventID
 
@@ -230,11 +284,8 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		return true
 	})
 
-	if len(matchups) == 0 {
-		log.Printf("No relevant data scraped @ %s\n", url)
-	} else {
-		diff := time.Now().UTC().Sub(start)
-		log.Printf("Scraping of %s Completed in %s\n", url, diff)
-	}
-	return matchups
+	diff := time.Now().UTC().Sub(start)
+	log.Printf("Scraping of %s Completed in %s\n", url, diff)
+	output.Output = matchups
+	return output
 }

@@ -51,13 +51,7 @@ func (s MLBPitchingBoxScoreScraper) Feed() sportscrape.Feed {
 func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	var context sportscrape.EventDataContext
-	context.AwayTeam = matchupModel.AwayTeamNameFull
-	context.AwayID = matchupModel.AwayTeamID
-	context.HomeTeam = matchupModel.HomeTeamNameFull
-	context.HomeID = matchupModel.HomeTeamID
-	context.EventID = matchupModel.EventID
-	context.EventTime = matchupModel.EventTime
+	context := s.ConstructContext(matchupModel)
 
 	var data []interface{}
 	// Construct event data URL
@@ -158,6 +152,9 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.Eve
 
 func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresponse.MLBEventData, context sportscrape.EventDataContext) ([]*model.MLBPitchingBoxScoreStats, error) {
 	var stats []*model.MLBPitchingBoxScoreStats
+	homeid := context.HomeID.(int64)
+	awayid := context.AwayID.(int64)
+	eventid := context.EventID.(int64)
 
 	// Home
 	for idx, record := range responsePayload.BoxScore.BoxScoreSections.HomeStats.BoxscoreItems[2].BoxscoreTable.Rows {
@@ -175,10 +172,10 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			PlayerID:             playerID,
-			EventID:              context.EventID,
-			TeamID:               context.HomeID,
+			EventID:              eventid,
+			TeamID:               homeid,
 			Team:                 context.HomeTeam,
-			OpponentID:           context.AwayID,
+			OpponentID:           awayid,
 			Opponent:             context.AwayTeam,
 			PitchingOrder:        int32(idx + 1),
 		}
@@ -204,10 +201,10 @@ func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresp
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			PlayerID:             playerID,
-			EventID:              context.EventID,
-			OpponentID:           context.HomeID,
+			EventID:              eventid,
+			OpponentID:           homeid,
 			Opponent:             context.HomeTeam,
-			TeamID:               context.AwayID,
+			TeamID:               awayid,
 			Team:                 context.AwayTeam,
 			PitchingOrder:        int32(idx + 1),
 		}

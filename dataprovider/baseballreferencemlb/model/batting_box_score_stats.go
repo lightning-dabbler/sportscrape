@@ -16,10 +16,14 @@ type MLBBattingBoxScoreStats struct {
 	EventDate time.Time `json:"event_date"`
 	// EventDateParquet is the timestamp associated with a given event (in days)
 	EventDateParquet int32 `json:"-" parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
+	// TeamID
+	TeamID string `json:"team_id" parquet:"name=team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Team is the player's team name e.g. Atlanta Braves
 	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Opponent is the opposing team name
 	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// OpponentID
+	OpponentID string `json:"opponent_id" parquet:"name=opponent_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerID is the player's id
 	PlayerID string `json:"player_id" parquet:"name=player_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Player is the player's name

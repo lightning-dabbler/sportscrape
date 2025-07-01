@@ -1,12 +1,13 @@
 //go:build integration
 
-package mlb
+package baseballreferencemlb
 
 import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,10 +31,17 @@ func TestGetMatchups(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			runner := NewMatchupRunner(
-				WithMatchupTimeout(5 * time.Minute),
+			scraper := NewMatchupScraper(
+				WithMatchupDate(tt.date),
+				WithMatchupTimeout(5*time.Minute),
 			)
-			matchups := runner.GetMatchups(tt.date)
+			runner := sportscrape.NewMatchupRunner(
+				sportscrape.MatchupRunnerScraper(scraper),
+			)
+			matchups, err := runner.Run()
+			if err != nil {
+				t.Error(err)
+			}
 			for _, matchup := range matchups {
 				structured_matchup := matchup.(model.MLBMatchup)
 				assert.Equal(t, tt.playoff, structured_matchup.PlayoffMatch)

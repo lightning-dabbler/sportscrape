@@ -1,4 +1,4 @@
-package mlb
+package baseballreferencemlb
 
 import (
 	"testing"

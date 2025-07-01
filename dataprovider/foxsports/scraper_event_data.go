@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
@@ -38,6 +39,17 @@ func (e *EventDataScraper) ConstructEventDataURL(eventID int64) (string, error) 
 	}
 	url.RawQuery = queryValues.Encode()
 	return url.String(), nil
+}
+
+func (e EventDataScraper) ConstructContext(matchup model.Matchup) sportscrape.EventDataContext {
+	return sportscrape.EventDataContext{
+		AwayTeam:  matchup.AwayTeamNameFull,
+		AwayID:    matchup.AwayTeamID,
+		HomeTeam:  matchup.HomeTeamNameFull,
+		HomeID:    matchup.HomeTeamID,
+		EventTime: matchup.EventTime,
+		EventID:   matchup.EventID,
+	}
 }
 
 func (e *EventDataScraper) ConstructMatchupComparisonURL(eventID int64) (string, error) {

@@ -1,4 +1,4 @@
-package mlb
+package baseballreferencemlb
 
 import (
 	"fmt"
@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	"github.com/xitongsys/parquet-go/types"
 )
 
-var pitchingBoxScoreHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+var pitchingBoxScoreHeaders sportsreference.Headers = sportsreference.Headers{
 	"Pitching",
 	"IP",
 	"H",
@@ -44,66 +44,63 @@ var pitchingBoxScoreHeaders sportsreferenceutil.Headers = sportsreferenceutil.He
 	"RE24",
 }
 
-// PitchingBoxScoreOption defines a configuration option for the pitching box score runner
-type PitchingBoxScoreOption func(*PitchingBoxScoreRunner)
+// PitchingBoxScoreOption defines a configuration option for the pitching box score scraper
+type PitchingBoxScoreOption func(*PitchingBoxScoreScraper)
 
-// WithPitchingBoxScoreTimeout sets the timeout duration for pitching box score runner
+// WithPitchingBoxScoreTimeout sets the timeout duration for pitching box score scraper
 func WithPitchingBoxScoreTimeout(timeout time.Duration) PitchingBoxScoreOption {
-	return func(bsr *PitchingBoxScoreRunner) {
+	return func(bsr *PitchingBoxScoreScraper) {
 		bsr.Timeout = timeout
 	}
 }
 
-// WithPitchingBoxScoreDebug enables or disables debug mode for the pitching box score runner
+// WithPitchingBoxScoreDebug enables or disables debug mode for the pitching box score scraper
 func WithPitchingBoxScoreDebug(debug bool) PitchingBoxScoreOption {
-	return func(bsr *PitchingBoxScoreRunner) {
+	return func(bsr *PitchingBoxScoreScraper) {
 		bsr.Debug = debug
 	}
 }
 
-// WithPitchingBoxScoreConcurrency sets the number of concurrent workers
-func WithPitchingBoxScoreConcurrency(n int) PitchingBoxScoreOption {
-	return func(bsr *PitchingBoxScoreRunner) {
-		bsr.Concurrency = n
-	}
-}
-
-// NewPitchingBoxScoreRunner creates a new PitchingBoxScoreRunner with the provided options
-func NewPitchingBoxScoreRunner(options ...PitchingBoxScoreOption) *PitchingBoxScoreRunner {
-	bsr := &PitchingBoxScoreRunner{}
-	bsr.Processor = bsr
-	//
+// NewPitchingBoxScoreScraper creates a new PitchingBoxScoreScraper with the provided options
+func NewPitchingBoxScoreScraper(options ...PitchingBoxScoreOption) *PitchingBoxScoreScraper {
+	bsr := &PitchingBoxScoreScraper{}
 
 	// Apply all options
 	for _, option := range options {
 		option(bsr)
 	}
+	bsr.Init()
 
 	return bsr
 }
 
-// PitchingBoxScoreRunner specialized Runner for retrieving MLB pitching box score statistics
+// PitchingBoxScoreScraper specialized Runner for retrieving MLB pitching box score statistics
 // with support for concurrent processing.
-type PitchingBoxScoreRunner struct {
-	sportsreferenceutil.BoxScoreRunner
+type PitchingBoxScoreScraper struct {
+	EventDataScraper
 }
 
-// GetSegmentBoxScoreStats retrieves MLB pitching box score statistics for a single matchup.
-//
-// Parameter:
-//   - matchup: The MLB matchup for which to retrieve pitching box score statistics
-//
-// Returns a slice of MLB pitching box score statistics as interface{} values
-func (boxScoreRunner *PitchingBoxScoreRunner) GetSegmentBoxScoreStats(matchup interface{}) []interface{} {
+func (s PitchingBoxScoreScraper) Feed() sportscrape.Feed {
+	return sportscrape.BaseballReferenceMLBPitchingBoxScore
+}
+
+// Scrape retrieves MLB pitching box score statistics for a single matchup.
+func (s *PitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	matchupModel := matchup.(model.MLBMatchup)
+	context := s.ConstructContext(matchupModel)
+	output := sportscrape.EventDataOutput{
+		Context: context,
+	}
+
 	url := matchupModel.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	var boxScoreStats []interface{}
 	log.Println("Scraping pitching Box Score: " + url)
-	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := s.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 	homeTeamSelector := generateStatTableSelector(matchupModel.HomeTeam, Pitching)
 	awayTeamSelector := generateStatTableSelector(matchupModel.AwayTeam, Pitching)
@@ -112,56 +109,87 @@ func (boxScoreRunner *PitchingBoxScoreRunner) GetSegmentBoxScoreStats(matchup in
 	// Away team pitching stat box
 	awayStatBox := doc.Find(awayTeamSelector)
 	// Validate headers and their positions for each team's stat box
-	homeStatBox.Find(headersSelector).Each(func(idx int, s *goquery.Selection) {
+	homeStatBox.Find(headersSelector).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 		header := util.CleanTextDatum(s.Text())
 		expectedHeader := pitchingBoxScoreHeaders[idx]
 		if header != expectedHeader {
-			log.Fatalf("Home team header '%s' at position %d does not equal expected header '%s' @ %s\n", header, idx, expectedHeader, url)
+			err = fmt.Errorf("home team header '%s' at position %d does not equal expected header '%s' @ %s", header, idx, expectedHeader, url)
+			output.Error = err
+			return false
 		}
+		return true
 	})
 
-	awayStatBox.Find(headersSelector).Each(func(idx int, s *goquery.Selection) {
+	if output.Error != nil {
+		return output
+	}
+
+	awayStatBox.Find(headersSelector).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 		header := util.CleanTextDatum(s.Text())
 		expectedHeader := pitchingBoxScoreHeaders[idx]
 		if header != expectedHeader {
-			log.Fatalf("Away team header '%s' at position %d does not equal expected header '%s' @ %s\n", header, idx, expectedHeader, url)
+			err = fmt.Errorf("away team header '%s' at position %d does not equal expected header '%s' @ %s", header, idx, expectedHeader, url)
+			output.Error = err
+			return false
 		}
+		return true
 	})
+
+	if output.Error != nil {
+		return output
+	}
 
 	// Parse records - home team
-	homeStatBox.Find(recordSelector).Each(func(idx int, s *goquery.Selection) {
-		statline := parsePitchingBoxScore(s)
+	homeStatBox.Find(recordSelector).EachWithBreak(func(idx int, s *goquery.Selection) bool {
+		statline, err := parsePitchingBoxScore(s)
+		if err != nil {
+			output.Error = err
+			return false
+		}
 		statline.PitchingOrder = int32(idx + 1)
 		statline.PullTimestamp = PullTimestamp
 		statline.EventID = matchupModel.EventID
 		statline.Team = matchupModel.HomeTeam
+		statline.TeamID = matchupModel.HomeTeamID
+		statline.OpponentID = matchupModel.AwayTeamID
 		statline.Opponent = matchupModel.AwayTeam
 		statline.EventDate = matchupModel.EventDate
 		statline.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
 		statline.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
 		boxScoreStats = append(boxScoreStats, statline)
+		return true
 	})
+	if output.Error != nil {
+		return output
+	}
 	// Parse records - away team
-	awayStatBox.Find(recordSelector).Each(func(idx int, s *goquery.Selection) {
-		statline := parsePitchingBoxScore(s)
+	awayStatBox.Find(recordSelector).EachWithBreak(func(idx int, s *goquery.Selection) bool {
+		statline, err := parsePitchingBoxScore(s)
+		if err != nil {
+			output.Error = err
+			return false
+		}
 		statline.PitchingOrder = int32(idx + 1)
 		statline.PullTimestamp = PullTimestamp
 		statline.EventID = matchupModel.EventID
 		statline.Team = matchupModel.AwayTeam
+		statline.TeamID = matchupModel.AwayTeamID
 		statline.Opponent = matchupModel.HomeTeam
+		statline.OpponentID = matchupModel.HomeTeamID
 		statline.EventDate = matchupModel.EventDate
 		statline.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
 		statline.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
 		boxScoreStats = append(boxScoreStats, statline)
+		return true
 	})
-
-	if len(boxScoreStats) == 0 {
-		log.Printf("No Data Scraped @ %s\n", url)
-	} else {
-		diff := time.Now().UTC().Sub(start)
-		log.Printf("Scraping of %s Completed in %s\n", url, diff)
+	if output.Error != nil {
+		return output
 	}
-	return boxScoreStats
+
+	diff := time.Now().UTC().Sub(start)
+	log.Printf("Scraping of %s Completed in %s\n", url, diff)
+	output.Output = boxScoreStats
+	return output
 }
 
 // parsePitchingBoxScore parses a player's batting statline
@@ -170,15 +198,15 @@ func (boxScoreRunner *PitchingBoxScoreRunner) GetSegmentBoxScoreStats(matchup in
 //   - s: goquery.Selection representing a player's batting statline
 //
 // Returns model.MLBPitchingBoxScoreStats containing parsed statistics
-func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats {
+func parsePitchingBoxScore(s *goquery.Selection) (model.MLBPitchingBoxScoreStats, error) {
 	var statline model.MLBPitchingBoxScoreStats
 	// Player, PlayerLink, & PlayerID
 	player := s.Find(playerSelector)
-	statline.PlayerLink = baseballreference.URL + util.CleanTextDatum(player.AttrOr("href", ""))
+	statline.PlayerLink = sportsreference.BaseballRefURL + util.CleanTextDatum(player.AttrOr("href", ""))
 	statline.Player = util.CleanTextDatum(player.Text())
-	playerID, err := sportsreferenceutil.PlayerID(statline.PlayerLink)
+	playerID, err := sportsreference.PlayerID(statline.PlayerLink)
 	if err != nil {
-		log.Fatalln(err)
+		return statline, err
 	}
 	statline.PlayerID = playerID
 
@@ -186,7 +214,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	inningsPitchedText := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
 	inningsPitched, err := util.TextToFloat32(inningsPitchedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for inningsPitchedText to float32 - %w", inningsPitchedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for inningsPitchedText to float32 - %w", inningsPitchedText, err)
+		return statline, err
 	}
 	statline.InningsPitched = inningsPitched
 
@@ -194,7 +223,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	hitsAllowedText := util.CleanTextDatum(s.Find("td:nth-child(3)").Text())
 	hitsAllowed, err := util.TextToInt32(hitsAllowedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for hitsAllowedText to int - %w", hitsAllowedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for hitsAllowedText to int - %w", hitsAllowedText, err)
+		return statline, err
 	}
 	statline.HitsAllowed = hitsAllowed
 
@@ -202,7 +232,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	runsAllowedText := util.CleanTextDatum(s.Find("td:nth-child(4)").Text())
 	runsAllowed, err := util.TextToInt32(runsAllowedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for runsAllowedText to int - %w", runsAllowedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for runsAllowedText to int - %w", runsAllowedText, err)
+		return statline, err
 	}
 	statline.RunsAllowed = runsAllowed
 
@@ -210,7 +241,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	earnedRunsAllowedText := util.CleanTextDatum(s.Find("td:nth-child(5)").Text())
 	earnedRunsAllowed, err := util.TextToInt32(earnedRunsAllowedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for earnedRunsAllowedText to int - %w", earnedRunsAllowedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for earnedRunsAllowedText to int - %w", earnedRunsAllowedText, err)
+		return statline, err
 	}
 	statline.EarnedRunsAllowed = earnedRunsAllowed
 
@@ -218,7 +250,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	walksText := util.CleanTextDatum(s.Find("td:nth-child(6)").Text())
 	walks, err := util.TextToInt32(walksText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for walksText to int - %w", walksText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for walksText to int - %w", walksText, err)
+		return statline, err
 	}
 	statline.Walks = walks
 
@@ -226,7 +259,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	strikeoutsText := util.CleanTextDatum(s.Find("td:nth-child(7)").Text())
 	strikeouts, err := util.TextToInt32(strikeoutsText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikeoutsText to int - %w", strikeoutsText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for strikeoutsText to int - %w", strikeoutsText, err)
+		return statline, err
 	}
 	statline.Strikeouts = strikeouts
 
@@ -234,7 +268,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	homeRunsAllowedText := util.CleanTextDatum(s.Find("td:nth-child(8)").Text())
 	homeRunsAllowed, err := util.TextToInt32(homeRunsAllowedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for homeRunsAllowedText to int - %w", homeRunsAllowedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for homeRunsAllowedText to int - %w", homeRunsAllowedText, err)
+		return statline, err
 	}
 	statline.HomeRunsAllowed = homeRunsAllowed
 
@@ -242,7 +277,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	earnedRunAverageText := util.CleanTextDatum(s.Find("td:nth-child(9)").Text())
 	earnedRunAverage, err := util.TextToFloat32(earnedRunAverageText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for earnedRunAverageText to float32 - %w", earnedRunAverageText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for earnedRunAverageText to float32 - %w", earnedRunAverageText, err)
+		return statline, err
 	}
 	statline.EarnedRunAverage = earnedRunAverage
 
@@ -250,7 +286,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	battersFacedText := util.CleanTextDatum(s.Find("td:nth-child(10)").Text())
 	battersFaced, err := util.TextToInt32(battersFacedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for battersFacedText to int - %w", battersFacedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for battersFacedText to int - %w", battersFacedText, err)
+		return statline, err
 	}
 	statline.BattersFaced = battersFaced
 
@@ -258,7 +295,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	pitchesPerPlateAppearanceText := util.CleanTextDatum(s.Find("td:nth-child(11)").Text())
 	pitchesPerPlateAppearance, err := util.TextToInt32(pitchesPerPlateAppearanceText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for pitchesPerPlateAppearanceText to int - %w", pitchesPerPlateAppearanceText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for pitchesPerPlateAppearanceText to int - %w", pitchesPerPlateAppearanceText, err)
+		return statline, err
 	}
 	statline.PitchesPerPlateAppearance = pitchesPerPlateAppearance
 
@@ -266,7 +304,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	strikesText := util.CleanTextDatum(s.Find("td:nth-child(12)").Text())
 	strikes, err := util.TextToInt32(strikesText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikesText to int - %w", strikesText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for strikesText to int - %w", strikesText, err)
+		return statline, err
 	}
 	statline.Strikes = strikes
 
@@ -274,7 +313,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	strikesByContactText := util.CleanTextDatum(s.Find("td:nth-child(13)").Text())
 	strikesByContact, err := util.TextToInt32(strikesByContactText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikesByContactText to int - %w", strikesByContactText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for strikesByContactText to int - %w", strikesByContactText, err)
+		return statline, err
 	}
 	statline.StrikesByContact = strikesByContact
 
@@ -282,7 +322,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	strikesSwingingText := util.CleanTextDatum(s.Find("td:nth-child(14)").Text())
 	strikesSwinging, err := util.TextToInt32(strikesSwingingText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikesSwingingText to int - %w", strikesSwingingText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for strikesSwingingText to int - %w", strikesSwingingText, err)
+		return statline, err
 	}
 	statline.StrikesSwinging = strikesSwinging
 
@@ -290,7 +331,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	strikesLookingText := util.CleanTextDatum(s.Find("td:nth-child(15)").Text())
 	strikesLooking, err := util.TextToInt32(strikesLookingText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for strikesLookingText to int - %w", strikesLookingText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for strikesLookingText to int - %w", strikesLookingText, err)
+		return statline, err
 	}
 	statline.StrikesLooking = strikesLooking
 
@@ -298,7 +340,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	groundBallsText := util.CleanTextDatum(s.Find("td:nth-child(16)").Text())
 	groundBalls, err := util.TextToInt32(groundBallsText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for groundBallsText to int - %w", groundBallsText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for groundBallsText to int - %w", groundBallsText, err)
+		return statline, err
 	}
 	statline.GroundBalls = groundBalls
 
@@ -306,7 +349,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	flyBallsText := util.CleanTextDatum(s.Find("td:nth-child(17)").Text())
 	flyBalls, err := util.TextToInt32(flyBallsText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for flyBallsText to int - %w", flyBallsText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for flyBallsText to int - %w", flyBallsText, err)
+		return statline, err
 	}
 	statline.FlyBalls = flyBalls
 
@@ -314,7 +358,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	lineDrivesText := util.CleanTextDatum(s.Find("td:nth-child(18)").Text())
 	lineDrives, err := util.TextToInt32(lineDrivesText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for lineDrivesText to int - %w", lineDrivesText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for lineDrivesText to int - %w", lineDrivesText, err)
+		return statline, err
 	}
 	statline.LineDrives = lineDrives
 
@@ -322,7 +367,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	unknownBattedBallTypeText := util.CleanTextDatum(s.Find("td:nth-child(19)").Text())
 	unknownBattedBallType, err := util.TextToInt32(unknownBattedBallTypeText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for unknownBattedBallTypeText to int - %w", unknownBattedBallTypeText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for unknownBattedBallTypeText to int - %w", unknownBattedBallTypeText, err)
+		return statline, err
 	}
 	statline.UnknownBattedBallType = unknownBattedBallType
 
@@ -331,7 +377,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	if gameScoreText != "" {
 		gameScore, err := util.TextToInt32(gameScoreText)
 		if err != nil {
-			log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for gameScoreText to int - %w!", gameScoreText, err))
+			err = fmt.Errorf("ERROR: Can't convert '%s' for gameScoreText to int - %w", gameScoreText, err)
+			return statline, err
 		}
 		statline.GameScore = &gameScore
 	}
@@ -341,7 +388,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	if inheritedRunnersText != "" {
 		inheritedRunners, err := util.TextToInt32(inheritedRunnersText)
 		if err != nil {
-			log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for inheritedRunnersText to int - %w!", inheritedRunnersText, err))
+			err = fmt.Errorf("ERROR: Can't convert '%s' for inheritedRunnersText to int - %w", inheritedRunnersText, err)
+			return statline, err
 		}
 		statline.InheritedRunners = &inheritedRunners
 	}
@@ -351,7 +399,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	if inheritedScoreText != "" {
 		inheritedScore, err := util.TextToInt32(inheritedScoreText)
 		if err != nil {
-			log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for inheritedScoreText to int - %w!", inheritedScoreText, err))
+			err = fmt.Errorf("ERROR: Can't convert '%s' for inheritedScoreText to int - %w", inheritedScoreText, err)
+			return statline, err
 		}
 		statline.InheritedScore = &inheritedScore
 	}
@@ -360,7 +409,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	winProbabilityAddedText := util.CleanTextDatum(s.Find("td:nth-child(23)").Text())
 	winProbabilityAdded, err := util.TextToFloat32(winProbabilityAddedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for winProbabilityAddedText to float32 - %w", winProbabilityAddedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for winProbabilityAddedText to float32 - %w", winProbabilityAddedText, err)
+		return statline, err
 	}
 	statline.WinProbabilityAdded = winProbabilityAdded
 
@@ -368,7 +418,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	averageLeverageIndexText := util.CleanTextDatum(s.Find("td:nth-child(24)").Text())
 	averageLeverageIndex, err := util.TextToFloat32(averageLeverageIndexText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for averageLeverageIndexText to float32 - %w", averageLeverageIndexText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for averageLeverageIndexText to float32 - %w", averageLeverageIndexText, err)
+		return statline, err
 	}
 	statline.AverageLeverageIndex = averageLeverageIndex
 
@@ -376,7 +427,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	championshipWinProbabilityAddedText := strings.TrimRight(util.CleanTextDatum(s.Find("td:nth-child(25)").Text()), "%") // -2.92% --> -2.92
 	championshipWinProbabilityAdded, err := util.TextToFloat32(championshipWinProbabilityAddedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for championshipWinProbabilityAddedText to float32 - %w", championshipWinProbabilityAddedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for championshipWinProbabilityAddedText to float32 - %w", championshipWinProbabilityAddedText, err)
+		return statline, err
 	}
 	statline.ChampionshipWinProbabilityAdded = championshipWinProbabilityAdded
 
@@ -384,7 +436,8 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	averageChampionshipLeverageIndexText := util.CleanTextDatum(s.Find("td:nth-child(26)").Text())
 	averageChampionshipLeverageIndex, err := util.TextToFloat32(averageChampionshipLeverageIndexText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for averageChampionshipLeverageIndexText to int - %w", averageChampionshipLeverageIndexText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for averageChampionshipLeverageIndexText to int - %w", averageChampionshipLeverageIndexText, err)
+		return statline, err
 	}
 	statline.AverageChampionshipLeverageIndex = averageChampionshipLeverageIndex
 
@@ -392,9 +445,10 @@ func parsePitchingBoxScore(s *goquery.Selection) model.MLBPitchingBoxScoreStats 
 	baseOutRunsSavedText := util.CleanTextDatum(s.Find("td:nth-child(27)").Text())
 	baseOutRunsSaved, err := util.TextToFloat32(baseOutRunsSavedText)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("ERROR: Can't convert '%s' for baseOutRunsSavedText to float32 - %w", baseOutRunsSavedText, err))
+		err = fmt.Errorf("ERROR: Can't convert '%s' for baseOutRunsSavedText to float32 - %w", baseOutRunsSavedText, err)
+		return statline, err
 	}
 	statline.BaseOutRunsSaved = baseOutRunsSaved
 
-	return statline
+	return statline, nil
 }

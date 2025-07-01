@@ -55,13 +55,7 @@ func (s NBABoxScoreScraper) Feed() sportscrape.Feed {
 func (s *NBABoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	var context sportscrape.EventDataContext
-	context.AwayTeam = matchupModel.AwayTeamNameFull
-	context.AwayID = matchupModel.AwayTeamID
-	context.HomeTeam = matchupModel.HomeTeamNameFull
-	context.HomeID = matchupModel.HomeTeamID
-	context.EventID = matchupModel.EventID
-	context.EventTime = matchupModel.EventTime
+	context := s.ConstructContext(matchupModel)
 
 	var data []interface{}
 	// Construct event data URL
@@ -227,7 +221,9 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 
 func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBAEventData, context sportscrape.EventDataContext) (map[int64]*model.NBABoxScoreStats, error) {
 	playerMap := make(map[int64]*model.NBABoxScoreStats)
-
+	homeid := context.HomeID.(int64)
+	awayid := context.AwayID.(int64)
+	eventid := context.EventID.(int64)
 	// Home
 	// Starters
 	starterRecords := responsePayload.BoxScore.BoxScoreSections.HomePlayerStats.BoxscoreItems[0].BoxscoreTable.Rows
@@ -246,11 +242,11 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			PlayerID:             playerID,
-			EventID:              context.EventID,
+			EventID:              eventid,
 			Starter:              true,
-			TeamID:               context.HomeID,
+			TeamID:               homeid,
 			Team:                 context.HomeTeam,
-			OpponentID:           context.AwayID,
+			OpponentID:           awayid,
 			Opponent:             context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
@@ -275,10 +271,10 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			PlayerID:             playerID,
-			EventID:              context.EventID,
-			TeamID:               context.HomeID,
+			EventID:              eventid,
+			TeamID:               homeid,
 			Team:                 context.HomeTeam,
-			OpponentID:           context.AwayID,
+			OpponentID:           awayid,
 			Opponent:             context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
@@ -323,11 +319,11 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			PlayerID:             playerID,
-			EventID:              context.EventID,
+			EventID:              eventid,
 			Starter:              true,
-			OpponentID:           context.HomeID,
+			OpponentID:           homeid,
 			Opponent:             context.HomeTeam,
-			TeamID:               context.AwayID,
+			TeamID:               awayid,
 			Team:                 context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)
@@ -352,10 +348,10 @@ func (s *NBABoxScoreScraper) parseBoxScoreStats(responsePayload jsonresponse.NBA
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			PlayerID:             playerID,
-			EventID:              context.EventID,
-			OpponentID:           context.HomeID,
+			EventID:              eventid,
+			OpponentID:           homeid,
 			Opponent:             context.HomeTeam,
-			TeamID:               context.AwayID,
+			TeamID:               awayid,
 			Team:                 context.AwayTeam,
 		}
 		err = s.parseRawMetrics(playerMap[playerID], record)

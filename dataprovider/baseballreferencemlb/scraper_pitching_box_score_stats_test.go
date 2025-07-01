@@ -1,12 +1,13 @@
 //go:build integration
 
-package mlb
+package baseballreferencemlb
 
 import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreference/mlb/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,15 +18,32 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 
 	date := "2024-10-30"
 
-	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(5 * time.Minute),
+	matchupscraper := NewMatchupScraper(
+		WithMatchupDate(date),
+		WithMatchupTimeout(5*time.Minute),
 	)
-	matchups := matchupRunner.GetMatchups(date)
-	boxScoreRunner := NewPitchingBoxScoreRunner(
-		WithPitchingBoxScoreTimeout(6*time.Minute),
-		WithPitchingBoxScoreConcurrency(1),
+	runner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupscraper),
 	)
-	boxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+	// Retrieve MLB matchups associated with date
+	matchups, err := runner.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Instantiate PitchingBoxScoreScraper
+	boxscorescraper := NewPitchingBoxScoreScraper(
+		WithPitchingBoxScoreTimeout(6 * time.Minute),
+	)
+	boxScoreRunner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	)
+	// Retrieve MLB pitching box score stats associated with matchups
+	boxScoreStats, err := boxScoreRunner.Run(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 
 	playerToTest := map[string]bool{
 		"Luke Weaver":   false,
@@ -38,7 +56,9 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 		if stats.Player == "Luke Weaver" {
 			playerToTest["Luke Weaver"] = true
 			assert.Equal(t, "New York Yankees", stats.Team)
+			assert.Equal(t, "NYY", stats.TeamID)
 			assert.Equal(t, "Los Angeles Dodgers", stats.Opponent)
+			assert.Equal(t, "LAD", stats.OpponentID)
 			assert.Equal(t, "weavelu01", stats.PlayerID)
 			assert.Equal(t, "https://www.baseball-reference.com/players/w/weavelu01.shtml", stats.PlayerLink)
 			assert.Equal(t, int32(4), stats.PitchingOrder)
@@ -71,7 +91,9 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 		} else if stats.Player == "Gerrit Cole" {
 			playerToTest["Gerrit Cole"] = true
 			assert.Equal(t, "New York Yankees", stats.Team)
+			assert.Equal(t, "NYY", stats.TeamID)
 			assert.Equal(t, "Los Angeles Dodgers", stats.Opponent)
+			assert.Equal(t, "LAD", stats.OpponentID)
 			assert.Equal(t, "colege01", stats.PlayerID)
 			assert.Equal(t, "https://www.baseball-reference.com/players/c/colege01.shtml", stats.PlayerLink)
 			assert.Equal(t, int32(1), stats.PitchingOrder)
@@ -104,7 +126,9 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 		} else if stats.Player == "Jack Flaherty" {
 			playerToTest["Jack Flaherty"] = true
 			assert.Equal(t, "Los Angeles Dodgers", stats.Team)
+			assert.Equal(t, "LAD", stats.TeamID)
 			assert.Equal(t, "New York Yankees", stats.Opponent)
+			assert.Equal(t, "NYY", stats.OpponentID)
 			assert.Equal(t, "flaheja01", stats.PlayerID)
 			assert.Equal(t, "https://www.baseball-reference.com/players/f/flaheja01.shtml", stats.PlayerLink)
 			assert.Equal(t, int32(1), stats.PitchingOrder)

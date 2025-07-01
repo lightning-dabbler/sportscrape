@@ -56,13 +56,7 @@ func (s MLBProbableStartingPitcherScraper) Feed() sportscrape.Feed {
 func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	var context sportscrape.EventDataContext
-	context.AwayTeam = matchupModel.AwayTeamNameFull
-	context.AwayID = matchupModel.AwayTeamID
-	context.HomeTeam = matchupModel.HomeTeamNameFull
-	context.HomeID = matchupModel.HomeTeamID
-	context.EventID = matchupModel.EventID
-	context.EventTime = matchupModel.EventTime
+	context := s.ConstructContext(matchupModel)
 
 	var data []interface{}
 	// Construct event data URL
@@ -144,10 +138,13 @@ func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload
 	if name == "TBD" {
 		log.Printf("Skipping: %s starting pitcher not announced at %s", teamName, context.URL)
 	} else {
+		homeid := context.HomeID.(int64)
+		awayid := context.AwayID.(int64)
+		eventid := context.EventID.(int64)
 		probablePitchers := &model.MLBProbableStartingPitcher{
 			PullTimestamp:        context.PullTimestamp,
 			PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(context.PullTimestamp, true),
-			EventID:              context.EventID,
+			EventID:              eventid,
 			EventTime:            context.EventTime,
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(context.EventTime, true),
 			TeamNameFull:         teamName,
@@ -155,13 +152,13 @@ func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload
 
 		switch team {
 		case "home":
-			probablePitchers.TeamID = context.HomeID
+			probablePitchers.TeamID = homeid
 			probablePitchers.StartingPitcherRecord = responsePayload.FeaturedPairing.HomePitcher.StatLine1
 			probablePitchers.StartingPitcher = responsePayload.FeaturedPairing.HomePitcher.Player
 			playerid = responsePayload.FeaturedPairing.HomePitcher.EntityLink.Layout.Tokens.ID
 			era = responsePayload.FeaturedPairing.HomePitcher.StatLine2
 		default:
-			probablePitchers.TeamID = context.AwayID
+			probablePitchers.TeamID = awayid
 			probablePitchers.StartingPitcherRecord = responsePayload.FeaturedPairing.AwayPitcher.StatLine1
 			probablePitchers.StartingPitcher = responsePayload.FeaturedPairing.AwayPitcher.Player
 			playerid = responsePayload.FeaturedPairing.AwayPitcher.EntityLink.Layout.Tokens.ID

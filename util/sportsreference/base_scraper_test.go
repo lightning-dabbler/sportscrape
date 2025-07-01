@@ -1,6 +1,6 @@
 //go:build unit
 
-package sportsreferenceutil
+package sportsreference
 
 import (
 	"reflect"
@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	mocksportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference/mocks"
+	mocksportsreference "github.com/lightning-dabbler/sportscrape/util/sportsreference/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -81,7 +81,7 @@ func TestBoxScoreRunnerGetBoxScoresStats(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mockprocessor := &mocksportsreferenceutil.MockBoxScoreProcessor{}
+			mockprocessor := &mocksportsreference.MockBoxScoreProcessor{}
 			for _, matchup := range tc.matchups {
 				mockprocessor.EXPECT().GetSegmentBoxScoreStats(matchup).Return([]interface{}{2 * matchup.(int), 2 * matchup.(int)})
 			}
@@ -118,7 +118,7 @@ func TestBoxScoreRunnerWorker(t *testing.T) {
 	// Test data
 	matchups := []interface{}{1, "test", map[string]string{"key": "value"}}
 
-	mockprocessor := &mocksportsreferenceutil.MockBoxScoreProcessor{}
+	mockprocessor := &mocksportsreference.MockBoxScoreProcessor{}
 
 	for _, matchup := range matchups {
 		mockprocessor.EXPECT().GetSegmentBoxScoreStats(matchup).Return([]interface{}{matchup})
