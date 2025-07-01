@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `MatchupRunner`, `EventDataRunner`, `MatchupScraper`, and `EventDataScraper` abstractions to be reused across all data providers (#80)
+- Added `Feed` and `Provider` enums to catalog sources in code (#80)
+### Changed
+- Updated fox sports extraction to use new `Runner` and `Scraper` pattern (#80)
+- Additional validation in fox sports extraction (#80)
 
 ## [0.10.0] - 2025-05-29
 ### Changed

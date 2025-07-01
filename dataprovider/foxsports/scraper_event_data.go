@@ -1,22 +1,30 @@
-package eventdata
+package foxsports
 
 import (
 	"io"
+	"log"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
-type Scraper interface {
-	Scrape(matchup interface{}) OutputWrapper
-	SetParams()
-}
-
 type EventDataScraper struct {
 	// League - The league of interest to fetch matchups data
-	League foxsports.League
+	League League
 	// Params - URL Query parameters
 	Params map[string]string
+}
+
+func (e *EventDataScraper) Init() {
+	// Ensure League is set
+	if e.League.Undefined() {
+		log.Fatalln("League is a required argument for foxsports EventDataScraper")
+	}
+	// Params
+	if e.Params == nil {
+		e.Params = map[string]string{}
+	}
+	e.League.SetParams(e.Params)
 }
 
 func (e *EventDataScraper) ConstructEventDataURL(eventID int64) (string, error) {
@@ -54,9 +62,6 @@ func (e *EventDataScraper) FetchData(url string) ([]byte, error) {
 	return io.ReadAll(response.Body)
 }
 
-func (e *EventDataScraper) SetParams() {
-	if e.Params == nil {
-		e.Params = map[string]string{}
-	}
-	e.League.SetParams(e.Params)
+func (e EventDataScraper) Provider() sportscrape.Provider {
+	return sportscrape.FS
 }

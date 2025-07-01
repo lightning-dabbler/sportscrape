@@ -4,6 +4,12 @@ import (
 	"time"
 )
 
+// Segmenter is the interface for constructing Segment IDs
+type Segmenter interface {
+	// GetSegmentID returns the ID that is concatenated to a League's URL to fetch the relevant point-in-time dataset.
+	GetSegmentID() (string, error)
+}
+
 type GeneralSegmenter struct {
 	Date string
 }

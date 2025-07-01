@@ -12,28 +12,42 @@ go get github.com/lightning-dabbler/sportscrape
 ```
 
 ## Quick start
-Retrieve and output `2025-02-20` NBA matchups from https://basketball-reference.com
+Retrieve and output `2025-02-20` NBA matchups from https://foxsports.com
 ```go
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
+	"log"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 )
 
 func main() {
 	date := "2025-02-20"
-	// Instantiate MatchupRunner
-	runner := nba.NewMatchupRunner(
-		nba.WithMatchupTimeout(2 * time.Minute),
+	// define matchup scraper
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.NBA),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: date}),
 	)
-	// Retrieve NBA matchups associated with date
-	matchups := runner.GetMatchups(date)
+	// define matchup runner
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupScraper),
+	)
+	// Retrieve matchups
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+	// Output each matchup as pretty json
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup.(model.NBAMatchup))
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 ```
@@ -41,8 +55,7 @@ func main() {
 ## Usage
 - [basketball-reference.com NBA scrape examples](dataprovider/basketballreference/nba/example_test.go)
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreference/mlb/example_test.go)
-- [foxsports.com scraping matchups examples](dataprovider/foxsports/runner/matchup/example_test.go)
-- [foxsports.com scraping event data example](dataprovider/foxsports/runner/eventdata/example_test.go)
+- [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 
 ## Data providers
 
