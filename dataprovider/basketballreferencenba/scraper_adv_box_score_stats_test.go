@@ -1,12 +1,13 @@
 //go:build integration
 
-package nba
+package basketballreferencenba
 
 import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,15 +16,35 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 	date := "2025-02-19"
-	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(4 * time.Minute),
+
+	// Instantiate MatchupRunner
+	matchupscraper := NewMatchupScraper(
+		WithMatchupDate(date),
+		WithMatchupTimeout(4*time.Minute),
 	)
-	matchups := matchupRunner.GetMatchups(date)
-	boxScoreRunner := NewAdvBoxScoreRunner(
-		WithAdvBoxScoreTimeout(4*time.Minute),
-		WithAdvBoxScoreConcurrency(1),
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupscraper),
 	)
-	advBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+	// Retrieve NBA matchups associated with date
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Instantiate AdvBoxScoreScraper
+	boxscorescraper := NewAdvBoxScoreScraper(
+		WithAdvBoxScoreTimeout(4 * time.Minute),
+	)
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	)
+	// Retrieve NBA basic box score stats associated with matchups
+	advBoxScoreStats, err := runner.Run(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
+
 	numAwayPlayers := 0
 	numHomePlayers := 0
 	numAwayDNP := 0
@@ -46,6 +67,7 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 				assert.Equal(t, true, stats.Starter, "LeBron was a starter")
 				assert.Equal(t, "jamesle01", stats.PlayerID, "LeBron's player ID")
 				assert.Equal(t, "Charlotte", stats.Opponent, "LeBron's opposing team")
+				assert.Equal(t, "CHO", stats.OpponentID, "LeBron's opposing team")
 				assert.Equal(t, "https://www.basketball-reference.com/players/j/jamesle01.html", stats.PlayerLink, "LeBron's player link")
 				assert.Equal(t, float32(37.9), stats.MinutesPlayed, "LeBron minutes played")
 				assert.Equal(t, float32(0.568), stats.TrueShootingPercentage, "LeBron true shooting percentage")
@@ -76,6 +98,7 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 				assert.Equal(t, false, stats.Starter, "Gabe was a reserve player")
 				assert.Equal(t, "vincega01", stats.PlayerID, "Gabe's player ID")
 				assert.Equal(t, "LA Lakers", stats.Opponent, "Gabe's opposing team")
+				assert.Equal(t, "LAL", stats.OpponentID, "Gabe's opposing team")
 				assert.Equal(t, "https://www.basketball-reference.com/players/v/vincega01.html", stats.PlayerLink, "Gabe's player link")
 				assert.Equal(t, float32(20.2), stats.MinutesPlayed, "Gabe minutes played")
 				assert.Equal(t, float32(0.429), stats.TrueShootingPercentage, "Gabe true shooting percentage")

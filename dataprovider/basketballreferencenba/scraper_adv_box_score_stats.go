@@ -1,4 +1,4 @@
-package nba
+package basketballreferencenba
 
 import (
 	"fmt"
@@ -7,10 +7,10 @@ import (
 	"unicode"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	"github.com/xitongsys/parquet-go/types"
 )
 
@@ -20,7 +20,7 @@ const (
 )
 
 // advBoxScoreStarterHeaders represents the headers in sequential order for the starter team members
-var advBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+var advBoxScoreStarterHeaders sportsreference.Headers = sportsreference.Headers{
 	"Starters",
 	"MP",
 	"TS%",
@@ -41,7 +41,7 @@ var advBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.
 }
 
 // advBoxScoreReservesHeaders represents the headers in sequential order for the reserve team members
-var advBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+var advBoxScoreReservesHeaders sportsreference.Headers = sportsreference.Headers{
 	"Reserves",
 	"MP",
 	"TS%",
@@ -62,77 +62,80 @@ var advBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceutil
 }
 
 // AdvBoxScoreOption defines a configuration option for advanced box score runners
-type AdvBoxScoreOption func(*AdvBoxScoreRunner)
+type AdvBoxScoreOption func(*AdvBoxScoreScraper)
 
 // WithAdvBoxScoreTimeout sets the timeout duration for advanced box score runner
 func WithAdvBoxScoreTimeout(timeout time.Duration) AdvBoxScoreOption {
-	return func(absr *AdvBoxScoreRunner) {
-		absr.Timeout = timeout
+	return func(s *AdvBoxScoreScraper) {
+		s.Timeout = timeout
 	}
 }
 
 // WithAdvBoxScoreDebug enables or disables debug mode for advanced box score runner
 func WithAdvBoxScoreDebug(debug bool) AdvBoxScoreOption {
-	return func(absr *AdvBoxScoreRunner) {
-		absr.Debug = debug
+	return func(s *AdvBoxScoreScraper) {
+		s.Debug = debug
 	}
 }
 
-// WithAdvBoxScoreConcurrency sets the number of concurrent workers
-func WithAdvBoxScoreConcurrency(n int) AdvBoxScoreOption {
-	return func(absr *AdvBoxScoreRunner) {
-		absr.Concurrency = n
-	}
-}
-
-// NewAdvBoxScoreRunner creates a new AdvBoxScoreRunner with the provided options
-func NewAdvBoxScoreRunner(options ...AdvBoxScoreOption) *AdvBoxScoreRunner {
-	absr := &AdvBoxScoreRunner{}
-	absr.Processor = absr
+// NewAdvBoxScoreScraper creates a new AdvBoxScoreScraper with the provided options
+func NewAdvBoxScoreScraper(options ...AdvBoxScoreOption) *AdvBoxScoreScraper {
+	s := &AdvBoxScoreScraper{}
 
 	// Apply all options
 	for _, option := range options {
-		option(absr)
+		option(s)
 	}
+	s.Init()
 
-	return absr
+	return s
 }
 
-// AdvBoxScoreRunner specialized Runner for retrieving NBA advanced box score statistics
+// AdvBoxScoreScraper specialized Runner for retrieving NBA advanced box score statistics
 // with support for concurrent processing.
-type AdvBoxScoreRunner struct {
-	sportsreferenceutil.BoxScoreRunner
+type AdvBoxScoreScraper struct {
+	EventDataScraper
 }
 
-// GetSegmentBoxScoreStats retrieves NBA advanced box score statistics for a single matchup.
-//
-// Parameter:
-//   - matchup: The NBA matchup for which to retrieve advanced box score statistics
-//
-// Returns a slice of NBA advanced box score statistics as interface{} values
-func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interface{}) []interface{} {
+func (s *AdvBoxScoreScraper) Feed() sportscrape.Feed {
+	return sportscrape.BasketballReferenceNBAAdvBoxScore
+}
+
+// Scrape retrieves NBA advanced box score statistics for a single matchup.
+func (abs *AdvBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	matchupModel := matchup.(model.NBAMatchup)
+	context := abs.ConstructContext(matchupModel)
+	output := sportscrape.EventDataOutput{
+		Context: context,
+	}
 	url := matchupModel.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	var advNBABoxScoreStats []interface{}
 	log.Println("Scraping Advanced Box Score: " + url)
-	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := abs.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
-	doc.Find(advBoxScoreSelector).Each(func(i int, s *goquery.Selection) {
+	doc.Find(advBoxScoreSelector).EachWithBreak(func(i int, s *goquery.Selection) bool {
 		var starterHeader string
 		var reserveHeader string
-		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {
+		s.Find(boxScoreStarterHeaders).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 			starterHeader = util.CleanTextDatum(s.Text())
 			expectedHeader := advBoxScoreStarterHeaders[idx]
 			if starterHeader != expectedHeader {
-				log.Fatalf("Starter header '%s' at position %d does not equal expected header '%s' @ %s\n", starterHeader, idx, expectedHeader, url)
+				err = fmt.Errorf("starter header '%s' at position %d does not equal expected header '%s' @ %s", starterHeader, idx, expectedHeader, url)
+				output.Error = err
+				return false
 			}
+			return true
 		})
+		if output.Error != nil {
+			return false
+		}
 
-		s.Find(boxScoreStatsRecordsSelector).Each(func(j int, s *goquery.Selection) {
+		s.Find(boxScoreStatsRecordsSelector).EachWithBreak(func(j int, s *goquery.Selection) bool {
 			var boxScoreStats model.NBAAdvBoxScoreStats
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
@@ -140,10 +143,14 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 				boxScoreStats.EventID = matchupModel.EventID
 				if i == 0 {
 					boxScoreStats.Team = matchupModel.AwayTeam
+					boxScoreStats.TeamID = matchupModel.AwayTeamID
 					boxScoreStats.Opponent = matchupModel.HomeTeam
+					boxScoreStats.OpponentID = matchupModel.HomeTeamID
 				} else {
 					boxScoreStats.Team = matchupModel.HomeTeam
+					boxScoreStats.TeamID = matchupModel.HomeTeamID
 					boxScoreStats.Opponent = matchupModel.AwayTeam
+					boxScoreStats.OpponentID = matchupModel.AwayTeamID
 				}
 				boxScoreStats.EventDate = matchupModel.EventDate
 				boxScoreStats.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
@@ -152,18 +159,20 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 				} else {
 					boxScoreStats.Starter = false
 				}
-				boxScoreStats.PlayerLink = basketballreference.URL + util.CleanTextDatum(s.Find(boxScorePlayerLinkSelector).AttrOr("href", ""))
+				boxScoreStats.PlayerLink = sportsreference.BasketballRefURL + util.CleanTextDatum(s.Find(boxScorePlayerLinkSelector).AttrOr("href", ""))
 				boxScoreStats.Player = util.CleanTextDatum(s.Find(boxScorePlayerSelector).Text())
-				playerID, err := sportsreferenceutil.PlayerID(boxScoreStats.PlayerLink)
+				playerID, err := sportsreference.PlayerID(boxScoreStats.PlayerLink)
 				if err != nil {
-					log.Fatalln(err)
+					output.Error = err
+					return false
 				}
 				boxScoreStats.PlayerID = playerID
 				minutesPlayed := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
 				if len(minutesPlayed) > 0 && unicode.IsDigit(rune(minutesPlayed[0])) {
 					totalMinutes, err := transformMinutesPlayed(minutesPlayed)
 					if err != nil {
-						log.Fatalln(err)
+						output.Error = err
+						return false
 					}
 
 					boxScoreStats.MinutesPlayed = totalMinutes
@@ -338,23 +347,28 @@ func (boxScoreRunner *AdvBoxScoreRunner) GetSegmentBoxScoreStats(matchup interfa
 
 				advNBABoxScoreStats = append(advNBABoxScoreStats, boxScoreStats)
 			} else {
-				s.Find(boxScoreReserveHeaders).Each(func(idx int, s *goquery.Selection) {
+				s.Find(boxScoreReserveHeaders).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 
 					reserveHeader = util.CleanTextDatum(s.Text())
 					expectedHeader := advBoxScoreReservesHeaders[idx]
 					if reserveHeader != expectedHeader {
-						log.Fatalf("Reserve header '%s' at position %d does not equal expected header '%s' @ %s\n", reserveHeader, idx, expectedHeader, url)
+						err = fmt.Errorf("reserve header '%s' at position %d does not equal expected header '%s' @ %s", reserveHeader, idx, expectedHeader, url)
+						output.Error = err
+						return false
 					}
+					return true
 				})
 			}
+			if output.Error != nil {
+				return false
+			}
+			return true
 		})
+		return true
 	})
-	if len(advNBABoxScoreStats) == 0 {
-		log.Printf("No Data Scraped @ %s\n", url)
-	} else {
-		diff := time.Now().UTC().Sub(start)
-		log.Printf("Scraping of %s Completed in %s\n", url, diff)
-	}
 
-	return advNBABoxScoreStats
+	diff := time.Now().UTC().Sub(start)
+	log.Printf("Scraping of %s Completed in %s\n", url, diff)
+	output.Output = advNBABoxScoreStats
+	return output
 }

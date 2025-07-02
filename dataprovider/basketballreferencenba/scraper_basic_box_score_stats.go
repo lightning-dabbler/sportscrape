@@ -1,4 +1,4 @@
-package nba
+package basketballreferencenba
 
 import (
 	"fmt"
@@ -6,10 +6,10 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	"github.com/xitongsys/parquet-go/types"
 
 	"github.com/PuerkitoBio/goquery"
@@ -19,7 +19,8 @@ import (
 type Period int
 
 const (
-	Full Period = iota
+	Undefined Period = iota
+	Full
 	Q1
 	Q2
 	Q3
@@ -45,7 +46,7 @@ func (p Period) String() string {
 	case H2:
 		return "H2"
 	default:
-		return "?"
+		return "Undefined"
 	}
 }
 
@@ -67,12 +68,21 @@ func (p Period) TableSelector() string {
 	case H2:
 		return fmt.Sprintf(baseSelector, "h2")
 	default:
-		return "?"
+		return "Undefined"
+	}
+}
+
+func (p Period) Undefined() bool {
+	switch p {
+	case Full, Q1, Q2, Q3, Q4, H1, H2:
+		return false
+	default:
+		return true
 	}
 }
 
 // basicBoxScoreStarterHeaders represents the headers in sequential order for the starter team members
-var basicBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+var basicBoxScoreStarterHeaders sportsreference.Headers = sportsreference.Headers{
 	"Starters",
 	"MP",
 	"FG",
@@ -98,7 +108,7 @@ var basicBoxScoreStarterHeaders sportsreferenceutil.Headers = sportsreferenceuti
 }
 
 // basicBoxScoreReservesHeaders represents the headers in sequential order for the reserve team members
-var basicBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceutil.Headers{
+var basicBoxScoreReservesHeaders sportsreference.Headers = sportsreference.Headers{
 	"Reserves",
 	"MP",
 	"FG",
@@ -124,87 +134,112 @@ var basicBoxScoreReservesHeaders sportsreferenceutil.Headers = sportsreferenceut
 }
 
 // BasicBoxScoreOption defines a configuration option for basic box score runners
-type BasicBoxScoreOption func(*BasicBoxScoreRunner)
+type BasicBoxScoreOption func(*BasicBoxScoreScraper)
 
 // WithBasicBoxScoreTimeout sets the timeout duration for basic box score runner
 func WithBasicBoxScoreTimeout(timeout time.Duration) BasicBoxScoreOption {
-	return func(bsr *BasicBoxScoreRunner) {
-		bsr.Timeout = timeout
+	return func(s *BasicBoxScoreScraper) {
+		s.Timeout = timeout
 	}
 }
 
 // WithBasicBoxScoreDebug enables or disables debug mode for basic box score runner
 func WithBasicBoxScoreDebug(debug bool) BasicBoxScoreOption {
-	return func(bsr *BasicBoxScoreRunner) {
-		bsr.Debug = debug
-	}
-}
-
-// WithBasicBoxScoreConcurrency sets the number of concurrent workers
-func WithBasicBoxScoreConcurrency(n int) BasicBoxScoreOption {
-	return func(bsr *BasicBoxScoreRunner) {
-		bsr.Concurrency = n
+	return func(s *BasicBoxScoreScraper) {
+		s.Debug = debug
 	}
 }
 
 // WithBasicBoxScorePeriod sets the period of data to scrape
 func WithBasicBoxScorePeriod(period Period) BasicBoxScoreOption {
-	return func(bsr *BasicBoxScoreRunner) {
-		bsr.Period = period
+	return func(s *BasicBoxScoreScraper) {
+		s.Period = period
 	}
 }
 
-// NewBasicBoxScoreRunner creates a new BasicBoxScoreRunner with the provided options
-func NewBasicBoxScoreRunner(options ...BasicBoxScoreOption) *BasicBoxScoreRunner {
-	bsr := &BasicBoxScoreRunner{}
-	bsr.Processor = bsr
+// NewBasicBoxScoreScraper creates a new BasicBoxScoreScraper with the provided options
+func NewBasicBoxScoreScraper(options ...BasicBoxScoreOption) *BasicBoxScoreScraper {
+	s := &BasicBoxScoreScraper{}
 	// default period
-	bsr.Period = Full
+	s.Period = Full
 
 	// Apply all options
 	for _, option := range options {
-		option(bsr)
+		option(s)
 	}
+	s.Init()
 
-	return bsr
+	return s
 }
 
-// BasicBoxScoreRunner specialized Runner for retrieving NBA basic box score statistics
+// BasicBoxScoreScraper specialized Runner for retrieving NBA basic box score statistics
 // with support for concurrent processing.
-type BasicBoxScoreRunner struct {
-	sportsreferenceutil.BoxScoreRunner
+type BasicBoxScoreScraper struct {
+	EventDataScraper
 	Period Period
 }
 
-// GetSegmentBoxScoreStats retrieves NBA basic box score statistics for a single matchup.
-//
-// Parameter:
-//   - matchup: The NBA matchup for which to retrieve basic box score statistics
-//
-// Returns a slice of NBA basic box score statistics as interface{} values
-func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup interface{}) []interface{} {
+func (s *BasicBoxScoreScraper) Init() {
+	if s.Period.Undefined() {
+		log.Fatalln("Period is a required argument for basketball reference nba BasicBoxScoreScraper")
+	}
+}
+
+func (s *BasicBoxScoreScraper) Feed() sportscrape.Feed {
+	switch s.Period {
+	case Full:
+		return sportscrape.BasketballReferenceNBABoxScore
+	case Q1:
+		return sportscrape.BasketballReferenceNBABoxScoreQ1
+	case Q2:
+		return sportscrape.BasketballReferenceNBABoxScoreQ2
+	case Q3:
+		return sportscrape.BasketballReferenceNBABoxScoreQ3
+	case Q4:
+		return sportscrape.BasketballReferenceNBABoxScoreQ4
+	case H1:
+		return sportscrape.BasketballReferenceNBABoxScoreH1
+	case H2:
+		return sportscrape.BasketballReferenceNBABoxScoreH2
+	}
+	return sportscrape.BasketballReferenceNBABoxScore
+}
+
+// Scrape retrieves NBA basic box score statistics for a single matchup.
+func (bs *BasicBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	matchupModel := matchup.(model.NBAMatchup)
+	context := bs.ConstructContext(matchupModel)
+	output := sportscrape.EventDataOutput{
+		Context: context,
+	}
 	url := matchupModel.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	var basicNBABoxScoreStats []interface{}
-	log.Printf("Scraping %s Basic Box Score: %s\n", boxScoreRunner.Period.String(), url)
-	doc, err := boxScoreRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	log.Printf("Scraping %s Basic Box Score: %s\n", bs.Period.String(), url)
+	doc, err := bs.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
-	doc.Find(boxScoreRunner.Period.TableSelector()).Each(func(i int, s *goquery.Selection) {
+	doc.Find(bs.Period.TableSelector()).EachWithBreak(func(i int, s *goquery.Selection) bool {
 		var starterHeader string
 		var reserveHeader string
-		s.Find(boxScoreStarterHeaders).Each(func(idx int, s *goquery.Selection) {
+		s.Find(boxScoreStarterHeaders).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 			starterHeader = util.CleanTextDatum(s.Text())
 			expectedHeader := basicBoxScoreStarterHeaders[idx]
 			if starterHeader != expectedHeader {
-				log.Fatalf("Starter header '%s' at position %d does not equal expected header '%s' @ %s\n", starterHeader, idx, expectedHeader, url)
+				err = fmt.Errorf("starter header '%s' at position %d does not equal expected header '%s' @ %s", starterHeader, idx, expectedHeader, url)
+				output.Error = err
+				return false
 			}
+			return true
 		})
+		if output.Error != nil {
+			return false
+		}
 
-		s.Find(boxScoreStatsRecordsSelector).Each(func(j int, s *goquery.Selection) {
+		s.Find(boxScoreStatsRecordsSelector).EachWithBreak(func(j int, s *goquery.Selection) bool {
 			var boxScoreStats model.NBABasicBoxScoreStats
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
@@ -212,10 +247,14 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 				boxScoreStats.EventID = matchupModel.EventID
 				if i == 0 {
 					boxScoreStats.Team = matchupModel.AwayTeam
+					boxScoreStats.TeamID = matchupModel.AwayTeamID
 					boxScoreStats.Opponent = matchupModel.HomeTeam
+					boxScoreStats.OpponentID = matchupModel.HomeTeamID
 				} else {
 					boxScoreStats.Team = matchupModel.HomeTeam
+					boxScoreStats.TeamID = matchupModel.HomeTeamID
 					boxScoreStats.Opponent = matchupModel.AwayTeam
+					boxScoreStats.OpponentID = matchupModel.AwayTeamID
 				}
 				boxScoreStats.EventDate = matchupModel.EventDate
 				boxScoreStats.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
@@ -224,18 +263,20 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 				} else {
 					boxScoreStats.Starter = false
 				}
-				boxScoreStats.PlayerLink = basketballreference.URL + util.CleanTextDatum(s.Find(boxScorePlayerLinkSelector).AttrOr("href", ""))
+				boxScoreStats.PlayerLink = sportsreference.BasketballRefURL + util.CleanTextDatum(s.Find(boxScorePlayerLinkSelector).AttrOr("href", ""))
 				boxScoreStats.Player = util.CleanTextDatum(s.Find(boxScorePlayerSelector).Text())
-				playerID, err := sportsreferenceutil.PlayerID(boxScoreStats.PlayerLink)
+				playerID, err := sportsreference.PlayerID(boxScoreStats.PlayerLink)
 				if err != nil {
-					log.Fatalln(err)
+					output.Error = err
+					return false
 				}
 				boxScoreStats.PlayerID = playerID
 				minutesPlayed := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
 				if len(minutesPlayed) > 0 && unicode.IsDigit(rune(minutesPlayed[0])) {
 					totalMinutes, err := transformMinutesPlayed(minutesPlayed)
 					if err != nil {
-						log.Fatalln(err)
+						output.Error = err
+						return false
 					}
 					boxScoreStats.MinutesPlayed = totalMinutes
 
@@ -263,7 +304,9 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 					} else {
 						fieldGoalPercentage, err = util.TextToFloat32(rawFieldGoalPercentage)
 						if err != nil {
-							log.Fatalln(fmt.Errorf("Can't convert '%s' for rawFieldGoalPercentage to Float64 - %w", rawFieldGoalPercentage, err))
+							err = fmt.Errorf("can't convert '%s' for rawFieldGoalPercentage to Float64 - %w", rawFieldGoalPercentage, err)
+							output.Error = err
+							return false
 						}
 					}
 
@@ -291,7 +334,9 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 					} else {
 						threePointPercentage, err = util.TextToFloat32(rawthreePointPercentage)
 						if err != nil {
-							log.Fatalln(fmt.Errorf("Can't convert '%s' for rawthreePointPercentage to Float64 - %w", rawthreePointPercentage, err))
+							err = fmt.Errorf("can't convert '%s' for rawthreePointPercentage to Float64 - %w", rawthreePointPercentage, err)
+							output.Error = err
+							return false
 						}
 					}
 
@@ -319,7 +364,9 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 					} else {
 						freeThrowPercentage, err = util.TextToFloat32(rawfreeThrowPercentage)
 						if err != nil {
-							log.Fatalln(fmt.Errorf("Error: Can't convert '%s' for rawfreeThrowPercentage to Float64 - %w", rawfreeThrowPercentage, err))
+							err = fmt.Errorf("error: can't convert '%s' for rawfreeThrowPercentage to Float64 - %w", rawfreeThrowPercentage, err)
+							output.Error = err
+							return false
 						}
 					}
 					boxScoreStats.FieldGoalsMade = fieldGoalsMade
@@ -435,23 +482,27 @@ func (boxScoreRunner *BasicBoxScoreRunner) GetSegmentBoxScoreStats(matchup inter
 				}
 				basicNBABoxScoreStats = append(basicNBABoxScoreStats, boxScoreStats)
 			} else {
-				s.Find(boxScoreReserveHeaders).Each(func(idx int, s *goquery.Selection) {
+				s.Find(boxScoreReserveHeaders).EachWithBreak(func(idx int, s *goquery.Selection) bool {
 					reserveHeader = util.CleanTextDatum(s.Text())
 					expectedHeader := basicBoxScoreReservesHeaders[idx]
 					if reserveHeader != expectedHeader {
-						log.Fatalf("Reserve header '%s' at position %d does not equal expected header '%s' @ %s\n", reserveHeader, idx, expectedHeader, url)
+						err = fmt.Errorf("reserve header '%s' at position %d does not equal expected header '%s' @ %s", reserveHeader, idx, expectedHeader, url)
+						output.Error = err
+						return false
 					}
+					return true
 				})
 			}
-
+			if output.Error != nil {
+				return false
+			}
+			return true
 		})
+		return true
 	})
-	if len(basicNBABoxScoreStats) == 0 {
-		log.Printf("No Data Scraped @ %s\n", url)
-	} else {
-		diff := time.Now().UTC().Sub(start)
-		log.Printf("Scraping of %s Completed in %s\n", url, diff)
-	}
 
-	return basicNBABoxScoreStats
+	diff := time.Now().UTC().Sub(start)
+	log.Printf("Scraping of %s Completed in %s\n", url, diff)
+	output.Output = basicNBABoxScoreStats
+	return output
 }

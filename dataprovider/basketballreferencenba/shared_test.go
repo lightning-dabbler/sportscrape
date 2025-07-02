@@ -1,6 +1,6 @@
 //go:build unit
 
-package nba
+package basketballreferencenba
 
 import (
 	"testing"

@@ -1,13 +1,13 @@
-package nba
+package basketballreferencenba
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
 	"github.com/lightning-dabbler/sportscrape/util"
-	sportsreferenceutil "github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	"github.com/xitongsys/parquet-go/types"
 
 	"time"
@@ -38,73 +38,97 @@ const (
 	matchupsQuarterHeadersSelector = "table:nth-child(2) > thead > tr > th:nth-child(%d)"
 )
 
-// MatchupOption defines a configuration option for MatchupRunner
-type MatchupOption func(*MatchupRunner)
+// MatchupOption defines a configuration option for MatchupScraper
+type MatchupOption func(*MatchupScraper)
+
+// WithMatchupTimeout sets the timeout duration for matchup runner
+func WithMatchupDate(date string) MatchupOption {
+	return func(mr *MatchupScraper) {
+		mr.Date = date
+	}
+}
 
 // WithMatchupTimeout sets the timeout duration for matchup runner
 func WithMatchupTimeout(timeout time.Duration) MatchupOption {
-	return func(mr *MatchupRunner) {
+	return func(mr *MatchupScraper) {
 		mr.Timeout = timeout
 	}
 }
 
 // WithMatchupDebug enables or disables debug mode for matchup runner
 func WithMatchupDebug(debug bool) MatchupOption {
-	return func(mr *MatchupRunner) {
+	return func(mr *MatchupScraper) {
 		mr.Debug = debug
 	}
 }
 
-// NewMatchupRunner creates a new MatchupRunner with the provided options
-func NewMatchupRunner(options ...MatchupOption) *MatchupRunner {
-	mr := &MatchupRunner{}
+// NewMatchupScraper creates a new MatchupScraper with the provided options
+func NewMatchupScraper(options ...MatchupOption) *MatchupScraper {
+	mr := &MatchupScraper{}
 
 	// Apply all options
 	for _, option := range options {
 		option(mr)
 	}
+	mr.Init()
 
 	return mr
 }
 
-// MatchupRunner specialized Runner for retrieving NBA matchup information.
-type MatchupRunner struct {
-	sportsreferenceutil.MatchupRunner
+// MatchupScraper specialized Runner for retrieving NBA matchup information.
+type MatchupScraper struct {
+	sportsreference.BaseScraper
+	Date string
+}
+
+func (ms MatchupScraper) Provider() sportscrape.Provider {
+	return sportscrape.BasketballReference
+}
+
+func (ms MatchupScraper) Init() {
+	ms.BaseScraper.Init()
+	if ms.Date == "" {
+		log.Fatalln("Date is a required argument")
+	}
+}
+
+func (ms MatchupScraper) Feed() sportscrape.Feed {
+	return sportscrape.BasketballReferenceNBAMatchup
 }
 
 // GetMatchups retrieves NBA matchups for the specified date.
-//
-// Parameter:
-//   - date: The date for which to retrieve matchups
-//
-// Returns a slice of NBA matchup data as interface{} values
-func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
+func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
-	timestamp, err := sportsreferenceutil.DateStrToTime(date)
+	output := sportscrape.MatchupOutput{}
+	timestamp, err := sportsreference.DateStrToTime(ms.Date)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 	month := timestamp.Format("1")
 	day := timestamp.Format("2")
 	year := timestamp.Format("2006")
-	url, err := util.StrFormat(basketballreference.MatchupURL, "month", month, "year", year, "day", day)
+	url, err := util.StrFormat(sportsreference.BasketballRefMatchupURL, "month", month, "year", year, "day", day)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
 	log.Println("Scraping Matchups: " + url)
 
-	EventDate, err := sportsreferenceutil.EventDate(date)
+	EventDate, err := sportsreference.EventDate(ms.Date)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
-	doc, err := matchupRunner.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := ms.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 
-	doc.Find(matchupsGameSummarySelector).Each(func(_ int, s *goquery.Selection) {
+	doc.Find(matchupsGameSummarySelector).EachWithBreak(func(_ int, s *goquery.Selection) bool {
 		var matchup model.NBAMatchup
 		var location string
 		matchup.PullTimestamp = PullTimestamp
@@ -114,61 +138,85 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		// AwayTeam
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsAwayTeamNameSelector)
 
-		matchup.AwayTeam, err = sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum((s.Find(matchupsAwayTeamNameSelector).Text())), location, "AwayTeam")
+		matchup.AwayTeam, err = sportsreference.ReturnUnemptyField(util.CleanTextDatum((s.Find(matchupsAwayTeamNameSelector).Text())), location, "AwayTeam")
 		if err != nil {
-			log.Fatalln(err)
-		}
-		// AwayTeamLink
-		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsAwayTeamLinkSelector)
-		urlPath, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsAwayTeamLinkSelector).AttrOr("href", "")), location, "AwayTeamLink")
-		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
-		matchup.AwayTeamLink = basketballreference.URL + urlPath
+		// AwayTeamLink
+		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsAwayTeamLinkSelector)
+		urlPath, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsAwayTeamLinkSelector).AttrOr("href", "")), location, "AwayTeamLink")
+		if err != nil {
+			output.Error = err
+			return false
+		}
+		matchup.AwayTeamLink = sportsreference.BasketballRefURL + urlPath
+
+		// AwayTeamID
+		awayteamid, err := sportsreference.TeamID(urlPath)
+		if err != nil {
+			output.Error = err
+			return false
+		}
+		matchup.AwayTeamID = awayteamid
 		// AwayScore
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsAwayTeamScoreSelector)
-		rawAwayScore, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsAwayTeamScoreSelector).Text()), location, "AwayScore")
+		rawAwayScore, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsAwayTeamScoreSelector).Text()), location, "AwayScore")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.AwayScore, err = util.TextToInt32(rawAwayScore)
 		if err != nil {
 			log.Printf("Cannot convert '%s' for rawAwayScore into Int\n", rawAwayScore)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		// HomeTeam
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsHomeTeamNameSelector)
-		matchup.HomeTeam, err = sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsHomeTeamNameSelector).Text()), location, "HomeTeam")
+		matchup.HomeTeam, err = sportsreference.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsHomeTeamNameSelector).Text()), location, "HomeTeam")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		// HomeTeamLink
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsHomeTeamLinkSelector)
-		urlPath, err = sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsHomeTeamLinkSelector).AttrOr("href", "")), location, "HomeTeamLink")
+		urlPath, err = sportsreference.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsHomeTeamLinkSelector).AttrOr("href", "")), location, "HomeTeamLink")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
-		matchup.HomeTeamLink = basketballreference.URL + urlPath
+		matchup.HomeTeamLink = sportsreference.BasketballRefURL + urlPath
+		// HomeTeamID
+		hometeamid, err := sportsreference.TeamID(urlPath)
+		if err != nil {
+			output.Error = err
+			return false
+		}
+		matchup.HomeTeamID = hometeamid
 		// HomeScore
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsHomeTeamScoreSelector)
-		rawHomeScore, err := sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsHomeTeamScoreSelector).Text()), location, "HomeScore")
+		rawHomeScore, err := sportsreference.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsHomeTeamScoreSelector).Text()), location, "HomeScore")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.HomeScore, err = util.TextToInt32(rawHomeScore)
 		if err != nil {
 			log.Printf("Conversion issue detected for rawHomeScore ('%s') to Int\n", rawHomeScore)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		// Loser
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsLoserSelector)
 		rawLoser := util.CleanTextDatum(s.Find(matchupsLoserSelector).AttrOr("class", ""))
-		_, ok := sportsreferenceutil.LoserValueExists[rawLoser]
+		_, ok := sportsreference.LoserValueExists[rawLoser]
 		if !ok {
-			log.Fatalf("Unrecognized attribute value @ %s for Loser\n", location)
+			output.Error = fmt.Errorf("unrecognized attribute value @ %s for Loser", location)
+			return false
 		}
 		if rawLoser == "loser" {
 			matchup.Loser = matchup.AwayTeam
@@ -178,16 +226,18 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 
 		//BoxScoreLink
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, matchupsBoxScoreLinkSelector)
-		urlPath, err = sportsreferenceutil.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsBoxScoreLinkSelector).AttrOr("href", "")), location, "BoxScoreLink")
+		urlPath, err = sportsreference.ReturnUnemptyField(util.CleanTextDatum(s.Find(matchupsBoxScoreLinkSelector).AttrOr("href", "")), location, "BoxScoreLink")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
-		matchup.BoxScoreLink = basketballreference.URL + urlPath
+		matchup.BoxScoreLink = sportsreference.BasketballRefURL + urlPath
 
 		// EventID
-		eventID, err := sportsreferenceutil.EventID(matchup.BoxScoreLink)
+		eventID, err := sportsreference.EventID(matchup.BoxScoreLink)
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.EventID = eventID
 
@@ -206,123 +256,136 @@ func (matchupRunner *MatchupRunner) GetMatchups(date string) []interface{} {
 		selector = fmt.Sprintf(matchupsAwayQuarterScoresSelector, 2)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		AwayQ1TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		AwayQ1TotalText, err = sportsreferenceutil.ReturnUnemptyField(AwayQ1TotalText, location, "AwayQ1Total")
+		AwayQ1TotalText, err = sportsreference.ReturnUnemptyField(AwayQ1TotalText, location, "AwayQ1Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.AwayQ1Total, err = util.TextToInt32(AwayQ1TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ1TotalText to Int\n", AwayQ1TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//AwayQ2Total
 		selector = fmt.Sprintf(matchupsAwayQuarterScoresSelector, 3)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		AwayQ2TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		AwayQ2TotalText, err = sportsreferenceutil.ReturnUnemptyField(AwayQ2TotalText, location, "AwayQ2Total")
+		AwayQ2TotalText, err = sportsreference.ReturnUnemptyField(AwayQ2TotalText, location, "AwayQ2Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.AwayQ2Total, err = util.TextToInt32(AwayQ2TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ2TotalText to Int\n", AwayQ2TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//AwayQ3Total
 		selector = fmt.Sprintf(matchupsAwayQuarterScoresSelector, 4)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		AwayQ3TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		AwayQ3TotalText, err = sportsreferenceutil.ReturnUnemptyField(AwayQ3TotalText, location, "AwayQ3Total")
+		AwayQ3TotalText, err = sportsreference.ReturnUnemptyField(AwayQ3TotalText, location, "AwayQ3Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.AwayQ3Total, err = util.TextToInt32(AwayQ3TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ3TotalText to Int\n", AwayQ3TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//AwayQ4Total
 		selector = fmt.Sprintf(matchupsAwayQuarterScoresSelector, 5)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		AwayQ4TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		AwayQ4TotalText, err = sportsreferenceutil.ReturnUnemptyField(AwayQ4TotalText, location, "AwayQ4Total")
+		AwayQ4TotalText, err = sportsreference.ReturnUnemptyField(AwayQ4TotalText, location, "AwayQ4Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.AwayQ4Total, err = util.TextToInt32(AwayQ4TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for AwayQ4TotalText to Int\n", AwayQ4TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//HomeQ1Total
 		selector = fmt.Sprintf(matchupsHomeQuarterScoresSelector, 2)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		HomeQ1TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		HomeQ1TotalText, err = sportsreferenceutil.ReturnUnemptyField(HomeQ1TotalText, location, "HomeQ1Total")
+		HomeQ1TotalText, err = sportsreference.ReturnUnemptyField(HomeQ1TotalText, location, "HomeQ1Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.HomeQ1Total, err = util.TextToInt32(HomeQ1TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ1TotalText to Int\n", HomeQ1TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//HomeQ2Total
 		selector = fmt.Sprintf(matchupsHomeQuarterScoresSelector, 3)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		HomeQ2TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		HomeQ2TotalText, err = sportsreferenceutil.ReturnUnemptyField(HomeQ2TotalText, location, "HomeQ2Total")
+		HomeQ2TotalText, err = sportsreference.ReturnUnemptyField(HomeQ2TotalText, location, "HomeQ2Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.HomeQ2Total, err = util.TextToInt32(HomeQ2TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ2TotalText to Int\n", HomeQ2TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//HomeQ3Total
 		selector = fmt.Sprintf(matchupsHomeQuarterScoresSelector, 4)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		HomeQ3TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		HomeQ3TotalText, err = sportsreferenceutil.ReturnUnemptyField(HomeQ3TotalText, location, "HomeQ3Total")
+		HomeQ3TotalText, err = sportsreference.ReturnUnemptyField(HomeQ3TotalText, location, "HomeQ3Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.HomeQ3Total, err = util.TextToInt32(HomeQ3TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ3TotalText to Int\n", HomeQ3TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		//HomeQ4Total
 		selector = fmt.Sprintf(matchupsHomeQuarterScoresSelector, 5)
 		location = fmt.Sprintf("%s %s %s", matchupsGameSummariesSelector, matchupsGameSummarySelector, selector)
 		HomeQ4TotalText := util.CleanTextDatum(s.Find(selector).Text())
-		HomeQ4TotalText, err = sportsreferenceutil.ReturnUnemptyField(HomeQ4TotalText, location, "HomeQ4Total")
+		HomeQ4TotalText, err = sportsreference.ReturnUnemptyField(HomeQ4TotalText, location, "HomeQ4Total")
 		if err != nil {
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 		matchup.HomeQ4Total, err = util.TextToInt32(HomeQ4TotalText)
 		if err != nil {
 			log.Printf("Cannot Convert '%s' for HomeQ4TotalText to Int\n", HomeQ4TotalText)
-			log.Fatalln(err)
+			output.Error = err
+			return false
 		}
 
 		matchups = append(matchups, matchup)
-
+		return true
 	})
 
-	if len(matchups) == 0 {
-		log.Printf("No Data Scraped @ %s\n", url)
-	} else {
-		diff := time.Now().UTC().Sub(start)
-		log.Printf("Scraping of %s Completed in %s\n", url, diff)
-	}
-	return matchups
+	diff := time.Now().UTC().Sub(start)
+	log.Printf("Scraping of %s Completed in %s\n", url, diff)
+	output.Output = matchups
+	return output
 }

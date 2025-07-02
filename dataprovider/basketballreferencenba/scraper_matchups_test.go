@@ -1,6 +1,6 @@
 //go:build integration
 
-package nba
+package basketballreferencenba
 
 import (
 	"log"
@@ -8,7 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go-source/local"
@@ -41,10 +42,17 @@ func TestGetMatchups(t *testing.T) {
 	defer fs.RemoveAll(tmpDir)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			runner := NewMatchupRunner(
-				WithMatchupTimeout(4 * time.Minute),
+			scraper := NewMatchupScraper(
+				WithMatchupDate(tt.date),
+				WithMatchupTimeout(5*time.Minute),
 			)
-			matchups := runner.GetMatchups(tt.date)
+			runner := sportscrape.NewMatchupRunner(
+				sportscrape.MatchupRunnerScraper(scraper),
+			)
+			matchups, err := runner.Run()
+			if err != nil {
+				t.Error(err)
+			}
 			assert.Equal(t, tt.expectedNumMatches, len(matchups))
 			filePath := filepath.Join(tmpDir, "foo.parquet")
 

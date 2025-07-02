@@ -28,14 +28,15 @@ var (
 	BaseballReferenceMLBPitchingBoxScore Feed = Feed(string(BaseballReference) + " mlb pitching box score")
 
 	// basketball reference
-	BasketballReferenceNBAMatchup    Feed = Feed(string(BasketballReference) + " nba matchup")
-	BasketballReferenceNBABoxScore   Feed = Feed(string(BasketballReference) + " nba box score")
-	BasketballReferenceNBABoxScoreQ1 Feed = Feed(string(BasketballReference) + " nba q1 box score")
-	BasketballReferenceNBABoxScoreQ2 Feed = Feed(string(BasketballReference) + " nba q2 box score")
-	BasketballReferenceNBABoxScoreQ3 Feed = Feed(string(BasketballReference) + " nba q3 box score")
-	BasketballReferenceNBABoxScoreQ4 Feed = Feed(string(BasketballReference) + " nba q4 box score")
-	BasketballReferenceNBABoxScoreH1 Feed = Feed(string(BasketballReference) + " nba h1 box score")
-	BasketballReferenceNBABoxScoreH2 Feed = Feed(string(BasketballReference) + " nba h2 box score")
+	BasketballReferenceNBAMatchup     Feed = Feed(string(BasketballReference) + " nba matchup")
+	BasketballReferenceNBABoxScore    Feed = Feed(string(BasketballReference) + " nba box score")
+	BasketballReferenceNBABoxScoreQ1  Feed = Feed(string(BasketballReference) + " nba q1 box score")
+	BasketballReferenceNBABoxScoreQ2  Feed = Feed(string(BasketballReference) + " nba q2 box score")
+	BasketballReferenceNBABoxScoreQ3  Feed = Feed(string(BasketballReference) + " nba q3 box score")
+	BasketballReferenceNBABoxScoreQ4  Feed = Feed(string(BasketballReference) + " nba q4 box score")
+	BasketballReferenceNBABoxScoreH1  Feed = Feed(string(BasketballReference) + " nba h1 box score")
+	BasketballReferenceNBABoxScoreH2  Feed = Feed(string(BasketballReference) + " nba h2 box score")
+	BasketballReferenceNBAAdvBoxScore Feed = Feed(string(BasketballReference) + " nba advanced box score")
 )
 
 func (p Provider) Deprecated() bool {

@@ -14,8 +14,12 @@ type NBAMatchup struct {
 	EventDate time.Time `json:"event_date"`
 	// EventDateParquet is the timestamp associated with a given event (in days)
 	EventDateParquet int32 `json:"-" parquet:"name=event_date, type=INT32, convertedtype=DATE, logicaltype=DATE"`
+	// AwayTeamID
+	AwayTeamID string `json:"away_team_id" parquet:"name=away_team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayTeam is the away team's name
 	AwayTeam string `json:"away_team" parquet:"name=away_team, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// HomeTeamID
+	HomeTeamID string `json:"home_team_id" parquet:"name=home_team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeTeam is the home team's name
 	HomeTeam string `json:"home_team" parquet:"name=home_team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeScore is the home team's final score

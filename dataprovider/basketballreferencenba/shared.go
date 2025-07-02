@@ -1,4 +1,4 @@
-package nba
+package basketballreferencenba
 
 import (
 	"fmt"

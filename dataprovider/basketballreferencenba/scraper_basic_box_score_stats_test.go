@@ -1,12 +1,13 @@
 //go:build integration
 
-package nba
+package basketballreferencenba
 
 import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreference/nba/model"
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,15 +16,34 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 	date := "2025-02-19"
-	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(5 * time.Minute),
+	// Instantiate MatchupRunner
+	matchupscraper := NewMatchupScraper(
+		WithMatchupDate(date),
+		WithMatchupTimeout(5*time.Minute),
 	)
-	matchups := matchupRunner.GetMatchups(date)
-	boxScoreRunner := NewBasicBoxScoreRunner(
-		WithBasicBoxScoreTimeout(5*time.Minute),
-		WithBasicBoxScoreConcurrency(1),
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupscraper),
 	)
-	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+	// Retrieve NBA matchups associated with date
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	boxscorescraper := NewBasicBoxScoreScraper(
+		WithBasicBoxScoreTimeout(4*time.Minute),
+		WithBasicBoxScorePeriod(Full),
+	)
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	)
+	// Retrieve NBA basic box score stats associated with matchups
+	basicBoxScoreStats, err := runner.Run(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
+
 	numAwayPlayers := 0
 	numHomePlayers := 0
 	numAwayDNP := 0
@@ -53,6 +73,7 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 				assert.Equal(t, true, stats.Starter, "LaMelo is a starter")
 				assert.Equal(t, "ballla01", stats.PlayerID, "LaMelo's player ID")
 				assert.Equal(t, "LA Lakers", stats.Opponent, "LaMelo's opposing team")
+				assert.Equal(t, "LAL", stats.OpponentID, "LaMelo's opposing team")
 				assert.Equal(t, "https://www.basketball-reference.com/players/b/ballla01.html", stats.PlayerLink, "LaMelo's player link")
 				assert.Equal(t, float32(33.25), stats.MinutesPlayed, "LaMelo minutes played")
 				assert.Equal(t, int32(9), stats.FieldGoalsMade, "LaMelo field goals made")
@@ -90,16 +111,33 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 	date := "2025-02-19"
-	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(4 * time.Minute),
+	// Instantiate MatchupRunner
+	matchupscraper := NewMatchupScraper(
+		WithMatchupDate(date),
+		WithMatchupTimeout(4*time.Minute),
 	)
-	matchups := matchupRunner.GetMatchups(date)
-	boxScoreRunner := NewBasicBoxScoreRunner(
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupscraper),
+	)
+	// Retrieve NBA matchups associated with date
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	boxscorescraper := NewBasicBoxScoreScraper(
 		WithBasicBoxScoreTimeout(4*time.Minute),
-		WithBasicBoxScoreConcurrency(1),
 		WithBasicBoxScorePeriod(H1),
 	)
-	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	)
+	// Retrieve NBA basic box score stats associated with matchups
+	basicBoxScoreStats, err := runner.Run(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 
 	playerToTest := map[string]bool{
 		"LaMelo Ball":  false,
@@ -114,6 +152,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 			assert.Equal(t, true, stats.Starter, "LaMelo is a starter")
 			assert.Equal(t, "ballla01", stats.PlayerID, "LaMelo's player ID")
 			assert.Equal(t, "LA Lakers", stats.Opponent, "LaMelo's opposing team")
+			assert.Equal(t, "LAL", stats.OpponentID, "LaMelo's opposing team")
 			assert.Equal(t, "https://www.basketball-reference.com/players/b/ballla01.html", stats.PlayerLink, "LaMelo's player link")
 			assert.Equal(t, float32(14.78), stats.MinutesPlayed, "LaMelo minutes played")
 			assert.Equal(t, int32(4), stats.FieldGoalsMade, "LaMelo field goals made")
@@ -141,6 +180,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 			assert.Equal(t, true, stats.Starter, "Luka is a starter")
 			assert.Equal(t, "doncilu01", stats.PlayerID, "Luka's player ID")
 			assert.Equal(t, "Charlotte", stats.Opponent, "Luka's opposing team")
+			assert.Equal(t, "CHO", stats.OpponentID, "Luka's opposing team")
 			assert.Equal(t, "https://www.basketball-reference.com/players/d/doncilu01.html", stats.PlayerLink, "Luka's player link")
 			assert.Equal(t, float32(15.55), stats.MinutesPlayed, "Luka minutes played")
 			assert.Equal(t, int32(2), stats.FieldGoalsMade, "Luka field goals made")
@@ -169,6 +209,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 			assert.Equal(t, false, stats.Starter, "Gabe is a reserves player")
 			assert.Equal(t, "vincega01", stats.PlayerID, "Gabe's player ID")
 			assert.Equal(t, "Charlotte", stats.Opponent, "Gabe's opposing team")
+			assert.Equal(t, "CHO", stats.OpponentID, "Gabe's opposing team")
 			assert.Equal(t, "https://www.basketball-reference.com/players/v/vincega01.html", stats.PlayerLink, "Gabe's player link")
 			assert.Equal(t, float32(10.65), stats.MinutesPlayed, "Gabe minutes played")
 			assert.Equal(t, int32(2), stats.FieldGoalsMade, "Gabe field goals made")
@@ -204,16 +245,34 @@ func TestGetQ3BasicBoxScoreStats(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 	date := "2025-02-19"
-	matchupRunner := NewMatchupRunner(
-		WithMatchupTimeout(4 * time.Minute),
+
+	// Instantiate MatchupRunner
+	matchupscraper := NewMatchupScraper(
+		WithMatchupDate(date),
+		WithMatchupTimeout(4*time.Minute),
 	)
-	matchups := matchupRunner.GetMatchups(date)
-	boxScoreRunner := NewBasicBoxScoreRunner(
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupscraper),
+	)
+	// Retrieve NBA matchups associated with date
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	boxscorescraper := NewBasicBoxScoreScraper(
 		WithBasicBoxScoreTimeout(4*time.Minute),
-		WithBasicBoxScoreConcurrency(1),
 		WithBasicBoxScorePeriod(Q3),
 	)
-	basicBoxScoreStats := boxScoreRunner.GetBoxScoresStats(matchups...)
+	runner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerConcurrency(1),
+		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	)
+	// Retrieve NBA basic box score stats associated with matchups
+	basicBoxScoreStats, err := runner.Run(matchups...)
+	if err != nil {
+		t.Error(err)
+	}
 	playerToTest := map[string]bool{
 		"Tidjane Salaün": false,
 		"Rui Hachimura":  false,
@@ -226,6 +285,7 @@ func TestGetQ3BasicBoxScoreStats(t *testing.T) {
 			assert.Equal(t, false, stats.Starter, "Tidjane is a reserves player")
 			assert.Equal(t, "salauti01", stats.PlayerID, "Tidjane's player ID")
 			assert.Equal(t, "LA Lakers", stats.Opponent, "Tidjane's opposing team")
+			assert.Equal(t, "LAL", stats.OpponentID, "Tidjane's opposing team")
 			assert.Equal(t, "https://www.basketball-reference.com/players/s/salauti01.html", stats.PlayerLink, "Tidjane's player link")
 			assert.Equal(t, float32(0), stats.MinutesPlayed, "Tidjane minutes played")
 			assert.Equal(t, int32(0), stats.FieldGoalsMade, "Tidjane field goals made")
@@ -253,6 +313,7 @@ func TestGetQ3BasicBoxScoreStats(t *testing.T) {
 			assert.Equal(t, true, stats.Starter, "Rui is a starter")
 			assert.Equal(t, "hachiru01", stats.PlayerID, "Rui's player ID")
 			assert.Equal(t, "Charlotte", stats.Opponent, "Rui's opposing team")
+			assert.Equal(t, "CHO", stats.OpponentID, "Rui's opposing team")
 			assert.Equal(t, "https://www.basketball-reference.com/players/h/hachiru01.html", stats.PlayerLink, "Rui's player link")
 			assert.Equal(t, float32(10.27), stats.MinutesPlayed, "Rui minutes played")
 			assert.Equal(t, int32(2), stats.FieldGoalsMade, "Rui field goals made")
