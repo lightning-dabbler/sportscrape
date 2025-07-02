@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2025-07-02
+### Added
+- Added `MatchupRunner`, `EventDataRunner`, `MatchupScraper`, and `EventDataScraper` abstractions to be reused across all data providers (#80)
+- Added `Feed` and `Provider` enums to catalog sources in code (#80)
+### Changed
+- Updated fox sports extraction to use new `Runner` and `Scraper` pattern (#80)
+- Additional validation in fox sports extraction (#80)
+- Updated baseball reference mlb extraction to use new `Runner` and `Scraper` pattern (#82)
+- Updated basketball reference nba extraction to use new `Runner` and `Scraper` pattern (#82)
+- Code organization improvements (#82)
+
 ## [0.10.0] - 2025-05-29
 ### Changed
 - Update `MLBProbableStartingPitcher` fields (#77)

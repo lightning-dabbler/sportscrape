@@ -8,7 +8,8 @@ import (
 type League int
 
 const (
-	NBA League = iota
+	Undefined League = iota
+	NBA
 	MLB
 	NCAAB
 	NFL
@@ -32,7 +33,16 @@ func (l League) LeaguePath() string {
 	case NFL:
 		return "nfl"
 	default:
-		return "?"
+		return "undefined"
+	}
+}
+
+func (l League) Undefined() bool {
+	switch l {
+	case NBA, MLB, NCAAB, NFL:
+		return false
+	default:
+		return true
 	}
 }
 
@@ -54,7 +64,7 @@ func (l League) V1MatchupURL(segmentID string) (*url.URL, error) {
 	case NFL:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), scoreboardPath))
 	default:
-		return nil, fmt.Errorf("unknown League identified: %#v", l)
+		return nil, fmt.Errorf("undefined league: %#v", l)
 	}
 }
 
@@ -76,7 +86,7 @@ func (l League) V1EventDataURL(eventID int64) (*url.URL, error) {
 	case NFL:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
 	default:
-		return nil, fmt.Errorf("unknown League identified: %#v", l)
+		return nil, fmt.Errorf("undefined League identified: %#v", l)
 	}
 }
 
@@ -98,7 +108,7 @@ func (l League) V1MatchupComparisonURL(eventID int64) (*url.URL, error) {
 	case NFL:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
 	default:
-		return nil, fmt.Errorf("unknown League identified: %#v", l)
+		return nil, fmt.Errorf("undefined League identified: %#v", l)
 	}
 }
 

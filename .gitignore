@@ -33,3 +33,6 @@ coverage.html
 
 # binary toools
 bin/
+
+# scratch
+tmp

@@ -1,4 +1,4 @@
-package sportsreferenceutil
+package sportsreference
 
 import (
 	"fmt"
@@ -64,7 +64,7 @@ func extractID(link string) string {
 func EventID(boxscoreLink string) (string, error) {
 	id := extractID(boxscoreLink)
 	if id == "" {
-		return "", fmt.Errorf("Error: Event ID is an empty string when parsing %s", id)
+		return "", fmt.Errorf("error: Event ID is an empty string when parsing %s", boxscoreLink)
 	}
 	return id, nil
 }
@@ -78,7 +78,20 @@ func EventID(boxscoreLink string) (string, error) {
 func PlayerID(playerLink string) (string, error) {
 	id := extractID(playerLink)
 	if id == "" {
-		return "", fmt.Errorf("Error: Player ID is an empty string when parsing %s", id)
+		return "", fmt.Errorf("error: Player ID is an empty string when parsing %s", playerLink)
+	}
+	return id, nil
+}
+
+// TeamID
+func TeamID(teamLink string) (string, error) {
+	linkSplit := strings.Split(teamLink, "/")
+	if len(linkSplit) != 4 {
+		return "", fmt.Errorf("error: unexpected team link format %s", teamLink)
+	}
+	id := linkSplit[2]
+	if id == "" {
+		return "", fmt.Errorf("error: Team ID is an empty string when parsing %s", teamLink)
 	}
 	return id, nil
 }
