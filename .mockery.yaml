@@ -12,6 +12,7 @@ outpkg: "mock{{.PackageName}}"
 
 
 packages:
-  github.com/lightning-dabbler/sportscrape/util/sportsreference:
+  github.com/lightning-dabbler/sportscrape:
     interfaces:
-      BoxScoreProcessor:
+      MatchupScraper:
+      EventDataScraper:
