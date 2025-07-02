@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
 	"github.com/stretchr/testify/assert"
 )
@@ -31,8 +30,8 @@ func TestGetBattingBoxScoreStats(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Instantiate BattingBoxScoreScraper
-	boxscorescraper := baseballreferencemlb.NewBattingBoxScoreScraper(
-		baseballreferencemlb.WithBattingBoxScoreTimeout(5 * time.Minute),
+	boxscorescraper := NewBattingBoxScoreScraper(
+		WithBattingBoxScoreTimeout(5 * time.Minute),
 	)
 	boxScoreRunner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerConcurrency(1),
