@@ -45,6 +45,8 @@ func EventDataRunnerScraper(scraper EventDataScraper) EventDataRunnerOption {
 // NewEventDataRunner Instantiates a new EventDataRunner
 func NewEventDataRunner(options ...EventDataRunnerOption) *EventDataRunner {
 	r := &EventDataRunner{}
+	// Default
+	r.Concurrency = 1
 	// Apply all options
 	for _, option := range options {
 		option(r)
