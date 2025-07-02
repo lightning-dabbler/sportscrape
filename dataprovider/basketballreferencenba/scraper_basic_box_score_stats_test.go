@@ -26,9 +26,7 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	boxscorescraper := NewBasicBoxScoreScraper(
 		WithBasicBoxScoreTimeout(4*time.Minute),
@@ -40,9 +38,7 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	numAwayPlayers := 0
 	numHomePlayers := 0
@@ -121,9 +117,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	boxscorescraper := NewBasicBoxScoreScraper(
 		WithBasicBoxScoreTimeout(4*time.Minute),
@@ -135,9 +129,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	playerToTest := map[string]bool{
 		"LaMelo Ball":  false,
@@ -256,9 +248,7 @@ func TestGetQ3BasicBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	boxscorescraper := NewBasicBoxScoreScraper(
 		WithBasicBoxScoreTimeout(4*time.Minute),
@@ -270,9 +260,7 @@ func TestGetQ3BasicBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	playerToTest := map[string]bool{
 		"Tidjane Salaün": false,
 		"Rui Hachimura":  false,

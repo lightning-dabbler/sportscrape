@@ -140,7 +140,6 @@ type MatchupOutput struct {
 type MatchupContext struct {
 	Errors int
 	Skips  int
-	Total  int
 }
 
 // MatchupRunnerOption

@@ -27,9 +27,7 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve MLB matchups associated with date
 	matchups, err := runner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Instantiate PitchingBoxScoreScraper
 	boxscorescraper := NewPitchingBoxScoreScraper(
@@ -41,9 +39,7 @@ func TestGetPitchingBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve MLB pitching box score stats associated with matchups
 	boxScoreStats, err := boxScoreRunner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	playerToTest := map[string]bool{
 		"Luke Weaver":   false,

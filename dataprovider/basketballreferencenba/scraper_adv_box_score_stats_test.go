@@ -27,9 +27,7 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Instantiate AdvBoxScoreScraper
 	boxscorescraper := NewAdvBoxScoreScraper(
@@ -41,9 +39,7 @@ func TestGetAdvBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	advBoxScoreStats, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	numAwayPlayers := 0
 	numHomePlayers := 0

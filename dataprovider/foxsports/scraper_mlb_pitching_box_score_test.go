@@ -33,9 +33,7 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Get boxscore data
 	boxscoreScraper := NewMLBPitchingBoxScoreScraper()
@@ -46,9 +44,7 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 		),
 	)
 	boxScoreStats, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	n_expected := 13
 	assert.Equal(t, n_expected, n_stats, "13 statlines")

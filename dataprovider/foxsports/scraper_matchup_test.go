@@ -26,9 +26,7 @@ func TestGetNBAMatchup(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 11, n_matchups, "11 events")
@@ -71,9 +69,7 @@ func TestGetMLBMatchup(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
@@ -117,9 +113,7 @@ func TestGetNFLMatchup(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
 	testMatchup := matchups[1].(model.Matchup)
@@ -160,9 +154,7 @@ func TestGetNCAABMatchup(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 4, n_matchups, "4 events")

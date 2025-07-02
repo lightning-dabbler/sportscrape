@@ -266,7 +266,6 @@ func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	output.Context = sportscrape.MatchupContext{
 		Errors: errors,
 		Skips:  skipped,
-		Total:  len(matchups),
 	}
 	return output
 }

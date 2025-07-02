@@ -28,11 +28,11 @@ func TestBaseScraperStructureAndOptions(t *testing.T) {
 			}
 
 			if scraper.Timeout != tc.timeout {
-				t.Errorf("Expected Timeout to be %v, got %v", tc.timeout, runner.Timeout)
+				t.Errorf("Expected Timeout to be %v, got %v", tc.timeout, scraper.Timeout)
 			}
 
 			if scraper.Debug != tc.debug {
-				t.Errorf("Expected Debug to be %v, got %v", tc.debug, runner.Debug)
+				t.Errorf("Expected Debug to be %v, got %v", tc.debug, scraper.Debug)
 			}
 		})
 	}

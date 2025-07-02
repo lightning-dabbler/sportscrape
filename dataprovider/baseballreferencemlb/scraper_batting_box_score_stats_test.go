@@ -28,9 +28,7 @@ func TestGetBattingBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve MLB matchups associated with date
 	matchups, err := runner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Instantiate BattingBoxScoreScraper
 	boxscorescraper := baseballreferencemlb.NewBattingBoxScoreScraper(
@@ -42,9 +40,7 @@ func TestGetBattingBoxScoreStats(t *testing.T) {
 	)
 	// Retrieve MLB batting box score stats associated with matchups
 	boxScoreStats, err := boxScoreRunner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	playerToTest := map[string]bool{
 		"Harrison Bader":    false,
