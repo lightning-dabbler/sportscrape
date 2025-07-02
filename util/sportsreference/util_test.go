@@ -1,6 +1,6 @@
 //go:build unit
 
-package sportsreferenceutil
+package sportsreference
 
 import (
 	"testing"

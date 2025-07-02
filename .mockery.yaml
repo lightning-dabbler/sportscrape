@@ -1,17 +1,12 @@
 # https://vektra.github.io/mockery/latest/configuration/
 
-with-expecter: True
-resolve-type-alias: False
-issue-845-fix: True
-disable-version-string: True
-
 filename: "mock_{{.InterfaceName}}.go"
-dir: "{{ .InterfaceDir }}/mocks"
-mockname: "Mock{{.InterfaceName}}"
-outpkg: "mock{{.PackageName}}"
-
+dir: "{{ .InterfaceDir }}"
+structname: "Mock{{.InterfaceName}}"
+pkgname: '{{.SrcPackageName}}'
 
 packages:
-  github.com/lightning-dabbler/sportscrape/util/sportsreference:
+  github.com/lightning-dabbler/sportscrape:
     interfaces:
-      BoxScoreProcessor:
+      MatchupScraper:
+      EventDataScraper:

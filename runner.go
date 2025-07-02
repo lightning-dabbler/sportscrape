@@ -17,11 +17,11 @@ type EventDataOutput struct {
 type EventDataContext struct {
 	PullTimestamp time.Time
 	EventTime     time.Time
-	EventID       int64
+	EventID       interface{}
 	URL           string
-	AwayID        int64
+	AwayID        interface{}
 	AwayTeam      string
-	HomeID        int64
+	HomeID        interface{}
 	HomeTeam      string
 }
 
@@ -45,6 +45,8 @@ func EventDataRunnerScraper(scraper EventDataScraper) EventDataRunnerOption {
 // NewEventDataRunner Instantiates a new EventDataRunner
 func NewEventDataRunner(options ...EventDataRunnerOption) *EventDataRunner {
 	r := &EventDataRunner{}
+	// Default
+	r.Concurrency = 1
 	// Apply all options
 	for _, option := range options {
 		option(r)
@@ -106,16 +108,16 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	for ow := range eventData {
 		if ow.Error != nil {
 			errors += 1
-			log.Println(fmt.Errorf("issue Scraping %d (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
+			log.Println(fmt.Errorf("issue Scraping %v (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
 			continue
 		} else {
-			log.Printf("%d (%s vs %s) scraped for %d record(s) for %s at url: %s\n", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, len(ow.Output), t.Scraper.Feed(), ow.Context.URL)
+			log.Printf("%v (%s vs %s) scraped for %v record(s) for %s at url: %s\n", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, len(ow.Output), t.Scraper.Feed(), ow.Context.URL)
 		}
 		output = append(output, ow.Output...)
 	}
 	outputCount := len(output)
 	if errors != 0 {
-		log.Printf("WARNING: %d/%d events errored out\n", errors, matchupsCount)
+		return nil, fmt.Errorf("error: %d/%d events errored out", errors, matchupsCount)
 	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of %s with %d record(s) completed in %s\n", t.Scraper.Feed(), outputCount, diff)
@@ -132,6 +134,7 @@ func (t *EventDataRunner) Worker(wg *sync.WaitGroup, workerMatchups <-chan inter
 }
 
 type MatchupOutput struct {
+	Error   error
 	Output  []interface{}
 	Context MatchupContext
 }
@@ -139,7 +142,6 @@ type MatchupOutput struct {
 type MatchupContext struct {
 	Errors int
 	Skips  int
-	Total  int
 }
 
 // MatchupRunnerOption
@@ -187,14 +189,17 @@ func (r *MatchupRunner) Run() ([]interface{}, error) {
 	}
 	start := time.Now().UTC()
 	ou := r.Scraper.Scrape()
+	if ou.Error != nil {
+		return nil, ou.Error
+	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of %s with %d record(s) completed in %s\n", r.Scraper.Feed(), len(ou.Output), diff)
+	if ou.Context.Skips != 0 {
+		log.Printf("WARNING: %d event(s) skipped\n", ou.Context.Skips)
+	}
 	if ou.Context.Errors != 0 {
-		log.Printf("WARNING: %d events errored out\n", ou.Context.Errors)
+		return ou.Output, fmt.Errorf("error: %d event(s) errored out", ou.Context.Errors)
 	}
 
-	if ou.Context.Skips != 0 {
-		log.Printf("WARNING: %d events skipped\n", ou.Context.Skips)
-	}
 	return ou.Output, nil
 }

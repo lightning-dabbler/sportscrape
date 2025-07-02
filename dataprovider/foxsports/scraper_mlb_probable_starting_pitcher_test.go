@@ -26,9 +26,7 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	boxscoreScraper := NewMLBProbableStartingPitcherScraper()
 	runner := sportscrape.NewEventDataRunner(
@@ -38,9 +36,7 @@ func TestMLBProbableStartingPitcher(t *testing.T) {
 		),
 	)
 	probablePitchers, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	n_records := len(probablePitchers)
 	n_expected := 2
 	assert.Equal(t, n_expected, n_records, "2 starting pitchers")

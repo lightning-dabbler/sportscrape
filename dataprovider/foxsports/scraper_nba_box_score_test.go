@@ -27,9 +27,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	)
 
 	matchups, err := matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Get boxscore data
 	boxscoreScraper := NewNBABoxScoreScraper()
@@ -40,9 +38,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		),
 	)
 	boxScoreStats, err := runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	assert.Equal(t, 41, n_stats, "41 statlines")
 	// 43197 (Sacramento Kings vs Detroit Pistons) scraped for 20
@@ -105,9 +101,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	)
 
 	matchups, err = matchuprunner.Run()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Get boxscore data
 	boxscoreScraper = NewNBABoxScoreScraper()
@@ -118,9 +112,7 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		),
 	)
 	boxScoreStats, err = runner.Run(matchups...)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	n_stats = len(boxScoreStats)
 	assert.Equal(t, 69, n_stats, "69 statlines")
 }

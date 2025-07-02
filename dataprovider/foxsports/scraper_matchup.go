@@ -221,12 +221,14 @@ func (s *MatchupScraper) ParseMatchup(eventPayload jsonresponse.Event) (model.Ma
 // Scrape gets all matchups of a League and segment ID
 func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
+	output := sportscrape.MatchupOutput{}
 	// Construct full url
 	log.Println("Constructing full URL")
 	url, err := s.ConstructFullURL()
 	if err != nil {
 		log.Println("Issue constructing full URL")
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 
 	// Fetch matchups data
@@ -235,7 +237,8 @@ func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	jsonPayload, err := s.FetchMatchups(url)
 	if err != nil {
 		log.Println("Issue fetching matchups")
-		log.Fatalln(err)
+		output.Error = err
+		return output
 	}
 	events := jsonPayload.SectionList[0].Events
 	nEvents := len(events)
@@ -259,13 +262,10 @@ func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 		}
 		matchups = append(matchups, parsedEvent)
 	}
-	ou := sportscrape.MatchupOutput{
-		Output: matchups,
-		Context: sportscrape.MatchupContext{
-			Errors: errors,
-			Skips:  skipped,
-			Total:  len(matchups),
-		},
+	output.Output = matchups
+	output.Context = sportscrape.MatchupContext{
+		Errors: errors,
+		Skips:  skipped,
 	}
-	return ou
+	return output
 }
