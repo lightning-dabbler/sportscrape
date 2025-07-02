@@ -12,9 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated fox sports extraction to use new `Runner` and `Scraper` pattern (#80)
 - Additional validation in fox sports extraction (#80)
-- Updated baseball reference mlb extraction to use new `Runner` and `Scraper` pattern
-- Updated basketball reference nba extraction to use new `Runner` and `Scraper` pattern
-- Code organization improvements
+- Updated baseball reference mlb extraction to use new `Runner` and `Scraper` pattern (#82)
+- Updated basketball reference nba extraction to use new `Runner` and `Scraper` pattern (#82)
+- Code organization improvements (#82)
 
 ## [0.10.0] - 2025-05-29
 ### Changed
