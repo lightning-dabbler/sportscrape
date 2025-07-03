@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAdvBoxScoreStats(t *testing.T) {
+func TestAdvBoxScoreScraper(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}

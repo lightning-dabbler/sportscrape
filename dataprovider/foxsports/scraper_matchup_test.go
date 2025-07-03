@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetNBAMatchup(t *testing.T) {
+func TestMatchupScraper_NBA(t *testing.T) {
 	// https://api.foxsports.com/bifrost/v1/nba/scoreboard/segment/20250406?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 	if testing.Short() {
 		t.Skip("Skipping integration test")
@@ -54,7 +54,7 @@ func TestGetNBAMatchup(t *testing.T) {
 
 }
 
-func TestGetMLBMatchup(t *testing.T) {
+func TestMatchupScraper_MLB(t *testing.T) {
 	// https://api.foxsports.com/bifrost/v1/mlb/scoreboard/segment/20241018?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 	if testing.Short() {
 		t.Skip("Skipping integration test")
@@ -97,7 +97,7 @@ func TestGetMLBMatchup(t *testing.T) {
 
 }
 
-func TestGetNFLMatchup(t *testing.T) {
+func TestMatchupScraper_NFL(t *testing.T) {
 	// https://api.foxsports.com/bifrost/v1/nfl/scoreboard/segment/2024-4-2?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 	if testing.Short() {
 		t.Skip("Skipping integration test")
@@ -139,7 +139,7 @@ func TestGetNFLMatchup(t *testing.T) {
 	assert.Equal(t, true, testMatchup.IsPlayoff)
 }
 
-func TestGetNCAABMatchup(t *testing.T) {
+func TestMatchupScraper_NCAAB(t *testing.T) {
 	// https://api.foxsports.com/bifrost/v1/cbk/scoreboard/segment/20250405?groupId=2&apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 	if testing.Short() {
 		t.Skip("Skipping integration test")
