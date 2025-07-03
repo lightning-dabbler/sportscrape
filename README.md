@@ -56,6 +56,7 @@ func main() {
 - [basketball-reference.com NBA scrape examples](dataprovider/basketballreferencenba/example_test.go)
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go)
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
+- [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
 
 ## Data providers
 
@@ -75,6 +76,7 @@ func main() {
 | https://www.foxsports.com		   | MLB	| Probable starting pitcher| Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | |application/json|✅|
 | https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | |application/json|✅|
+| https://baseballsavant.mlb.com		   | MLB	| Matchup				 | Live, Full			  | |application/json|✅|
 
 ## Supported Formats
 File formats the constructed data models support on export and import.
@@ -88,7 +90,7 @@ File formats the constructed data models support on export and import.
 Go 1.24 or higher
 
 ### Testing
-This project is using [mockery](https://github.com/vektra/mockery) to mock interfaces.
+This project is using [mockery](https://github.com/vektra/mockery) v3.5.0 to mock interfaces.
 
 To run unit tests:
 ```console

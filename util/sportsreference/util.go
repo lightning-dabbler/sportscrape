@@ -6,25 +6,6 @@ import (
 	"time"
 )
 
-const (
-	// time parse date template
-	dateLayout = "2006-01-02"
-)
-
-// DateStrToTime takes in a date string in the form 2024-01-25
-//
-// Parameter:
-//   - date: the date string to parse
-//
-// Returns a time.Time{} and nilable error
-func DateStrToTime(date string) (time.Time, error) {
-	dateParse, err := time.Parse(dateLayout, date)
-	if err != nil {
-		return time.Time{}, fmt.Errorf("could not parse '%s': %w", date, err)
-	}
-	return dateParse, nil
-}
-
 // EventDate takes in a date string in the form 2024-01-25
 //
 // Parameter:
@@ -37,7 +18,7 @@ func EventDate(date string) (time.Time, error) {
 		return time.Time{}, fmt.Errorf("An issue arose loading timezone: %w", err)
 	}
 
-	dateParse, err := time.ParseInLocation(dateLayout, date, loc)
+	dateParse, err := time.ParseInLocation(time.DateOnly, date, loc)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("Could not parse '%s': %w", date, err)
 	}

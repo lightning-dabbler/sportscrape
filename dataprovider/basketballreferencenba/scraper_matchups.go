@@ -100,7 +100,7 @@ func (ms MatchupScraper) Feed() sportscrape.Feed {
 func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
 	output := sportscrape.MatchupOutput{}
-	timestamp, err := sportsreference.DateStrToTime(ms.Date)
+	timestamp, err := util.DateStrToTime(ms.Date)
 	if err != nil {
 		output.Error = err
 		return output

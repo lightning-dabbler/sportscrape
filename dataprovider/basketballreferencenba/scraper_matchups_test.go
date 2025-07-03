@@ -18,7 +18,7 @@ import (
 	"github.com/xitongsys/parquet-go/writer"
 )
 
-func TestGetMatchups(t *testing.T) {
+func TestMatchupScraper(t *testing.T) {
 
 	if testing.Short() {
 		t.Skip("Skipping integration test")

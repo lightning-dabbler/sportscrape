@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetFullBasicBoxScoreStats(t *testing.T) {
+func TestBasicBoxScoreScraper(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
@@ -102,7 +102,7 @@ func TestGetFullBasicBoxScoreStats(t *testing.T) {
 	assert.Equal(t, expectedHomeDNP, numHomeDNP, "Assert number of home players on LA Lakers that did not play")
 }
 
-func TestGetH1BasicBoxScoreStats(t *testing.T) {
+func TestBasicBoxScoreScraper_H1(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
@@ -232,7 +232,7 @@ func TestGetH1BasicBoxScoreStats(t *testing.T) {
 	assert.True(t, playerToTest["Gabe Vincent"], "Gabe Vincent's stats were collected")
 }
 
-func TestGetQ3BasicBoxScoreStats(t *testing.T) {
+func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}

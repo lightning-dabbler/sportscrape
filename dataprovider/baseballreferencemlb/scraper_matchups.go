@@ -91,7 +91,7 @@ func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
 	output := sportscrape.MatchupOutput{}
 	var skips int
-	timestamp, err := sportsreference.DateStrToTime(ms.Date)
+	timestamp, err := util.DateStrToTime(ms.Date)
 	if err != nil {
 		output.Error = err
 		return output
