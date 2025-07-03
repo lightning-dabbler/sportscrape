@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added `MatchupScraper` for baseball savant mlb
+- Added `MatchupScraper` for baseball savant mlb (#84)
 ### Changed
-- Moved `RFC3339ToTime` and `DateStrToTime` to time.go
-- Documentation updates
+- Moved `RFC3339ToTime` and `DateStrToTime` to time.go (#84)
+- Documentation updates (#84)
 
 ## [0.11.0] - 2025-07-02
 ### Added
