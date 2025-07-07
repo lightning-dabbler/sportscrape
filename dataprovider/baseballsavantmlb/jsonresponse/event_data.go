@@ -1,5 +1,7 @@
 package jsonresponse
 
+// https://baseballsavant.mlb.com/gf?game_pk=777267
+
 type GameFeed struct {
 	AwayLineup        Lineup   `json:"away_lineup"`
 	HomeLineup        Lineup   `json:"home_lineup"`
