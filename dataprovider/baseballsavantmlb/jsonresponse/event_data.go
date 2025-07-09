@@ -27,7 +27,7 @@ type Play struct {
 	// PreBalls is the number of balls before the current play
 	PreBalls int32 `json:"pre_balls"` // 0
 	BatterID int64 `json:"batter"`    // 572191
-	// BatterStand is the abbreviation side of the home plate the batter is standing
+	// BatterStand is the abbreviation of the side of the home plate the batter is standing
 	// R = the first-base side of the home plate, L = the third-base side of home plate
 	BatterStand  string `json:"stand"`        // "R"
 	BatterName   string `json:"batter_name"`  // "Michael A. Taylor"
