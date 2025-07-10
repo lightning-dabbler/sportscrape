@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Moved `RFC3339ToTime` and `DateStrToTime` to time.go (#84)
 - Documentation updates (#84)
+- Deprecation warning on baseball reference feed
 
 ## [0.11.0] - 2025-07-02
 ### Added
