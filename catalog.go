@@ -36,8 +36,12 @@ var (
 	BasketballReferenceNBAAdvBoxScore Feed     = Feed(string(BasketballReference) + " nba advanced box score")
 
 	// baseball savant
-	BaseballSavant           Provider = "baseball savant"
-	BaseballSavantMLBMatchup Feed     = Feed(string(BaseballSavant) + " mlb matchup")
+	BaseballSavant                    Provider = "baseball savant"
+	BaseballSavantMLBMatchup          Feed     = Feed(string(BaseballSavant) + " mlb matchup")
+	BaseballSavantMLBPitchingBoxScore Feed     = Feed(string(BaseballSavant) + " mlb pitching box score")
+	BaseballSavantMLBBattingBoxScore  Feed     = Feed(string(BaseballSavant) + " mlb batting box score")
+	BaseballSavantMLBFieldingBoxScore Feed     = Feed(string(BaseballSavant) + " mlb fielding box score")
+	BaseballSavantMLBPlayByPlay       Feed     = Feed(string(BaseballSavant) + " mlb play by play")
 
 	// testing
 	DummyProvider Provider = "dummy provider"

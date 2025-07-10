@@ -15,17 +15,18 @@ type FieldingBoxScore struct {
 	// EventTimeParquet is the timestamp associated with the matchup (in milliseconds)
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// TeamID
-	TeamID string `json:"team_id" parquet:"name=team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
+	TeamID int64 `json:"team_id" parquet:"name=team_id, type=INT64"`
 	// Team is the player's team name
 	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Opponent is the opposing team name
 	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// OpponentID
-	OpponentID string `json:"opponent_id" parquet:"name=opponent_id, type=BYTE_ARRAY, convertedtype=UTF8"`
+	OpponentID int64 `json:"opponent_id" parquet:"name=opponent_id, type=INT64"`
 	// PlayerID
-	PlayerID string `json:"player_id" parquet:"name=player_id, type=BYTE_ARRAY, convertedtype=UTF8"`
+	PlayerID int64 `json:"player_id" parquet:"name=player_id, type=INT64"`
 	// Player is the pitcher's name
-	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
+	Player   string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
+	Position string `json:"position" parquet:"name=position, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// CaughtStealing - https://www.mlb.com/glossary/standard-stats/caught-stealing
 	CaughtStealing int32 `json:"caught_stealing" parquet:"name=caught_stealing, type=INT32"`
 	// StolenBases - https://www.mlb.com/glossary/standard-stats/stolen-base
