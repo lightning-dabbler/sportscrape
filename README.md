@@ -70,12 +70,12 @@ func main() {
 | https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |[model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go)||✅|
 | https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://www.foxsports.com		   | NBA	| Box score stats		 | Live, Full			  | [model](dataprovider/foxsports/model/nba_box_score_stats.go)||✅|
-| https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | [model](dataprovider/baseballreferencemlb/model/matchup.go)||✅|
+| https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://www.foxsports.com		   | MLB	| Batting Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_batting_box_score_stats.go)||✅|
 | https://www.foxsports.com		   | MLB	| Pitching Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_pitching_box_score_stats.goo)||✅|
 | https://www.foxsports.com		   | MLB	| Probable starting pitcher| Full			  | [model](dataprovider/foxsports/model/mlb_probable_starting_pitcher.go)||✅|
-| https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | [model](dataprovider/baseballreferencemlb/model/matchup.go)||✅|
-| https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | [model](dataprovider/baseballreferencemlb/model/matchup.go)||✅|
+| https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
+| https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://baseballsavant.mlb.com		   | MLB	| Matchup				 | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/matchup.go) ||✅|
 | https://baseballsavant.mlb.com		   | MLB	| Batting box score stats| Live, Full			  |[model](dataprovider/baseballsavantmlb/model/batting_box_score.go) ||✅|
 | https://baseballsavant.mlb.com		   | MLB	| Pitching box score stats | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/pitching_box_score.go) ||✅|
