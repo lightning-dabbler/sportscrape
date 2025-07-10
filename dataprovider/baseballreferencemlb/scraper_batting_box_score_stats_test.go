@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetBattingBoxScoreStats(t *testing.T) {
+func TestBattingBoxScoreScraper(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}

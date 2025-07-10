@@ -9,6 +9,7 @@ on:
       - 'dataprovider/**'
       - '.github/workflows/all-tests.yml'
       - '.github/actions/setup-go/actions.yml'
+      - '*.go'
 
   workflow_call:
     outputs:

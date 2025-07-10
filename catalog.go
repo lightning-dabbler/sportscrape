@@ -1,6 +1,9 @@
 package sportscrape
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 type Provider string
 type Feed string
@@ -35,12 +38,24 @@ var (
 	BasketballReferenceNBABoxScoreH2  Feed     = Feed(string(BasketballReference) + " nba h2 box score")
 	BasketballReferenceNBAAdvBoxScore Feed     = Feed(string(BasketballReference) + " nba advanced box score")
 
+	// baseball savant
+	BaseballSavant                    Provider = "baseball savant"
+	BaseballSavantMLBMatchup          Feed     = Feed(string(BaseballSavant) + " mlb matchup")
+	BaseballSavantMLBPitchingBoxScore Feed     = Feed(string(BaseballSavant) + " mlb pitching box score")
+	BaseballSavantMLBBattingBoxScore  Feed     = Feed(string(BaseballSavant) + " mlb batting box score")
+	BaseballSavantMLBFieldingBoxScore Feed     = Feed(string(BaseballSavant) + " mlb fielding box score")
+	BaseballSavantMLBPlayByPlay       Feed     = Feed(string(BaseballSavant) + " mlb play by play")
+
 	// testing
 	DummyProvider Provider = "dummy provider"
 	DummyFeed     Feed     = Feed(string(DummyProvider) + " dummy feed")
 )
 
 func (p Provider) Deprecated() bool {
+	switch p {
+	case BaseballReference:
+		log.Printf("Warning: %s provider will be deprecated as of v0.13.0\n", BaseballReference)
+	}
 	return false
 }
 
