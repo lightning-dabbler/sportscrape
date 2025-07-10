@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Added `MatchupScraper` for baseball savant mlb (#84)
-- Added `FieldingBoxScoreScraper`,`BattingBoxScoreScraper`, `PitchingBoxScoreScraper`, and `PlayByPlayScraper` for baseball savant mlb
+- Added `FieldingBoxScoreScraper`,`BattingBoxScoreScraper`, `PitchingBoxScoreScraper`, and `PlayByPlayScraper` for baseball savant mlb (#86)
 ### Changed
 - Moved `RFC3339ToTime` and `DateStrToTime` to time.go (#84)
 - Documentation updates (#84)
