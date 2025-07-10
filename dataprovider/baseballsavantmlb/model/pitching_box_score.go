@@ -61,6 +61,8 @@ type PitchingBoxScore struct {
 	NumberOfPitches int32 `json:"number_of_pitches" parquet:"name=number_of_pitches, type=INT32"`
 	// InningsPitched - https://www.mlb.com/glossary/standard-stats/innings-pitched
 	InningsPitched float32 `json:"innings_pitched" parquet:"name=innings_pitched, type=FLOAT"`
+	Wins           int32   `json:"wins" parquet:"name=wins, type=INT32"`
+	Losses         int32   `json:"losses" parquet:"name=losses, type=INT32"`
 	// Saves - https://www.mlb.com/glossary/standard-stats/save
 	Saves int32 `json:"saves" parquet:"name=saves, type=INT32"`
 	// BlownSaves - https://www.mlb.com/glossary/standard-stats/blown-save
@@ -85,8 +87,6 @@ type PitchingBoxScore struct {
 	Pickoffs int32 `json:"pickoffs" parquet:"name=pickoffs, type=INT32"`
 	// RBI - https://www.mlb.com/glossary/standard-stats/runs-batted-in
 	RBI int32 `json:"rbi" parquet:"name=rbi, type=INT32"`
-	// EarnedRunAverage - https://www.mlb.com/glossary/standard-stats/earned-run-average
-	EarnedRunAverage float32 `json:"earned_run_average" parquet:"name=earned_run_average, type=FLOAT"`
 	// InheritedRunners - https://www.mlb.com/glossary/standard-stats/inherited-runner
 	InheritedRunners       int32 `json:"inherited_runners" parquet:"name=inherited_runners, type=INT32"`
 	InheritedRunnersScored int32 `json:"inherited_runners_scored" parquet:"name=inherited_runners_scored, type=INT32"`

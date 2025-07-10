@@ -34,9 +34,8 @@ func ExampleMatchupScraper() {
 
 // Example for baseballsavantmlb.FieldingBoxScoreScraper
 func ExampleFieldingBoxScoreScraper() {
-	date := "2025-06-25"
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
-		baseballsavantmlb.MatchupScraperDate(date),
+		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupscraper),
@@ -72,7 +71,7 @@ func ExampleFieldingBoxScoreScraper() {
 // Example for baseballsavantmlb.BattingBoxScoreScraper
 func ExampleBattingBoxScoreScraper() {
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
-		baseballsavantmlb.MatchupScraperDate("2025-06-25"),
+		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupscraper),
@@ -83,6 +82,42 @@ func ExampleBattingBoxScoreScraper() {
 	}
 
 	boxscorescraper := baseballsavantmlb.NewBattingBoxScoreScraper()
+
+	boxscorerunner := sportscrape.NewEventDataRunner(
+		sportscrape.EventDataRunnerScraper(boxscorescraper),
+		sportscrape.EventDataRunnerConcurrency(1),
+	)
+
+	stats, err := boxscorerunner.Run(matchups...)
+	if err != nil {
+		panic(err)
+	}
+
+	// Output each statline as pretty json
+	for _, statline := range stats {
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+
+}
+
+// Example for baseballsavantmlb.PitchingBoxScoreScraper
+func ExamplePitchingBoxScoreScraper() {
+	matchupscraper := baseballsavantmlb.NewMatchupScraper(
+		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
+	)
+	matchuprunner := sportscrape.NewMatchupRunner(
+		sportscrape.MatchupRunnerScraper(matchupscraper),
+	)
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	boxscorescraper := baseballsavantmlb.NewPitchingBoxScoreScraper()
 
 	boxscorerunner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerScraper(boxscorescraper),
