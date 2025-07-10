@@ -70,7 +70,7 @@ type PlayByPlay struct {
 	// GameTotalPitches
 	GameTotalPitches int32 `json:"game_total_pitches" parquet:"name=game_total_pitches, type=INT32"`
 	// HitSpeed
-	HitSpeed *string `json:"hit_speed" parquet:"name=hit_speed, type=BYTE_ARRAY, convertedtype=UTF8"`
+	HitSpeed *float32 `json:"hit_speed" parquet:"name=hit_speed, type=FLOAT"`
 	// HitDistance
-	HitDistance *string `json:"hit_distance" parquet:"name=hit_distance, type=BYTE_ARRAY, convertedtype=UTF8"`
+	HitDistance *int32 `json:"hit_distance" parquet:"name=hit_distance, type=INT32"`
 }
