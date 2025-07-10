@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb/model"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,8 +15,8 @@ func TestFieldingBoxScoreScraper(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 	date := "2024-10-07"
-	matchupscraper := baseballsavantmlb.NewMatchupScraper(
-		baseballsavantmlb.MatchupScraperDate(date),
+	matchupscraper := NewMatchupScraper(
+		MatchupScraperDate(date),
 	)
 	matchuprunner := sportscrape.NewMatchupRunner(
 		sportscrape.MatchupRunnerScraper(matchupscraper),
@@ -25,7 +24,7 @@ func TestFieldingBoxScoreScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 
-	boxscorescraper := baseballsavantmlb.NewFieldingBoxScoreScraper()
+	boxscorescraper := NewFieldingBoxScoreScraper()
 	boxscorerunner := sportscrape.NewEventDataRunner(
 		sportscrape.EventDataRunnerScraper(boxscorescraper),
 		sportscrape.EventDataRunnerConcurrency(1),
