@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,8 +22,8 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2025-04-07"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -31,9 +31,9 @@ func TestNBABoxScoreScraper(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper := NewNBABoxScoreScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(2),
-		sportscrape.EventDataRunnerScraper(
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(2),
+		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
@@ -96,8 +96,8 @@ func TestNBABoxScoreScraper(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2019-10-06"}),
 	)
 
-	matchuprunner = sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner = runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err = matchuprunner.Run()
@@ -105,9 +105,9 @@ func TestNBABoxScoreScraper(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper = NewNBABoxScoreScraper()
-	runner = sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(2),
-		sportscrape.EventDataRunnerScraper(
+	runner = runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(2),
+		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)

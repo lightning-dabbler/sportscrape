@@ -1,4 +1,4 @@
-package sportscrape
+package runner
 
 import (
 	"fmt"
@@ -6,24 +6,10 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 )
-
-type EventDataOutput struct {
-	Error   error
-	Output  []interface{}
-	Context EventDataContext
-}
-
-type EventDataContext struct {
-	PullTimestamp time.Time
-	EventTime     time.Time
-	EventID       interface{}
-	URL           string
-	AwayID        interface{}
-	AwayTeam      string
-	HomeID        interface{}
-	HomeTeam      string
-}
 
 // EventDataRunnerOption
 type EventDataRunnerOption func(*EventDataRunner)
@@ -36,7 +22,7 @@ func EventDataRunnerConcurrency(concurrency int) EventDataRunnerOption {
 }
 
 // EventDataRunnerScraper option
-func EventDataRunnerScraper(scraper EventDataScraper) EventDataRunnerOption {
+func EventDataRunnerScraper(scraper scraper.EventDataScraper) EventDataRunnerOption {
 	return func(r *EventDataRunner) {
 		r.Scraper = scraper
 	}
@@ -58,7 +44,7 @@ func NewEventDataRunner(options ...EventDataRunnerOption) *EventDataRunner {
 
 type EventDataRunner struct {
 	Concurrency int
-	Scraper     EventDataScraper
+	Scraper     scraper.EventDataScraper
 }
 
 // Deprecated is a deprecation check for the feed/provider
@@ -83,7 +69,7 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 
 	var wg sync.WaitGroup
 	workerMatchups := make(chan interface{}, concurrency)
-	eventData := make(chan EventDataOutput, len(matchups))
+	eventData := make(chan sportscrape.EventDataOutput, len(matchups))
 
 	// Start worker goroutines
 	for i := 0; i < cap(workerMatchups); i++ {
@@ -125,7 +111,7 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	return output, nil
 }
 
-func (t *EventDataRunner) Worker(wg *sync.WaitGroup, workerMatchups <-chan interface{}, eventData chan<- EventDataOutput) {
+func (t *EventDataRunner) Worker(wg *sync.WaitGroup, workerMatchups <-chan interface{}, eventData chan<- sportscrape.EventDataOutput) {
 	for matchup := range workerMatchups {
 		ow := t.Scraper.Scrape(matchup)
 		eventData <- ow
@@ -133,22 +119,11 @@ func (t *EventDataRunner) Worker(wg *sync.WaitGroup, workerMatchups <-chan inter
 	}
 }
 
-type MatchupOutput struct {
-	Error   error
-	Output  []interface{}
-	Context MatchupContext
-}
-
-type MatchupContext struct {
-	Errors int
-	Skips  int
-}
-
 // MatchupRunnerOption
 type MatchupRunnerOption func(*MatchupRunner)
 
 // MatchupRunnerScraper option
-func MatchupRunnerScraper(scraper MatchupScraper) MatchupRunnerOption {
+func MatchupRunnerScraper(scraper scraper.MatchupScraper) MatchupRunnerOption {
 	return func(r *MatchupRunner) {
 		r.Scraper = scraper
 	}
@@ -169,7 +144,7 @@ func NewMatchupRunner(options ...MatchupRunnerOption) *MatchupRunner {
 // MatchupRunner is a general matchup runner for scraping NBA, MLB, NCAAB, etc. matchup data.
 type MatchupRunner struct {
 	// Scraper
-	Scraper MatchupScraper
+	Scraper scraper.MatchupScraper
 }
 
 // Deprecated is a deprecation check for the feed/provider

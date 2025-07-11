@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb"
+	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
 // Example for baseballsavantmlb.MatchupScraper
@@ -15,8 +15,8 @@ func ExampleMatchupScraper() {
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
 		baseballsavantmlb.MatchupScraperDate(date),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -37,8 +37,8 @@ func ExampleFieldingBoxScoreScraper() {
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -47,9 +47,9 @@ func ExampleFieldingBoxScoreScraper() {
 
 	boxscorescraper := baseballsavantmlb.NewFieldingBoxScoreScraper()
 
-	boxscorerunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
-		sportscrape.EventDataRunnerConcurrency(1),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerScraper(boxscorescraper),
+		runner.EventDataRunnerConcurrency(1),
 	)
 
 	stats, err := boxscorerunner.Run(matchups...)
@@ -73,8 +73,8 @@ func ExampleBattingBoxScoreScraper() {
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -83,9 +83,9 @@ func ExampleBattingBoxScoreScraper() {
 
 	boxscorescraper := baseballsavantmlb.NewBattingBoxScoreScraper()
 
-	boxscorerunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
-		sportscrape.EventDataRunnerConcurrency(1),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerScraper(boxscorescraper),
+		runner.EventDataRunnerConcurrency(1),
 	)
 
 	stats, err := boxscorerunner.Run(matchups...)
@@ -109,8 +109,8 @@ func ExamplePitchingBoxScoreScraper() {
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -119,9 +119,9 @@ func ExamplePitchingBoxScoreScraper() {
 
 	boxscorescraper := baseballsavantmlb.NewPitchingBoxScoreScraper()
 
-	boxscorerunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
-		sportscrape.EventDataRunnerConcurrency(1),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerScraper(boxscorescraper),
+		runner.EventDataRunnerConcurrency(1),
 	)
 
 	stats, err := boxscorerunner.Run(matchups...)
@@ -144,8 +144,8 @@ func ExamplePlayByPlayScraper() {
 	matchupscraper := baseballsavantmlb.NewMatchupScraper(
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -154,9 +154,9 @@ func ExamplePlayByPlayScraper() {
 
 	playbyplayscraper := baseballsavantmlb.NewPlayByPlayScraper()
 
-	playbyplayrunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerScraper(playbyplayscraper),
-		sportscrape.EventDataRunnerConcurrency(1),
+	playbyplayrunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerScraper(playbyplayscraper),
+		runner.EventDataRunnerConcurrency(1),
 	)
 
 	plays, err := playbyplayrunner.Run(matchups...)

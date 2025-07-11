@@ -1,12 +1,12 @@
 # https://vektra.github.io/mockery/latest/configuration/
 
 filename: "mock_{{.InterfaceName}}.go"
-dir: "{{ .InterfaceDir }}"
+dir: "internal/mocks/{{.SrcPackageName}}"
 structname: "Mock{{.InterfaceName}}"
 pkgname: '{{.SrcPackageName}}'
 
 packages:
-  github.com/lightning-dabbler/sportscrape:
+  github.com/lightning-dabbler/sportscrape/scraper:
     interfaces:
       MatchupScraper:
       EventDataScraper:
