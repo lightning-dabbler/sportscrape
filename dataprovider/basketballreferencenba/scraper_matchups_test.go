@@ -46,10 +46,10 @@ func TestMatchupScraper(t *testing.T) {
 				WithMatchupDate(tt.date),
 				WithMatchupTimeout(5*time.Minute),
 			)
-			runner := runner.NewMatchupRunner(
+			matchuprunner := runner.NewMatchupRunner(
 				runner.MatchupRunnerScraper(scraper),
 			)
-			matchups, err := runner.Run()
+			matchups, err := matchuprunner.Run()
 			if err != nil {
 				t.Error(err)
 			}

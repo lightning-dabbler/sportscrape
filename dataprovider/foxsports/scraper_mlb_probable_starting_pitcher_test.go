@@ -29,13 +29,13 @@ func TestMLBProbableStartingPitcherScraper(t *testing.T) {
 	assert.NoError(t, err)
 
 	boxscoreScraper := NewMLBProbableStartingPitcherScraper()
-	runner := runner.NewEventDataRunner(
+	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConcurrency(1),
 		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
-	probablePitchers, err := runner.Run(matchups...)
+	probablePitchers, err := boxscorerunner.Run(matchups...)
 	assert.NoError(t, err)
 	n_records := len(probablePitchers)
 	n_expected := 2

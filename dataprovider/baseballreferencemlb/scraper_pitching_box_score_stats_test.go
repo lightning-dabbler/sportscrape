@@ -22,11 +22,11 @@ func TestPitchingBoxScoreScraper(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(5*time.Minute),
 	)
-	runner := runner.NewMatchupRunner(
+	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve MLB matchups associated with date
-	matchups, err := runner.Run()
+	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 
 	// Instantiate PitchingBoxScoreScraper

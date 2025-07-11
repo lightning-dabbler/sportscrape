@@ -37,13 +37,13 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper := NewMLBPitchingBoxScoreScraper()
-	runner := runner.NewEventDataRunner(
+	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConcurrency(1),
 		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups...)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	n_expected := 13

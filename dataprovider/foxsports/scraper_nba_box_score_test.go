@@ -31,13 +31,13 @@ func TestNBABoxScoreScraper(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper := NewNBABoxScoreScraper()
-	runner := runner.NewEventDataRunner(
+	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConcurrency(2),
 		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups...)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	assert.Equal(t, 41, n_stats, "41 statlines")
@@ -105,13 +105,13 @@ func TestNBABoxScoreScraper(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper = NewNBABoxScoreScraper()
-	runner = runner.NewEventDataRunner(
+	boxscorerunner = runner.NewEventDataRunner(
 		runner.EventDataRunnerConcurrency(2),
 		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
-	boxScoreStats, err = runner.Run(matchups...)
+	boxScoreStats, err = boxscorerunner.Run(matchups...)
 	assert.NoError(t, err)
 	n_stats = len(boxScoreStats)
 	assert.Equal(t, 69, n_stats, "69 statlines")
