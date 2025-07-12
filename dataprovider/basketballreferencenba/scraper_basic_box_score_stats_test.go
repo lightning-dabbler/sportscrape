@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,8 +21,8 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(5*time.Minute),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -32,9 +32,9 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(Full),
 	)
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := runner.Run(matchups...)
@@ -112,8 +112,8 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(4*time.Minute),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -123,9 +123,9 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(H1),
 	)
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := runner.Run(matchups...)
@@ -243,8 +243,8 @@ func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(4*time.Minute),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -254,9 +254,9 @@ func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(Q3),
 	)
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := runner.Run(matchups...)

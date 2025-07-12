@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,8 +22,8 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(4*time.Minute),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -33,9 +33,9 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 	boxscorescraper := NewAdvBoxScoreScraper(
 		WithAdvBoxScoreTimeout(4 * time.Minute),
 	)
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve NBA basic box score stats associated with matchups
 	advBoxScoreStats, err := runner.Run(matchups...)

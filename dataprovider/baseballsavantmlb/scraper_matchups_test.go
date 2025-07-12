@@ -5,8 +5,8 @@ package baseballsavantmlb
 import (
 	"testing"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,8 +17,8 @@ func TestMatchupScraper_NBA(t *testing.T) {
 	matchupscraper := NewMatchupScraper(
 		MatchupScraperDate("2024-10-18"),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)

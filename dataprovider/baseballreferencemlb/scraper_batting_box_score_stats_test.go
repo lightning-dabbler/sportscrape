@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,20 +22,20 @@ func TestBattingBoxScoreScraper(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(5*time.Minute),
 	)
-	runner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve MLB matchups associated with date
-	matchups, err := runner.Run()
+	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 
 	// Instantiate BattingBoxScoreScraper
 	boxscorescraper := NewBattingBoxScoreScraper(
 		WithBattingBoxScoreTimeout(5 * time.Minute),
 	)
-	boxScoreRunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	boxScoreRunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve MLB batting box score stats associated with matchups
 	boxScoreStats, err := boxScoreRunner.Run(matchups...)

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go-source/local"
@@ -28,8 +28,8 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -37,13 +37,13 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper := NewMLBPitchingBoxScoreScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups...)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	n_expected := 13

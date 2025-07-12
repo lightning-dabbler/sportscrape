@@ -54,7 +54,7 @@ var (
 func (p Provider) Deprecated() bool {
 	switch p {
 	case BaseballReference:
-		log.Printf("Warning: %s provider will be deprecated as of v0.13.0\n", BaseballReference)
+		log.Printf("Warning: %s provider will be deprecated in future releases\n", BaseballReference)
 	}
 	return false
 }

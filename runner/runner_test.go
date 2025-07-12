@@ -1,23 +1,25 @@
 //go:build unit
 
-package sportscrape
+package runner
 
 import (
 	"testing"
 
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/internal/mocks/scraper"
 	"github.com/stretchr/testify/assert"
 	mock "github.com/stretchr/testify/mock"
 )
 
 func TestMatchupRunner(t *testing.T) {
-	mockscraper := NewMockMatchupScraper(t)
-	dummyoutput := MatchupOutput{
-		Context: MatchupContext{},
+	mockscraper := scraper.NewMockMatchupScraper(t)
+	dummyoutput := sportscrape.MatchupOutput{
+		Context: sportscrape.MatchupContext{},
 	}
 	mockscraper.EXPECT().Init().Return()
 	mockscraper.EXPECT().Scrape().Return(dummyoutput).Once()
-	mockscraper.EXPECT().Feed().Return(DummyFeed)
-	mockscraper.EXPECT().Provider().Return(DummyProvider).Once()
+	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed)
+	mockscraper.EXPECT().Provider().Return(sportscrape.DummyProvider).Once()
 	runner := NewMatchupRunner(
 		MatchupRunnerScraper(mockscraper),
 	)
@@ -27,14 +29,14 @@ func TestMatchupRunner(t *testing.T) {
 }
 
 func TestEventDataRunner(t *testing.T) {
-	mockscraper := NewMockEventDataScraper(t)
-	dummyoutput := EventDataOutput{
-		Context: EventDataContext{},
+	mockscraper := scraper.NewMockEventDataScraper(t)
+	dummyoutput := sportscrape.EventDataOutput{
+		Context: sportscrape.EventDataContext{},
 	}
 	mockscraper.EXPECT().Init().Return()
 	mockscraper.EXPECT().Scrape(mock.Anything).Return(dummyoutput).Once()
-	mockscraper.EXPECT().Feed().Return(DummyFeed)
-	mockscraper.EXPECT().Provider().Return(DummyProvider).Once()
+	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed)
+	mockscraper.EXPECT().Provider().Return(sportscrape.DummyProvider).Once()
 	runner := NewEventDataRunner(
 		EventDataRunnerScraper(mockscraper),
 	)
