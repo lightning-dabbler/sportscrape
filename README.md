@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
+	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
 func main() {
@@ -33,8 +33,8 @@ func main() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: date}),
 	)
 	// define matchup runner
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 	// Retrieve matchups
 	matchups, err := matchuprunner.Run()
