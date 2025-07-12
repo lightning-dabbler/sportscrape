@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go-source/local"
@@ -46,10 +46,10 @@ func TestMatchupScraper(t *testing.T) {
 				WithMatchupDate(tt.date),
 				WithMatchupTimeout(5*time.Minute),
 			)
-			runner := sportscrape.NewMatchupRunner(
-				sportscrape.MatchupRunnerScraper(scraper),
+			matchuprunner := runner.NewMatchupRunner(
+				runner.MatchupRunnerScraper(scraper),
 			)
-			matchups, err := runner.Run()
+			matchups, err := matchuprunner.Run()
 			if err != nil {
 				t.Error(err)
 			}

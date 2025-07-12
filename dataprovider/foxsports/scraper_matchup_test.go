@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,8 +21,8 @@ func TestMatchupScraper_NBA(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2025-04-06"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -64,8 +64,8 @@ func TestMatchupScraper_MLB(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2024-10-18"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -108,8 +108,8 @@ func TestMatchupScraper_NFL(t *testing.T) {
 		MatchupScraperSegmenter(&NFLSegmenter{Year: 2024, Week: 3, Season: POSTSEASON}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -149,8 +149,8 @@ func TestMatchupScraper_NCAAB(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2025-04-05"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()

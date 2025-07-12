@@ -2,9 +2,10 @@
 // github.com/vektra/mockery
 // template: testify
 
-package sportscrape
+package scraper
 
 import (
+	"github.com/lightning-dabbler/sportscrape"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,18 +37,18 @@ func (_m *MockMatchupScraper) EXPECT() *MockMatchupScraper_Expecter {
 }
 
 // Feed provides a mock function for the type MockMatchupScraper
-func (_mock *MockMatchupScraper) Feed() Feed {
+func (_mock *MockMatchupScraper) Feed() sportscrape.Feed {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Feed")
 	}
 
-	var r0 Feed
-	if returnFunc, ok := ret.Get(0).(func() Feed); ok {
+	var r0 sportscrape.Feed
+	if returnFunc, ok := ret.Get(0).(func() sportscrape.Feed); ok {
 		r0 = returnFunc()
 	} else {
-		r0 = ret.Get(0).(Feed)
+		r0 = ret.Get(0).(sportscrape.Feed)
 	}
 	return r0
 }
@@ -69,12 +70,12 @@ func (_c *MockMatchupScraper_Feed_Call) Run(run func()) *MockMatchupScraper_Feed
 	return _c
 }
 
-func (_c *MockMatchupScraper_Feed_Call) Return(feed Feed) *MockMatchupScraper_Feed_Call {
+func (_c *MockMatchupScraper_Feed_Call) Return(feed sportscrape.Feed) *MockMatchupScraper_Feed_Call {
 	_c.Call.Return(feed)
 	return _c
 }
 
-func (_c *MockMatchupScraper_Feed_Call) RunAndReturn(run func() Feed) *MockMatchupScraper_Feed_Call {
+func (_c *MockMatchupScraper_Feed_Call) RunAndReturn(run func() sportscrape.Feed) *MockMatchupScraper_Feed_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -113,18 +114,18 @@ func (_c *MockMatchupScraper_Init_Call) RunAndReturn(run func()) *MockMatchupScr
 }
 
 // Provider provides a mock function for the type MockMatchupScraper
-func (_mock *MockMatchupScraper) Provider() Provider {
+func (_mock *MockMatchupScraper) Provider() sportscrape.Provider {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Provider")
 	}
 
-	var r0 Provider
-	if returnFunc, ok := ret.Get(0).(func() Provider); ok {
+	var r0 sportscrape.Provider
+	if returnFunc, ok := ret.Get(0).(func() sportscrape.Provider); ok {
 		r0 = returnFunc()
 	} else {
-		r0 = ret.Get(0).(Provider)
+		r0 = ret.Get(0).(sportscrape.Provider)
 	}
 	return r0
 }
@@ -146,29 +147,29 @@ func (_c *MockMatchupScraper_Provider_Call) Run(run func()) *MockMatchupScraper_
 	return _c
 }
 
-func (_c *MockMatchupScraper_Provider_Call) Return(provider Provider) *MockMatchupScraper_Provider_Call {
+func (_c *MockMatchupScraper_Provider_Call) Return(provider sportscrape.Provider) *MockMatchupScraper_Provider_Call {
 	_c.Call.Return(provider)
 	return _c
 }
 
-func (_c *MockMatchupScraper_Provider_Call) RunAndReturn(run func() Provider) *MockMatchupScraper_Provider_Call {
+func (_c *MockMatchupScraper_Provider_Call) RunAndReturn(run func() sportscrape.Provider) *MockMatchupScraper_Provider_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Scrape provides a mock function for the type MockMatchupScraper
-func (_mock *MockMatchupScraper) Scrape() MatchupOutput {
+func (_mock *MockMatchupScraper) Scrape() sportscrape.MatchupOutput {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Scrape")
 	}
 
-	var r0 MatchupOutput
-	if returnFunc, ok := ret.Get(0).(func() MatchupOutput); ok {
+	var r0 sportscrape.MatchupOutput
+	if returnFunc, ok := ret.Get(0).(func() sportscrape.MatchupOutput); ok {
 		r0 = returnFunc()
 	} else {
-		r0 = ret.Get(0).(MatchupOutput)
+		r0 = ret.Get(0).(sportscrape.MatchupOutput)
 	}
 	return r0
 }
@@ -190,12 +191,12 @@ func (_c *MockMatchupScraper_Scrape_Call) Run(run func()) *MockMatchupScraper_Sc
 	return _c
 }
 
-func (_c *MockMatchupScraper_Scrape_Call) Return(matchupOutput MatchupOutput) *MockMatchupScraper_Scrape_Call {
+func (_c *MockMatchupScraper_Scrape_Call) Return(matchupOutput sportscrape.MatchupOutput) *MockMatchupScraper_Scrape_Call {
 	_c.Call.Return(matchupOutput)
 	return _c
 }
 
-func (_c *MockMatchupScraper_Scrape_Call) RunAndReturn(run func() MatchupOutput) *MockMatchupScraper_Scrape_Call {
+func (_c *MockMatchupScraper_Scrape_Call) RunAndReturn(run func() sportscrape.MatchupOutput) *MockMatchupScraper_Scrape_Call {
 	_c.Call.Return(run)
 	return _c
 }

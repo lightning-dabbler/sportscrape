@@ -7,9 +7,9 @@ import (
 
 	"encoding/json"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
 // Example for baseballreferencemlb.MatchupScraper
@@ -20,8 +20,8 @@ func ExampleMatchupRunner() {
 		baseballreferencemlb.WithMatchupDate(date),
 		baseballreferencemlb.WithMatchupTimeout(2*time.Minute),
 	)
-	runner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	runner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve MLB matchups associated with date
 	matchups, err := runner.Run()
@@ -42,11 +42,11 @@ func ExampleBattingBoxScoreScraper() {
 		baseballreferencemlb.WithMatchupDate(date),
 		baseballreferencemlb.WithMatchupTimeout(2*time.Minute),
 	)
-	runner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve MLB matchups associated with date
-	matchups, err := runner.Run()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -54,9 +54,9 @@ func ExampleBattingBoxScoreScraper() {
 	boxscorescraper := baseballreferencemlb.NewBattingBoxScoreScraper(
 		baseballreferencemlb.WithBattingBoxScoreTimeout(4 * time.Minute),
 	)
-	boxScoreRunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	boxScoreRunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve MLB batting box score stats associated with matchups
 	boxScoreStats, err := boxScoreRunner.Run(matchups...)
@@ -81,11 +81,11 @@ func ExamplePitchingBoxScoreScraper() {
 		baseballreferencemlb.WithMatchupDate(date),
 		baseballreferencemlb.WithMatchupTimeout(2*time.Minute),
 	)
-	runner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupscraper),
 	)
 	// Retrieve MLB matchups associated with date
-	matchups, err := runner.Run()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
@@ -94,9 +94,9 @@ func ExamplePitchingBoxScoreScraper() {
 	boxscorescraper := baseballreferencemlb.NewPitchingBoxScoreScraper(
 		baseballreferencemlb.WithPitchingBoxScoreTimeout(4 * time.Minute),
 	)
-	boxScoreRunner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(boxscorescraper),
+	boxScoreRunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(boxscorescraper),
 	)
 	// Retrieve MLB pitching box score stats associated with matchups
 	boxScoreStats, err := boxScoreRunner.Run(matchups...)

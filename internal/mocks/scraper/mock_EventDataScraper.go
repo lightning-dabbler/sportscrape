@@ -2,9 +2,10 @@
 // github.com/vektra/mockery
 // template: testify
 
-package sportscrape
+package scraper
 
 import (
+	"github.com/lightning-dabbler/sportscrape"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,18 +37,18 @@ func (_m *MockEventDataScraper) EXPECT() *MockEventDataScraper_Expecter {
 }
 
 // Feed provides a mock function for the type MockEventDataScraper
-func (_mock *MockEventDataScraper) Feed() Feed {
+func (_mock *MockEventDataScraper) Feed() sportscrape.Feed {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Feed")
 	}
 
-	var r0 Feed
-	if returnFunc, ok := ret.Get(0).(func() Feed); ok {
+	var r0 sportscrape.Feed
+	if returnFunc, ok := ret.Get(0).(func() sportscrape.Feed); ok {
 		r0 = returnFunc()
 	} else {
-		r0 = ret.Get(0).(Feed)
+		r0 = ret.Get(0).(sportscrape.Feed)
 	}
 	return r0
 }
@@ -69,12 +70,12 @@ func (_c *MockEventDataScraper_Feed_Call) Run(run func()) *MockEventDataScraper_
 	return _c
 }
 
-func (_c *MockEventDataScraper_Feed_Call) Return(feed Feed) *MockEventDataScraper_Feed_Call {
+func (_c *MockEventDataScraper_Feed_Call) Return(feed sportscrape.Feed) *MockEventDataScraper_Feed_Call {
 	_c.Call.Return(feed)
 	return _c
 }
 
-func (_c *MockEventDataScraper_Feed_Call) RunAndReturn(run func() Feed) *MockEventDataScraper_Feed_Call {
+func (_c *MockEventDataScraper_Feed_Call) RunAndReturn(run func() sportscrape.Feed) *MockEventDataScraper_Feed_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -113,18 +114,18 @@ func (_c *MockEventDataScraper_Init_Call) RunAndReturn(run func()) *MockEventDat
 }
 
 // Provider provides a mock function for the type MockEventDataScraper
-func (_mock *MockEventDataScraper) Provider() Provider {
+func (_mock *MockEventDataScraper) Provider() sportscrape.Provider {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for Provider")
 	}
 
-	var r0 Provider
-	if returnFunc, ok := ret.Get(0).(func() Provider); ok {
+	var r0 sportscrape.Provider
+	if returnFunc, ok := ret.Get(0).(func() sportscrape.Provider); ok {
 		r0 = returnFunc()
 	} else {
-		r0 = ret.Get(0).(Provider)
+		r0 = ret.Get(0).(sportscrape.Provider)
 	}
 	return r0
 }
@@ -146,29 +147,29 @@ func (_c *MockEventDataScraper_Provider_Call) Run(run func()) *MockEventDataScra
 	return _c
 }
 
-func (_c *MockEventDataScraper_Provider_Call) Return(provider Provider) *MockEventDataScraper_Provider_Call {
+func (_c *MockEventDataScraper_Provider_Call) Return(provider sportscrape.Provider) *MockEventDataScraper_Provider_Call {
 	_c.Call.Return(provider)
 	return _c
 }
 
-func (_c *MockEventDataScraper_Provider_Call) RunAndReturn(run func() Provider) *MockEventDataScraper_Provider_Call {
+func (_c *MockEventDataScraper_Provider_Call) RunAndReturn(run func() sportscrape.Provider) *MockEventDataScraper_Provider_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Scrape provides a mock function for the type MockEventDataScraper
-func (_mock *MockEventDataScraper) Scrape(matchup interface{}) EventDataOutput {
+func (_mock *MockEventDataScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	ret := _mock.Called(matchup)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Scrape")
 	}
 
-	var r0 EventDataOutput
-	if returnFunc, ok := ret.Get(0).(func(interface{}) EventDataOutput); ok {
+	var r0 sportscrape.EventDataOutput
+	if returnFunc, ok := ret.Get(0).(func(interface{}) sportscrape.EventDataOutput); ok {
 		r0 = returnFunc(matchup)
 	} else {
-		r0 = ret.Get(0).(EventDataOutput)
+		r0 = ret.Get(0).(sportscrape.EventDataOutput)
 	}
 	return r0
 }
@@ -197,12 +198,12 @@ func (_c *MockEventDataScraper_Scrape_Call) Run(run func(matchup interface{})) *
 	return _c
 }
 
-func (_c *MockEventDataScraper_Scrape_Call) Return(eventDataOutput EventDataOutput) *MockEventDataScraper_Scrape_Call {
+func (_c *MockEventDataScraper_Scrape_Call) Return(eventDataOutput sportscrape.EventDataOutput) *MockEventDataScraper_Scrape_Call {
 	_c.Call.Return(eventDataOutput)
 	return _c
 }
 
-func (_c *MockEventDataScraper_Scrape_Call) RunAndReturn(run func(matchup interface{}) EventDataOutput) *MockEventDataScraper_Scrape_Call {
+func (_c *MockEventDataScraper_Scrape_Call) RunAndReturn(run func(matchup interface{}) sportscrape.EventDataOutput) *MockEventDataScraper_Scrape_Call {
 	_c.Call.Return(run)
 	return _c
 }

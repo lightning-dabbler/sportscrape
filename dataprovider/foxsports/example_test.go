@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
 // Example for foxsports.MatchupScraper NBA
@@ -16,8 +16,8 @@ func ExampleMatchupScraper_nba() {
 		foxsports.MatchupScraperLeague(foxsports.NBA),
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -41,8 +41,8 @@ func ExampleMatchupScraper_mlb() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-08-02"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -66,8 +66,8 @@ func ExampleMatchupScraper_ncaab() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-01-10"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -91,8 +91,8 @@ func ExampleMatchupScraper_nfl() {
 		foxsports.MatchupScraperSegmenter(&foxsports.NFLSegmenter{Year: 2024, Week: 4, Season: foxsports.POSTSEASON}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -117,8 +117,8 @@ func ExampleNBABoxScoreScraper() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -128,9 +128,9 @@ func ExampleNBABoxScoreScraper() {
 
 	// Get boxscore data
 	eventdatascraper := foxsports.NewNBABoxScoreScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(4),
-		sportscrape.EventDataRunnerScraper(
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
 			eventdatascraper,
 		),
 	)
@@ -151,8 +151,8 @@ func ExampleMLBBattingBoxScoreScraper() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -162,9 +162,9 @@ func ExampleMLBBattingBoxScoreScraper() {
 
 	// Get boxscore data
 	eventdatascraper := foxsports.NewMLBBattingBoxScoreScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(4),
-		sportscrape.EventDataRunnerScraper(
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
 			eventdatascraper,
 		),
 	)
@@ -186,8 +186,8 @@ func ExampleMLBPitchingBoxScoreScraper() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-30"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -197,9 +197,9 @@ func ExampleMLBPitchingBoxScoreScraper() {
 
 	// Get boxscore data
 	eventdatascraper := foxsports.NewMLBPitchingBoxScoreScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(4),
-		sportscrape.EventDataRunnerScraper(
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
 			eventdatascraper,
 		),
 	)
@@ -226,8 +226,8 @@ func ExampleMLBProbableStartingPitcherScraper() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2024-10-17"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -237,9 +237,9 @@ func ExampleMLBProbableStartingPitcherScraper() {
 
 	// Get starting pitcher data
 	eventdatascraper := foxsports.NewMLBProbableStartingPitcherScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(4),
-		sportscrape.EventDataRunnerScraper(
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
 			eventdatascraper,
 		),
 	)

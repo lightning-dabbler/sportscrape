@@ -5,8 +5,8 @@ package foxsports
 import (
 	"testing"
 
-	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,21 +21,21 @@ func TestMLBProbableStartingPitcherScraper(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2024-10-25"}),
 	)
 
-	matchuprunner := sportscrape.NewMatchupRunner(
-		sportscrape.MatchupRunnerScraper(matchupScraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
 	)
 
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 
 	boxscoreScraper := NewMLBProbableStartingPitcherScraper()
-	runner := sportscrape.NewEventDataRunner(
-		sportscrape.EventDataRunnerConcurrency(1),
-		sportscrape.EventDataRunnerScraper(
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerScraper(
 			boxscoreScraper,
 		),
 	)
-	probablePitchers, err := runner.Run(matchups...)
+	probablePitchers, err := boxscorerunner.Run(matchups...)
 	assert.NoError(t, err)
 	n_records := len(probablePitchers)
 	n_expected := 2
