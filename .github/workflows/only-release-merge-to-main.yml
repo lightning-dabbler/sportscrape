@@ -1,4 +1,4 @@
-name: Only Release branch <> main
+name: Only release/v*.*.* can merge to main
 
 on:
   pull_request:
@@ -7,11 +7,11 @@ on:
 
 jobs:
   prevent-non-release-branch-merge:
-    name: Only release/v*.*.* can merge to main
+    name: Check
     if: ${{!startsWith(github.head_ref, 'release/v') && !contains(github.head_ref, '.')}}
     runs-on: ubuntu-latest
     steps:
-      - name: Only release branch can merge to main
+      - name: Error
         env:
           HEAD_REF: ${{ github.head_ref }}
         run: |
