@@ -18,7 +18,7 @@ var (
 	FSMLBPitchingBoxScore        Feed     = Feed(string(FS) + " mlb pitching box score")
 	FSMLBProbableStartingPitcher Feed     = Feed(string(FS) + " mlb pitching box score")
 	FSNFLMatchup                 Feed     = Feed(string(FS) + " nfl matchup")
-	FSNCAAMatchup                Feed     = Feed(string(FS) + " ncaa matchup")
+	FSNCAABMatchup               Feed     = Feed(string(FS) + " ncaab matchup")
 
 	// baseball reference
 	BaseballReference                    Provider = "baseball reference"
