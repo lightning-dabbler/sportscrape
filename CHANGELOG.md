@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.13.2] - 2025-07-17
 ### Changed
-- `FSNCAAMatchup` -> `FSNCAABMatchup`
+- `FSNCAAMatchup` -> `FSNCAABMatchup` (#93)
 
 ## [0.13.1] - 2025-07-11
 ### Changed
