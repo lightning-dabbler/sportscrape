@@ -94,7 +94,7 @@ func (s *MatchupScraper) Feed() sportscrape.Feed {
 	case NFL:
 		return sportscrape.FSNFLMatchup
 	case NCAAB:
-		return sportscrape.FSNCAAMatchup
+		return sportscrape.FSNCAABMatchup
 	}
 	return sportscrape.FSNBAMatchup
 }
