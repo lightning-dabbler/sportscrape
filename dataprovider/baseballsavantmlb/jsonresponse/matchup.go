@@ -1,5 +1,13 @@
 package jsonresponse
 
+import (
+	"bytes"
+	"encoding/json"
+	"log"
+
+	"github.com/lightning-dabbler/sportscrape"
+)
+
 // https://baseballsavant.mlb.com/schedule?date=2025-6-24
 
 type Matchups struct {
@@ -46,4 +54,24 @@ type Team struct {
 		ID   int64  `json:"id"`       // "id": 694973,
 		Name string `json:"fullName"` // "fullName": "Paul Skenes"
 	} `json:"probablePitcher"`
+}
+
+func (m *Matchups) UnmarshalJSON(b []byte) error {
+
+	if bytes.Equal(b, []byte("[]")) {
+		log.Printf("Empty response payload for %s\n", sportscrape.BaseballReferenceMLBMatchup)
+		return nil
+	}
+
+	type Alias Matchups
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(m),
+	}
+	err := json.Unmarshal(b, aux)
+	if err != nil {
+		return err
+	}
+	return nil
 }
