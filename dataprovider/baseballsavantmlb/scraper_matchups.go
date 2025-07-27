@@ -82,7 +82,10 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput {
 		output.Error = err
 		return output
 	}
-
+	if len(jsonobj.Schedule.Dates) == 0 {
+		output.Output = matchups
+		return output
+	}
 	for _, game := range jsonobj.Schedule.Dates[0].Games {
 		season, err := util.TextToInt32(game.Season)
 		if err != nil {
