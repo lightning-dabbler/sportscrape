@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Fixed unmarshalling of baseball savant mlb matchups to handle empty response payload
+- Fixed unmarshalling of baseball savant mlb matchups to handle empty response payload (#94)
 
 ## [0.13.2] - 2025-07-17
 ### Changed
