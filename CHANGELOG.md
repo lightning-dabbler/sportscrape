@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.4] - 2025-07-29
+### Fixed
+- Fixed parquet field names for baseball savant mlb matchup data model
+
 ## [0.13.3] - 2025-07-27
 ### Fixed
 - Fixed unmarshalling of baseball savant mlb matchups to handle empty response payload (#94)

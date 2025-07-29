@@ -21,7 +21,7 @@ type Matchup struct {
 	// HomeTeamAbbreviation is the abbreviation of the home team's name e.g. DET
 	HomeTeamAbbreviation string `json:"home_team_abbreviation" parquet:"name=home_team_abbreviation, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeTeamName is the home team's full name e.g. Detroit Tigers
-	HomeTeamName string `json:"home_team_name" parquet:"name=home_team_name_full, type=BYTE_ARRAY, convertedtype=UTF8"`
+	HomeTeamName string `json:"home_team_name" parquet:"name=home_team_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeRecord is the home team's number of wins
 	HomeWins int32 `json:"home_wins" parquet:"name=home_wins, type=INT32"`
 	// HomeLosses is the home team's number of losses
@@ -37,7 +37,7 @@ type Matchup struct {
 	// AwayTeamAbbreviation is the abbreviation of the away team's name e.g. LAA
 	AwayTeamAbbreviation string `json:"away_team_abbreviation" parquet:"name=away_team_abbreviation, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayTeamName is the away team's full name
-	AwayTeamName string `json:"away_team_name" parquet:"name=away_team_name_full, type=BYTE_ARRAY, convertedtype=UTF8"`
+	AwayTeamName string `json:"away_team_name" parquet:"name=away_team_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayRecord is the away team's number of wins
 	AwayWins int32 `json:"away_wins" parquet:"name=away_wins, type=INT32"`
 	// AwayLosses is the away team's number of losses
