@@ -13,6 +13,7 @@ const (
 	MLB
 	NCAAB
 	NFL
+	WNBA
 )
 
 const (
@@ -32,6 +33,8 @@ func (l League) LeaguePath() string {
 		return "cbk"
 	case NFL:
 		return "nfl"
+	case WNBA:
+		return "wnba"
 	default:
 		return "undefined"
 	}
@@ -39,7 +42,7 @@ func (l League) LeaguePath() string {
 
 func (l League) Undefined() bool {
 	switch l {
-	case NBA, MLB, NCAAB, NFL:
+	case NBA, MLB, NCAAB, NFL, WNBA:
 		return false
 	default:
 		return true
@@ -55,13 +58,7 @@ func (l League) Undefined() bool {
 func (l League) V1MatchupURL(segmentID string) (*url.URL, error) {
 	scoreboardPath := "scoreboard/segment/" + segmentID
 	switch l {
-	case NBA:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), scoreboardPath))
-	case MLB:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), scoreboardPath))
-	case NCAAB:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), scoreboardPath))
-	case NFL:
+	case NBA, MLB, NCAAB, NFL, WNBA:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), scoreboardPath))
 	default:
 		return nil, fmt.Errorf("undefined league: %#v", l)
@@ -77,13 +74,7 @@ func (l League) V1MatchupURL(segmentID string) (*url.URL, error) {
 func (l League) V1EventDataURL(eventID int64) (*url.URL, error) {
 	eventPath := fmt.Sprintf("event/%d/data", eventID)
 	switch l {
-	case NBA:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
-	case MLB:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
-	case NCAAB:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
-	case NFL:
+	case NBA, MLB, NCAAB, NFL, WNBA:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
 	default:
 		return nil, fmt.Errorf("undefined League identified: %#v", l)
@@ -99,13 +90,7 @@ func (l League) V1EventDataURL(eventID int64) (*url.URL, error) {
 func (l League) V1MatchupComparisonURL(eventID int64) (*url.URL, error) {
 	eventPath := fmt.Sprintf("event/%d/matchup", eventID)
 	switch l {
-	case NBA:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
-	case MLB:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
-	case NCAAB:
-		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
-	case NFL:
+	case NBA, MLB, NCAAB, NFL, WNBA:
 		return url.Parse(fmt.Sprintf("%s/%s/%s", BifrostEndpointV1, l.LeaguePath(), eventPath))
 	default:
 		return nil, fmt.Errorf("undefined League identified: %#v", l)
@@ -123,6 +108,8 @@ func (l League) String() string {
 		return "NCAAB"
 	case NFL:
 		return "NFL"
+	case WNBA:
+		return "WNBA"
 	default:
 		return "?"
 	}

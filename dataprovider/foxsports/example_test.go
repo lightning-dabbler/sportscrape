@@ -34,6 +34,30 @@ func ExampleMatchupScraper_nba() {
 	}
 }
 
+// Example for foxsports.MatchupScraper WNBA
+func ExampleMatchupScraper_wnba() {
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.WNBA),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-08-07"}),
+	)
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+	// Output each statline as pretty json
+	for _, matchup := range matchups {
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
+
 // Example for foxsports.MatchupScraper MLB
 func ExampleMatchupScraper_mlb() {
 	matchupScraper := foxsports.NewMatchupScraper(
@@ -109,8 +133,8 @@ func ExampleMatchupScraper_nfl() {
 	}
 }
 
-// Example for foxsports.NBABoxScoreScraper
-func ExampleNBABoxScoreScraper() {
+// Example for foxsports.NBABoxScoreScraper NBA
+func ExampleNBABoxScoreScraper_nba() {
 	// Get matchups
 	matchupScraper := foxsports.NewMatchupScraper(
 		foxsports.MatchupScraperLeague(foxsports.NBA),
@@ -138,8 +162,54 @@ func ExampleNBABoxScoreScraper() {
 	if err != nil {
 		panic(err)
 	}
+	// Output each statline as pretty json
 	for _, statline := range boxScoreStats {
-		fmt.Printf("%#v\n", statline.(model.NBABoxScoreStats))
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
+
+// Example for foxsports.NBABoxScoreScraper WNBA
+func ExampleNBABoxScoreScraper_wnba() {
+	// Get matchups
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.WNBA),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-08-07"}),
+	)
+
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	// Get boxscore data
+	eventdatascraper := foxsports.NewNBABoxScoreScraper(
+		foxsports.NBABoxScoreScraperLeague(foxsports.WNBA),
+	)
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
+			eventdatascraper,
+		),
+	)
+	boxScoreStats, err := runner.Run(matchups...)
+	if err != nil {
+		panic(err)
+	}
+	// Output each statline as pretty json
+	for _, statline := range boxScoreStats {
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 

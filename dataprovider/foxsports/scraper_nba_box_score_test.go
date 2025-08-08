@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNBABoxScoreScraper(t *testing.T) {
+func TestNBABoxScoreScraper_nba(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
@@ -115,4 +115,71 @@ func TestNBABoxScoreScraper(t *testing.T) {
 	assert.NoError(t, err)
 	n_stats = len(boxScoreStats)
 	assert.Equal(t, 69, n_stats, "69 statlines")
+}
+
+func TestNBABoxScoreScraper_wnba(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	// Get matchups
+	matchupScraper := NewMatchupScraper(
+		MatchupScraperLeague(WNBA),
+		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2025-05-02"}),
+	)
+
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	assert.NoError(t, err)
+
+	// Get boxscore data
+	boxscoreScraper := NewNBABoxScoreScraper(
+		NBABoxScoreScraperLeague(WNBA),
+	)
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(2),
+		runner.EventDataRunnerScraper(
+			boxscoreScraper,
+		),
+	)
+	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	assert.NoError(t, err)
+	n_stats := len(boxScoreStats)
+	assert.Equal(t, 48, n_stats, "48 statlines")
+	NaLyssaTested := false
+
+	for _, statline := range boxScoreStats {
+		s := statline.(model.NBABoxScoreStats)
+		if s.Player == "NaLyssa Smith" {
+			NaLyssaTested = true
+			assert.Equal(t, int64(2182), s.EventID, "EventID")
+			assert.Equal(t, int64(7), s.TeamID, "TeamID")
+			assert.Equal(t, "Dallas Wings", s.Team, "Team")
+			assert.Equal(t, int64(11), s.OpponentID, "OpponentID")
+			assert.Equal(t, "Las Vegas Aces", s.Opponent, "Opponent")
+			assert.Equal(t, int64(634), s.PlayerID, "PlayerID")
+			assert.Equal(t, "F", *s.Position, "Position")
+			assert.Equal(t, true, s.Starter, "Starter")
+			assert.Equal(t, int32(16), s.MinutesPlayed, "MinutesPlayed")
+			assert.Equal(t, int32(3), s.FieldGoalsMade, "FieldGoalsMade")
+			assert.Equal(t, int32(6), s.FieldGoalAttempts, "FieldGoalAttempts")
+			assert.Equal(t, int32(0), s.ThreePointsMade, "ThreePointsMade")
+			assert.Equal(t, int32(1), s.ThreePointAttempts, "ThreePointAttempts")
+			assert.Equal(t, int32(2), s.FreeThrowsMade, "FreeThrowsMade")
+			assert.Equal(t, int32(2), s.FreeThrowAttempts, "FreeThrowAttempts")
+			assert.Equal(t, int32(1), s.OffensiveRebounds, "OffensiveRebounds")
+			assert.Equal(t, int32(2), s.DefensiveRebounds, "DefensiveRebounds")
+			assert.Equal(t, int32(3), s.TotalRebounds, "TotalRebounds")
+			assert.Equal(t, int32(1), s.Assists, "Assists")
+			assert.Equal(t, int32(0), s.Steals, "Steals")
+			assert.Equal(t, int32(1), s.Blocks, "Blocks")
+			assert.Equal(t, int32(1), s.Turnovers, "Turnovers")
+			assert.Equal(t, int32(1), s.PersonalFouls, "PersonalFouls")
+			assert.Equal(t, int32(8), s.Points, "Points")
+		}
+	}
+	assert.True(t, NaLyssaTested, "NaLyssa Smith statline tested")
 }
