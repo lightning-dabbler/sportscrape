@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"slices"
 	"strings"
 	"time"
 
@@ -20,8 +21,17 @@ var NBABoxscoreStatsHeaders map[string][]string = map[string][]string{
 	"shooting": {"SHOOTING", "FG", "3FG", "FT", "PTS"},
 }
 
+var NBABoxScoreLeagueSupported []League = []League{NBA, WNBA}
+
 // NBABoxScoreScraperOption defines a configuration option for the scraper
 type NBABoxScoreScraperOption func(*NBABoxScoreScraper)
+
+// NBABoxScoreScraperLeague sets the League option
+func NBABoxScoreScraperLeague(league League) NBABoxScoreScraperOption {
+	return func(s *NBABoxScoreScraper) {
+		s.League = league
+	}
+}
 
 // NBABoxScoreScraperParams sets the Params option
 func NBABoxScoreScraperParams(params map[string]string) NBABoxScoreScraperOption {
@@ -33,12 +43,12 @@ func NBABoxScoreScraperParams(params map[string]string) NBABoxScoreScraperOption
 // NewNBABoxScoreScraper creates a new NBABoxScoreScraper with the provided options
 func NewNBABoxScoreScraper(options ...NBABoxScoreScraperOption) *NBABoxScoreScraper {
 	s := &NBABoxScoreScraper{}
-
+	// Default League
+	s.League = NBA
 	// Apply all options
 	for _, option := range options {
 		option(s)
 	}
-	s.League = NBA
 	s.Init()
 
 	return s
@@ -48,8 +58,20 @@ type NBABoxScoreScraper struct {
 	EventDataScraper
 }
 
+func (s *NBABoxScoreScraper) Init() {
+	s.EventDataScraper.Init()
+	if !slices.Contains(NBABoxScoreLeagueSupported, s.League) {
+		log.Fatalf("League %s is not supported for NBABoxScoreScraper. Only NBA and WNBA are supported.\n", s.League.String())
+	}
+}
+
 func (s NBABoxScoreScraper) Feed() sportscrape.Feed {
-	return sportscrape.FSNBABoxScore
+	switch s.League {
+	case WNBA:
+		return sportscrape.FSWNBABoxScore
+	default:
+		return sportscrape.FSNBABoxScore
+	}
 }
 
 func (s *NBABoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
@@ -80,20 +102,21 @@ func (s *NBABoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
+	league := s.League.String()
 	// Check for box score data
 	if responsePayload.BoxScore == nil || responsePayload.BoxScore.BoxScoreSections == nil {
-		log.Printf("No NBA box score data available for event id: %d\n", matchupModel.EventID)
+		log.Printf("No %s box score data available for event id: %d\n", league, matchupModel.EventID)
 		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	// Check that both Away and Home team box score stats are populated
 	if responsePayload.BoxScore.BoxScoreSections.AwayPlayerStats == nil {
-		log.Printf("No NBA box score data available for away team (%s) for event id: %d\n", matchupModel.AwayTeamNameFull, matchupModel.EventID)
+		log.Printf("No %s box score data available for away team (%s) for event id: %d\n", league, matchupModel.AwayTeamNameFull, matchupModel.EventID)
 		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 
 	if responsePayload.BoxScore.BoxScoreSections.AwayPlayerStats == nil {
-		log.Printf("No NBA box score data available for home team (%s) for event id: %d\n", matchupModel.HomeTeamNameFull, matchupModel.EventID)
+		log.Printf("No %s box score data available for home team (%s) for event id: %d\n", league, matchupModel.HomeTeamNameFull, matchupModel.EventID)
 		return sportscrape.EventDataOutput{Output: data, Context: context}
 	}
 

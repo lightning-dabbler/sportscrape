@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added fox sports wnba matchup and box score feeds
+### Changed
+- Modified `NBABoxScoreScraper` to support WNBA extraction
+- `EventDataRunner.Run()` and `MatchupRunner.Run()` now call `Scraper.Init()` for extra validation before execution
+### Documentation
+- Added fox sports WNBA matchup and box score to provider list
 
 ## [0.13.4] - 2025-07-29
 ### Fixed

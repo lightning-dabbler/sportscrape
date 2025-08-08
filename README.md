@@ -70,6 +70,8 @@ func main() {
 | https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |[model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go)||✅|
 | https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://www.foxsports.com		   | NBA	| Box score stats		 | Live, Full			  | [model](dataprovider/foxsports/model/nba_box_score_stats.go)||✅|
+| https://www.foxsports.com		   | WNBA	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
+| https://www.foxsports.com		   | WNBA	| Box score stats		 | Live, Full			  | [model](dataprovider/foxsports/model/nba_box_score_stats.go)||✅|
 | https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://www.foxsports.com		   | MLB	| Batting Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_batting_box_score_stats.go)||✅|
 | https://www.foxsports.com		   | MLB	| Pitching Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_pitching_box_score_stats.goo)||✅|
