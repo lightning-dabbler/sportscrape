@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2025-08-08
+### Added
+- Added fox sports wnba matchup and box score feeds (#97)
+### Changed
+- Modified `NBABoxScoreScraper` to support WNBA extraction (#97)
+- `EventDataRunner.Run()` and `MatchupRunner.Run()` now call `Scraper.Init()` for extra validation before execution (#97)
+### Documentation
+- Added fox sports WNBA matchup and box score to provider list (#97)
+
 ## [0.13.4] - 2025-07-29
 ### Fixed
 - Fixed parquet field names for baseball savant mlb matchup data model

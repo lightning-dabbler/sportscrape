@@ -61,6 +61,7 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	if t.Deprecated() {
 		return nil, t.Scraper.Feed().Deprecation()
 	}
+	t.Scraper.Init()
 	start := time.Now().UTC()
 	concurrency := t.Concurrency
 	if concurrency <= 0 {
@@ -162,6 +163,7 @@ func (r *MatchupRunner) Run() ([]interface{}, error) {
 	if r.Deprecated() {
 		return nil, r.Scraper.Feed().Deprecation()
 	}
+	r.Scraper.Init()
 	start := time.Now().UTC()
 	ou := r.Scraper.Scrape()
 	if ou.Error != nil {

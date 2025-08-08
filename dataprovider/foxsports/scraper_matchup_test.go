@@ -54,6 +54,49 @@ func TestMatchupScraper_NBA(t *testing.T) {
 
 }
 
+func TestMatchupScraper_WNBA(t *testing.T) {
+	// https://api.foxsports.com/bifrost/v1/wnba/scoreboard/segment/20250502?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	matchupScraper := NewMatchupScraper(
+		MatchupScraperLeague(WNBA),
+		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2025-05-02"}),
+	)
+
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	assert.NoError(t, err)
+
+	n_matchups := len(matchups)
+	assert.Equal(t, 2, n_matchups, "2 events")
+	testMatchup := matchups[1].(model.Matchup)
+	assert.Equal(t, int64(2179), testMatchup.EventID)
+	assert.Equal(t, time.Date(2025, time.May, 3, 1, 0, 0, 0, time.UTC), testMatchup.EventTime) // 2025-04-06T22:00:00Z
+	assert.Equal(t, int32(3), testMatchup.EventStatus)
+	assert.Equal(t, "FINAL", testMatchup.StatusLine)
+	assert.Equal(t, int64(2), testMatchup.HomeTeamID)
+	assert.Equal(t, "CHI", testMatchup.HomeTeamAbbreviation)
+	assert.Equal(t, "Sky", testMatchup.HomeTeamNameLong)
+	assert.Equal(t, "Chicago Sky", testMatchup.HomeTeamNameFull)
+	assert.Equal(t, "1-0", testMatchup.HomeRecord)
+	assert.Equal(t, int32(89), testMatchup.HomeScore)
+	assert.Nil(t, testMatchup.HomeRank)
+	assert.Equal(t, int64(24), testMatchup.AwayTeamID)
+	assert.Equal(t, "BRA", testMatchup.AwayTeamAbbreviation)
+	assert.Equal(t, "Brazil National Team", testMatchup.AwayTeamNameLong)
+	assert.Equal(t, "Brazil National Team", testMatchup.AwayTeamNameFull)
+	assert.Equal(t, "0-1", testMatchup.AwayRecord)
+	assert.Equal(t, int32(62), testMatchup.AwayScore)
+	assert.Nil(t, testMatchup.AwayRank)
+	assert.Equal(t, int64(24), *testMatchup.Loser) // Utah lost
+	assert.Equal(t, false, testMatchup.IsPlayoff)
+
+}
+
 func TestMatchupScraper_MLB(t *testing.T) {
 	// https://api.foxsports.com/bifrost/v1/mlb/scoreboard/segment/20241018?apikey=jE7yBJVRNAwdDesMgTzTXUUSx1It41Fq
 	if testing.Short() {

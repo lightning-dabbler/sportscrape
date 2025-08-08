@@ -13,6 +13,8 @@ var (
 	FS                           Provider = "fox sports"
 	FSNBAMatchup                 Feed     = Feed(string(FS) + " nba matchup")
 	FSNBABoxScore                Feed     = Feed(string(FS) + " nba box score")
+	FSWNBAMatchup                Feed     = Feed(string(FS) + " wnba matchup")
+	FSWNBABoxScore               Feed     = Feed(string(FS) + " wnba box score")
 	FSMLBMatchup                 Feed     = Feed(string(FS) + " mlb matchup")
 	FSMLBBattingBoxScore         Feed     = Feed(string(FS) + " mlb batting box score")
 	FSMLBPitchingBoxScore        Feed     = Feed(string(FS) + " mlb pitching box score")
