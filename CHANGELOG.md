@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Chained errors observed in `EventDataRunner` and `MatchupRunner`
+- Chained errors observed in `EventDataRunner` and `MatchupRunner` (#99)
 
 ## [0.14.0] - 2025-08-08
 ### Added
