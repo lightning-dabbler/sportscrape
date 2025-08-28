@@ -179,7 +179,7 @@ func (s *MLBOddsTotalScraper) record(matchupModel model.Matchup, responsePayload
 			return nil, fmt.Errorf("expected total lines to be parsed twice was instead parsed %d times", n)
 		}
 		if parsedLines[0] != parsedLines[1] {
-			return nil, fmt.Errorf("expected equal line results (%d != %d)", parsedLines[0], parsedLines[1])
+			return nil, fmt.Errorf("expected equal line results (%f != %f)", parsedLines[0], parsedLines[1])
 		}
 		record.TotalLine = parsedLines[0]
 		return record, nil
