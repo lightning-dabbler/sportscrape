@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Chained errors observed in `EventDataRunner` and `MatchupRunner` (#99)
+### Fixed
 - foxsports `MLBProbableStartingPitcher.StartingPitcherRecord` and `MLBProbableStartingPitcher.StartingPitcherERA` are now nilable
 ### Added
 - Added the following fields to the baseball savant mlb `Matchup` model (#100)
