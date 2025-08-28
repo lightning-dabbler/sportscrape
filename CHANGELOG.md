@@ -8,7 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Chained errors observed in `EventDataRunner` and `MatchupRunner` (#99)
-
+### Added
+- Added the following fields to the baseball savant mlb `Matchup` model (#100)
+    - VenueID
+    - VenueName
+    - HomeTeamLeagueID
+    - HomeTeamLeagueName
+    - HomeTeamDivisionID
+    - HomeTeamDivisionName
+    - HomeStartingPitcherPitchHand
+    - AwayTeamLeagueID
+    - AwayTeamLeagueName
+    - AwayTeamDivisionID
+    - AwayTeamDivisionName
+    - AwayStartingPitcherPitchHand
 ## [0.14.0] - 2025-08-08
 ### Added
 - Added fox sports wnba matchup and box score feeds (#97)
