@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	probablePitcherTitle = "PROBABLE STARTING PITCHERS"
-	regexExpr            = `^(\d+\.\d+)\sERA`
+	probablePitcherTitle    = "PROBABLE STARTING PITCHERS"
+	probablePitcherEraRegex = `^(\d+\.\d+)\sERA`
 )
 
-var re = regexp.MustCompile(regexExpr)
+var probablePitcherEraRe = regexp.MustCompile(probablePitcherEraRegex)
 
 // MLBProbableStartingPitcherScraperOption defines a configuration option for the scraper
 type MLBProbableStartingPitcherScraperOption func(*MLBProbableStartingPitcherScraper)
@@ -112,9 +112,9 @@ func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) sportscr
 }
 
 func (s *MLBProbableStartingPitcherScraper) era(rawStatline string) (float32, error) {
-	matches := re.FindStringSubmatch(rawStatline)
+	matches := probablePitcherEraRe.FindStringSubmatch(rawStatline)
 	if len(matches) != 2 {
-		return 0, fmt.Errorf("%s does not match ERA pattern %s in featuredPairing", rawStatline, regexExpr)
+		return 0, fmt.Errorf("%s does not match ERA pattern %s in featuredPairing", rawStatline, probablePitcherEraRegex)
 	}
 	era, err := util.TextToFloat32(matches[1])
 	if err != nil {

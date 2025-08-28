@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Chained errors observed in `EventDataRunner` and `MatchupRunner` (#99)
 ### Fixed
 - foxsports `MLBProbableStartingPitcher.StartingPitcherRecord` and `MLBProbableStartingPitcher.StartingPitcherERA` are now nilable
+- Fixed feed name for `FSMLBProbableStartingPitcher`
 ### Added
 - Added the following fields to the baseball savant mlb `Matchup` model (#100)
     - VenueID
@@ -24,9 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - AwayTeamDivisionID
     - AwayTeamDivisionName
     - AwayStartingPitcherPitchHand
+- Added foxsports `MLBOddsTotalScraper` and `MLBOddsMoneyLineScraper` betting odds extraction
 ### Documentation
 - foxsports `MLBProbableStartingPitcher.StartingPitcherRecord` and `MLBProbableStartingPitcher.StartingPitcherERA` are not point-in-time (PIT) with respect to event
     - Added comment to data model
+- Added foxsports mlb odds total and model line to catalog in README
 ## [0.14.0] - 2025-08-08
 ### Added
 - Added fox sports wnba matchup and box score feeds (#97)

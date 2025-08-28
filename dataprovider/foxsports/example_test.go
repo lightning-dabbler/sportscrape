@@ -326,3 +326,81 @@ func ExampleMLBProbableStartingPitcherScraper() {
 		fmt.Println(string(jsonBytes))
 	}
 }
+
+// Example for foxsports.MLBOddsTotalScraper
+func ExampleMLBOddsTotalScraper() {
+	// Get matchups
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.MLB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-08-28"}),
+	)
+
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	// Get starting pitcher data
+	eventdatascraper := foxsports.NewMLBOddsTotalScraper()
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
+			eventdatascraper,
+		),
+	)
+
+	events, err := runner.Run(matchups...)
+	if err != nil {
+		panic(err)
+	}
+	for _, event := range events {
+		jsonBytes, err := json.MarshalIndent(event, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
+
+// Example for foxsports.MLBOddsMoneyLineScraper
+func ExampleMLBOddsMoneyLineScraper() {
+	// Get matchups
+	matchupScraper := foxsports.NewMatchupScraper(
+		foxsports.MatchupScraperLeague(foxsports.MLB),
+		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-08-28"}),
+	)
+
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	// Get starting pitcher data
+	eventdatascraper := foxsports.NewMLBOddsMoneyLineScraper()
+	runner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConcurrency(4),
+		runner.EventDataRunnerScraper(
+			eventdatascraper,
+		),
+	)
+
+	events, err := runner.Run(matchups...)
+	if err != nil {
+		panic(err)
+	}
+	for _, event := range events {
+		jsonBytes, err := json.MarshalIndent(event, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
