@@ -106,13 +106,23 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput {
 			EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(eventTime, true),
 			EventID:              game.EventID,
 			Status:               game.Status.DetailedState,
+			VenueID:              game.Venue.ID,
+			VenueName:            game.Venue.Name,
 
+			HomeTeamLeagueID:     game.Teams.Home.Team.League.ID,
+			HomeTeamLeagueName:   game.Teams.Home.Team.League.Name,
+			HomeTeamDivisionID:   game.Teams.Home.Team.Division.ID,
+			HomeTeamDivisionName: game.Teams.Home.Team.Division.Name,
 			HomeTeamID:           game.Teams.Home.Team.ID,
 			HomeTeamAbbreviation: game.Teams.Home.Team.Abbreviation,
 			HomeTeamName:         game.Teams.Home.Team.Name,
 			HomeWins:             game.Teams.Home.LeagueRecord.Wins,
 			HomeLosses:           game.Teams.Home.LeagueRecord.Losses,
 
+			AwayTeamLeagueID:     game.Teams.Away.Team.League.ID,
+			AwayTeamLeagueName:   game.Teams.Away.Team.League.Name,
+			AwayTeamDivisionID:   game.Teams.Away.Team.Division.ID,
+			AwayTeamDivisionName: game.Teams.Away.Team.Division.Name,
 			AwayTeamID:           game.Teams.Away.Team.ID,
 			AwayTeamAbbreviation: game.Teams.Away.Team.Abbreviation,
 			AwayTeamName:         game.Teams.Away.Team.Name,
@@ -132,6 +142,7 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput {
 		if game.Teams.Home.ProbablePitcher != nil {
 			matchup.HomeStartingPitcherID = &game.Teams.Home.ProbablePitcher.ID
 			matchup.HomeStartingPitcher = &game.Teams.Home.ProbablePitcher.Name
+			matchup.HomeStartingPitcherPitchHand = &game.Teams.Home.ProbablePitcher.PitchHand.Code
 		}
 
 		if game.Teams.Away.Score != nil {
@@ -140,6 +151,7 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput {
 		if game.Teams.Away.ProbablePitcher != nil {
 			matchup.AwayStartingPitcherID = &game.Teams.Away.ProbablePitcher.ID
 			matchup.AwayStartingPitcher = &game.Teams.Away.ProbablePitcher.Name
+			matchup.AwayStartingPitcherPitchHand = &game.Teams.Away.ProbablePitcher.PitchHand.Code
 		}
 
 		if game.Teams.Away.IsWinner != nil && *game.Teams.Away.IsWinner {

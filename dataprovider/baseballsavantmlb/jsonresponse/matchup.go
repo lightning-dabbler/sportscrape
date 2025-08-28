@@ -36,6 +36,10 @@ type Game struct {
 		Away Team `json:"away"`
 		Home Team `json:"home"`
 	} `json:"teams"`
+	Venue struct {
+		ID   int64  `json:"id"`   // "id": 680
+		Name string `json:"name"` // "name": "T-Mobile Park"
+	} `json:"venue"`
 }
 
 type Team struct {
@@ -49,10 +53,21 @@ type Team struct {
 		ID           int64  `json:"id"`           // "id": 116
 		Name         string `json:"name"`         // "name": "Detroit Tigers"
 		Abbreviation string `json:"abbreviation"` // "abbreviation": "NYM"
+		League       struct {
+			ID   int64  `json:"id"`   // "id": 103
+			Name string `json:"name"` //"name": "American League"
+		} `json:"league"`
+		Division struct {
+			ID   int64  `json:"id"`   // "id": 200
+			Name string `json:"name"` //"name": "American League West"
+		} `json:"division"`
 	} `json:"team"`
 	ProbablePitcher *struct {
-		ID   int64  `json:"id"`       // "id": 694973,
-		Name string `json:"fullName"` // "fullName": "Paul Skenes"
+		ID        int64  `json:"id"`       // "id": 694973,
+		Name      string `json:"fullName"` // "fullName": "Paul Skenes"
+		PitchHand struct {
+			Code string `json:"code"` // "code": "R"
+		} `json:"pitchHand"`
 	} `json:"probablePitcher"`
 }
 

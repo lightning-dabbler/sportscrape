@@ -16,6 +16,18 @@ type Matchup struct {
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	// Status is the string representation of the event status e.g. Final
 	Status string `json:"status" parquet:"name=status, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// VenueID
+	VenueID int64 `json:"venue_id" parquet:"name=venue_id, type=INT64"`
+	// VenueName
+	VenueName string `json:"venue_name" parquet:"name=venue_name, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// HomeTeamLeagueID
+	HomeTeamLeagueID int64 `json:"home_team_league_id" parquet:"name=home_team_league_id, type=INT64"`
+	// HomeTeamLeagueName
+	HomeTeamLeagueName string `json:"home_team_league_name" parquet:"name=home_team_league_name, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// HomeTeamDivisionID
+	HomeTeamDivisionID int64 `json:"home_team_division_id" parquet:"name=home_team_division_id, type=INT64"`
+	// HomeTeamDivisionName
+	HomeTeamDivisionName string `json:"home_team_division_name" parquet:"name=home_team_division_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeTeamID is the home team's ID
 	HomeTeamID int64 `json:"home_team_id" parquet:"name=home_team_id, type=INT64"`
 	// HomeTeamAbbreviation is the abbreviation of the home team's name e.g. DET
@@ -32,6 +44,16 @@ type Matchup struct {
 	HomeStartingPitcherID *int64 `json:"home_starting_pitcher_id" parquet:"name=home_starting_pitcher_id, type=INT64"`
 	// HomeStartingPitcher the name of the home team's starting pitcher
 	HomeStartingPitcher *string `json:"home_starting_pitcher" parquet:"name=home_starting_pitcher, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// HomeStartingPitcherPitchHand - R for right, L for left
+	HomeStartingPitcherPitchHand *string `json:"home_starting_pitcher_pitch_hand" parquet:"name=home_starting_pitcher_pitch_hand, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// AwayTeamLeagueID
+	AwayTeamLeagueID int64 `json:"away_team_league_id" parquet:"name=away_team_league_id, type=INT64"`
+	// AwayTeamLeagueName
+	AwayTeamLeagueName string `json:"away_team_league_name" parquet:"name=away_team_league_name, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// AwayTeamDivisionID
+	AwayTeamDivisionID int64 `json:"away_team_division_id" parquet:"name=away_team_division_id, type=INT64"`
+	// AwayTeamDivisionName
+	AwayTeamDivisionName string `json:"away_team_division_name" parquet:"name=away_team_division_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayTeamID is the away team's ID e.g. 8
 	AwayTeamID int64 `json:"away_team_id" parquet:"name=away_team_id, type=INT64"`
 	// AwayTeamAbbreviation is the abbreviation of the away team's name e.g. LAA
@@ -48,6 +70,8 @@ type Matchup struct {
 	AwayStartingPitcherID *int64 `json:"away_starting_pitcher_id" parquet:"name=away_starting_pitcher_id, type=INT64"`
 	// AwayStartingPitcher the name of the away team's starting pitcher
 	AwayStartingPitcher *string `json:"away_starting_pitcher" parquet:"name=away_starting_pitcher, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// AwayStartingPitcherPitchHand - R for right, L for left
+	AwayStartingPitcherPitchHand *string `json:"away_starting_pitcher_pitch_hand" parquet:"name=away_starting_pitcher_pitch_hand, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Loser is an optional team id associated with the loser. Optional because some games could be live a loser will not be determined until the matchup is complete.
 	Loser *int64 `json:"loser" parquet:"name=loser, type=INT64"`
 	// GameType is an abbreviation that indicates the type of event taking place (e.g. "R", "S", "W", etc.)
