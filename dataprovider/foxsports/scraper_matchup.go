@@ -2,6 +2,7 @@ package foxsports
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -247,7 +248,8 @@ func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	log.Printf("%d event(s) fetched\n", nEvents)
 
 	// Parse response payload
-	var errors, skipped int
+	var skipped, errCnt int
+	var outputErr error
 
 	log.Println("Parsing Matchups")
 	for idx, event := range events {
@@ -258,15 +260,16 @@ func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
 		}
 		parsedEvent, err := s.ParseMatchup(event)
 		if err != nil {
-			log.Println(fmt.Errorf("WARNING: Error identified at event #%d - %w", idx, err))
-			errors += 1
+			errCnt += 1
+			outputErr = errors.Join(outputErr, fmt.Errorf("error identified at event #%d - %w", idx, err))
 			continue
 		}
 		matchups = append(matchups, parsedEvent)
 	}
 	output.Output = matchups
+	output.Error = outputErr
 	output.Context = sportscrape.MatchupContext{
-		Errors: errors,
+		Errors: errCnt,
 		Skips:  skipped,
 	}
 	return output

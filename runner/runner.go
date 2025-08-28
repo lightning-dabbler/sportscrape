@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"runtime"
@@ -90,12 +91,13 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	close(eventData)
 
 	// Collect results
-	var errors int
+	var errCnt int
 	var output []interface{}
+	var outputErr error
 	for ow := range eventData {
 		if ow.Error != nil {
-			errors += 1
-			log.Println(fmt.Errorf("issue Scraping %v (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
+			errCnt += 1
+			outputErr = errors.Join(outputErr, fmt.Errorf("issue Scraping %v (%s vs %s) at url: '%s': %w", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, ow.Context.URL, ow.Error))
 			continue
 		} else {
 			log.Printf("%v (%s vs %s) scraped for %v record(s) for %s at url: %s\n", ow.Context.EventID, ow.Context.AwayTeam, ow.Context.HomeTeam, len(ow.Output), t.Scraper.Feed(), ow.Context.URL)
@@ -103,8 +105,9 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 		output = append(output, ow.Output...)
 	}
 	outputCount := len(output)
-	if errors != 0 {
-		return nil, fmt.Errorf("error: %d/%d events errored out", errors, matchupsCount)
+	if errCnt != 0 {
+		log.Printf("error: %d/%d events errored out\n", errCnt, matchupsCount)
+		return nil, outputErr
 	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of %s with %d record(s) completed in %s\n", t.Scraper.Feed(), outputCount, diff)
@@ -166,6 +169,9 @@ func (r *MatchupRunner) Run() ([]interface{}, error) {
 	r.Scraper.Init()
 	start := time.Now().UTC()
 	ou := r.Scraper.Scrape()
+	if ou.Context.Errors != 0 {
+		log.Printf("error: %d event(s) errored out\n", ou.Context.Errors)
+	}
 	if ou.Error != nil {
 		return nil, ou.Error
 	}
@@ -174,9 +180,5 @@ func (r *MatchupRunner) Run() ([]interface{}, error) {
 	if ou.Context.Skips != 0 {
 		log.Printf("WARNING: %d event(s) skipped\n", ou.Context.Skips)
 	}
-	if ou.Context.Errors != 0 {
-		return ou.Output, fmt.Errorf("error: %d event(s) errored out", ou.Context.Errors)
-	}
-
 	return ou.Output, nil
 }
