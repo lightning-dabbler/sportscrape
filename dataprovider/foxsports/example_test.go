@@ -319,6 +319,10 @@ func ExampleMLBProbableStartingPitcherScraper() {
 		panic(err)
 	}
 	for _, event := range probablePitchers {
-		fmt.Printf("%#v\n", event.(model.MLBProbableStartingPitcher))
+		jsonBytes, err := json.MarshalIndent(event, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }

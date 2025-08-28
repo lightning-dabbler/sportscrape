@@ -23,7 +23,9 @@ type MLBProbableStartingPitcher struct {
 	// StartingPitcher the name of the team's starting pitcher
 	StartingPitcher string `json:"starting_pitcher" parquet:"name=starting_pitcher, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// StartingPitcherRecord is the record of the team's starting pitcher
-	StartingPitcherRecord string `json:"starting_pitcher_record" parquet:"name=starting_pitcher_record, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// Please note: the API does not provide PIT starting pitcher record! This field is not reliable for PIT calculations.
+	StartingPitcherRecord *string `json:"starting_pitcher_record" parquet:"name=starting_pitcher_record, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// StartingPitcherERA is the team's starting pitcher's earned run average - https://www.mlb.com/glossary/standard-stats/earned-run-average
-	StartingPitcherERA float32 `json:"starting_pitcher_era" parquet:"name=starting_pitcher_era, type=FLOAT"`
+	// Please note: the API does not provide PIT starting pitcher ERA! This field is not reliable for PIT calculations.
+	StartingPitcherERA *float32 `json:"starting_pitcher_era" parquet:"name=starting_pitcher_era, type=FLOAT"`
 }

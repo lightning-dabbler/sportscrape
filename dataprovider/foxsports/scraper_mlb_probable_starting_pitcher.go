@@ -124,7 +124,8 @@ func (s *MLBProbableStartingPitcherScraper) era(rawStatline string) (float32, er
 }
 
 func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBProbableStartingPitcher, error) {
-	var name, era, playerid, teamName string
+	var name, playerid, teamName string
+	var era *string
 
 	switch team {
 	case "home":
@@ -172,11 +173,14 @@ func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload
 		probablePitchers.StartingPitcherID = playerID
 
 		// StartingPitcherERA
-		era, err := s.era(era)
-		if err != nil {
-			return nil, err
+		if era != nil {
+			era, err := s.era(*era)
+			if err != nil {
+				return nil, err
+			}
+			probablePitchers.StartingPitcherERA = &era
 		}
-		probablePitchers.StartingPitcherERA = era
+
 		return probablePitchers, nil
 	}
 

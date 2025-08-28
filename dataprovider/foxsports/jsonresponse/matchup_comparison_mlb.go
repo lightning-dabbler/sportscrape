@@ -20,8 +20,8 @@ type MLBProbableStartingPitcher struct {
 			} `json:"tokens"`
 		} `json:"layout"`
 	} `json:"entityLink"`
-	Name      string `json:"name"`         // "name": "T. Skubal"
-	Player    string `json:"imageAltText"` // "imageAltText": "Tarik Skubal"
-	StatLine1 string `json:"statLine1"`    // "statLine1": "4-2"
-	StatLine2 string `json:"statLine2"`    // "statLine2": "2.87 ERA"
+	Name      string  `json:"name"`         // "name": "T. Skubal"
+	Player    string  `json:"imageAltText"` // "imageAltText": "Tarik Skubal"
+	StatLine1 *string `json:"statLine1"`    // "statLine1": "4-2"
+	StatLine2 *string `json:"statLine2"`    // "statLine2": "2.87 ERA"
 }
