@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Chained errors observed in `EventDataRunner` and `MatchupRunner` (#99)
 ### Added
-- Added the following fields to the baseball savant mlb `Matchup` model
+- Added the following fields to the baseball savant mlb `Matchup` model (#100)
     - VenueID
     - VenueName
     - HomeTeamLeagueID
