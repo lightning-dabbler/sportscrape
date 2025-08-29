@@ -18,7 +18,9 @@ var (
 	FSMLBMatchup                 Feed     = Feed(string(FS) + " mlb matchup")
 	FSMLBBattingBoxScore         Feed     = Feed(string(FS) + " mlb batting box score")
 	FSMLBPitchingBoxScore        Feed     = Feed(string(FS) + " mlb pitching box score")
-	FSMLBProbableStartingPitcher Feed     = Feed(string(FS) + " mlb pitching box score")
+	FSMLBProbableStartingPitcher Feed     = Feed(string(FS) + " mlb probable starting pitcher")
+	FSMLBOddsTotal               Feed     = Feed(string(FS) + " mlb odds total")
+	FSMLBOddsMoneyLine           Feed     = Feed(string(FS) + " mlb odds money line")
 	FSNFLMatchup                 Feed     = Feed(string(FS) + " nfl matchup")
 	FSNCAABMatchup               Feed     = Feed(string(FS) + " ncaab matchup")
 

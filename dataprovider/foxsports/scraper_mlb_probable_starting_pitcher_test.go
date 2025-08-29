@@ -44,12 +44,12 @@ func TestMLBProbableStartingPitcherScraper(t *testing.T) {
 	awayStartingPitcher := probablePitchers[1].(model.MLBProbableStartingPitcher)
 
 	assert.Equal(t, "Jack Flaherty", homeStartingPitcher.StartingPitcher)
-	assert.Equal(t, "1-2", homeStartingPitcher.StartingPitcherRecord)
-	assert.Equal(t, float32(7.36), homeStartingPitcher.StartingPitcherERA)
+	assert.Equal(t, "1-2", *homeStartingPitcher.StartingPitcherRecord)
+	assert.Equal(t, float32(7.36), *homeStartingPitcher.StartingPitcherERA)
 	assert.Equal(t, int64(8249), homeStartingPitcher.StartingPitcherID)
 
 	assert.Equal(t, "Gerrit Cole", awayStartingPitcher.StartingPitcher)
-	assert.Equal(t, "1-0", awayStartingPitcher.StartingPitcherRecord)
-	assert.Equal(t, float32(2.17), awayStartingPitcher.StartingPitcherERA)
+	assert.Equal(t, "1-0", *awayStartingPitcher.StartingPitcherRecord)
+	assert.Equal(t, float32(2.17), *awayStartingPitcher.StartingPitcherERA)
 	assert.Equal(t, int64(5539), awayStartingPitcher.StartingPitcherID)
 }

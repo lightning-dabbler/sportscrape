@@ -76,6 +76,8 @@ func main() {
 | https://www.foxsports.com		   | MLB	| Batting Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_batting_box_score_stats.go)||✅|
 | https://www.foxsports.com		   | MLB	| Pitching Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_pitching_box_score_stats.goo)||✅|
 | https://www.foxsports.com		   | MLB	| Probable starting pitcher| Full			  | [model](dataprovider/foxsports/model/mlb_probable_starting_pitcher.go)||✅|
+| https://www.foxsports.com		   | MLB	| Betting Odds Money line| Full			  | [model](dataprovider/foxsports/model/mlb_odds_money_line.go)||✅|
+| https://www.foxsports.com		   | MLB	| Betting Odds Total| Full			  | [model](dataprovider/foxsports/model/mlb_odds_total.go)||✅|
 | https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
 | https://baseballsavant.mlb.com		   | MLB	| Matchup				 | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/matchup.go) ||✅|
