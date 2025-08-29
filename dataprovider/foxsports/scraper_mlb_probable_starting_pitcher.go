@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	probablePitcherTitle = "PROBABLE STARTING PITCHERS"
-	regexExpr            = `^(\d+\.\d+)\sERA`
+	probablePitcherTitle    = "PROBABLE STARTING PITCHERS"
+	probablePitcherEraRegex = `^(\d+\.\d+)\sERA`
 )
 
-var re = regexp.MustCompile(regexExpr)
+var probablePitcherEraRe = regexp.MustCompile(probablePitcherEraRegex)
 
 // MLBProbableStartingPitcherScraperOption defines a configuration option for the scraper
 type MLBProbableStartingPitcherScraperOption func(*MLBProbableStartingPitcherScraper)
@@ -112,9 +112,9 @@ func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) sportscr
 }
 
 func (s *MLBProbableStartingPitcherScraper) era(rawStatline string) (float32, error) {
-	matches := re.FindStringSubmatch(rawStatline)
+	matches := probablePitcherEraRe.FindStringSubmatch(rawStatline)
 	if len(matches) != 2 {
-		return 0, fmt.Errorf("%s does not match ERA pattern %s in featuredPairing", rawStatline, regexExpr)
+		return 0, fmt.Errorf("%s does not match ERA pattern %s in featuredPairing", rawStatline, probablePitcherEraRegex)
 	}
 	era, err := util.TextToFloat32(matches[1])
 	if err != nil {
@@ -124,7 +124,8 @@ func (s *MLBProbableStartingPitcherScraper) era(rawStatline string) (float32, er
 }
 
 func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBProbableStartingPitcher, error) {
-	var name, era, playerid, teamName string
+	var name, playerid, teamName string
+	var era *string
 
 	switch team {
 	case "home":
@@ -172,11 +173,14 @@ func (s *MLBProbableStartingPitcherScraper) pitcher(team string, responsePayload
 		probablePitchers.StartingPitcherID = playerID
 
 		// StartingPitcherERA
-		era, err := s.era(era)
-		if err != nil {
-			return nil, err
+		if era != nil {
+			era, err := s.era(*era)
+			if err != nil {
+				return nil, err
+			}
+			probablePitchers.StartingPitcherERA = &era
 		}
-		probablePitchers.StartingPitcherERA = era
+
 		return probablePitchers, nil
 	}
 
