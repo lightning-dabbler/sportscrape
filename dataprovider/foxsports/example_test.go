@@ -344,7 +344,7 @@ func ExampleMLBOddsTotalScraper() {
 		panic(err)
 	}
 
-	// Get starting pitcher data
+	// Get odds total line data
 	eventdatascraper := foxsports.NewMLBOddsTotalScraper()
 	runner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConcurrency(4),
@@ -383,7 +383,7 @@ func ExampleMLBOddsMoneyLineScraper() {
 		panic(err)
 	}
 
-	// Get starting pitcher data
+	// Get odds money line data
 	eventdatascraper := foxsports.NewMLBOddsMoneyLineScraper()
 	runner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConcurrency(4),

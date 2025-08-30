@@ -122,7 +122,7 @@ func (s *MLBOddsMoneyLineScraper) record(matchupModel model.Matchup, responsePay
 			return nil, fmt.Errorf("%d mlb odds money line items identified. expected 2", n)
 		}
 		for _, oddsItem := range bet.Model.Odds {
-			oddsText = oddsItem.Text
+			oddsText = *oddsItem.Text
 			odds, err := util.TextToInt32(oddsText)
 			if err != nil {
 				return nil, err

@@ -119,7 +119,7 @@ func (s *MLBOddsTotalScraper) parseLine(lineText string) (float32, error) {
 }
 
 func (s *MLBOddsTotalScraper) record(matchupModel model.Matchup, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBOddsTotal, error) {
-	var lineText, oddsText string
+	var lineText string
 	var line float32
 	var err error
 	for _, bet := range responsePayload.BetSection.Bets {
@@ -145,18 +145,19 @@ func (s *MLBOddsTotalScraper) record(matchupModel model.Matchup, responsePayload
 		parsedLines := []float32{}
 		for _, oddsItem := range bet.Model.Odds {
 			lineText = oddsItem.SubText
-			oddsText = oddsItem.Text
 			if strings.HasPrefix(lineText, "UNDER") {
 				line, err = s.parseLine(lineText)
 				if err != nil {
 					return nil, err
 				}
 				parsedLines = append(parsedLines, line)
-				odds, err := util.TextToInt32(oddsText)
-				if err != nil {
-					return nil, err
+				if oddsItem.Text != nil {
+					odds, err := util.TextToInt32(*oddsItem.Text)
+					if err != nil {
+						return nil, err
+					}
+					record.UnderOdds = &odds
 				}
-				record.UnderOdds = odds
 
 			} else if strings.HasPrefix(lineText, "OVER") {
 				line, err = s.parseLine(lineText)
@@ -164,11 +165,13 @@ func (s *MLBOddsTotalScraper) record(matchupModel model.Matchup, responsePayload
 					return nil, err
 				}
 				parsedLines = append(parsedLines, line)
-				odds, err := util.TextToInt32(oddsText)
-				if err != nil {
-					return nil, err
+				if oddsItem.Text != nil {
+					odds, err := util.TextToInt32(*oddsItem.Text)
+					if err != nil {
+						return nil, err
+					}
+					record.OverOdds = &odds
 				}
-				record.OverOdds = odds
 
 			} else {
 				return nil, fmt.Errorf("unrecognized prefix in odds total line text %s. expected OVER or UNDER", lineText)
