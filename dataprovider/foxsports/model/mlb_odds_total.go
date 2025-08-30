@@ -23,9 +23,9 @@ type MLBOddsTotal struct {
 	// AwayTeamNameFull is the away team's full name e.g. Los Angeles Angels
 	AwayTeamNameFull string `json:"away_team_name_full" parquet:"name=away_team_name_full, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// OverOdds
-	OverOdds int32 `json:"over_odds" parquet:"name=over_odds, type=INT32"`
+	OverOdds *int32 `json:"over_odds" parquet:"name=over_odds, type=INT32"`
 	// UnderOdds
-	UnderOdds int32 `json:"under_odds" parquet:"name=under_odds, type=INT32"`
+	UnderOdds *int32 `json:"under_odds" parquet:"name=under_odds, type=INT32"`
 	// TotalLine
 	TotalLine float32 `json:"total_line" parquet:"name=total_line, type=FLOAT"`
 }

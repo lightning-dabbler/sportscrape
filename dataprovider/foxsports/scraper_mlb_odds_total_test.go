@@ -42,7 +42,7 @@ func TestMLBOddsTotalScraper(t *testing.T) {
 	assert.Equal(t, n_expected, n_records, "1 odds record")
 	record := odds[0].(model.MLBOddsTotal)
 
-	assert.Equal(t, int32(-101), record.OverOdds)
-	assert.Equal(t, int32(-119), record.UnderOdds)
+	assert.Equal(t, int32(-101), *record.OverOdds)
+	assert.Equal(t, int32(-119), *record.UnderOdds)
 	assert.Equal(t, float32(9), record.TotalLine)
 }
