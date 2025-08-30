@@ -17,9 +17,9 @@ type MLBMatchupComparison struct {
 				Subtitle string `json:"subtitle"` // "subtitle": "RUN LINE" | // "subtitle": "TEAM TO WIN" | // "subtitle": "TOTAL"
 				MainText string `json:"mainText"` // "mainText": "The Rays must win by 2 runs or more to cover the run line"
 				Odds     []struct {
-					Text    string `json:"text"`    // "text": "-108"
-					SubText string `json:"subText"` // "subText": "CLE" | // "subText": "OVER 9"
-					Success *bool  `json:"success"` // "success": true
+					Text    *string `json:"text"`    // "text": "-108"
+					SubText string  `json:"subText"` // "subText": "CLE" | // "subText": "OVER 9"
+					Success *bool   `json:"success"` // "success": true
 				} `json:"odds"`
 			} `json:"model"`
 		} `json:"bets"`
