@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.15.1] - 2025-08-29
 ### Fixed
 -  foxsports `MLBOddsTotal.OverOdds` and `MLBOddsTotal.UnderOdds` are now optional because it's not always available for all events (#103)
 ## [0.15.0] - 2025-08-28
