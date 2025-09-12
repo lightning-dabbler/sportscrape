@@ -50,6 +50,11 @@ var (
 	BaseballSavantMLBFieldingBoxScore Feed     = Feed(string(BaseballSavant) + " mlb fielding box score")
 	BaseballSavantMLBPlayByPlay       Feed     = Feed(string(BaseballSavant) + " mlb play by play")
 
+	// ESPN MMA
+	ESPNMMA       Provider = "espn mma"
+	ESPNMMAEvents Feed     = Feed(string(ESPNMMA) + " events")
+	ESPNMMAEvent  Feed     = Feed(string(ESPNMMA) + " event")
+
 	// testing
 	DummyProvider Provider = "dummy provider"
 	DummyFeed     Feed     = Feed(string(DummyProvider) + " dummy feed")
