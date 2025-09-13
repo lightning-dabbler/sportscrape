@@ -1,4 +1,4 @@
-package sportsreference
+package request
 
 import (
 	"encoding/json"
@@ -8,34 +8,32 @@ import (
 	"net/http"
 	"reflect"
 	"time"
-
-	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
-type JsonScraper[T any] struct {
+type JsonRetriever[T any] struct {
 	// Timeout is the context timeout for Chrome operations
 	Timeout time.Duration
 	// Debug enables verbose logging of Chrome operations when true
 	Debug bool
 }
 
-func (s JsonScraper[T]) Init() {
+func (s JsonRetriever[T]) Init() {
 	if s.Timeout == 0 {
 		log.Fatalln("Timeout needs to be > 0")
 	}
 }
 
 // RetrieveBytes retrieves a []byte slice from the specified URL.
-func (s JsonScraper[T]) RetrieveBytes(url string) (*[]byte, error) {
-	var retrieveOptions []request.RetrieverOption
+func (s JsonRetriever[T]) RetrieveBytes(url string) (*[]byte, error) {
+	var retrieveOptions []RetrieverOption
 	// Only add the timeout option if it's non-zero
 	if s.Timeout != 0 {
-		retrieveOptions = append(retrieveOptions, request.WithTimeout(s.Timeout))
+		retrieveOptions = append(retrieveOptions, WithTimeout(s.Timeout))
 	}
 
 	// Add debug option
 	if s.Debug {
-		retrieveOptions = append(retrieveOptions, request.WithDebug(s.Debug))
+		retrieveOptions = append(retrieveOptions, WithDebug(s.Debug))
 	}
 
 	resp, err := http.Get(url)
@@ -56,7 +54,7 @@ func (s JsonScraper[T]) RetrieveBytes(url string) (*[]byte, error) {
 
 // HydrateModel takes a []byte slice and unmarshals it into a model struct.
 // The model struct type is defined in the generic type T.
-func (s JsonScraper[T]) HydrateModel(payload []byte) (*T, error) {
+func (s JsonRetriever[T]) HydrateModel(payload []byte) (*T, error) {
 	var model T
 
 	err := json.Unmarshal(payload, &model)
@@ -72,7 +70,7 @@ func (s JsonScraper[T]) HydrateModel(payload []byte) (*T, error) {
 }
 
 // RetrieveModel retrieves a model struct from the specified URL.
-func (s JsonScraper[T]) RetrieveModel(url string) (*T, error) {
+func (s JsonRetriever[T]) RetrieveModel(url string) (*T, error) {
 	body, err := s.RetrieveBytes(url)
 	if err != nil {
 		return nil, err

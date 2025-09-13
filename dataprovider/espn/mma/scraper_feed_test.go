@@ -9,9 +9,7 @@ import (
 
 // Example for nba.MatchupRunner
 func TestEventsDataScraper(T *testing.T) {
-	scraper := ESPNMMAEventsFeedScraper{
-		Year: "2024",
-	}
+	scraper := espnScraperFeed{}
 
 	// Test Retrieving the model for a single year
 	model, err := scraper.Scrape("2024")

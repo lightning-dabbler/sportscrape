@@ -51,9 +51,8 @@ var (
 	BaseballSavantMLBPlayByPlay       Feed     = Feed(string(BaseballSavant) + " mlb play by play")
 
 	// ESPN MMA
-	ESPNMMA       Provider = "espn mma"
-	ESPNMMAEvents Feed     = Feed(string(ESPNMMA) + " events")
-	ESPNMMAEvent  Feed     = Feed(string(ESPNMMA) + " event")
+	ESPNMMA         Provider = "espn mma"
+	ESPNMMAMatchups Feed     = Feed(string(ESPNMMA) + " matchups")
 
 	// testing
 	DummyProvider Provider = "dummy provider"

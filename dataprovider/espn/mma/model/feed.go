@@ -16,7 +16,7 @@ type ESPNMMAEvent struct {
 	}
 }
 
-type ESPNMMAEventsFeed struct {
+type ESPNMMAFeed struct {
 	Raw    json.RawMessage `json:"-"`
 	League struct {
 		ID   string `json:"id"`
@@ -27,7 +27,7 @@ type ESPNMMAEventsFeed struct {
 }
 
 // filter events where link is not empty
-func (f *ESPNMMAEventsFeed) FilterScrapeableEvents() []ESPNMMAEvent {
+func (f *ESPNMMAFeed) FilterScrapeableEvents() []ESPNMMAEvent {
 	var events []ESPNMMAEvent
 	for _, event := range f.Events {
 		for _, e := range event {
