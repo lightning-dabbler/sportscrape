@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
-	"github.com/lightning-dabbler/sportscrape/util/request"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 )
 
 const ESPNMMAEventsFeedURL = "https://www.espn.com/mma/schedule/_/year/%s?_xhr=pageContent"
 
 type espnScraperFeed struct {
-	request.JsonRetriever[model.ESPNMMAFeed]
+	scraper.BaseJsonScraper[model.ESPNMMAFeed]
 }
 
 func (e espnScraperFeed) Scrape(year string) (model *model.ESPNMMAFeed, err error) {

@@ -1,4 +1,4 @@
-package request
+package scraper
 
 import (
 	"encoding/json"
@@ -9,12 +9,12 @@ import (
 	"reflect"
 )
 
-type JsonRetriever[T any] struct{}
+type BaseJsonScraper[T any] struct{}
 
-func (s JsonRetriever[T]) Init() {}
+func (s BaseJsonScraper[T]) Init() {}
 
 // RetrieveBytes retrieves a []byte slice from the specified URL.
-func (s JsonRetriever[T]) RetrieveBytes(url string) (*[]byte, error) {
+func (s BaseJsonScraper[T]) RetrieveBytes(url string) (*[]byte, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -34,7 +34,7 @@ func (s JsonRetriever[T]) RetrieveBytes(url string) (*[]byte, error) {
 
 // HydrateModel takes a []byte slice and unmarshals it into a model struct.
 // The model struct type is defined in the generic type T.
-func (s JsonRetriever[T]) HydrateModel(payload []byte) (*T, error) {
+func (s BaseJsonScraper[T]) HydrateModel(payload []byte) (*T, error) {
 	var model T
 
 	err := json.Unmarshal(payload, &model)
@@ -50,7 +50,7 @@ func (s JsonRetriever[T]) HydrateModel(payload []byte) (*T, error) {
 }
 
 // RetrieveModel retrieves a model struct from the specified URL.
-func (s JsonRetriever[T]) RetrieveModel(url string) (*T, error) {
+func (s BaseJsonScraper[T]) RetrieveModel(url string) (*T, error) {
 	body, err := s.RetrieveBytes(url)
 	if err != nil {
 		return nil, err

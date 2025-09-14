@@ -8,7 +8,6 @@ import (
 	"github.com/chromedp/cdproto/network"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/lightning-dabbler/sportscrape/scraper"
-	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
 // https://www.espn.com/mma/fightcenter/_/id/600040033/league/ufc
@@ -19,7 +18,7 @@ type espnEventDataScraper struct {
 }
 
 func (e espnEventDataScraper) Scrape(id string) (data *model.ESPNEventData, err error) {
-	jsonRetriever := request.JsonRetriever[model.ESPNEventData]{}
+	jsonRetriever := scraper.BaseJsonScraper[model.ESPNEventData]{}
 
 	url := fmt.Sprintf(ESPNMMAEventURL, id)
 	doc, err := e.RetrieveDocument(url, network.Headers{}, "html")
