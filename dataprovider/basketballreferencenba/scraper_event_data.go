@@ -2,13 +2,13 @@ package basketballreferencenba
 
 import (
 	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
-	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 )
 
 type EventDataScraper struct {
-	sportsreference.BaseScraper
+	scraper.BaseScraper
 }
 
 func (e EventDataScraper) Provider() sportscrape.Provider {

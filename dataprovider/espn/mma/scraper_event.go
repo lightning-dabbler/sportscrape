@@ -7,15 +7,15 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/cdproto/network"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 	"github.com/lightning-dabbler/sportscrape/util/request"
-	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 )
 
 // https://www.espn.com/mma/fightcenter/_/id/600040033/league/ufc
 const ESPNMMAEventURL = "https://www.espn.com/mma/fightcenter/_/id/%s/league/ufc"
 
 type espnEventDataScraper struct {
-	sportsreference.BaseScraper
+	scraper.BaseScraper
 }
 
 func (e espnEventDataScraper) Scrape(id string) (data *model.ESPNEventData, err error) {

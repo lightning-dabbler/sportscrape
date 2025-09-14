@@ -6,6 +6,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba/model"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
 	"github.com/xitongsys/parquet-go/types"
@@ -77,7 +78,7 @@ func NewMatchupScraper(options ...MatchupOption) *MatchupScraper {
 
 // MatchupScraper specialized Runner for retrieving NBA matchup information.
 type MatchupScraper struct {
-	sportsreference.BaseScraper
+	scraper.BaseScraper
 	Date string
 }
 

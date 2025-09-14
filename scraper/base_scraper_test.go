@@ -1,6 +1,6 @@
 //go:build unit
 
-package sportsreference
+package scraper
 
 import (
 	"testing"
