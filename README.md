@@ -86,7 +86,7 @@ func main() {
 | https://baseballsavant.mlb.com		 | MLB	   | Pitching box score stats  |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/pitching_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	   | Fielding box score stats  |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/fielding_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	   | Play by play              |        Live, Full			         |        [model](dataprovider/baseballsavantmlb/model/play_by_play.go)         ||✅|
-| https://www.espn.com/mma/     		 | MMMA	  | Stats, Odds, Results      |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
+| https://www.espn.com/mma/     		 | UFC	  | Stats, Odds, Results      |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
 
 ## Supported Formats
 File formats the constructed data models support on export and import.

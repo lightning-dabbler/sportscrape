@@ -7,34 +7,14 @@ import (
 	"log"
 	"net/http"
 	"reflect"
-	"time"
 )
 
-type JsonRetriever[T any] struct {
-	// Timeout is the context timeout for Chrome operations
-	Timeout time.Duration
-	// Debug enables verbose logging of Chrome operations when true
-	Debug bool
-}
+type JsonRetriever[T any] struct{}
 
-func (s JsonRetriever[T]) Init() {
-	if s.Timeout == 0 {
-		log.Fatalln("Timeout needs to be > 0")
-	}
-}
+func (s JsonRetriever[T]) Init() {}
 
 // RetrieveBytes retrieves a []byte slice from the specified URL.
 func (s JsonRetriever[T]) RetrieveBytes(url string) (*[]byte, error) {
-	var retrieveOptions []RetrieverOption
-	// Only add the timeout option if it's non-zero
-	if s.Timeout != 0 {
-		retrieveOptions = append(retrieveOptions, WithTimeout(s.Timeout))
-	}
-
-	// Add debug option
-	if s.Debug {
-		retrieveOptions = append(retrieveOptions, WithDebug(s.Debug))
-	}
 
 	resp, err := http.Get(url)
 	if err != nil {
