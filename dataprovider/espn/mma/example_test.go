@@ -11,11 +11,19 @@ func TestMatchupRunner(T *testing.T) {
 
 	matchupRunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(
-			NewScraperMatchups(2, []string{"2024"}),
+			ESPNMMAMatchupScraper{Year: "2024"},
 		),
 	)
 
 	result, err := matchupRunner.Run()
+	assert.NotEmpty(T, result)
+	assert.NoError(T, err)
+
+	eventRunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerScraper(ESPNMMAFightDetailsScraper{}),
+	)
+
+	result, err = eventRunner.Run(result[0:2]...)
 
 	assert.NotEmpty(T, result)
 	assert.NoError(T, err)
