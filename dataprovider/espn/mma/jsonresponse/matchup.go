@@ -51,12 +51,14 @@ func (f *ESPNMMASchedule) GetScrapableMatchup() []model.Matchup {
 	for _, event := range f.Events {
 		for _, e := range event {
 			if e.Link != "" {
+				eventTime, _ := time.Parse("2006-01-02T15:04Z", e.Date)
+
 				m := model.Matchup{
 					PullTimestamp:        f.PullTime,
 					PullTimestampParquet: f.PullTime.UnixNano() / 1000000,
 					EventID:              e.ID,
-					EventTime:            time.Now(),
-					EventTimeParquet:     f.PullTime.UnixNano() / 1000000,
+					EventTime:            eventTime,
+					EventTimeParquet:     eventTime.UnixNano() / 1000000,
 					LeagueID:             f.League.ID,
 					LeagueName:           f.League.Name,
 					//Date: f,
