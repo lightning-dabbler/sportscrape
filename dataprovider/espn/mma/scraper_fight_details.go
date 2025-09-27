@@ -21,7 +21,7 @@ type ESPNMMAFightDetailsScraper struct {
 }
 
 func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	
+
 	jsonRetriever := scraper.BaseJsonScraper[jsonresponse.ESPNEventData]{}
 
 	m, ok := matchup.(model.Matchup)
@@ -38,6 +38,7 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 			Error: err,
 		}
 	}
+
 	data := &jsonresponse.ESPNEventData{}
 
 	doc.Find("script").Each(func(i int, s *goquery.Selection) {
@@ -49,12 +50,12 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 			payload := []byte(parts[1][0 : len(parts[1])-1])
 			result, err := jsonRetriever.HydrateModel(payload)
 			if err == nil {
-
 				data = result
 			}
 		}
 	})
-
+	
+	data.PullTime = time.Now()
 	fights := data.GetFightDetails()
 
 	out := make([]interface{}, 0, len(fights))

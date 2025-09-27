@@ -1,8 +1,14 @@
 package model
 
+import "time"
+
 type FightDetails struct {
-	ID                   string `json:"id" parquet:"name=id, type=BYTE_ARRAY, convertedtype=UTF8"`
-	NTE                  string `json:"nte" parquet:"name=nte, type=BYTE_ARRAY, convertedtype=UTF8"`
+	ID  string `json:"id" parquet:"name=id, type=BYTE_ARRAY, convertedtype=UTF8"`
+	NTE string `json:"nte" parquet:"name=nte, type=BYTE_ARRAY, convertedtype=UTF8"`
+	// PullTimestamp is the fetch timestamp for when the request was made to the API
+	PullTimestamp time.Time `json:"pull_timestamp"`
+	// PullTimestampParquet is the fetch timestamp (in milliseconds)
+	PullTimestampParquet int64  `json:"-" parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
 	StatusID             string `json:"status_id" parquet:"name=status_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	StatusState          string `json:"status_state" parquet:"name=status_state, type=BYTE_ARRAY, convertedtype=UTF8"`
 	StatusDetail         string `json:"status_detail" parquet:"name=status_detail, type=BYTE_ARRAY, convertedtype=UTF8"`

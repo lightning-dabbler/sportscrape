@@ -23,7 +23,7 @@ type ESPNMMAEvent struct {
 }
 
 type ESPNMMASchedule struct {
-	PullTime time.Time       `json:"pull_time"`
+	PullTime time.Time       `json:"-"`
 	Raw      json.RawMessage `json:"-"`
 	League   struct {
 		ID   string `json:"id"`

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"reflect"
 
 	"github.com/lightning-dabbler/sportscrape/util/request"

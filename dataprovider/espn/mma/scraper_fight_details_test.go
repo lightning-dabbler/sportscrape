@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMatchupScraper(T *testing.T) {
+func TestESPNMMAFightDetailsScraper(T *testing.T) {
 	scraper := ESPNMMAFightDetailsScraper{}
 	mockTime := time.Now()
 	matchup := model.Matchup{
@@ -24,8 +24,12 @@ func TestMatchupScraper(T *testing.T) {
 	for _, untyped := range result.Output {
 		fight := (untyped).(model.FightDetails)
 		if fight.ID == "401630119" {
+			fight.PullTimestamp = time.Time{}
+			fight.PullTimestampParquet = 0
 			assert.Equal(T,
 				model.FightDetails{
+					PullTimestamp:                    time.Time{},
+					PullTimestampParquet:             0,
 					ID:                               "401630119",
 					NTE:                              "Flyweight - Main Event",
 					StatusID:                         "3",

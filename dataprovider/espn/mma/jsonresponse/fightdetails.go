@@ -2,8 +2,10 @@ package jsonresponse
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 type Fighter struct {
@@ -107,8 +109,9 @@ type EventMatchup struct {
 }
 
 type ESPNEventData struct {
-	Raw  json.RawMessage `json:"-"`
-	Page struct {
+	Raw      json.RawMessage `json:"-"`
+	PullTime time.Time       `json:"-"`
+	Page     struct {
 		Content struct {
 			GamePackage struct {
 				CardSegs []struct {
@@ -123,6 +126,8 @@ func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
 	for _, seg := range e.Page.Content.GamePackage.CardSegs {
 		for _, match := range seg.Matches {
 			m := model.FightDetails{
+				PullTimestamp:        e.PullTime,
+				PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(e.PullTime, true),
 				ID:                   match.ID,
 				NTE:                  match.NTE,
 				StatusID:             match.Status.ID,

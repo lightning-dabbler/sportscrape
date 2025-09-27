@@ -2,6 +2,7 @@ package mma
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/jsonresponse"
@@ -29,7 +30,7 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {
 			Error: err,
 		}
 	}
-
+	jsonModel.PullTime = time.Now()
 	matchups := jsonModel.GetScrapableMatchup()
 	output := make([]interface{}, 0, len(matchups))
 	for _, matchup := range matchups {
