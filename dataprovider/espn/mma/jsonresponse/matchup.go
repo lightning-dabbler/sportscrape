@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 type ESPNMMAEvent struct {
@@ -55,10 +56,10 @@ func (f *ESPNMMASchedule) GetScrapableMatchup() []model.Matchup {
 
 				m := model.Matchup{
 					PullTimestamp:        f.PullTime,
-					PullTimestampParquet: f.PullTime.UnixNano() / 1000000,
+					PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(f.PullTime, true),
 					EventID:              e.ID,
 					EventTime:            eventTime,
-					EventTimeParquet:     eventTime.UnixNano() / 1000000,
+					EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(eventTime, true),
 					LeagueID:             f.League.ID,
 					LeagueName:           f.League.Name,
 					//Date: f,

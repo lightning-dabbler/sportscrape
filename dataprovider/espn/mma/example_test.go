@@ -1,31 +1,60 @@
-package mma
+package mma_test
 
 import (
-	"testing"
+	"encoding/json"
+	"fmt"
+	"log"
 
+	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma"
 	"github.com/lightning-dabbler/sportscrape/runner"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestMatchupRunner(T *testing.T) {
+func ExampleESPNMMAMatchupScraper() {
+	matchupRunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(
+			mma.ESPNMMAMatchupScraper{Year: "2024"},
+		),
+	)
+
+	matchups, err := matchupRunner.Run()
+	if err != nil {
+		panic(err)
+	}
+	for _, matchup := range matchups {
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
+
+func ExampleESPNMMAFightDetailsScraper() {
 
 	matchupRunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(
-			ESPNMMAMatchupScraper{Year: "2024"},
+			mma.ESPNMMAMatchupScraper{Year: "2024"},
 		),
 	)
 
 	result, err := matchupRunner.Run()
-	assert.NotEmpty(T, result)
-	assert.NoError(T, err)
+	if err != nil {
+		panic(err)
+	}
 
 	eventRunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(ESPNMMAFightDetailsScraper{}),
+		runner.EventDataRunnerScraper(mma.ESPNMMAFightDetailsScraper{}),
 	)
 
-	result, err = eventRunner.Run(result[0:2]...)
-
-	assert.NotEmpty(T, result)
-	assert.NoError(T, err)
-
+	fightDetails, err := eventRunner.Run(result[0:10]...)
+	if err != nil {
+		panic(err)
+	}
+	for _, matchup := range fightDetails {
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
 }

@@ -1,3 +1,5 @@
+//go:build integration
+
 package mma
 
 import (
@@ -124,9 +126,10 @@ func TestMatchupScraper(T *testing.T) {
 					HomeBetsOddsBySub:                "OFF",
 					HomeBetOddsByPoints:              "OFF"},
 				fight)
-			break
+			return
 		}
 
 	}
+	assert.Fail(T, "Fight not found")
 
 }

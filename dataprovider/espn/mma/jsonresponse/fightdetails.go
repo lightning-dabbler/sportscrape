@@ -119,7 +119,6 @@ type ESPNEventData struct {
 	} `json:"page"`
 }
 
-// ... existing code ...
 func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
 	for _, seg := range e.Page.Content.GamePackage.CardSegs {
 		for _, match := range seg.Matches {

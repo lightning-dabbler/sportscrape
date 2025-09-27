@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+
+	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
 type BaseJsonScraper[T any] struct{}
@@ -16,7 +18,7 @@ func (s BaseJsonScraper[T]) Init() {}
 // RetrieveBytes retrieves a []byte slice from the specified URL.
 func (s BaseJsonScraper[T]) RetrieveBytes(url string) (*[]byte, error) {
 
-	resp, err := http.Get(url)
+	resp, err := request.Get(url)
 	if err != nil {
 
 		return nil, err

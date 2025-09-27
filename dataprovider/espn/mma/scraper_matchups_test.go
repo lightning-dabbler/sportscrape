@@ -1,3 +1,5 @@
+//go:build integration
+
 package mma
 
 import (
@@ -9,8 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Example for nba.MatchupRunner
-func TestEventsDataScraper(T *testing.T) {
+func TestESPNMMMAMatchupScraper(T *testing.T) {
 	scraper := ESPNMMAMatchupScraper{Year: "2024"}
 
 	r := scraper.Scrape()
@@ -40,8 +41,9 @@ func TestEventsDataScraper(T *testing.T) {
 					StatusDetail:           "Final"},
 				matchup,
 			)
+			return
 		}
 
 	}
-
+	assert.Fail(T, "Matchup not found")
 }

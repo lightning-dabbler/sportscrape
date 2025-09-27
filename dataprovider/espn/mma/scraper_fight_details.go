@@ -21,7 +21,7 @@ type ESPNMMAFightDetailsScraper struct {
 }
 
 func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	//TODO implement me
+	
 	jsonRetriever := scraper.BaseJsonScraper[jsonresponse.ESPNEventData]{}
 
 	m, ok := matchup.(model.Matchup)
@@ -85,5 +85,3 @@ func (e ESPNMMAFightDetailsScraper) Feed() sportscrape.Feed {
 func (e ESPNMMAFightDetailsScraper) Provider() sportscrape.Provider {
 	return sportscrape.ESPNMMA
 }
-
-func (e ESPNMMAFightDetailsScraper) Init() {}
