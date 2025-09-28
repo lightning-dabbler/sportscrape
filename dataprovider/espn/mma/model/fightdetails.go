@@ -22,9 +22,9 @@ type FightDetails struct {
 	AwayGender     string `json:"away_gender" parquet:"name=away_gender, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayCountry    string `json:"away_country" parquet:"name=away_country, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayLink       string `json:"away_link" parquet:"name=away_link, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayDamageBody int    `json:"away_damage_body" parquet:"name=away_damage_body, type=INT32"`
-	AwayDamageHead int    `json:"away_damage_head" parquet:"name=away_damage_head, type=INT32"`
-	AwayDamageLegs int    `json:"away_damage_legs" parquet:"name=away_damage_legs, type=INT32"`
+	AwayDamageBody int32  `json:"away_damage_body" parquet:"name=away_damage_body, type=INT32"`
+	AwayDamageHead int32  `json:"away_damage_head" parquet:"name=away_damage_head, type=INT32"`
+	AwayDamageLegs int32  `json:"away_damage_legs" parquet:"name=away_damage_legs, type=INT32"`
 	AwayFirstName  string `json:"away_first_name" parquet:"name=away_first_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayLastName   string `json:"away_last_name" parquet:"name=away_last_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayDisplay    string `json:"away_display_name" parquet:"name=away_display_name, type=BYTE_ARRAY, convertedtype=UTF8"`
@@ -62,7 +62,7 @@ type FightDetails struct {
 	// Away Bets (flattened)
 	AwayBetsProviderID       string `json:"away_bets_provider_id" parquet:"name=away_bets_provider_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayBetsProviderName     string `json:"away_bets_provider_name" parquet:"name=away_bets_provider_name, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayBetsProviderPriority int    `json:"away_bets_provider_priority" parquet:"name=away_bets_provider_priority, type=INT32"`
+	AwayBetsProviderPriority int32  `json:"away_bets_provider_priority" parquet:"name=away_bets_provider_priority, type=INT32"`
 	AwayBetsOddsMoneyLine    string `json:"away_bet_odds_money_line" parquet:"name=away_bet_odds_money_line, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayBetsOddsByKO         string `json:"away_bet_odds_ko" parquet:"name=away_bet_odds_ko, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayBetsOddsBySub        string `json:"away_bet_odds_sub" parquet:"name=away_bet_odds_sub, type=BYTE_ARRAY, convertedtype=UTF8"`
@@ -73,9 +73,9 @@ type FightDetails struct {
 	HomeGender     string `json:"home_gender" parquet:"name=home_gender, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeCountry    string `json:"home_country" parquet:"name=home_country, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeLink       string `json:"home_link" parquet:"name=home_link, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeDamageBody int    `json:"home_damage_body" parquet:"name=home_damage_body, type=INT32"`
-	HomeDamageHead int    `json:"home_damage_head" parquet:"name=home_damage_head, type=INT32"`
-	HomeDamageLegs int    `json:"home_damage_legs" parquet:"name=home_damage_legs, type=INT32"`
+	HomeDamageBody int32  `json:"home_damage_body" parquet:"name=home_damage_body, type=INT32"`
+	HomeDamageHead int32  `json:"home_damage_head" parquet:"name=home_damage_head, type=INT32"`
+	HomeDamageLegs int32  `json:"home_damage_legs" parquet:"name=home_damage_legs, type=INT32"`
 	HomeFirstName  string `json:"home_first_name" parquet:"name=home_first_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeLastName   string `json:"home_last_name" parquet:"name=home_last_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeDisplay    string `json:"home_display_name" parquet:"name=home_display_name, type=BYTE_ARRAY, convertedtype=UTF8"`
@@ -113,7 +113,7 @@ type FightDetails struct {
 	// Home Bets (flattened)
 	HomeBetsProviderID       string `json:"home_bets_provider_id" parquet:"name=home_bets_provider_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeBetsProviderName     string `json:"home_bets_provider_name" parquet:"name=home_bets_provider_name, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeBetsProviderPriority int    `json:"home_bets_provider_priority" parquet:"name=home_bets_provider_priority, type=INT32"`
+	HomeBetsProviderPriority int32  `json:"home_bets_provider_priority" parquet:"name=home_bets_provider_priority, type=INT32"`
 	HomeBetsOddsMoneyLine    string `json:"home_bet_odds_money_line" parquet:"name=home_bet_odds_money_line, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeBetsOddsByKO         string `json:"home_bet_odds_ko" parquet:"name=home_bet_odds_ko, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeBetsOddsBySub        string `json:"home_bet_odds_sub" parquet:"name=home_bet_odds_sub, type=BYTE_ARRAY, convertedtype=UTF8"`

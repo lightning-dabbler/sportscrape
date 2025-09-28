@@ -15,9 +15,9 @@ type Fighter struct {
 	Link      string `json:"lnk"`
 
 	Damage struct {
-		Body int `json:"bdy"`
-		Head int `json:"hd"`
-		Legs int `json:"lgs"`
+		Body int32 `json:"bdy"`
+		Head int32 `json:"hd"`
+		Legs int32 `json:"lgs"`
 	} `json:"dmg"`
 
 	FirstName string `json:"frstNm"`
@@ -30,7 +30,7 @@ type Fighter struct {
 		Provider struct {
 			ID       string `json:"id"` // "58" in sample
 			Name     string `json:"name"`
-			Priority int    `json:"priority"`
+			Priority int32  `json:"priority"`
 			Logos    []struct {
 				Href string   `json:"href"`
 				Rel  []string `json:"rel"`
