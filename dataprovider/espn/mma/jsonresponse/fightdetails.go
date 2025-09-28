@@ -2,6 +2,9 @@ package jsonresponse
 
 import (
 	"encoding/json"
+	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
@@ -123,6 +126,8 @@ type ESPNEventData struct {
 }
 
 func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
+	x := 1
+	_ = x
 	for _, seg := range e.Page.Content.GamePackage.CardSegs {
 		for _, match := range seg.Matches {
 			m := model.FightDetails{
@@ -156,22 +161,23 @@ func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
 				AwayRecord:     match.Away.Record,
 				AwayShortName:  match.Away.ShortName,
 				// Away Stats (flattened)
-				AwayStatsBodyTotal:               match.Away.Stats.Body.Total,
-				AwayStatsBodyValue:               match.Away.Stats.Body.Value,
+				AwayStatsBodyTotal:               strToInt32(match.Away.Stats.Body.Total, "away_body_total"),
+				AwayStatsBodyValue:               strToInt32(match.Away.Stats.Body.Value, "away_body_value"),
 				AwayStatsControl:                 match.Away.Stats.Control,
-				AwayStatsHeadTotal:               match.Away.Stats.Head.Total,
-				AwayStatsHeadValue:               match.Away.Stats.Head.Value,
+				AwayStatsControlSeconds:          minutesStringToSeconds(match.Away.Stats.Control, "away_control_seconds"),
+				AwayStatsHeadTotal:               strToInt32(match.Away.Stats.Head.Total, "away_head_total"),
+				AwayStatsHeadValue:               strToInt32(match.Away.Stats.Head.Value, "away_head_value"),
 				AwayStatsIsPre:                   match.Away.Stats.IsPre,
-				AwayStatsKnockdowns:              match.Away.Stats.Knockdowns,
-				AwayStatsLegsTotal:               match.Away.Stats.Legs.Total,
-				AwayStatsLegsValue:               match.Away.Stats.Legs.Value,
-				AwayStatsSignificantStrikesTotal: match.Away.Stats.SignificantStrikes.Total,
-				AwayStatsSignificantStrikesValue: match.Away.Stats.SignificantStrikes.Value,
-				AwayStatsSubmissionAttempts:      match.Away.Stats.SubmissionAttempts,
-				AwayStatsTakedownsTotal:          match.Away.Stats.Takedowns.Total,
-				AwayStatsTakedownsValue:          match.Away.Stats.Takedowns.Value,
-				AwayStatsTotalStrikesTotal:       match.Away.Stats.TotalStrikes.Total,
-				AwayStatsTotalStrikesValue:       match.Away.Stats.TotalStrikes.Value,
+				AwayStatsKnockdowns:              strToInt32(match.Away.Stats.Knockdowns, "away_knockdowns"),
+				AwayStatsLegsTotal:               strToInt32(match.Away.Stats.Legs.Total, "away_legs_total"),
+				AwayStatsLegsValue:               strToInt32(match.Away.Stats.Legs.Value, "away_legs_value"),
+				AwayStatsSignificantStrikesTotal: strToInt32(match.Away.Stats.SignificantStrikes.Total, "away_significant_strikes_total"),
+				AwayStatsSignificantStrikesValue: strToInt32(match.Away.Stats.SignificantStrikes.Value, "away_significant_strikes_value"),
+				AwayStatsSubmissionAttempts:      strToInt32(match.Away.Stats.SubmissionAttempts, "away_submission_attempts"),
+				AwayStatsTakedownsTotal:          strToInt32(match.Away.Stats.Takedowns.Total, "away_takedowns_total"),
+				AwayStatsTakedownsValue:          strToInt32(match.Away.Stats.Takedowns.Value, "away_takedowns_value"),
+				AwayStatsTotalStrikesTotal:       strToInt32(match.Away.Stats.TotalStrikes.Total, "away_total_strikes_total"),
+				AwayStatsTotalStrikesValue:       strToInt32(match.Away.Stats.TotalStrikes.Value, "away_total_strikes_value"),
 				AwayStatsOdds:                    match.Away.Stats.Odds,
 				AwayStatsID:                      match.Away.Stats.ID,
 				AwayStatsIsWin:                   match.Away.Stats.IsWin,
@@ -201,22 +207,23 @@ func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
 				HomeRecord:     match.Home.Record,
 				HomeShortName:  match.Home.ShortName,
 				// Home Stats (flattened)
-				HomeStatsBodyTotal:               match.Home.Stats.Body.Total,
-				HomeStatsBodyValue:               match.Home.Stats.Body.Value,
+				HomeStatsBodyTotal:               strToInt32(match.Home.Stats.Body.Total, "home_body_total"),
+				HomeStatsBodyValue:               strToInt32(match.Home.Stats.Body.Value, "home_body_value"),
 				HomeStatsControl:                 match.Home.Stats.Control,
-				HomeStatsHeadTotal:               match.Home.Stats.Head.Total,
-				HomeStatsHeadValue:               match.Home.Stats.Head.Value,
+				HomeStatsControlSeconds:          minutesStringToSeconds(match.Home.Stats.Control, "home_control_seconds"),
+				HomeStatsHeadTotal:               strToInt32(match.Home.Stats.Head.Total, "home_head_total"),
+				HomeStatsHeadValue:               strToInt32(match.Home.Stats.Head.Value, "home_head_value"),
 				HomeStatsIsPre:                   match.Home.Stats.IsPre,
-				HomeStatsKnockdowns:              match.Home.Stats.Knockdowns,
-				HomeStatsLegsTotal:               match.Home.Stats.Legs.Total,
-				HomeStatsLegsValue:               match.Home.Stats.Legs.Value,
-				HomeStatsSignificantStrikesTotal: match.Home.Stats.SignificantStrikes.Total,
-				HomeStatsSignificantStrikesValue: match.Home.Stats.SignificantStrikes.Value,
-				HomeStatsSubmissionAttempts:      match.Home.Stats.SubmissionAttempts,
-				HomeStatsTakedownsTotal:          match.Home.Stats.Takedowns.Total,
-				HomeStatsTakedownsValue:          match.Home.Stats.Takedowns.Value,
-				HomeStatsTotalStrikesTotal:       match.Home.Stats.TotalStrikes.Total,
-				HomeStatsTotalStrikesValue:       match.Home.Stats.TotalStrikes.Value,
+				HomeStatsKnockdowns:              strToInt32(match.Home.Stats.Knockdowns, "home_stats_knockdowns"),
+				HomeStatsLegsTotal:               strToInt32(match.Home.Stats.Legs.Total, "home_Stats_legs_total"),
+				HomeStatsLegsValue:               strToInt32(match.Home.Stats.Legs.Value, "home_stats_legs_values"),
+				HomeStatsSignificantStrikesTotal: strToInt32(match.Home.Stats.SignificantStrikes.Total, "home_stats_significant_strikes_total"),
+				HomeStatsSignificantStrikesValue: strToInt32(match.Home.Stats.SignificantStrikes.Value, "home_Stats_significant_strikes_value"),
+				HomeStatsSubmissionAttempts:      strToInt32(match.Home.Stats.SubmissionAttempts, "home_stats_submission_attempts"),
+				HomeStatsTakedownsTotal:          strToInt32(match.Home.Stats.Takedowns.Total, "home_stats_takedowns_total"),
+				HomeStatsTakedownsValue:          strToInt32(match.Home.Stats.Takedowns.Value, "home_stats_takedowns_value"),
+				HomeStatsTotalStrikesTotal:       strToInt32(match.Home.Stats.TotalStrikes.Total, "home_stats_total_strikes_total"),
+				HomeStatsTotalStrikesValue:       strToInt32(match.Home.Stats.TotalStrikes.Value, "home_stats_total_strikes_value"),
 				HomeStatsOdds:                    match.Home.Stats.Odds,
 				HomeStatsID:                      match.Home.Stats.ID,
 				HomeStatsIsWin:                   match.Home.Stats.IsWin,
@@ -263,4 +270,30 @@ func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
 		}
 	}
 	return
+}
+
+func strToInt32(s, field string) int32 {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		log.Println("Error converting %s for field %s to int: %s", s, field, err)
+		return 0
+	}
+	return int32(i)
+}
+
+func minutesStringToSeconds(str, field string) int32 {
+	splitResult := strings.Split(str, ":")
+	minutes, seconds := splitResult[0], splitResult[1]
+	m, err := strconv.Atoi(minutes)
+	if err != nil {
+		log.Println("Error converting %s for field %s to int: %s", str, field, err)
+		return 0
+	}
+	s, err := strconv.Atoi(seconds)
+	if err != nil {
+		log.Println("Error converting %s for field %s to int: %s", str, field, err)
+		return 0
+	}
+	totalSeconds := m*60 + s
+	return int32(totalSeconds)
 }

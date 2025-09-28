@@ -37,22 +37,23 @@ type FightDetails struct {
 	AwayShortName  string `json:"away_short_name" parquet:"name=away_short_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 
 	// Away Stats (flattened)
-	AwayStatsBodyTotal               string `json:"away_stats_body_total" parquet:"name=away_stats_body_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsBodyValue               string `json:"away_stats_body_value" parquet:"name=away_stats_body_value, type=BYTE_ARRAY, convertedtype=UTF8"`
+	AwayStatsBodyTotal               int32  `json:"away_stats_body_total" parquet:"name=away_stats_body_total, type=INT32"`
+	AwayStatsBodyValue               int32  `json:"away_stats_body_value" parquet:"name=away_stats_body_value,type=INT32"`
 	AwayStatsControl                 string `json:"away_stats_control" parquet:"name=away_stats_control, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsHeadTotal               string `json:"away_stats_head_total" parquet:"name=away_stats_head_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsHeadValue               string `json:"away_stats_head_value" parquet:"name=away_stats_head_value, type=BYTE_ARRAY, convertedtype=UTF8"`
+	AwayStatsControlSeconds          int32  `json:"away_stats_control_seconds" parquet:"name=away_stats_control_seconds, type=INT32"`
+	AwayStatsHeadTotal               int32  `json:"away_stats_head_total" parquet:"name=away_stats_head_total, type=INT32"`
+	AwayStatsHeadValue               int32  `json:"away_stats_head_value" parquet:"name=away_stats_head_value, type=INT32"`
 	AwayStatsIsPre                   bool   `json:"away_stats_is_pre" parquet:"name=away_stats_is_pre, type=BOOLEAN"`
-	AwayStatsKnockdowns              string `json:"away_stats_knockdowns" parquet:"name=away_stats_knockdowns, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsLegsTotal               string `json:"away_stats_legs_total" parquet:"name=away_stats_legs_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsLegsValue               string `json:"away_stats_legs_value" parquet:"name=away_stats_legs_value, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsSignificantStrikesTotal string `json:"away_stats_significant_strikes_total" parquet:"name=away_stats_significant_strikes_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsSignificantStrikesValue string `json:"away_stats_significant_strikes_value" parquet:"name=away_stats_significant_strikes_value, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsSubmissionAttempts      string `json:"away_stats_submission_attempts" parquet:"name=away_stats_submission_attempts, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsTakedownsTotal          string `json:"away_stats_takedowns_total" parquet:"name=away_stats_takedowns_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsTakedownsValue          string `json:"away_stats_takedowns_value" parquet:"name=away_stats_takedowns_value, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsTotalStrikesTotal       string `json:"away_stats_total_strikes_total" parquet:"name=away_stats_total_strikes_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsTotalStrikesValue       string `json:"away_stats_total_strikes_value" parquet:"name=away_stats_total_strikes_value, type=BYTE_ARRAY, convertedtype=UTF8"`
+	AwayStatsKnockdowns              int32  `json:"away_stats_knockdowns" parquet:"name=away_stats_knockdowns, type=INT32"`
+	AwayStatsLegsTotal               int32  `json:"away_stats_legs_total" parquet:"name=away_stats_legs_total, type=INT32"`
+	AwayStatsLegsValue               int32  `json:"away_stats_legs_value" parquet:"name=away_stats_legs_value, type=INT32"`
+	AwayStatsSignificantStrikesTotal int32  `json:"away_stats_significant_strikes_total" parquet:"name=away_stats_significant_strikes_total, type=INT32"`
+	AwayStatsSignificantStrikesValue int32  `json:"away_stats_significant_strikes_value" parquet:"name=away_stats_significant_strikes_value, type=INT32"`
+	AwayStatsSubmissionAttempts      int32  `json:"away_stats_submission_attempts" parquet:"name=away_stats_submission_attempts,  type=INT32"`
+	AwayStatsTakedownsTotal          int32  `json:"away_stats_takedowns_total" parquet:"name=away_stats_takedowns_total, type=INT32"`
+	AwayStatsTakedownsValue          int32  `json:"away_stats_takedowns_value" parquet:"name=away_stats_takedowns_value,  type=INT32"`
+	AwayStatsTotalStrikesTotal       int32  `json:"away_stats_total_strikes_total" parquet:"name=away_stats_total_strikes_total,  type=INT32"`
+	AwayStatsTotalStrikesValue       int32  `json:"away_stats_total_strikes_value" parquet:"name=away_stats_total_strikes_value,  type=INT32"`
 	AwayStatsOdds                    string `json:"away_stats_odds" parquet:"name=away_stats_odds, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayStatsID                      string `json:"away_stats_id" parquet:"name=away_stats_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	AwayStatsIsWin                   bool   `json:"away_stats_is_win" parquet:"name=away_stats_is_win, type=BOOLEAN"`
@@ -88,22 +89,23 @@ type FightDetails struct {
 	HomeShortName  string `json:"home_short_name" parquet:"name=home_short_name, type=BYTE_ARRAY, convertedtype=UTF8"`
 
 	// Home Stats (flattened)
-	HomeStatsBodyTotal               string `json:"home_stats_body_total" parquet:"name=home_stats_body_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsBodyValue               string `json:"home_stats_body_value" parquet:"name=home_stats_body_value, type=BYTE_ARRAY, convertedtype=UTF8"`
+	HomeStatsBodyTotal               int32  `json:"home_stats_body_total" parquet:"name=home_stats_body_total, type=INT32"`
+	HomeStatsBodyValue               int32  `json:"home_stats_body_value" parquet:"name=home_stats_body_value, type=INT32"`
 	HomeStatsControl                 string `json:"home_stats_control" parquet:"name=home_stats_control, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsHeadTotal               string `json:"home_stats_head_total" parquet:"name=home_stats_head_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsHeadValue               string `json:"home_stats_head_value" parquet:"name=home_stats_head_value, type=BYTE_ARRAY, convertedtype=UTF8"`
+	HomeStatsControlSeconds          int32  `json:"home_stats_control_seconds" parquet:"name=home_stats_control_seconds, type=INT32"`
+	HomeStatsHeadTotal               int32  `json:"home_stats_head_total" parquet:"name=home_stats_head_total, type=INT32"`
+	HomeStatsHeadValue               int32  `json:"home_stats_head_value" parquet:"name=home_stats_head_value, type=INT32"`
 	HomeStatsIsPre                   bool   `json:"home_stats_is_pre" parquet:"name=home_stats_is_pre, type=BOOLEAN"`
-	HomeStatsKnockdowns              string `json:"home_stats_knockdowns" parquet:"name=home_stats_knockdowns, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsLegsTotal               string `json:"home_stats_legs_total" parquet:"name=home_stats_legs_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsLegsValue               string `json:"home_stats_legs_value" parquet:"name=home_stats_legs_value, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsSignificantStrikesTotal string `json:"home_stats_significant_strikes_total" parquet:"name=home_stats_significant_strikes_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsSignificantStrikesValue string `json:"home_stats_significant_strikes_value" parquet:"name=home_stats_significant_strikes_value, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsSubmissionAttempts      string `json:"home_stats_submission_attempts" parquet:"name=home_stats_submission_attempts, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsTakedownsTotal          string `json:"home_stats_takedowns_total" parquet:"name=home_stats_takedowns_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsTakedownsValue          string `json:"home_stats_takedowns_value" parquet:"name=home_stats_takedowns_value, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsTotalStrikesTotal       string `json:"home_stats_total_strikes_total" parquet:"name=home_stats_total_strikes_total, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsTotalStrikesValue       string `json:"home_stats_total_strikes_value" parquet:"name=home_stats_total_strikes_value, type=BYTE_ARRAY, convertedtype=UTF8"`
+	HomeStatsKnockdowns              int32  `json:"home_stats_knockdowns" parquet:"name=home_stats_knockdowns, type=INT32"`
+	HomeStatsLegsTotal               int32  `json:"home_stats_legs_total" parquet:"name=home_stats_legs_total, type=INT32"`
+	HomeStatsLegsValue               int32  `json:"home_stats_legs_value" parquet:"name=home_stats_legs_value, type=INT32"`
+	HomeStatsSignificantStrikesTotal int32  `json:"home_stats_significant_strikes_total" parquet:"name=home_stats_significant_strikes_total, type=INT32"`
+	HomeStatsSignificantStrikesValue int32  `json:"home_stats_significant_strikes_value" parquet:"name=home_stats_significant_strikes_value, type=INT32"`
+	HomeStatsSubmissionAttempts      int32  `json:"home_stats_submission_attempts" parquet:"name=home_stats_submission_attempts, type=INT32"`
+	HomeStatsTakedownsTotal          int32  `json:"home_stats_takedowns_total" parquet:"name=home_stats_takedowns_total, type=INT32"`
+	HomeStatsTakedownsValue          int32  `json:"home_stats_takedowns_value" parquet:"name=home_stats_takedowns_value, type=INT32"`
+	HomeStatsTotalStrikesTotal       int32  `json:"home_stats_total_strikes_total" parquet:"name=home_stats_total_strikes_total, type=INT32"`
+	HomeStatsTotalStrikesValue       int32  `json:"home_stats_total_strikes_value" parquet:"name=home_stats_total_strikes_value, type=INT32"`
 	HomeStatsOdds                    string `json:"home_stats_odds" parquet:"name=home_stats_odds, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeStatsID                      string `json:"home_stats_id" parquet:"name=home_stats_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	HomeStatsIsWin                   bool   `json:"home_stats_is_win" parquet:"name=home_stats_is_win, type=BOOLEAN"`
