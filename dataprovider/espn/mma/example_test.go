@@ -28,7 +28,7 @@ func ExampleESPNMMAMatchupScraper() {
 		fmt.Println(string(jsonBytes))
 	}
 }
-
+// Example for mma.ESPNMMAFightDetailsScraper
 func ExampleESPNMMAFightDetailsScraper() {
 
 	matchupRunner := runner.NewMatchupRunner(
