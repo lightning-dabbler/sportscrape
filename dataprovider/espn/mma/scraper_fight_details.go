@@ -56,7 +56,8 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 	})
 
 	data.PullTime = time.Now()
-	fights := data.GetFightDetails()
+
+	fights := data.GetFightDetails(m)
 
 	out := make([]interface{}, 0, len(fights))
 	for _, fight := range fights {

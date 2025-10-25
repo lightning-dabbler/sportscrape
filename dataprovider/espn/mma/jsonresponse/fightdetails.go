@@ -126,14 +126,15 @@ type ESPNEventData struct {
 	} `json:"page"`
 }
 
-func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
-	x := 1
-	_ = x
+func (e ESPNEventData) GetFightDetails(event model.Matchup) (matchups []model.FightDetails) {
 	for _, seg := range e.Page.Content.GamePackage.CardSegs {
 		for _, match := range seg.Matches {
 			m := model.FightDetails{
 				PullTimestamp:        e.PullTime,
 				PullTimestampParquet: types.TimeToTIMESTAMP_MILLIS(e.PullTime, true),
+				EventID:              event.EventID,
+				EventTime:            event.EventTime,
+				EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(event.EventTime, true),
 				ID:                   match.ID,
 				NTE:                  match.NTE,
 				StatusID:             match.Status.ID,

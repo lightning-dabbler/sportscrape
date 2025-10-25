@@ -8,6 +8,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/stretchr/testify/assert"
+	"github.com/xitongsys/parquet-go/types"
 )
 
 func int32ptr(i int32) *int32 {
@@ -18,10 +19,11 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 	scraper := ESPNMMAFightDetailsScraper{}
 	mockTime := time.Now()
 	matchup := model.Matchup{
-		PullTimestamp: mockTime,
-		EventID:       "600041054",
-		EventTime:     mockTime,
-		LeagueName:    "ufc",
+		PullTimestamp:    mockTime,
+		EventID:          "600041054",
+		EventTime:        mockTime,
+		EventTimeParquet: types.TimeToTIMESTAMP_MILLIS(mockTime, true),
+		LeagueName:       "ufc",
 	}
 	result := scraper.Scrape(matchup)
 	assert.NoError(T, result.Error)
@@ -35,6 +37,9 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 				model.FightDetails{
 					PullTimestamp:                    time.Time{},
 					PullTimestampParquet:             0,
+					EventID:                          "600041054",
+					EventTime:                        mockTime,
+					EventTimeParquet:                 types.TimeToTIMESTAMP_MILLIS(mockTime, true),
 					ID:                               "401630119",
 					NTE:                              "Flyweight - Main Event",
 					StatusID:                         "3",

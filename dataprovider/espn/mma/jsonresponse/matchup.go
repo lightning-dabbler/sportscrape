@@ -25,18 +25,21 @@ type ESPNMMAEvent struct {
 type ESPNMMASchedule struct {
 	PullTime time.Time       `json:"-"`
 	Raw      json.RawMessage `json:"-"`
-	League   struct {
-		ID   string `json:"id"`
-		Name string `json:"name"`
-	} `json:"league"`
-
-	Events map[string][]ESPNMMAEvent `json:"events"`
+	Page     struct {
+		Content struct {
+			League struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			} `json:"league"`
+			Events map[string][]ESPNMMAEvent `json:"events"`
+		} `json:"content"`
+	} `json:"page"`
 }
 
 // filter events where link is not empty
 func (f *ESPNMMASchedule) FilterScrapeableEvents() []ESPNMMAEvent {
 	var events []ESPNMMAEvent
-	for _, event := range f.Events {
+	for _, event := range f.Page.Content.Events {
 		for _, e := range event {
 			if e.Link != "" {
 				events = append(events, e)
@@ -49,7 +52,7 @@ func (f *ESPNMMASchedule) FilterScrapeableEvents() []ESPNMMAEvent {
 func (f *ESPNMMASchedule) GetScrapableMatchup() []model.Matchup {
 	var events []model.Matchup
 
-	for _, event := range f.Events {
+	for _, event := range f.Page.Content.Events {
 		for _, e := range event {
 			if e.Link != "" {
 				eventTime, _ := time.Parse("2006-01-02T15:04Z", e.Date)
@@ -60,8 +63,8 @@ func (f *ESPNMMASchedule) GetScrapableMatchup() []model.Matchup {
 					EventID:              e.ID,
 					EventTime:            eventTime,
 					EventTimeParquet:     types.TimeToTIMESTAMP_MILLIS(eventTime, true),
-					LeagueID:             f.League.ID,
-					LeagueName:           f.League.Name,
+					LeagueID:             f.Page.Content.League.ID,
+					LeagueName:           f.Page.Content.League.Name,
 					//Date: f,
 					Completed:              e.Completed,
 					Link:                   e.Link,

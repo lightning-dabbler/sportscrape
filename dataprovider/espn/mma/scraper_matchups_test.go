@@ -12,7 +12,7 @@ import (
 )
 
 func TestESPNMMMAMatchupScraper(T *testing.T) {
-	scraper := ESPNMMAMatchupScraper{Year: "2024"}
+	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc"}
 
 	r := scraper.Scrape()
 	assert.NoError(T, r.Error)
@@ -29,8 +29,8 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 					EventID:                "600039853",
 					EventTime:              time.Date(2024, time.September, 14, 23, 30, 0, 0, time.UTC),
 					EventTimeParquet:       1726356600000,
-					LeagueID:               "3301",
-					LeagueName:             "MMA",
+					LeagueID:               "3321",
+					LeagueName:             "Ultimate Fighting Championship",
 					Date:                   "",
 					Completed:              true,
 					Link:                   "/mma/fightcenter/_/id/600039853/league/ufc",
