@@ -8,7 +8,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
-
+// Example for mma.ESPNMMAMatchupScraper
 func ExampleESPNMMAMatchupScraper() {
 	matchupRunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(
@@ -28,7 +28,7 @@ func ExampleESPNMMAMatchupScraper() {
 		fmt.Println(string(jsonBytes))
 	}
 }
-
+// Example for mma.ESPNMMAFightDetailsScraper
 func ExampleESPNMMAFightDetailsScraper() {
 
 	matchupRunner := runner.NewMatchupRunner(
