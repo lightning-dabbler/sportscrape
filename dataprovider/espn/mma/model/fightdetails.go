@@ -9,6 +9,12 @@ type FightDetails struct {
 	PullTimestamp time.Time `json:"pull_timestamp"`
 	// PullTimestampParquet is the fetch timestamp (in milliseconds)
 	PullTimestampParquet int64  `json:"-" parquet:"name=pull_timestamp, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	EventID              string `json:"event_id" parquet:"name=event_id, type=INT64"`
+	// EventTime is the timestamp associated with the matchup
+	EventTime time.Time `json:"event_time"`
+	// EventTimeParquet is the timestamp associated with the matchup (in milliseconds)
+	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+
 	StatusID             string `json:"status_id" parquet:"name=status_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	StatusState          string `json:"status_state" parquet:"name=status_state, type=BYTE_ARRAY, convertedtype=UTF8"`
 	StatusDetail         string `json:"status_detail" parquet:"name=status_detail, type=BYTE_ARRAY, convertedtype=UTF8"`
@@ -40,7 +46,7 @@ type FightDetails struct {
 	AwayStatsBodyTotal               int32  `json:"away_stats_body_total" parquet:"name=away_stats_body_total, type=INT32"`
 	AwayStatsBodyValue               int32  `json:"away_stats_body_value" parquet:"name=away_stats_body_value,type=INT32"`
 	AwayStatsControl                 string `json:"away_stats_control" parquet:"name=away_stats_control, type=BYTE_ARRAY, convertedtype=UTF8"`
-	AwayStatsControlSeconds          int32  `json:"away_stats_control_seconds" parquet:"name=away_stats_control_seconds, type=INT32"`
+	AwayStatsControlSeconds          *int32 `json:"away_stats_control_seconds" parquet:"name=away_stats_control_seconds, type=INT32"`
 	AwayStatsHeadTotal               int32  `json:"away_stats_head_total" parquet:"name=away_stats_head_total, type=INT32"`
 	AwayStatsHeadValue               int32  `json:"away_stats_head_value" parquet:"name=away_stats_head_value, type=INT32"`
 	AwayStatsIsPre                   bool   `json:"away_stats_is_pre" parquet:"name=away_stats_is_pre, type=BOOLEAN"`
@@ -92,7 +98,7 @@ type FightDetails struct {
 	HomeStatsBodyTotal               int32  `json:"home_stats_body_total" parquet:"name=home_stats_body_total, type=INT32"`
 	HomeStatsBodyValue               int32  `json:"home_stats_body_value" parquet:"name=home_stats_body_value, type=INT32"`
 	HomeStatsControl                 string `json:"home_stats_control" parquet:"name=home_stats_control, type=BYTE_ARRAY, convertedtype=UTF8"`
-	HomeStatsControlSeconds          int32  `json:"home_stats_control_seconds" parquet:"name=home_stats_control_seconds, type=INT32"`
+	HomeStatsControlSeconds          *int32 `json:"home_stats_control_seconds" parquet:"name=home_stats_control_seconds, type=INT32"`
 	HomeStatsHeadTotal               int32  `json:"home_stats_head_total" parquet:"name=home_stats_head_total, type=INT32"`
 	HomeStatsHeadValue               int32  `json:"home_stats_head_value" parquet:"name=home_stats_head_value, type=INT32"`
 	HomeStatsIsPre                   bool   `json:"home_stats_is_pre" parquet:"name=home_stats_is_pre, type=BOOLEAN"`

@@ -10,6 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func int32ptr(i int32) *int32 {
+	return &i
+}
+
 func TestESPNMMAFightDetailsScraper(T *testing.T) {
 	scraper := ESPNMMAFightDetailsScraper{}
 	mockTime := time.Now()
@@ -17,6 +21,7 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 		PullTimestamp: mockTime,
 		EventID:       "600041054",
 		EventTime:     mockTime,
+		LeagueName:    "ufc",
 	}
 	result := scraper.Scrape(matchup)
 	assert.NoError(T, result.Error)
@@ -59,7 +64,7 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 					AwayStatsBodyTotal:               51,
 					AwayStatsBodyValue:               37,
 					AwayStatsControl:                 "2:54",
-					AwayStatsControlSeconds:          174,
+					AwayStatsControlSeconds:          int32ptr(174),
 					AwayStatsHeadTotal:               127,
 					AwayStatsHeadValue:               48,
 					AwayStatsIsPre:                   false,
@@ -105,7 +110,7 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 					HomeStatsBodyTotal:               54,
 					HomeStatsBodyValue:               38,
 					HomeStatsControl:                 "0:35",
-					HomeStatsControlSeconds:          35,
+					HomeStatsControlSeconds:          int32ptr(35),
 					HomeStatsHeadTotal:               437,
 					HomeStatsHeadValue:               97,
 					HomeStatsIsPre:                   false,

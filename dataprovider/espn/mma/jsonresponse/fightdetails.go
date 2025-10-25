@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
+	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/xitongsys/parquet-go/types"
 )
 
@@ -273,27 +274,27 @@ func (e ESPNEventData) GetFightDetails() (matchups []model.FightDetails) {
 }
 
 func strToInt32(s, field string) int32 {
-	i, err := strconv.Atoi(s)
+	i, err := util.TextToInt32(s)
 	if err != nil {
 		log.Println("Error converting %s for field %s to int: %s", s, field, err)
 		return 0
 	}
-	return int32(i)
+	return i
 }
 
-func minutesStringToSeconds(str, field string) int32 {
+func minutesStringToSeconds(str, field string) *int32 {
 	splitResult := strings.Split(str, ":")
 	minutes, seconds := splitResult[0], splitResult[1]
 	m, err := strconv.Atoi(minutes)
 	if err != nil {
 		log.Println("Error converting %s for field %s to int: %s", str, field, err)
-		return 0
+		return nil
 	}
 	s, err := strconv.Atoi(seconds)
 	if err != nil {
 		log.Println("Error converting %s for field %s to int: %s", str, field, err)
-		return 0
+		return nil
 	}
-	totalSeconds := m*60 + s
-	return int32(totalSeconds)
+	totalSeconds := int32(m*60 + s)
+	return &totalSeconds
 }

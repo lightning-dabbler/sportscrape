@@ -54,7 +54,7 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 			}
 		}
 	})
-	
+
 	data.PullTime = time.Now()
 	fights := data.GetFightDetails()
 
