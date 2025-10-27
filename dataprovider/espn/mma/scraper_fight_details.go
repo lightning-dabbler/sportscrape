@@ -14,7 +14,7 @@ import (
 )
 
 // https://www.espn.com/mma/fightcenter/_/id/600040033/league/ufc
-const ESPNMMAEventURL = "https://www.espn.com/mma/fightcenter/_/id/%s/league/ufc"
+const ESPNMMAEventURL = "https://www.espn.com/mma/fightcenter/_/id/%s/league/%s"
 
 type ESPNMMAFightDetailsScraper struct {
 	scraper.BaseScraper
@@ -31,7 +31,15 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 		}
 	}
 
-	url := fmt.Sprintf(ESPNMMAEventURL, m.EventID)
+	league := m.LeagueName
+	switch m.LeagueName {
+	case "Ultimate Fighting Championship":
+		league = "ufc"
+	case "Professional Fighters League":
+		league = "pfl"
+	}
+
+	url := fmt.Sprintf(ESPNMMAEventURL, m.EventID, league)
 	doc, err := e.RetrieveDocument(url, network.Headers{}, "html")
 	if err != nil {
 		return sportscrape.EventDataOutput{
@@ -68,7 +76,7 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 		Error:  nil,
 		Output: out,
 		Context: sportscrape.EventDataContext{
-			PullTimestamp: time.Now(),
+			PullTimestamp: data.PullTime,
 			EventTime:     m.EventTime,
 			EventID:       m.EventID,
 			URL:           url,

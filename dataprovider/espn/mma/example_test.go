@@ -8,11 +8,12 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
+
 // Example for mma.ESPNMMAMatchupScraper
 func ExampleESPNMMAMatchupScraper() {
 	matchupRunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(
-			mma.ESPNMMAMatchupScraper{Year: "2024"},
+			mma.ESPNMMAMatchupScraper{Year: "2024", League: "ufc"},
 		),
 	)
 
@@ -28,12 +29,13 @@ func ExampleESPNMMAMatchupScraper() {
 		fmt.Println(string(jsonBytes))
 	}
 }
+
 // Example for mma.ESPNMMAFightDetailsScraper
 func ExampleESPNMMAFightDetailsScraper() {
 
 	matchupRunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(
-			mma.ESPNMMAMatchupScraper{Year: "2024"},
+			mma.ESPNMMAMatchupScraper{Year: "2024", League: "ufc"},
 		),
 	)
 

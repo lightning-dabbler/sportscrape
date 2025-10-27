@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
+	scraper2 "github.com/lightning-dabbler/sportscrape/scraper"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go/types"
 )
@@ -16,19 +18,23 @@ func int32ptr(i int32) *int32 {
 }
 
 func TestESPNMMAFightDetailsScraper(T *testing.T) {
-	scraper := ESPNMMAFightDetailsScraper{}
+	scraper := ESPNMMAFightDetailsScraper{BaseScraper: scraper2.BaseScraper{Timeout: 10 * time.Second}}
+
 	mockTime := time.Now()
 	matchup := model.Matchup{
 		PullTimestamp:    mockTime,
 		EventID:          "600041054",
 		EventTime:        mockTime,
 		EventTimeParquet: types.TimeToTIMESTAMP_MILLIS(mockTime, true),
-		LeagueName:       "ufc",
+		LeagueName:       "Ultimate Fighting Championship",
 	}
-	result := scraper.Scrape(matchup)
-	assert.NoError(T, result.Error)
-	assert.NotEmpty(T, result.Output)
-	for _, untyped := range result.Output {
+
+	runner := runner.NewEventDataRunner(runner.EventDataRunnerScraper(scraper))
+
+	result, err := runner.Run(matchup)
+	assert.NoError(T, err)
+	assert.NotEmpty(T, result)
+	for _, untyped := range result {
 		fight := (untyped).(model.FightDetails)
 		if fight.ID == "401630119" {
 			fight.PullTimestamp = time.Time{}

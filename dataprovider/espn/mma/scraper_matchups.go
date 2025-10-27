@@ -3,6 +3,7 @@ package mma
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -20,6 +21,19 @@ type ESPNMMAMatchupScraper struct {
 	scraper.BaseScraper
 	Year   string
 	League string
+}
+
+func (m ESPNMMAMatchupScraper) Init() {
+	m.BaseScraper.Init()
+	if m.Year == "" {
+		log.Fatalln("Year is a required argument")
+	}
+	if m.League == "" {
+		log.Fatalln("League is a required argument")
+	}
+	if m.League != "pfl" && m.League != "ufc" {
+		log.Fatalln("League must be either pfl or ufc")
+	}
 }
 
 func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {

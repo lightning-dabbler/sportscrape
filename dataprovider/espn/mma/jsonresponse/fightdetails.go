@@ -277,7 +277,7 @@ func (e ESPNEventData) GetFightDetails(event model.Matchup) (matchups []model.Fi
 func strToInt32(s, field string) int32 {
 	i, err := util.TextToInt32(s)
 	if err != nil {
-		log.Println("Error converting %s for field %s to int: %s", s, field, err)
+		log.Printf("Error converting %s for field %s to int: %s\n", s, field, err)
 		return 0
 	}
 	return i
@@ -288,12 +288,12 @@ func minutesStringToSeconds(str, field string) *int32 {
 	minutes, seconds := splitResult[0], splitResult[1]
 	m, err := strconv.Atoi(minutes)
 	if err != nil {
-		log.Println("Error converting %s for field %s to int: %s", str, field, err)
+		log.Printf("Error converting %s for field %s to int: %s\n", str, field, err)
 		return nil
 	}
 	s, err := strconv.Atoi(seconds)
 	if err != nil {
-		log.Println("Error converting %s for field %s to int: %s", str, field, err)
+		log.Printf("Error converting %s for field %s to int: %s\n", str, field, err)
 		return nil
 	}
 	totalSeconds := int32(m*60 + s)

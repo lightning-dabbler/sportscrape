@@ -7,17 +7,26 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
+	"github.com/lightning-dabbler/sportscrape/runner"
+	scraper2 "github.com/lightning-dabbler/sportscrape/scraper"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestESPNMMMAMatchupScraper(T *testing.T) {
-	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc"}
+	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 10 * time.Second}}
 
-	r := scraper.Scrape()
-	assert.NoError(T, r.Error)
-	assert.NotEmpty(T, r.Output)
-	for _, untyped := range r.Output {
+	matchupRunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(
+			scraper,
+		),
+	)
+
+	r, err := matchupRunner.Run()
+	assert.NoError(T, err)
+	output := r
+	assert.NotEmpty(T, output)
+	for _, untyped := range output {
 		matchup := untyped.(model.Matchup)
 		if matchup.EventID == "600039853" {
 			matchup.PullTimestamp = time.Time{}
