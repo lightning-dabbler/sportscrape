@@ -1,4 +1,4 @@
-package sportsreference
+package scraper
 
 import (
 	"log"
