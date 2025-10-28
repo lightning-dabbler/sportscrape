@@ -86,7 +86,12 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {
 }
 
 func (m ESPNMMAMatchupScraper) Feed() sportscrape.Feed {
-	return sportscrape.ESPNMMAMatchups
+	if m.League == "ufc" {
+		return sportscrape.ESPNUFCMatchups
+	} else if m.League == "pfl" {
+		return sportscrape.ESPNPFLMatchups
+	}
+	return ""
 }
 
 func (m ESPNMMAMatchupScraper) Provider() sportscrape.Provider {

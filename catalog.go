@@ -52,8 +52,10 @@ var (
 
 	// ESPN MMA
 	ESPNMMA             Provider = "espn mma"
-	ESPNMMAMatchups     Feed     = Feed(string(ESPNMMA) + " matchups")
-	ESPNMMAFightDetails Feed     = Feed(string(ESPNMMA) + " fight details")
+	ESPNUFCMatchups     Feed     = Feed(string(ESPNMMA) + " ufc matchups")
+	ESPNUFCFightDetails Feed     = Feed(string(ESPNMMA) + " ufc fight details")
+	ESPNPFLMatchups     Feed     = Feed(string(ESPNMMA) + " pfl matchups")
+	ESPNPFLFightDetails Feed     = Feed(string(ESPNMMA) + " pfl fight details")
 
 	// testing
 	DummyProvider Provider = "dummy provider"

@@ -2,6 +2,7 @@ package mma
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -18,6 +19,14 @@ const ESPNMMAEventURL = "https://www.espn.com/mma/fightcenter/_/id/%s/league/%s"
 
 type ESPNMMAFightDetailsScraper struct {
 	scraper.BaseScraper
+	League string //ufc or PFL
+}
+
+func (e ESPNMMAFightDetailsScraper) Init() {
+	e.BaseScraper.Init()
+	if e.League != "pfl" && e.League != "ufc" {
+		log.Fatalln("League must be either pfl or ufc")
+	}
 }
 
 func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
@@ -31,15 +40,7 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 		}
 	}
 
-	league := m.LeagueName
-	switch m.LeagueName {
-	case "Ultimate Fighting Championship":
-		league = "ufc"
-	case "Professional Fighters League":
-		league = "pfl"
-	}
-
-	url := fmt.Sprintf(ESPNMMAEventURL, m.EventID, league)
+	url := fmt.Sprintf(ESPNMMAEventURL, m.EventID, e.League)
 	doc, err := e.RetrieveDocument(url, network.Headers{}, "html")
 	if err != nil {
 		return sportscrape.EventDataOutput{
@@ -89,7 +90,12 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 }
 
 func (e ESPNMMAFightDetailsScraper) Feed() sportscrape.Feed {
-	return sportscrape.ESPNMMAFightDetails
+	if e.League == "ufc" {
+		return sportscrape.ESPNUFCFightDetails
+	} else if e.League == "pfl" {
+		return sportscrape.ESPNPFLFightDetails
+	}
+	return ""
 }
 
 func (e ESPNMMAFightDetailsScraper) Provider() sportscrape.Provider {

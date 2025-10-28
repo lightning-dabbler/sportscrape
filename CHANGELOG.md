@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Adds a scraper for ESPN MMA data.
-- Matchup scraper for scraping event data
-- Fight Details Scraper for scraping fight outcomes and stats
+- Adds a scraper for ESPN MMA data (UFC/PFL).
+- Matchup scraper for scraping event data (UFC/PFL).
+- Fight Details Scraper for scraping fight outcomes and stats (UFC/PFL).
 
 ## [0.15.1] - 2025-08-29
 ### Fixed

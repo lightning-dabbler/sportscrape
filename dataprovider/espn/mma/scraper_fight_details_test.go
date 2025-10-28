@@ -18,7 +18,7 @@ func int32ptr(i int32) *int32 {
 }
 
 func TestESPNMMAFightDetailsScraper(T *testing.T) {
-	scraper := ESPNMMAFightDetailsScraper{BaseScraper: scraper2.BaseScraper{Timeout: 10 * time.Second}}
+	scraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 10 * time.Second}}
 
 	mockTime := time.Now()
 	matchup := model.Matchup{
