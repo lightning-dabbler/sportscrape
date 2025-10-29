@@ -79,10 +79,10 @@ func TestPitchingBoxScoreScraper(t *testing.T) {
 			assert.Nil(t, stats.GameScore)
 			assert.Equal(t, int32(3), *stats.InheritedRunners)
 			assert.Equal(t, int32(2), *stats.InheritedScore)
-			assert.Equal(t, float32(-0.096), stats.WinProbabilityAdded)
-			assert.Equal(t, float32(2.33), stats.AverageLeverageIndex)
-			assert.Equal(t, float32(-2.25), stats.ChampionshipWinProbabilityAdded)
-			assert.Equal(t, float32(85.68), stats.AverageChampionshipLeverageIndex)
+			assert.Equal(t, float32(-0.098), stats.WinProbabilityAdded)
+			assert.Equal(t, float32(2.34), stats.AverageLeverageIndex)
+			assert.Equal(t, float32(-2.28), stats.ChampionshipWinProbabilityAdded)
+			assert.Equal(t, float32(85.09), stats.AverageChampionshipLeverageIndex)
 			assert.Equal(t, float32(-0.1), stats.BaseOutRunsSaved)
 		} else if stats.Player == "Gerrit Cole" {
 			playerToTest["Gerrit Cole"] = true
@@ -114,10 +114,10 @@ func TestPitchingBoxScoreScraper(t *testing.T) {
 			assert.Equal(t, int32(58), *stats.GameScore)
 			assert.Nil(t, stats.InheritedRunners)
 			assert.Nil(t, stats.InheritedScore)
-			assert.Equal(t, float32(-0.101), stats.WinProbabilityAdded)
-			assert.Equal(t, float32(1.04), stats.AverageLeverageIndex)
-			assert.Equal(t, float32(-2.10), stats.ChampionshipWinProbabilityAdded)
-			assert.Equal(t, float32(38.13), stats.AverageChampionshipLeverageIndex)
+			assert.Equal(t, float32(-0.104), stats.WinProbabilityAdded)
+			assert.Equal(t, float32(1.03), stats.AverageLeverageIndex)
+			assert.Equal(t, float32(-2.15), stats.ChampionshipWinProbabilityAdded)
+			assert.Equal(t, float32(37.67), stats.AverageChampionshipLeverageIndex)
 			assert.Equal(t, float32(-1.8), stats.BaseOutRunsSaved)
 		} else if stats.Player == "Jack Flaherty" {
 			playerToTest["Jack Flaherty"] = true
@@ -149,10 +149,10 @@ func TestPitchingBoxScoreScraper(t *testing.T) {
 			assert.Equal(t, int32(30), *stats.GameScore)
 			assert.Nil(t, stats.InheritedRunners)
 			assert.Nil(t, stats.InheritedScore)
-			assert.Equal(t, float32(-0.293), stats.WinProbabilityAdded)
+			assert.Equal(t, float32(-0.295), stats.WinProbabilityAdded)
 			assert.Equal(t, float32(0.61), stats.AverageLeverageIndex)
-			assert.Equal(t, float32(-6.06), stats.ChampionshipWinProbabilityAdded)
-			assert.Equal(t, float32(22.46), stats.AverageChampionshipLeverageIndex)
+			assert.Equal(t, float32(-6.03), stats.ChampionshipWinProbabilityAdded)
+			assert.Equal(t, float32(22.16), stats.AverageChampionshipLeverageIndex)
 			assert.Equal(t, float32(-3.5), stats.BaseOutRunsSaved)
 		}
 		assert.Equal(t, "NYA202410300", stats.EventID, "The event ID should be the same across all records as there's only one matchup for this event date")
