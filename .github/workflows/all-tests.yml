@@ -2,14 +2,14 @@ name: All tests
 
 on:
   pull_request:
-    paths:
-      - 'go.mod'
-      - 'go.sum'
-      - 'util/**'
-      - 'dataprovider/**'
-      - '.github/workflows/all-tests.yml'
-      - '.github/actions/setup-go/actions.yml'
-      - '*.go'
+    # paths:
+    #   - 'go.mod'
+    #   - 'go.sum'
+    #   - 'util/**'
+    #   - 'dataprovider/**'
+    #   - '.github/workflows/all-tests.yml'
+    #   - '.github/actions/setup-go/actions.yml'
+    #   - '*.go'
 
   workflow_call:
     outputs:
