@@ -6,10 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.16.0] - 2025-10-28
 ### Added
-- Adds a scraper for ESPN MMA data (UFC/PFL).
-- Matchup scraper for scraping event data (UFC/PFL).
-- Fight Details Scraper for scraping fight outcomes and stats (UFC/PFL).
+- Adds a scraper for ESPN MMA data (UFC/PFL). (#105)
+- Matchup scraper for scraping event data (UFC/PFL). (#105)
+- Fight Details Scraper for scraping fight outcomes and stats (UFC/PFL). (#105)
+
+### Fixed
+- Fixed pitching and batting scraper tests in baseball reference (#106)
+
+### New Contributors
+- @vlaurenzano in #105
 
 ## [0.15.1] - 2025-08-29
 ### Fixed
