@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - main
+  pull_request:
   workflow_call:
     outputs:
       successful_pre_commit_run:

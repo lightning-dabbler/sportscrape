@@ -3,11 +3,11 @@ package baseballreferencemlb
 import (
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
-	"github.com/lightning-dabbler/sportscrape/util/sportsreference"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 )
 
 type EventDataScraper struct {
-	sportsreference.BaseScraper
+	scraper.BaseScraper
 }
 
 func (e EventDataScraper) Provider() sportscrape.Provider {

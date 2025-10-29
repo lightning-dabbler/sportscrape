@@ -109,9 +109,9 @@ func TestBattingBoxScoreScraper(t *testing.T) {
 			assert.Equal(t, float32(0.42), *stats.AverageLeverageIndex)
 			assert.Equal(t, float32(0.099), *stats.SumPositiveWinProbabilityAdded)
 			assert.Equal(t, float32(-0.035), *stats.SumNegativeWinProbabilityAdded)
-			assert.Equal(t, float32(0.95), *stats.ChampionshipWinProbabilityAdded)
-			assert.Equal(t, float32(11.01), *stats.AverageChampionshipLeverageIndex)
-			assert.Equal(t, float32(2.1), *stats.BaseOutRunsAdded)
+			assert.Equal(t, float32(0.96), *stats.ChampionshipWinProbabilityAdded)
+			assert.Equal(t, float32(11.05), *stats.AverageChampionshipLeverageIndex)
+			assert.Equal(t, float32(2), *stats.BaseOutRunsAdded)
 			assert.Equal(t, int32(0), stats.Putout)
 			assert.Equal(t, int32(0), stats.Assist)
 		} else if stats.Player == "Enrique Hernández" {

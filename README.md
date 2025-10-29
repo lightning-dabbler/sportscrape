@@ -57,35 +57,37 @@ func main() {
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go)
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 - [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
+- [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
 
 ## Data providers
 
-| Source                           | League | Feed                  | Periods Available       | Data Model |	Deprecated	| Point-in-time|
-|----------------------------------|--------|------------------------|:----------------------:|:-------------------:|:---------------------:|:------------:|
-| https://basketball-reference.com | NBA    | Matchup                | Full                   |[model](dataprovider/basketballreferencenba/model/matchup.go)|		|✅|
-| https://basketball-reference.com | NBA    | Basic box score stats  | H1, H2, Q1, Q2, Q3, Q4, Full |[model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)|		|✅|
-| https://basketball-reference.com | NBA    | Advanced box score stats| Full                  |[model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)||✅|
-| https://baseball-reference.com   | MLB    | Matchup                | Full                   |[model](dataprovider/baseballreferencemlb/model/matchup.go)||✅|
-| https://baseball-reference.com   | MLB    | Batting box score stats| Full                   |[model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)||✅|
-| https://baseball-reference.com   | MLB    | Pitching box score stats| Full                  |[model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go)||✅|
-| https://www.foxsports.com		   | NBA	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
-| https://www.foxsports.com		   | NBA	| Box score stats		 | Live, Full			  | [model](dataprovider/foxsports/model/nba_box_score_stats.go)||✅|
-| https://www.foxsports.com		   | WNBA	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
-| https://www.foxsports.com		   | WNBA	| Box score stats		 | Live, Full			  | [model](dataprovider/foxsports/model/nba_box_score_stats.go)||✅|
-| https://www.foxsports.com		   | MLB	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
-| https://www.foxsports.com		   | MLB	| Batting Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_batting_box_score_stats.go)||✅|
-| https://www.foxsports.com		   | MLB	| Pitching Box score stats| Live, Full			  | [model](dataprovider/foxsports/model/mlb_pitching_box_score_stats.goo)||✅|
-| https://www.foxsports.com		   | MLB	| Probable starting pitcher| Full			  | [model](dataprovider/foxsports/model/mlb_probable_starting_pitcher.go)||✅|
-| https://www.foxsports.com		   | MLB	| Betting Odds Money line| Full			  | [model](dataprovider/foxsports/model/mlb_odds_money_line.go)||✅|
-| https://www.foxsports.com		   | MLB	| Betting Odds Total| Full			  | [model](dataprovider/foxsports/model/mlb_odds_total.go)||✅|
-| https://www.foxsports.com		   | NCAAB	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
-| https://www.foxsports.com		   | NFL	| Matchup				 | Live, Full			  | [model](dataprovider/foxsports/model/matchup.go)||✅|
-| https://baseballsavant.mlb.com		   | MLB	| Matchup				 | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/matchup.go) ||✅|
-| https://baseballsavant.mlb.com		   | MLB	| Batting box score stats| Live, Full			  |[model](dataprovider/baseballsavantmlb/model/batting_box_score.go) ||✅|
-| https://baseballsavant.mlb.com		   | MLB	| Pitching box score stats | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/pitching_box_score.go) ||✅|
-| https://baseballsavant.mlb.com		   | MLB	| Fielding box score stats | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/fielding_box_score.go) ||✅|
-| https://baseballsavant.mlb.com		   | MLB	| Play by play | Live, Full			  |[model](dataprovider/baseballsavantmlb/model/play_by_play.go) ||✅|
-
+| Source                           | League   | Feed                                 |      Periods Available       |                                  Data Model                                  |	Deprecated	| Point-in-time|
+|----------------------------------|----------|--------------------------------------|:----------------------------:|:----------------------------------------------------------------------------:|:---------------------:|:------------:|
+| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         |		|✅|
+| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  |		|✅|
+| https://basketball-reference.com | NBA      | Advanced box score stats             |             Full             |  [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)   ||✅|
+| https://baseball-reference.com   | MLB      | Matchup                              |             Full             |         [model](dataprovider/baseballreferencemlb/model/matchup.go)          ||✅|
+| https://baseball-reference.com   | MLB      | Batting box score stats              |             Full             | [model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)  ||✅|
+| https://baseball-reference.com   | MLB      | Pitching box score stats             |             Full             | [model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go) ||✅|
+| https://www.foxsports.com		      | NBA	     | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
+| https://www.foxsports.com		      | NBA	     | Box score stats		                    |        Live, Full			         |         [model](dataprovider/foxsports/model/nba_box_score_stats.go)         ||✅|
+| https://www.foxsports.com		      | WNBA	    | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
+| https://www.foxsports.com		      | WNBA	    | Box score stats		                    |        Live, Full			         |         [model](dataprovider/foxsports/model/nba_box_score_stats.go)         ||✅|
+| https://www.foxsports.com		      | MLB	     | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
+| https://www.foxsports.com		      | MLB	     | Batting Box score stats              |        Live, Full			         |     [model](dataprovider/foxsports/model/mlb_batting_box_score_stats.go)     ||✅|
+| https://www.foxsports.com		      | MLB	     | Pitching Box score stats             |        Live, Full			         |    [model](dataprovider/foxsports/model/mlb_pitching_box_score_stats.goo)    ||✅|
+| https://www.foxsports.com		      | MLB	     | Probable starting pitcher            |           Full			            |    [model](dataprovider/foxsports/model/mlb_probable_starting_pitcher.go)    ||✅|
+| https://www.foxsports.com		      | MLB	     | Betting Odds Money line              |           Full			            |         [model](dataprovider/foxsports/model/mlb_odds_money_line.go)         ||✅|
+| https://www.foxsports.com		      | MLB	     | Betting Odds Total                   |           Full			            |           [model](dataprovider/foxsports/model/mlb_odds_total.go)            ||✅|
+| https://www.foxsports.com		      | NCAAB	   | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
+| https://www.foxsports.com		      | NFL	     | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
+| https://baseballsavant.mlb.com		 | MLB	     | Matchup				                          |        Live, Full			         |           [model](dataprovider/baseballsavantmlb/model/matchup.go)           ||✅|
+| https://baseballsavant.mlb.com		 | MLB	     | Batting box score stats              |        Live, Full			         |      [model](dataprovider/baseballsavantmlb/model/batting_box_score.go)      ||✅|
+| https://baseballsavant.mlb.com		 | MLB	     | Pitching box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/pitching_box_score.go)      ||✅|
+| https://baseballsavant.mlb.com		 | MLB	     | Fielding box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/fielding_box_score.go)      ||✅|
+| https://baseballsavant.mlb.com		 | MLB	     | Play by play                         |        Live, Full			         |        [model](dataprovider/baseballsavantmlb/model/play_by_play.go)         ||✅|
+| https://www.espn.com/mma/     		 | UFC/PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
+| https://www.espn.com/mma/     		 | UFC/PFL	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|
 ## Supported Formats
 File formats the constructed data models support on export and import.
 |Format|Export|Import|Go Package|

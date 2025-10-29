@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2025-10-28
+### Added
+- Adds a scraper for ESPN MMA data (UFC/PFL). (#105)
+- Matchup scraper for scraping event data (UFC/PFL). (#105)
+- Fight Details Scraper for scraping fight outcomes and stats (UFC/PFL). (#105)
+
+### Fixed
+- Fixed pitching and batting scraper tests in baseball reference (#106)
+
+### New Contributors
+- @vlaurenzano in #105
+
 ## [0.15.1] - 2025-08-29
 ### Fixed
 -  foxsports `MLBOddsTotal.OverOdds` and `MLBOddsTotal.UnderOdds` are now optional because it's not always available for all events (#103)
