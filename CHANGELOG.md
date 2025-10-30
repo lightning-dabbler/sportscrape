@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- ESPN MMA: Fixed parquet type for event_id in matchups and fight details data models
+- ESPN MMA: Fixed parquet type for event_id in matchups and fight details data models (#110)
 
 ## [0.16.1] - 2025-10-29
 ### Fixed
