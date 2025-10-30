@@ -40,6 +40,14 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {
 	url := fmt.Sprintf(ESPNMMAEventsFeedURL, m.Year, m.League)
 
 	doc, err := m.RetrieveDocument(url, network.Headers{}, "html")
+	if err != nil {
+		return sportscrape.MatchupOutput{
+			Context: sportscrape.MatchupContext{
+				Errors: 1,
+				Skips:  0,
+			}, Error: err,
+		}
+	}
 
 	data := &jsonresponse.ESPNMMASchedule{}
 
