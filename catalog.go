@@ -65,12 +65,16 @@ var (
 func (p Provider) Deprecated() bool {
 	switch p {
 	case BaseballReference:
-		log.Printf("Warning: %s provider will be deprecated in future releases\n", BaseballReference)
+		log.Printf("Warning: %s provider will be deprecated in future releases\n", p)
 	}
 	return false
 }
 
 func (f Feed) Deprecated() bool {
+	switch f {
+	case ESPNPFLMatchups, ESPNPFLFightDetails:
+		log.Printf("Warning: %s feed will be deprecated in future releases\n", f)
+	}
 	return false
 }
 
