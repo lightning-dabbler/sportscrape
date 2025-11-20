@@ -54,8 +54,6 @@ type PlayByPlay struct {
 	ActionType string `json:"action_type" parquet:"name=action_type, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// SubType
 	SubType string `json:"sub_type" parquet:"name=sub_type, type=BYTE_ARRAY, convertedtype=UTF8"`
-	// VideoAvailable
-	VideoAvailable int32 `json:"video_available" parquet:"name=video_available, type=INT32"`
 	// ShotValue
 	ShotValue int32 `json:"shot_value" parquet:"name=shot_value, type=INT32"`
 	// ActionID
