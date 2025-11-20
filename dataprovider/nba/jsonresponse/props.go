@@ -14,7 +14,7 @@ type PropsBoxScoreMatchupsJSON struct {
 	Props struct {
 		PageProps struct {
 			Game struct {
-				GameID   string               `json:"gameId"` // "gameId": "0022500240"
+				EventID  string               `json:"gameId"` // "gameId": "0022500240"
 				HomeTeam BoxScoreMatchupsTeam `json:"homeTeam"`
 				AwayTeam BoxScoreMatchupsTeam `json:"awayTeam"`
 			} `json:"game"`
