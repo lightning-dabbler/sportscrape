@@ -41,5 +41,5 @@ type BoxScoreDefenseStats struct {
 			MatchupThreePointersAttempted int32   `json:"matchupThreePointersAttempted"` // "matchupThreePointersAttempted": 5,
 			MatchupThreePointerPercentage float32 `json:"matchupThreePointerPercentage"` // "matchupThreePointerPercentage": 0.2
 		} `json:"statistics"`
-	}
+	} `json:"players"`
 }

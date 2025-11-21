@@ -47,5 +47,5 @@ type BoxScoreTrackingStats struct {
 			DefendedAtRimFieldGoalsAttempted int32   `json:"defendedAtRimFieldGoalsAttempted"` // "defendedAtRimFieldGoalsAttempted": 5,
 			DefendedAtRimFieldGoalPercentage float32 `json:"defendedAtRimFieldGoalPercentage"` // "defendedAtRimFieldGoalPercentage": 0.2
 		} `json:"statistics"`
-	}
+	} `json:"players"`
 }

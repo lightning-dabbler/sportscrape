@@ -43,5 +43,5 @@ type BoxScoreHustleStats struct {
 			BoxOutPlayerRebounds         int32  `json:"boxOutPlayerRebounds"`         // "boxOutPlayerRebounds": 0,
 			BoxOuts                      int32  `json:"boxOuts"`                      // "boxOuts": 0
 		} `json:"statistics"`
-	}
+	} `json:"players"`
 }
