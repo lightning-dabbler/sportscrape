@@ -1,6 +1,6 @@
 package jsonresponse
 
-// BoxScoreFourFactorsJSON - box score player four factor json response by period (e.g. https://www.nba.com/game/chi-vs-uta-0022500240/box-score?type=fourfactors&period=All)
+// BoxScoreFourFactorsJSON - box score player four factors json response by period (e.g. https://www.nba.com/game/chi-vs-uta-0022500240/box-score?type=fourfactors&period=All)
 type BoxScoreFourFactorsJSON struct {
 	Props struct {
 		PageProps struct {
