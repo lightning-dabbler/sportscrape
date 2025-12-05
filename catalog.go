@@ -57,6 +57,22 @@ var (
 	ESPNPFLMatchups     Feed     = Feed(string(ESPNMMA) + " pfl matchups")
 	ESPNPFLFightDetails Feed     = Feed(string(ESPNMMA) + " pfl fight details")
 
+	// NBA
+	NBA                    Provider = "nba"
+	NBAMatchup             Feed     = Feed(string(NBA) + " matchup")
+	NBAMatchupPeriods      Feed     = Feed(string(NBA) + " matchup periods")
+	NBAAdvancedBoxScore    Feed     = Feed(string(NBA) + " advanced box score")
+	NBADefenseBoxScore     Feed     = Feed(string(NBA) + " defense box score")
+	NBAFourFactorsBoxScore Feed     = Feed(string(NBA) + " four factors box score")
+	NBAHustleBoxScore      Feed     = Feed(string(NBA) + " hustle box score")
+	NBAMatchupsBoxScore    Feed     = Feed(string(NBA) + " matchups box score")
+	NBAMiscBoxScore        Feed     = Feed(string(NBA) + " misc box score")
+	NBAScoringBoxScore     Feed     = Feed(string(NBA) + " scoring box score")
+	NBATrackingBoxScore    Feed     = Feed(string(NBA) + " tracking box score")
+	NBATraditionalBoxScore Feed     = Feed(string(NBA) + " traditional box score")
+	NBAUsageBoxScore       Feed     = Feed(string(NBA) + " usage box score")
+	NBAPlayByPlay          Feed     = Feed(string(NBA) + " play by play")
+
 	// testing
 	DummyProvider Provider = "dummy provider"
 	DummyFeed     Feed     = Feed(string(DummyProvider) + " dummy feed")
