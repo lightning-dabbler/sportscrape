@@ -53,7 +53,7 @@ type MatchupPeriodsScraper struct {
 }
 
 func (ms MatchupPeriodsScraper) Feed() sportscrape.Feed {
-	return sportscrape.NBAMatchup
+	return sportscrape.NBAMatchupPeriods
 }
 
 func (ms *MatchupPeriodsScraper) Scrape() sportscrape.MatchupOutput {
