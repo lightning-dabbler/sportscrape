@@ -1,7 +1,10 @@
 package nba
 
 import (
+	"log"
+
 	"github.com/chromedp/cdproto/network"
+	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/scraper"
 )
 
@@ -18,5 +21,10 @@ func (s Scraper) FetchDoc(URL string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	log.Println("Document retrieved")
 	return doc.Find(Selector).Text(), nil
+}
+
+func (s Scraper) Provider() sportscrape.Provider {
+	return sportscrape.NBA
 }

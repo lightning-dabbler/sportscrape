@@ -30,18 +30,18 @@ type Matchup struct {
 	AwayTeam string `json:"away_team" parquet:"name=away_team, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// AwayTeamAbbreviation
 	AwayTeamAbbreviation string `json:"away_team_abbreviation" parquet:"name=away_team_abbreviation, type=BYTE_ARRAY, convertedtype=UTF8"`
-	// AwayScore - total away team game score
-	AwayScore int32 `json:"away_score" parquet:"name=away_score, type=INT32"`
-	// HomeScore - total home team game score
-	HomeScore int32 `json:"home_score" parquet:"name=home_score, type=INT32"`
-	// AwayWins
-	AwayWins int32 `json:"away_wins" parquet:"name=away_wins, type=INT32"`
-	// HomeWins
-	HomeWins int32 `json:"home_wins" parquet:"name=home_wins, type=INT32"`
-	// AwayLosses
-	AwayLosses int32 `json:"away_losses" parquet:"name=away_losses, type=INT32"`
-	// HomeLosses
-	HomeLosses int32 `json:"home_losses" parquet:"name=home_losses, type=INT32"`
+	// AwayTeamScore - total away team game score
+	AwayTeamScore int32 `json:"away_team_score" parquet:"name=away_team_score, type=INT32"`
+	// HomeTeamScore - total home team game score
+	HomeTeamScore int32 `json:"home_team_score" parquet:"name=home_team_score, type=INT32"`
+	// AwayTeamWins
+	AwayTeamWins int32 `json:"away_team_wins" parquet:"name=away_team_wins, type=INT32"`
+	// HomeTeamWins
+	HomeTeamWins int32 `json:"home_team_wins" parquet:"name=home_team_wins, type=INT32"`
+	// AwayTeamLosses
+	AwayTeamLosses int32 `json:"away_team_losses" parquet:"name=away_team_losses, type=INT32"`
+	// HomeTeamLosses
+	HomeTeamLosses int32 `json:"home_team_losses" parquet:"name=home_team_losses, type=INT32"`
 	// ShareURL (e.g. https://www.nba.com/game/gsw-vs-orl-0022500249)
 	ShareURL string `json:"share_url" parquet:"name=share_url, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// SeasonType (e.g. "Regular Season")
