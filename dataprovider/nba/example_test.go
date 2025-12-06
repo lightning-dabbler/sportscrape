@@ -33,3 +33,27 @@ func ExampleMatchupScraper() {
 		fmt.Println(string(jsonBytes))
 	}
 }
+
+// Example for nba.MatchupPeriodsScraper
+func ExampleMatchupPeriodsScraper() {
+	matchupScraper := nba.NewMatchupPeriodsScraper(
+		nba.WithMatchupPeriodsDate("2025-06-05"),
+		nba.WithMatchupPeriodsTimeout(2*time.Minute),
+	)
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	records, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+	// Output each statline as pretty json
+	for _, period := range records {
+		jsonBytes, err := json.MarshalIndent(period, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}

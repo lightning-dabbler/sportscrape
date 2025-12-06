@@ -14,6 +14,10 @@ type MatchupPeriods struct {
 	EventTime time.Time `json:"event_time"`
 	// EventTimeParquet is the timestamp associated with the matchup (in milliseconds)
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	// EventStatus the numerical representation of the event status e.g. 3 (1=pregame, 2=in progress, 3=final)
+	EventStatus int32 `json:"event_status" parquet:"name=event_status, type=INT32"`
+	// EventStatusText (e.g. Final, Final/OT2, etc.)
+	EventStatusText string `json:"event_status_text" parquet:"name=event_status_text, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HomeTeamID
 	HomeTeamID int64 `json:"home_team_id" parquet:"name=home_team_id, type=INT64"`
 	// HomeTeam
@@ -28,10 +32,10 @@ type MatchupPeriods struct {
 	AwayTeamAbbreviation string `json:"away_team_abbreviation" parquet:"name=away_team_abbreviation, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Period is the quarter and/or overtime number, 1-4 represents quarter number and >4 represents Overtime
 	Period int32 `json:"period" parquet:"name=period, type=INT32"`
-	// AwayScore with respect to period and away team
-	AwayScore int32 `json:"away_score" parquet:"name=away_score, type=INT32"`
-	// HomeScore with respect to period and home team
-	HomeScore int32 `json:"home_score" parquet:"name=home_score, type=INT32"`
+	// AwayTeamScore with respect to period and away team
+	AwayTeamScore int32 `json:"away_team_score" parquet:"name=away_team_score, type=INT32"`
+	// HomeTeamScore with respect to period and home team
+	HomeTeamScore int32 `json:"home_team_score" parquet:"name=home_team_score, type=INT32"`
 	// SeasonType (e.g. "Regular Season")
 	SeasonType string `json:"season_type" parquet:"name=season_type, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// SeasonYear (e.g 2025-26)

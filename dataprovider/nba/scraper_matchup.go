@@ -14,21 +14,21 @@ import (
 // MatchupScraperOption defines a configuration option for the scraper
 type MatchupScraperOption func(*MatchupScraper)
 
-// WithMatchupDate sets the timeout duration for matchup runner
+// WithMatchupDate sets the timeout duration for matchup scraper
 func WithMatchupDate(date string) MatchupScraperOption {
 	return func(ms *MatchupScraper) {
 		ms.Date = date
 	}
 }
 
-// WithMatchupTimeout sets the timeout duration for matchup runner
+// WithMatchupTimeout sets the timeout duration for matchup scraper
 func WithMatchupTimeout(timeout time.Duration) MatchupScraperOption {
 	return func(ms *MatchupScraper) {
 		ms.Timeout = timeout
 	}
 }
 
-// WithMatchupDebug enables or disables debug mode for matchup runner
+// WithMatchupDebug enables or disables debug mode for matchup scraper
 func WithMatchupDebug(debug bool) MatchupScraperOption {
 	return func(ms *MatchupScraper) {
 		ms.Debug = debug
