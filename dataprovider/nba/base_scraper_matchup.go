@@ -1,6 +1,7 @@
 package nba
 
 import (
+	"fmt"
 	"log"
 	"net/url"
 
@@ -9,6 +10,10 @@ import (
 
 const (
 	BaseURL = "https://www.nba.com/games"
+)
+
+var (
+	ErrTooManyModules = fmt.Errorf("too many modules in matchup json response payload")
 )
 
 type BaseMatchupScraper struct {
