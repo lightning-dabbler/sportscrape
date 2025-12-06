@@ -42,7 +42,7 @@ const (
 // MatchupOption defines a configuration option for MatchupScraper
 type MatchupOption func(*MatchupScraper)
 
-// WithMatchupTimeout sets the timeout duration for matchup runner
+// WithMatchupDate sets the timeout duration for matchup runner
 func WithMatchupDate(date string) MatchupOption {
 	return func(mr *MatchupScraper) {
 		mr.Date = date
