@@ -1,4 +1,4 @@
-package jsonresponse
+package nba
 
 /*
 Matchup data:
