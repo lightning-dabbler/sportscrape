@@ -56,7 +56,7 @@ func (ms MatchupScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBAMatchup
 }
 
-func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput {
+func (ms MatchupScraper) Scrape() sportscrape.MatchupOutput {
 	var matchups []interface{}
 	var jsonPayload jsonresponse.MatchupJSON
 	output := sportscrape.MatchupOutput{}
