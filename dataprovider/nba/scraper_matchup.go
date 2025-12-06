@@ -14,7 +14,7 @@ import (
 // MatchupScraperOption defines a configuration option for the scraper
 type MatchupScraperOption func(*MatchupScraper)
 
-// WithMatchupDate sets the timeout duration for matchup scraper
+// WithMatchupDate sets the date for matchup scraper
 func WithMatchupDate(date string) MatchupScraperOption {
 	return func(ms *MatchupScraper) {
 		ms.Date = date
