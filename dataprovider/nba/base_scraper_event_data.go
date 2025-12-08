@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 )
 
 type BaseEventDataScraper struct {
@@ -39,6 +42,17 @@ func (beds *BaseEventDataScraper) Init() {
 			log.Println("Setting Period to Full for PlayByPlay FeedType")
 			beds.Period = Full
 		}
+	}
+}
+
+func (beds BaseEventDataScraper) ConstructContext(matchup model.Matchup) sportscrape.EventDataContext {
+	return sportscrape.EventDataContext{
+		AwayTeam:  matchup.AwayTeam,
+		AwayID:    matchup.AwayTeamID,
+		HomeTeam:  matchup.HomeTeam,
+		HomeID:    matchup.HomeTeamID,
+		EventTime: matchup.EventTime,
+		EventID:   matchup.EventID,
 	}
 }
 
