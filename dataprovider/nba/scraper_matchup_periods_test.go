@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMatchupScraper(t *testing.T) {
+func TestMatchupPeriodsScraper(t *testing.T) {
 	// https://www.nba.com/games?date=2025-06-05
 	if testing.Short() {
 		t.Skip("Skipping integration test")
@@ -28,8 +28,8 @@ func TestMatchupScraper(t *testing.T) {
 	records, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	n_records := len(records)
-	testPeriod := matchup[3]
 	assert.Equal(t, 4, n_records, "4 records")
+	testPeriod := matchup[3]
 	assert.Equal(t, "0042400401", testPeriod.EventID)
 	assert.Equal(t, int32(3), testPeriod.EventStatus)
 	assert.Equal(t, "Final", testPeriod.EventStatusText)

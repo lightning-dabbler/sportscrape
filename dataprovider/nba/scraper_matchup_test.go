@@ -28,8 +28,8 @@ func TestMatchupScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	n_matchups := len(matchups)
-	matchup := matchups[0]
 	assert.Equal(t, 1, n_matchups, "1 event")
+	matchup := matchups[0]
 	assert.Equal(t, "0042400401", matchup.EventID)
 	assert.Equal(t, int32(3), matchup.EventStatus)
 	assert.Equal(t, "Final", matchup.EventStatusText)

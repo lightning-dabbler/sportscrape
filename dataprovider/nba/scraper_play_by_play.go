@@ -114,6 +114,6 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 		data = append(data, playbyplay)
 	}
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", context.EventID, context.AwayTeam, context.HomeTeam, diff)
+	log.Printf("Scraping of event %s (%s vs %s) completed in %s\n", context.EventID, context.AwayTeam, context.HomeTeam, diff)
 	return sportscrape.EventDataOutput{Context: context, Output: data}
 }
