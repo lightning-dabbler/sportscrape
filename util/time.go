@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -34,4 +35,22 @@ func RFC3339ToTime(str string) (time.Time, error) {
 		return time.Time{}, fmt.Errorf("Could not convert RFC3339 string %s to time.Time: %w", str, err)
 	}
 	return timestamp, nil
+}
+
+// TransformMinutesPlayed
+// minutesPlayed in the form \d+\:\d+ (e.g. 20:59)
+func TransformMinutesPlayed(minutesPlayed string) (float32, error) {
+	minutesPlayedSplit := strings.Split(minutesPlayed, ":")
+	minutes, err := TextToInt(minutesPlayedSplit[0])
+	if err != nil {
+		return 0, fmt.Errorf("Could not convert minutes %s to integer: %w", minutesPlayedSplit[0], err)
+	}
+
+	seconds, err := TextToInt(minutesPlayedSplit[1])
+	if err != nil {
+		return 0, fmt.Errorf("Could not convert seconds %s to integer: %w", minutesPlayedSplit[1], err)
+	}
+
+	totalMinutes := float32(minutes) + float32(Round((float64(seconds)/float64(60)), 2))
+	return totalMinutes, nil
 }

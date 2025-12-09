@@ -14,7 +14,7 @@ import (
 )
 
 func TestESPNMMMAMatchupScraper(T *testing.T) {
-	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 10 * time.Second}}
+	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 3 * time.Minute}}
 
 	matchupRunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(

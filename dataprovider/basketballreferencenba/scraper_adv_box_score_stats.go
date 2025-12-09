@@ -169,7 +169,7 @@ func (abs *AdvBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventData
 				boxScoreStats.PlayerID = playerID
 				minutesPlayed := util.CleanTextDatum(s.Find("td:nth-child(2)").Text())
 				if len(minutesPlayed) > 0 && unicode.IsDigit(rune(minutesPlayed[0])) {
-					totalMinutes, err := transformMinutesPlayed(minutesPlayed)
+					totalMinutes, err := util.TransformMinutesPlayed(minutesPlayed)
 					if err != nil {
 						output.Error = err
 						return false

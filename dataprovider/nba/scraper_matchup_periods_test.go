@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/nba"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,9 +17,9 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 
-	scraper := nba.NewMatchupPeriodsScraper(
-		nba.WithMatchupPeriodsDate("2025-06-05"),
-		nba.WithMatchupPeriodsTimeout(3*time.Minute),
+	scraper := NewMatchupPeriodsScraper(
+		WithMatchupPeriodsDate("2025-06-05"),
+		WithMatchupPeriodsTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(scraper),
@@ -29,7 +29,7 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 	assert.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 4, n_records, "4 records")
-	testPeriod := matchup[3]
+	testPeriod := records[3].(model.MatchupPeriods)
 	assert.Equal(t, "0042400401", testPeriod.EventID)
 	assert.Equal(t, int32(3), testPeriod.EventStatus)
 	assert.Equal(t, "Final", testPeriod.EventStatusText)
@@ -42,7 +42,7 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 	assert.Equal(t, int32(4), testPeriod.Period)
 	assert.Equal(t, int32(35), testPeriod.AwayTeamScore)
 	assert.Equal(t, int32(25), testPeriod.HomeTeamScore)
-	assert.Equal(t, "Playoffs", matchup.SeasonType)
-	assert.Equal(t, "2024-25", matchup.SeasonYear)
-	assert.Equal(t, "00", matchup.LeagueID)
+	assert.Equal(t, "Playoffs", testPeriod.SeasonType)
+	assert.Equal(t, "2024-25", testPeriod.SeasonYear)
+	assert.Equal(t, "00", testPeriod.LeagueID)
 }

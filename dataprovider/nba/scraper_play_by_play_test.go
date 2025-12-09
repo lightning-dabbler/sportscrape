@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/nba"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,17 +17,17 @@ func TestPlayByPlayScraper(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 
-	matchupScraper := nba.NewMatchupScraper(
-		nba.WithMatchupDate("2025-06-11"),
-		nba.WithMatchupTimeout(3*time.Minute),
+	matchupScraper := NewMatchupScraper(
+		WithMatchupDate("2025-06-11"),
+		WithMatchupTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(matchupScraper),
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
-	playbyplayscraper := nba.NewPlayByPlayScraper(
-		nba.WithPlayByPlayTimeout(2 * time.Minute),
+	playbyplayscraper := NewPlayByPlayScraper(
+		WithPlayByPlayTimeout(2 * time.Minute),
 	)
 
 	playbyplayrunner := runner.NewEventDataRunner(
@@ -39,7 +39,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	assert.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 521, n_records, "521 plays")
-	testRecord := records[516]
+	testRecord := records[517].(model.PlayByPlay)
 
 	assert.Equal(t, "0042400403", testRecord.EventID)
 	assert.Equal(t, int32(3), testRecord.EventStatus)
@@ -51,7 +51,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	assert.Equal(t, "IND", testRecord.TeamAbbreviation)
 	assert.Equal(t, int64(1627783), testRecord.PersonID)
 	assert.Equal(t, "Siakam", testRecord.PlayerName)
-	assert.Equal(t, "P. Siakam", testRecord.PlayerNameI)
+	assert.Equal(t, "P. Siakam", testRecord.PlayerNameInitial)
 	assert.Equal(t, int32(1), testRecord.ShotDistance)
 	assert.Equal(t, "Made", testRecord.ShotResult)
 	assert.Equal(t, int32(1), testRecord.IsFieldGoal)

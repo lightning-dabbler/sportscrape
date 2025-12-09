@@ -68,7 +68,6 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
-	eventTimeParquet := types.TimeToTIMESTAMP_MILLIS(matchupModel.EventTime, true)
 	context.PullTimestamp = pullTimestamp
 	jsonstr, err := pbp.FetchDoc(url)
 	if err != nil {
@@ -87,7 +86,7 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 			PullTimestampParquet: pullTimestampParquet,
 			EventID:              matchupModel.EventID,
 			EventTime:            matchupModel.EventTime,
-			EventTimeParquet:     eventTimeParquet,
+			EventTimeParquet:     matchupModel.EventTimeParquet,
 			EventStatus:          matchupModel.EventStatus,
 			EventStatusText:      matchupModel.EventStatusText,
 			ActionNumber:         action.ActionNumber,

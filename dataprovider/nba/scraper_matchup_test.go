@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/nba"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,9 +17,9 @@ func TestMatchupScraper(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 
-	matchupScraper := nba.NewMatchupScraper(
-		nba.WithMatchupDate("2025-06-05"),
-		nba.WithMatchupTimeout(3*time.Minute),
+	matchupScraper := NewMatchupScraper(
+		WithMatchupDate("2025-06-05"),
+		WithMatchupTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerScraper(matchupScraper),
@@ -29,7 +29,7 @@ func TestMatchupScraper(t *testing.T) {
 	assert.NoError(t, err)
 	n_matchups := len(matchups)
 	assert.Equal(t, 1, n_matchups, "1 event")
-	matchup := matchups[0]
+	matchup := matchups[0].(model.Matchup)
 	assert.Equal(t, "0042400401", matchup.EventID)
 	assert.Equal(t, int32(3), matchup.EventStatus)
 	assert.Equal(t, "Final", matchup.EventStatusText)
