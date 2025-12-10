@@ -5,6 +5,7 @@ type BoxScoreTraditionalJSON struct {
 	Props struct {
 		PageProps struct {
 			Game struct {
+				Period   int32                    `json:"period"` //"period": 4
 				EventID  string                   `json:"gameId"` // "gameId": "0022500240"
 				HomeTeam BoxScoreTraditionalStats `json:"homeTeam"`
 				AwayTeam BoxScoreTraditionalStats `json:"awayTeam"`

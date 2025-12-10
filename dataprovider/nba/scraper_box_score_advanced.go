@@ -108,6 +108,10 @@ func (bsu BoxScoreAdvancedScraper) Scrape(matchup interface{}) sportscrape.Event
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
+	// Check that OT even exists
+	if bsu.Period == AllOT && jsonPayload.Props.PageProps.Game.Period <= 4 {
+		return sportscrape.EventDataOutput{Context: context}
+	}
 
 	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)
 	awayTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.AwayTeam.TeamCity, jsonPayload.Props.PageProps.Game.AwayTeam.TeamName)
