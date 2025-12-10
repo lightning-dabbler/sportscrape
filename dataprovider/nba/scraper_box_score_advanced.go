@@ -13,7 +13,7 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// BoxScoreAdvancedScraperOption defines a configuration option for the scraper
+// BoxScoreAdvancedScraperOption defines a configuration option for BoxScoreAdvancedScraper
 type BoxScoreAdvancedScraperOption func(*BoxScoreAdvancedScraper)
 
 // WithBoxScoreAdvancedPeriod sets the period for box score advanced scraper

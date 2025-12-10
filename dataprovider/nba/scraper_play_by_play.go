@@ -11,7 +11,7 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// PlayByPlayScraperOption defines a configuration option for the scraper
+// PlayByPlayScraperOption defines a configuration option for PlayByPlayScraper
 type PlayByPlayScraperOption func(*PlayByPlayScraper)
 
 // WithPlayByPlayTimeout sets the timeout duration for play by play scraper

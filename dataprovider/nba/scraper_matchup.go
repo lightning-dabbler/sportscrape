@@ -11,7 +11,7 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// MatchupScraperOption defines a configuration option for the scraper
+// MatchupScraperOption defines a configuration option for MatchupScraper
 type MatchupScraperOption func(*MatchupScraper)
 
 // WithMatchupDate sets the date for matchup scraper
