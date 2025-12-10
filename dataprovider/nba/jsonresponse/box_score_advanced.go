@@ -46,7 +46,7 @@ type BoxScoreAdvancedStats struct {
 			EstimatedPace                float32 `json:"estimatedPace"`                // "estimatedPace": 110.6
 			Pace                         float32 `json:"pace"`                         // "pace": 110.6
 			PacePer40                    float32 `json:"pacePer40"`                    // "pacePer40": 92.17
-			Possessions                  float32 `json:"possessions"`                  // "possessions": 64
+			Possessions                  int32   `json:"possessions"`                  // "possessions": 64
 			PIE                          float32 `json:"PIE"`                          // "PIE": 0.069
 		} `json:"statistics"`
 	} `json:"players"`

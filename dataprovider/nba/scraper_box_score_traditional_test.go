@@ -10,7 +10,7 @@ import (
 )
 
 func TestBoxScoreTraditionalScraper(t *testing.T) {
-	// https://www.nba.com/games?date=2025-06-11
+	// https://www.nba.com/games?date=2025-06-05
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}

@@ -212,3 +212,42 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 		fmt.Println(string(jsonBytes))
 	}
 }
+
+// Example for nba.BoxScoreAdvancedScraper full
+func ExampleBoxScoreAdvancedScraper_full() {
+	matchupScraper := nba.NewMatchupScraper(
+		nba.WithMatchupDate("2025-06-11"),
+		nba.WithMatchupTimeout(2*time.Minute),
+	)
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerScraper(matchupScraper),
+	)
+
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	boxscorescraper := nba.NewBoxScoreAdvancedScraper(
+		nba.WithBoxScoreAdvancedTimeout(2*time.Minute),
+		nba.WithBoxScoreAdvancedPeriod(nba.Full),
+	)
+
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerScraper(boxscorescraper),
+		runner.EventDataRunnerConcurrency(1),
+	)
+
+	records, err := boxscorerunner.Run(matchups...)
+	if err != nil {
+		panic(err)
+	}
+	// Output each statline as pretty json
+	for _, record := range records {
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
