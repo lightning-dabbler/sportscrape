@@ -16,7 +16,7 @@ import (
 // BoxScoreUsageScraperOption defines a configuration option for the scraper
 type BoxScoreUsageScraperOption func(*BoxScoreUsageScraper)
 
-// WithBoxScoreUsageTimeout sets the timeout duration for box score usage scraper
+// WithBoxScoreUsagePeriod sets the period for box score usage scraper
 func WithBoxScoreUsagePeriod(period Period) BoxScoreUsageScraperOption {
 	return func(bsu *BoxScoreUsageScraper) {
 		bsu.Period = period

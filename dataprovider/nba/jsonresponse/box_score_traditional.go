@@ -34,7 +34,7 @@ type BoxScoreTraditionalStats struct {
 			ThreePointersPercentage float32 `json:"threePointersPercentage"` // "threePointersPercentage": 0.667
 			FreeThrowsMade          int32   `json:"freeThrowsMade"`          // "freeThrowsMade": 0
 			FreeThrowsAttempted     int32   `json:"freeThrowsAttempted"`     // "freeThrowsAttempted": 0
-			FreeThrowsPercentage    int32   `json:"freeThrowsPercentage"`    // "freeThrowsPercentage": 0
+			FreeThrowsPercentage    float32 `json:"freeThrowsPercentage"`    // "freeThrowsPercentage": 0
 			ReboundsOffensive       int32   `json:"reboundsOffensive"`       // "reboundsOffensive": 0
 			ReboundsDefensive       int32   `json:"reboundsDefensive"`       // "reboundsDefensive": 0
 			ReboundsTotal           int32   `json:"reboundsTotal"`           // "reboundsTotal": 0
