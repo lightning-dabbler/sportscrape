@@ -18,52 +18,52 @@ type BoxScoreTraditionalScraperOption func(*BoxScoreTraditionalScraper)
 
 // WithBoxScoreTraditionalPeriod sets the period for box score traditional scraper
 func WithBoxScoreTraditionalPeriod(period Period) BoxScoreTraditionalScraperOption {
-	return func(bsu *BoxScoreTraditionalScraper) {
-		bsu.Period = period
+	return func(bs *BoxScoreTraditionalScraper) {
+		bs.Period = period
 	}
 }
 
 // WithBoxScoreTraditionalTimeout sets the timeout duration for box score traditional scraper
 func WithBoxScoreTraditionalTimeout(timeout time.Duration) BoxScoreTraditionalScraperOption {
-	return func(bsu *BoxScoreTraditionalScraper) {
-		bsu.Timeout = timeout
+	return func(bs *BoxScoreTraditionalScraper) {
+		bs.Timeout = timeout
 	}
 }
 
 // WithBoxScoreTraditionalDebug enables or disables debug mode for box score traditional scraper
 func WithBoxScoreTraditionalDebug(debug bool) BoxScoreTraditionalScraperOption {
-	return func(bsu *BoxScoreTraditionalScraper) {
-		bsu.Debug = debug
+	return func(bs *BoxScoreTraditionalScraper) {
+		bs.Debug = debug
 	}
 }
 
 // NewBoxScoreTraditionalScraper creates a new BoxScoreTraditionalScraper with the provided options
 func NewBoxScoreTraditionalScraper(options ...BoxScoreTraditionalScraperOption) *BoxScoreTraditionalScraper {
-	bsu := &BoxScoreTraditionalScraper{}
+	bs := &BoxScoreTraditionalScraper{}
 
 	// Apply all options
 	for _, option := range options {
-		option(bsu)
+		option(bs)
 	}
-	bsu.Init()
+	bs.Init()
 
-	return bsu
+	return bs
 }
 
 type BoxScoreTraditionalScraper struct {
 	BaseEventDataScraper
 }
 
-func (bsu *BoxScoreTraditionalScraper) Init() {
+func (bs *BoxScoreTraditionalScraper) Init() {
 	// FeedType is BoxScore
-	bsu.FeedType = BoxScore
+	bs.FeedType = BoxScore
 	// FeedType is Usage
-	bsu.BoxScoreType = Traditional
+	bs.BoxScoreType = Traditional
 	// Base validations
-	bsu.BaseEventDataScraper.Init()
+	bs.BaseEventDataScraper.Init()
 }
-func (bsu BoxScoreTraditionalScraper) Feed() sportscrape.Feed {
-	switch bsu.Period {
+func (bs BoxScoreTraditionalScraper) Feed() sportscrape.Feed {
+	switch bs.Period {
 	case Q1:
 		return sportscrape.NBATraditionalBoxScoreQ1
 	case Q2:
@@ -85,11 +85,11 @@ func (bsu BoxScoreTraditionalScraper) Feed() sportscrape.Feed {
 	}
 }
 
-func (bsu BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	context := bsu.ConstructContext(matchupModel)
-	url, err := bsu.URL(matchupModel.ShareURL)
+	context := bs.ConstructContext(matchupModel)
+	url, err := bs.URL(matchupModel.ShareURL)
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
@@ -97,7 +97,7 @@ func (bsu BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Ev
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	jsonstr, err := bsu.FetchDoc(url)
+	jsonstr, err := bs.FetchDoc(url)
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
@@ -109,8 +109,8 @@ func (bsu BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Ev
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
-	// Check that OT even exists
-	if bsu.Period == AllOT && jsonPayload.Props.PageProps.Game.Period <= 4 {
+	// Check period matches with response payload data
+	if !bs.PeriodMatches(jsonPayload.Props.PageProps.Game.Period) {
 		return sportscrape.EventDataOutput{Context: context}
 	}
 

@@ -18,52 +18,52 @@ type BoxScoreScoringScraperOption func(*BoxScoreScoringScraper)
 
 // WithBoxScoreScoringPeriod sets the period for box score scoring scraper
 func WithBoxScoreScoringPeriod(period Period) BoxScoreScoringScraperOption {
-	return func(bsu *BoxScoreScoringScraper) {
-		bsu.Period = period
+	return func(bs *BoxScoreScoringScraper) {
+		bs.Period = period
 	}
 }
 
 // WithBoxScoreScoringTimeout sets the timeout duration for box score scoring scraper
 func WithBoxScoreScoringTimeout(timeout time.Duration) BoxScoreScoringScraperOption {
-	return func(bsu *BoxScoreScoringScraper) {
-		bsu.Timeout = timeout
+	return func(bs *BoxScoreScoringScraper) {
+		bs.Timeout = timeout
 	}
 }
 
 // WithBoxScoreScoringDebug enables or disables debug mode for box score scoring scraper
 func WithBoxScoreScoringDebug(debug bool) BoxScoreScoringScraperOption {
-	return func(bsu *BoxScoreScoringScraper) {
-		bsu.Debug = debug
+	return func(bs *BoxScoreScoringScraper) {
+		bs.Debug = debug
 	}
 }
 
 // NewBoxScoreScoringScraper creates a new BoxScoreScoringScraper with the provided options
 func NewBoxScoreScoringScraper(options ...BoxScoreScoringScraperOption) *BoxScoreScoringScraper {
-	bsu := &BoxScoreScoringScraper{}
+	bs := &BoxScoreScoringScraper{}
 
 	// Apply all options
 	for _, option := range options {
-		option(bsu)
+		option(bs)
 	}
-	bsu.Init()
+	bs.Init()
 
-	return bsu
+	return bs
 }
 
 type BoxScoreScoringScraper struct {
 	BaseEventDataScraper
 }
 
-func (bsu *BoxScoreScoringScraper) Init() {
+func (bs *BoxScoreScoringScraper) Init() {
 	// FeedType is BoxScore
-	bsu.FeedType = BoxScore
+	bs.FeedType = BoxScore
 	// FeedType is Usage
-	bsu.BoxScoreType = Scoring
+	bs.BoxScoreType = Scoring
 	// Base validations
-	bsu.BaseEventDataScraper.Init()
+	bs.BaseEventDataScraper.Init()
 }
-func (bsu BoxScoreScoringScraper) Feed() sportscrape.Feed {
-	switch bsu.Period {
+func (bs BoxScoreScoringScraper) Feed() sportscrape.Feed {
+	switch bs.Period {
 	case Q1:
 		return sportscrape.NBAScoringBoxScoreQ1
 	case Q2:
@@ -85,11 +85,11 @@ func (bsu BoxScoreScoringScraper) Feed() sportscrape.Feed {
 	}
 }
 
-func (bsu BoxScoreScoringScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (bs BoxScoreScoringScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
-	context := bsu.ConstructContext(matchupModel)
-	url, err := bsu.URL(matchupModel.ShareURL)
+	context := bs.ConstructContext(matchupModel)
+	url, err := bs.URL(matchupModel.ShareURL)
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
@@ -97,7 +97,7 @@ func (bsu BoxScoreScoringScraper) Scrape(matchup interface{}) sportscrape.EventD
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	jsonstr, err := bsu.FetchDoc(url)
+	jsonstr, err := bs.FetchDoc(url)
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
@@ -109,8 +109,8 @@ func (bsu BoxScoreScoringScraper) Scrape(matchup interface{}) sportscrape.EventD
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 
-	// Check that OT even exists
-	if bsu.Period == AllOT && jsonPayload.Props.PageProps.Game.Period <= 4 {
+	// Check period matches with response payload data
+	if !bs.PeriodMatches(jsonPayload.Props.PageProps.Game.Period) {
 		return sportscrape.EventDataOutput{Context: context}
 	}
 
