@@ -61,6 +61,7 @@ var (
 	NBA                      Provider = "nba"
 	NBAMatchup               Feed     = Feed(string(NBA) + " matchup")
 	NBAMatchupPeriods        Feed     = Feed(string(NBA) + " matchup periods")
+	NBALiveBoxScore          Feed     = Feed(string(NBA) + " live box score")
 	NBAAdvancedBoxScore      Feed     = Feed(string(NBA) + " advanced box score")
 	NBAAdvancedBoxScoreQ1    Feed     = Feed(string(NBA) + " q1 advanced box score")
 	NBAAdvancedBoxScoreQ2    Feed     = Feed(string(NBA) + " q2 advanced box score")

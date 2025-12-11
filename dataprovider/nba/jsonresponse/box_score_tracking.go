@@ -5,9 +5,10 @@ type BoxScoreTrackingJSON struct {
 	Props struct {
 		PageProps struct {
 			Game struct {
-				EventID  string                `json:"gameId"` // "gameId": "0022500240"
-				HomeTeam BoxScoreTrackingStats `json:"homeTeam"`
-				AwayTeam BoxScoreTrackingStats `json:"awayTeam"`
+				GameStatus int32                 `json:"gameStatus"` // "gameStatus": 3
+				EventID    string                `json:"gameId"`     // "gameId": "0022500240"
+				HomeTeam   BoxScoreTrackingStats `json:"homeTeam"`
+				AwayTeam   BoxScoreTrackingStats `json:"awayTeam"`
 			} `json:"game"`
 		} `json:"pageProps"`
 	} `json:"props"`
@@ -38,7 +39,7 @@ type BoxScoreTrackingStats struct {
 			Assists                          int32   `json:"assists"`                          // "assists": 3,
 			ContestedFieldGoalsMade          int32   `json:"contestedFieldGoalsMade"`          // "contestedFieldGoalsMade": 1,
 			ContestedFieldGoalsAttempted     int32   `json:"contestedFieldGoalsAttempted"`     // "contestedFieldGoalsAttempted": 1,
-			ContestedFieldGoalPercentage     int32   `json:"contestedFieldGoalPercentage"`     // "contestedFieldGoalPercentage": 1,
+			ContestedFieldGoalPercentage     float32 `json:"contestedFieldGoalPercentage"`     // "contestedFieldGoalPercentage": 1,
 			UncontestedFieldGoalsMade        int32   `json:"uncontestedFieldGoalsMade"`        // "uncontestedFieldGoalsMade": 3,
 			UncontestedFieldGoalsAttempted   int32   `json:"uncontestedFieldGoalsAttempted"`   // "uncontestedFieldGoalsAttempted": 5,
 			UncontestedFieldGoalsPercentage  float32 `json:"uncontestedFieldGoalsPercentage"`  // "uncontestedFieldGoalsPercentage": 0.6,

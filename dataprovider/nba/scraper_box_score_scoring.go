@@ -110,7 +110,7 @@ func (bs BoxScoreScoringScraper) Scrape(matchup interface{}) sportscrape.EventDa
 	}
 
 	// Check period matches with response payload data
-	if !bs.PeriodMatches(jsonPayload.Props.PageProps.Game.Period) {
+	if !bs.PeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.Period, jsonPayload.Props.PageProps.Game.GameStatus) {
 		return sportscrape.EventDataOutput{Context: context}
 	}
 

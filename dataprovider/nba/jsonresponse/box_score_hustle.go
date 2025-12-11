@@ -5,9 +5,10 @@ type BoxScoreHustleJSON struct {
 	Props struct {
 		PageProps struct {
 			Game struct {
-				EventID  string              `json:"gameId"` // "gameId": "0022500240"
-				HomeTeam BoxScoreHustleStats `json:"homeTeam"`
-				AwayTeam BoxScoreHustleStats `json:"awayTeam"`
+				GameStatus int32               `json:"gameStatus"` // "gameStatus": 3
+				EventID    string              `json:"gameId"`     // "gameId": "0022500240"
+				HomeTeam   BoxScoreHustleStats `json:"homeTeam"`
+				AwayTeam   BoxScoreHustleStats `json:"awayTeam"`
 			} `json:"game"`
 		} `json:"pageProps"`
 	} `json:"props"`

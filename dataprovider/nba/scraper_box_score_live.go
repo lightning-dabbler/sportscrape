@@ -9,37 +9,29 @@ import (
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
-	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// BoxScoreTraditionalScraperOption defines a configuration option for BoxScoreTraditionalScraper
-type BoxScoreTraditionalScraperOption func(*BoxScoreTraditionalScraper)
+// BoxScoreLiveScraperOption defines a configuration option for BoxScoreLiveScraper
+type BoxScoreLiveScraperOption func(*BoxScoreLiveScraper)
 
-// WithBoxScoreTraditionalPeriod sets the period for box score traditional scraper
-func WithBoxScoreTraditionalPeriod(period Period) BoxScoreTraditionalScraperOption {
-	return func(bs *BoxScoreTraditionalScraper) {
-		bs.Period = period
-	}
-}
-
-// WithBoxScoreTraditionalTimeout sets the timeout duration for box score traditional scraper
-func WithBoxScoreTraditionalTimeout(timeout time.Duration) BoxScoreTraditionalScraperOption {
-	return func(bs *BoxScoreTraditionalScraper) {
+// WithBoxScoreLiveTimeout sets the timeout duration for box score tracking scraper
+func WithBoxScoreLiveTimeout(timeout time.Duration) BoxScoreLiveScraperOption {
+	return func(bs *BoxScoreLiveScraper) {
 		bs.Timeout = timeout
 	}
 }
 
-// WithBoxScoreTraditionalDebug enables or disables debug mode for box score traditional scraper
-func WithBoxScoreTraditionalDebug(debug bool) BoxScoreTraditionalScraperOption {
-	return func(bs *BoxScoreTraditionalScraper) {
+// WithBoxScoreLiveDebug enables or disables debug mode for box score tracking scraper
+func WithBoxScoreLiveDebug(debug bool) BoxScoreLiveScraperOption {
+	return func(bs *BoxScoreLiveScraper) {
 		bs.Debug = debug
 	}
 }
 
-// NewBoxScoreTraditionalScraper creates a new BoxScoreTraditionalScraper with the provided options
-func NewBoxScoreTraditionalScraper(options ...BoxScoreTraditionalScraperOption) *BoxScoreTraditionalScraper {
-	bs := &BoxScoreTraditionalScraper{}
+// NewBoxScoreLiveScraper creates a new BoxScoreLiveScraper with the provided options
+func NewBoxScoreLiveScraper(options ...BoxScoreLiveScraperOption) *BoxScoreLiveScraper {
+	bs := &BoxScoreLiveScraper{}
 
 	// Apply all options
 	for _, option := range options {
@@ -50,42 +42,23 @@ func NewBoxScoreTraditionalScraper(options ...BoxScoreTraditionalScraperOption) 
 	return bs
 }
 
-type BoxScoreTraditionalScraper struct {
+type BoxScoreLiveScraper struct {
 	BaseEventDataScraper
 }
 
-func (bs *BoxScoreTraditionalScraper) Init() {
+func (bs *BoxScoreLiveScraper) Init() {
 	// FeedType is BoxScore
 	bs.FeedType = BoxScore
 	// FeedType is Usage
-	bs.BoxScoreType = Traditional
+	bs.BoxScoreType = Live
 	// Base validations
 	bs.BaseEventDataScraper.Init()
 }
-func (bs BoxScoreTraditionalScraper) Feed() sportscrape.Feed {
-	switch bs.Period {
-	case Q1:
-		return sportscrape.NBATraditionalBoxScoreQ1
-	case Q2:
-		return sportscrape.NBATraditionalBoxScoreQ2
-	case Q3:
-		return sportscrape.NBATraditionalBoxScoreQ3
-	case Q4:
-		return sportscrape.NBATraditionalBoxScoreQ4
-	case H1:
-		return sportscrape.NBATraditionalBoxScoreH1
-	case H2:
-		return sportscrape.NBATraditionalBoxScoreH2
-	case AllOT:
-		return sportscrape.NBATraditionalBoxScoreOT
-	case Full:
-		return sportscrape.NBATraditionalBoxScore
-	default:
-		return sportscrape.NBATraditionalBoxScore
-	}
+func (bs BoxScoreLiveScraper) Feed() sportscrape.Feed {
+	return sportscrape.NBALiveBoxScore
 }
 
-func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (bs BoxScoreLiveScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
 	context := bs.ConstructContext(matchupModel)
@@ -101,19 +74,17 @@ func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Eve
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
-	var jsonPayload jsonresponse.BoxScoreTraditionalJSON
+	var jsonPayload jsonresponse.BoxScoreLiveJSON
 	var data []interface{}
 
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
-
 	// Check period matches with response payload data
-	if !bs.PeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.Period, jsonPayload.Props.PageProps.Game.GameStatus) {
+	if !bs.LiveBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.GameStatus) {
 		return sportscrape.EventDataOutput{Context: context}
 	}
-
 	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)
 	awayTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.AwayTeam.TeamCity, jsonPayload.Props.PageProps.Game.AwayTeam.TeamName)
 
@@ -123,7 +94,7 @@ func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Eve
 			starter = true
 		}
 		player := fmt.Sprintf("%s %s", stats.FirstName, stats.FamilyName)
-		boxscore := model.BoxScoreTraditional{
+		boxscore := model.BoxScoreLive{
 			PullTimestamp:           pullTimestamp,
 			PullTimestampParquet:    pullTimestampParquet,
 			EventID:                 matchupModel.EventID,
@@ -141,32 +112,40 @@ func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Eve
 			PlayerName:              player,
 			Position:                stats.Position,
 			Starter:                 starter,
-			FieldGoalsMade:          stats.Statistics.FieldGoalsMade,
-			FieldGoalsAttempted:     stats.Statistics.FieldGoalsAttempted,
-			FieldGoalsPercentage:    stats.Statistics.FieldGoalsPercentage,
-			ThreePointersMade:       stats.Statistics.ThreePointersMade,
-			ThreePointersAttempted:  stats.Statistics.ThreePointersAttempted,
-			ThreePointersPercentage: stats.Statistics.ThreePointersPercentage,
-			FreeThrowsMade:          stats.Statistics.FreeThrowsMade,
-			FreeThrowsAttempted:     stats.Statistics.FreeThrowsAttempted,
-			FreeThrowsPercentage:    stats.Statistics.FreeThrowsPercentage,
-			ReboundsOffensive:       stats.Statistics.ReboundsOffensive,
-			ReboundsDefensive:       stats.Statistics.ReboundsDefensive,
-			ReboundsTotal:           stats.Statistics.ReboundsTotal,
+			Status:                  stats.Status,
 			Assists:                 stats.Statistics.Assists,
-			Steals:                  stats.Statistics.Steals,
 			Blocks:                  stats.Statistics.Blocks,
-			Turnovers:               stats.Statistics.Turnovers,
+			BlocksReceived:          stats.Statistics.BlocksReceived,
+			FieldGoalsAttempted:     stats.Statistics.FieldGoalsAttempted,
+			FieldGoalsMade:          stats.Statistics.FieldGoalsMade,
+			FieldGoalsPercentage:    stats.Statistics.FieldGoalsPercentage,
+			FoulsOffensive:          stats.Statistics.FoulsOffensive,
+			FoulsDrawn:              stats.Statistics.FoulsDrawn,
 			FoulsPersonal:           stats.Statistics.FoulsPersonal,
-			Points:                  stats.Statistics.Points,
+			FoulsTechnical:          stats.Statistics.FoulsTechnical,
+			FreeThrowsAttempted:     stats.Statistics.FreeThrowsAttempted,
+			FreeThrowsMade:          stats.Statistics.FreeThrowsMade,
+			FreeThrowsPercentage:    stats.Statistics.FreeThrowsPercentage,
+			Minus:                   stats.Statistics.Minus,
+			Minutes:                 stats.Statistics.Minutes,
+			MinutesCalculated:       stats.Statistics.MinutesCalculated,
+			Plus:                    stats.Statistics.Plus,
 			PlusMinusPoints:         stats.Statistics.PlusMinusPoints,
-		}
-		if stats.Statistics.Minutes != "" {
-			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
-			if err != nil {
-				return sportscrape.EventDataOutput{Error: err, Context: context}
-			}
-			boxscore.Minutes = minutes
+			Points:                  stats.Statistics.Points,
+			PointsFastBreak:         stats.Statistics.PointsFastBreak,
+			PointsInThePaint:        stats.Statistics.PointsInThePaint,
+			PointsSecondChance:      stats.Statistics.PointsSecondChance,
+			ReboundsDefensive:       stats.Statistics.ReboundsDefensive,
+			ReboundsOffensive:       stats.Statistics.ReboundsOffensive,
+			ReboundsTotal:           stats.Statistics.ReboundsTotal,
+			Steals:                  stats.Statistics.Steals,
+			ThreePointersAttempted:  stats.Statistics.ThreePointersAttempted,
+			ThreePointersMade:       stats.Statistics.ThreePointersMade,
+			ThreePointersPercentage: stats.Statistics.ThreePointersPercentage,
+			Turnovers:               stats.Statistics.Turnovers,
+			TwoPointersAttempted:    stats.Statistics.TwoPointersAttempted,
+			TwoPointersMade:         stats.Statistics.TwoPointersMade,
+			TwoPointersPercentage:   stats.Statistics.TwoPointersPercentage,
 		}
 		data = append(data, boxscore)
 	}
@@ -177,7 +156,7 @@ func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Eve
 			starter = true
 		}
 		player := fmt.Sprintf("%s %s", stats.FirstName, stats.FamilyName)
-		boxscore := model.BoxScoreTraditional{
+		boxscore := model.BoxScoreLive{
 			PullTimestamp:           pullTimestamp,
 			PullTimestampParquet:    pullTimestampParquet,
 			EventID:                 matchupModel.EventID,
@@ -195,32 +174,40 @@ func (bs BoxScoreTraditionalScraper) Scrape(matchup interface{}) sportscrape.Eve
 			PlayerName:              player,
 			Position:                stats.Position,
 			Starter:                 starter,
-			FieldGoalsMade:          stats.Statistics.FieldGoalsMade,
-			FieldGoalsAttempted:     stats.Statistics.FieldGoalsAttempted,
-			FieldGoalsPercentage:    stats.Statistics.FieldGoalsPercentage,
-			ThreePointersMade:       stats.Statistics.ThreePointersMade,
-			ThreePointersAttempted:  stats.Statistics.ThreePointersAttempted,
-			ThreePointersPercentage: stats.Statistics.ThreePointersPercentage,
-			FreeThrowsMade:          stats.Statistics.FreeThrowsMade,
-			FreeThrowsAttempted:     stats.Statistics.FreeThrowsAttempted,
-			FreeThrowsPercentage:    stats.Statistics.FreeThrowsPercentage,
-			ReboundsOffensive:       stats.Statistics.ReboundsOffensive,
-			ReboundsDefensive:       stats.Statistics.ReboundsDefensive,
-			ReboundsTotal:           stats.Statistics.ReboundsTotal,
+			Status:                  stats.Status,
 			Assists:                 stats.Statistics.Assists,
-			Steals:                  stats.Statistics.Steals,
 			Blocks:                  stats.Statistics.Blocks,
-			Turnovers:               stats.Statistics.Turnovers,
+			BlocksReceived:          stats.Statistics.BlocksReceived,
+			FieldGoalsAttempted:     stats.Statistics.FieldGoalsAttempted,
+			FieldGoalsMade:          stats.Statistics.FieldGoalsMade,
+			FieldGoalsPercentage:    stats.Statistics.FieldGoalsPercentage,
+			FoulsOffensive:          stats.Statistics.FoulsOffensive,
+			FoulsDrawn:              stats.Statistics.FoulsDrawn,
 			FoulsPersonal:           stats.Statistics.FoulsPersonal,
-			Points:                  stats.Statistics.Points,
+			FoulsTechnical:          stats.Statistics.FoulsTechnical,
+			FreeThrowsAttempted:     stats.Statistics.FreeThrowsAttempted,
+			FreeThrowsMade:          stats.Statistics.FreeThrowsMade,
+			FreeThrowsPercentage:    stats.Statistics.FreeThrowsPercentage,
+			Minus:                   stats.Statistics.Minus,
+			Minutes:                 stats.Statistics.Minutes,
+			MinutesCalculated:       stats.Statistics.MinutesCalculated,
+			Plus:                    stats.Statistics.Plus,
 			PlusMinusPoints:         stats.Statistics.PlusMinusPoints,
-		}
-		if stats.Statistics.Minutes != "" {
-			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
-			if err != nil {
-				return sportscrape.EventDataOutput{Error: err, Context: context}
-			}
-			boxscore.Minutes = minutes
+			Points:                  stats.Statistics.Points,
+			PointsFastBreak:         stats.Statistics.PointsFastBreak,
+			PointsInThePaint:        stats.Statistics.PointsInThePaint,
+			PointsSecondChance:      stats.Statistics.PointsSecondChance,
+			ReboundsDefensive:       stats.Statistics.ReboundsDefensive,
+			ReboundsOffensive:       stats.Statistics.ReboundsOffensive,
+			ReboundsTotal:           stats.Statistics.ReboundsTotal,
+			Steals:                  stats.Statistics.Steals,
+			ThreePointersAttempted:  stats.Statistics.ThreePointersAttempted,
+			ThreePointersMade:       stats.Statistics.ThreePointersMade,
+			ThreePointersPercentage: stats.Statistics.ThreePointersPercentage,
+			Turnovers:               stats.Statistics.Turnovers,
+			TwoPointersAttempted:    stats.Statistics.TwoPointersAttempted,
+			TwoPointersMade:         stats.Statistics.TwoPointersMade,
+			TwoPointersPercentage:   stats.Statistics.TwoPointersPercentage,
 		}
 		data = append(data, boxscore)
 	}

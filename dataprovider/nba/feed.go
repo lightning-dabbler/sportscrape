@@ -15,6 +15,7 @@ const (
 	Hustle
 	Defense
 	Matchups
+	Live
 )
 
 const (
@@ -51,7 +52,7 @@ func (bst BoxScoreType) Type() string {
 
 func (bst BoxScoreType) Undefined() bool {
 	switch bst {
-	case Traditional, Advanced, Misc, Scoring, Usage, FourFactors, Tracking, Hustle, Defense, Matchups:
+	case Traditional, Advanced, Misc, Scoring, Usage, FourFactors, Tracking, Hustle, Defense, Matchups, Live:
 		return false
 	}
 	return true

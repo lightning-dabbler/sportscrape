@@ -73,7 +73,9 @@ func (beds BaseEventDataScraper) URL(share_url string) (string, error) {
 		case Traditional, Advanced, Misc, Scoring, Usage, FourFactors:
 			queryValues.Add("period", beds.Period.Period())
 		}
-		queryValues.Add("type", beds.BoxScoreType.Type())
+		if beds.BoxScoreType != Live {
+			queryValues.Add("type", beds.BoxScoreType.Type())
+		}
 		joinedURL.RawQuery = queryValues.Encode()
 		urlstr = joinedURL.String()
 
@@ -91,28 +93,33 @@ func (beds BaseEventDataScraper) URL(share_url string) (string, error) {
 	return urlstr, nil
 }
 
-func (beds BaseEventDataScraper) PeriodMatches(period int32) bool {
-	switch beds.Period {
-	case Q1, H1, Full:
-		if period > 0 {
+func (beds BaseEventDataScraper) PeriodBasedBoxScoreDataAvailable(period int32, gameStatus int32) bool {
+	// Game is Final
+	if gameStatus == int32(3) {
+		switch beds.Period {
+		case AllOT:
+			if period > 4 {
+				return true
+			}
+		default:
 			return true
 		}
-	case Q2:
-		if period > 1 {
-			return true
-		}
-	case Q3, H2:
-		if period > 2 {
-			return true
-		}
-	case Q4:
-		if period > 3 {
-			return true
-		}
-	case AllOT:
-		if period > 4 {
-			return true
-		}
+	}
+	return false
+}
+
+func (beds BaseEventDataScraper) NonPeriodBasedBoxScoreDataAvailable(gameStatus int32) bool {
+	// Game is Final
+	if gameStatus == int32(3) {
+		return true
+	}
+	return false
+}
+
+func (beds BaseEventDataScraper) LiveBoxScoreDataAvailable(gameStatus int32) bool {
+	// Game is ongoing
+	if gameStatus == int32(2) {
+		return true
 	}
 	return false
 }

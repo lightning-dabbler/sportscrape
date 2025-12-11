@@ -13,33 +13,26 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// BoxScoreUsageScraperOption defines a configuration option for BoxScoreUsageScraper
-type BoxScoreUsageScraperOption func(*BoxScoreUsageScraper)
+// BoxScoreTrackingScraperOption defines a configuration option for BoxScoreTrackingScraper
+type BoxScoreTrackingScraperOption func(*BoxScoreTrackingScraper)
 
-// WithBoxScoreUsagePeriod sets the period for box score usage scraper
-func WithBoxScoreUsagePeriod(period Period) BoxScoreUsageScraperOption {
-	return func(bs *BoxScoreUsageScraper) {
-		bs.Period = period
-	}
-}
-
-// WithBoxScoreUsageTimeout sets the timeout duration for box score usage scraper
-func WithBoxScoreUsageTimeout(timeout time.Duration) BoxScoreUsageScraperOption {
-	return func(bs *BoxScoreUsageScraper) {
+// WithBoxScoreTrackingTimeout sets the timeout duration for box score tracking scraper
+func WithBoxScoreTrackingTimeout(timeout time.Duration) BoxScoreTrackingScraperOption {
+	return func(bs *BoxScoreTrackingScraper) {
 		bs.Timeout = timeout
 	}
 }
 
-// WithBoxScoreUsageDebug enables or disables debug mode for box score usage scraper
-func WithBoxScoreUsageDebug(debug bool) BoxScoreUsageScraperOption {
-	return func(bs *BoxScoreUsageScraper) {
+// WithBoxScoreTrackingDebug enables or disables debug mode for box score tracking scraper
+func WithBoxScoreTrackingDebug(debug bool) BoxScoreTrackingScraperOption {
+	return func(bs *BoxScoreTrackingScraper) {
 		bs.Debug = debug
 	}
 }
 
-// NewBoxScoreUsageScraper creates a new BoxScoreUsageScraper with the provided options
-func NewBoxScoreUsageScraper(options ...BoxScoreUsageScraperOption) *BoxScoreUsageScraper {
-	bs := &BoxScoreUsageScraper{}
+// NewBoxScoreTrackingScraper creates a new BoxScoreTrackingScraper with the provided options
+func NewBoxScoreTrackingScraper(options ...BoxScoreTrackingScraperOption) *BoxScoreTrackingScraper {
+	bs := &BoxScoreTrackingScraper{}
 
 	// Apply all options
 	for _, option := range options {
@@ -50,42 +43,23 @@ func NewBoxScoreUsageScraper(options ...BoxScoreUsageScraperOption) *BoxScoreUsa
 	return bs
 }
 
-type BoxScoreUsageScraper struct {
+type BoxScoreTrackingScraper struct {
 	BaseEventDataScraper
 }
 
-func (bs *BoxScoreUsageScraper) Init() {
+func (bs *BoxScoreTrackingScraper) Init() {
 	// FeedType is BoxScore
 	bs.FeedType = BoxScore
 	// FeedType is Usage
-	bs.BoxScoreType = Usage
+	bs.BoxScoreType = Tracking
 	// Base validations
 	bs.BaseEventDataScraper.Init()
 }
-func (bs BoxScoreUsageScraper) Feed() sportscrape.Feed {
-	switch bs.Period {
-	case Q1:
-		return sportscrape.NBAUsageBoxScoreQ1
-	case Q2:
-		return sportscrape.NBAUsageBoxScoreQ2
-	case Q3:
-		return sportscrape.NBAUsageBoxScoreQ3
-	case Q4:
-		return sportscrape.NBAUsageBoxScoreQ4
-	case H1:
-		return sportscrape.NBAUsageBoxScoreH1
-	case H2:
-		return sportscrape.NBAUsageBoxScoreH2
-	case AllOT:
-		return sportscrape.NBAUsageBoxScoreOT
-	case Full:
-		return sportscrape.NBAUsageBoxScore
-	default:
-		return sportscrape.NBAUsageBoxScore
-	}
+func (bs BoxScoreTrackingScraper) Feed() sportscrape.Feed {
+	return sportscrape.NBATrackingBoxScore
 }
 
-func (bs BoxScoreUsageScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (bs BoxScoreTrackingScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
 	start := time.Now().UTC()
 	matchupModel := matchup.(model.Matchup)
 	context := bs.ConstructContext(matchupModel)
@@ -101,19 +75,17 @@ func (bs BoxScoreUsageScraper) Scrape(matchup interface{}) sportscrape.EventData
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
-	var jsonPayload jsonresponse.BoxScoreUsageJSON
+	var jsonPayload jsonresponse.BoxScoreTrackingJSON
 	var data []interface{}
 
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
-
 	// Check period matches with response payload data
-	if !bs.PeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.Period, jsonPayload.Props.PageProps.Game.GameStatus) {
+	if !bs.NonPeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.GameStatus) {
 		return sportscrape.EventDataOutput{Context: context}
 	}
-
 	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)
 	awayTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.AwayTeam.TeamCity, jsonPayload.Props.PageProps.Game.AwayTeam.TeamName)
 
@@ -123,7 +95,7 @@ func (bs BoxScoreUsageScraper) Scrape(matchup interface{}) sportscrape.EventData
 			starter = true
 		}
 		player := fmt.Sprintf("%s %s", stats.FirstName, stats.FamilyName)
-		boxscore := model.BoxScoreUsage{
+		boxscore := model.BoxScoreTracking{
 			PullTimestamp:                    pullTimestamp,
 			PullTimestampParquet:             pullTimestampParquet,
 			EventID:                          matchupModel.EventID,
@@ -141,24 +113,26 @@ func (bs BoxScoreUsageScraper) Scrape(matchup interface{}) sportscrape.EventData
 			PlayerName:                       player,
 			Position:                         stats.Position,
 			Starter:                          starter,
-			UsagePercentage:                  stats.Statistics.UsagePercentage,
-			PercentageFieldGoalsMade:         stats.Statistics.PercentageFieldGoalsMade,
-			PercentageFieldGoalsAttempted:    stats.Statistics.PercentageFieldGoalsAttempted,
-			PercentageThreePointersMade:      stats.Statistics.PercentageThreePointersMade,
-			PercentageThreePointersAttempted: stats.Statistics.PercentageThreePointersAttempted,
-			PercentageFreeThrowsMade:         stats.Statistics.PercentageFreeThrowsMade,
-			PercentageFreeThrowsAttempted:    stats.Statistics.PercentageFreeThrowsAttempted,
-			PercentageReboundsOffensive:      stats.Statistics.PercentageReboundsOffensive,
-			PercentageReboundsDefensive:      stats.Statistics.PercentageReboundsDefensive,
-			PercentageReboundsTotal:          stats.Statistics.PercentageReboundsTotal,
-			PercentageAssists:                stats.Statistics.PercentageAssists,
-			PercentageTurnovers:              stats.Statistics.PercentageTurnovers,
-			PercentageSteals:                 stats.Statistics.PercentageSteals,
-			PercentageBlocks:                 stats.Statistics.PercentageBlocks,
-			PercentageBlocksAllowed:          stats.Statistics.PercentageBlocksAllowed,
-			PercentagePersonalFouls:          stats.Statistics.PercentagePersonalFouls,
-			PercentagePersonalFoulsDrawn:     stats.Statistics.PercentagePersonalFoulsDrawn,
-			PercentagePoints:                 stats.Statistics.PercentagePoints,
+			Speed:                            stats.Statistics.Speed,
+			Distance:                         stats.Statistics.Distance,
+			ReboundChancesOffensive:          stats.Statistics.ReboundChancesOffensive,
+			ReboundChancesDefensive:          stats.Statistics.ReboundChancesDefensive,
+			ReboundChancesTotal:              stats.Statistics.ReboundChancesTotal,
+			Touches:                          stats.Statistics.Touches,
+			SecondaryAssists:                 stats.Statistics.SecondaryAssists,
+			FreeThrowAssists:                 stats.Statistics.FreeThrowAssists,
+			Passes:                           stats.Statistics.Passes,
+			Assists:                          stats.Statistics.Assists,
+			ContestedFieldGoalsMade:          stats.Statistics.ContestedFieldGoalsMade,
+			ContestedFieldGoalsAttempted:     stats.Statistics.ContestedFieldGoalsAttempted,
+			ContestedFieldGoalPercentage:     stats.Statistics.ContestedFieldGoalPercentage,
+			UncontestedFieldGoalsMade:        stats.Statistics.UncontestedFieldGoalsMade,
+			UncontestedFieldGoalsAttempted:   stats.Statistics.UncontestedFieldGoalsAttempted,
+			UncontestedFieldGoalsPercentage:  stats.Statistics.UncontestedFieldGoalsPercentage,
+			FieldGoalPercentage:              stats.Statistics.FieldGoalPercentage,
+			DefendedAtRimFieldGoalsMade:      stats.Statistics.DefendedAtRimFieldGoalsMade,
+			DefendedAtRimFieldGoalsAttempted: stats.Statistics.DefendedAtRimFieldGoalsAttempted,
+			DefendedAtRimFieldGoalPercentage: stats.Statistics.DefendedAtRimFieldGoalPercentage,
 		}
 		if stats.Statistics.Minutes != "" {
 			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
@@ -176,7 +150,7 @@ func (bs BoxScoreUsageScraper) Scrape(matchup interface{}) sportscrape.EventData
 			starter = true
 		}
 		player := fmt.Sprintf("%s %s", stats.FirstName, stats.FamilyName)
-		boxscore := model.BoxScoreUsage{
+		boxscore := model.BoxScoreTracking{
 			PullTimestamp:                    pullTimestamp,
 			PullTimestampParquet:             pullTimestampParquet,
 			EventID:                          matchupModel.EventID,
@@ -194,24 +168,26 @@ func (bs BoxScoreUsageScraper) Scrape(matchup interface{}) sportscrape.EventData
 			PlayerName:                       player,
 			Position:                         stats.Position,
 			Starter:                          starter,
-			UsagePercentage:                  stats.Statistics.UsagePercentage,
-			PercentageFieldGoalsMade:         stats.Statistics.PercentageFieldGoalsMade,
-			PercentageFieldGoalsAttempted:    stats.Statistics.PercentageFieldGoalsAttempted,
-			PercentageThreePointersMade:      stats.Statistics.PercentageThreePointersMade,
-			PercentageThreePointersAttempted: stats.Statistics.PercentageThreePointersAttempted,
-			PercentageFreeThrowsMade:         stats.Statistics.PercentageFreeThrowsMade,
-			PercentageFreeThrowsAttempted:    stats.Statistics.PercentageFreeThrowsAttempted,
-			PercentageReboundsOffensive:      stats.Statistics.PercentageReboundsOffensive,
-			PercentageReboundsDefensive:      stats.Statistics.PercentageReboundsDefensive,
-			PercentageReboundsTotal:          stats.Statistics.PercentageReboundsTotal,
-			PercentageAssists:                stats.Statistics.PercentageAssists,
-			PercentageTurnovers:              stats.Statistics.PercentageTurnovers,
-			PercentageSteals:                 stats.Statistics.PercentageSteals,
-			PercentageBlocks:                 stats.Statistics.PercentageBlocks,
-			PercentageBlocksAllowed:          stats.Statistics.PercentageBlocksAllowed,
-			PercentagePersonalFouls:          stats.Statistics.PercentagePersonalFouls,
-			PercentagePersonalFoulsDrawn:     stats.Statistics.PercentagePersonalFoulsDrawn,
-			PercentagePoints:                 stats.Statistics.PercentagePoints,
+			Speed:                            stats.Statistics.Speed,
+			Distance:                         stats.Statistics.Distance,
+			ReboundChancesOffensive:          stats.Statistics.ReboundChancesOffensive,
+			ReboundChancesDefensive:          stats.Statistics.ReboundChancesDefensive,
+			ReboundChancesTotal:              stats.Statistics.ReboundChancesTotal,
+			Touches:                          stats.Statistics.Touches,
+			SecondaryAssists:                 stats.Statistics.SecondaryAssists,
+			FreeThrowAssists:                 stats.Statistics.FreeThrowAssists,
+			Passes:                           stats.Statistics.Passes,
+			Assists:                          stats.Statistics.Assists,
+			ContestedFieldGoalsMade:          stats.Statistics.ContestedFieldGoalsMade,
+			ContestedFieldGoalsAttempted:     stats.Statistics.ContestedFieldGoalsAttempted,
+			ContestedFieldGoalPercentage:     stats.Statistics.ContestedFieldGoalPercentage,
+			UncontestedFieldGoalsMade:        stats.Statistics.UncontestedFieldGoalsMade,
+			UncontestedFieldGoalsAttempted:   stats.Statistics.UncontestedFieldGoalsAttempted,
+			UncontestedFieldGoalsPercentage:  stats.Statistics.UncontestedFieldGoalsPercentage,
+			FieldGoalPercentage:              stats.Statistics.FieldGoalPercentage,
+			DefendedAtRimFieldGoalsMade:      stats.Statistics.DefendedAtRimFieldGoalsMade,
+			DefendedAtRimFieldGoalsAttempted: stats.Statistics.DefendedAtRimFieldGoalsAttempted,
+			DefendedAtRimFieldGoalPercentage: stats.Statistics.DefendedAtRimFieldGoalPercentage,
 		}
 		if stats.Statistics.Minutes != "" {
 			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)

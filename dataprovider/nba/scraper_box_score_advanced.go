@@ -109,7 +109,7 @@ func (bs BoxScoreAdvancedScraper) Scrape(matchup interface{}) sportscrape.EventD
 		return sportscrape.EventDataOutput{Error: err, Context: context}
 	}
 	// Check period matches with response payload data
-	if !bs.PeriodMatches(jsonPayload.Props.PageProps.Game.Period) {
+	if !bs.PeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.Period, jsonPayload.Props.PageProps.Game.GameStatus) {
 		return sportscrape.EventDataOutput{Context: context}
 	}
 	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)

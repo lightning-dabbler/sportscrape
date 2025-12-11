@@ -5,10 +5,11 @@ type BoxScoreMiscJSON struct {
 	Props struct {
 		PageProps struct {
 			Game struct {
-				Period   int32             `json:"period"` //"period": 4
-				EventID  string            `json:"gameId"` // "gameId": "0022500240"
-				HomeTeam BoxScoreMiscStats `json:"homeTeam"`
-				AwayTeam BoxScoreMiscStats `json:"awayTeam"`
+				Period     int32             `json:"period"`     //"period": 4
+				GameStatus int32             `json:"gameStatus"` // "gameStatus": 3
+				EventID    string            `json:"gameId"`     // "gameId": "0022500240"
+				HomeTeam   BoxScoreMiscStats `json:"homeTeam"`
+				AwayTeam   BoxScoreMiscStats `json:"awayTeam"`
 			} `json:"game"`
 		} `json:"pageProps"`
 	} `json:"props"`
