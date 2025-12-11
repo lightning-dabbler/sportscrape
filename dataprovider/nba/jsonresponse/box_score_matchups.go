@@ -5,16 +5,16 @@ type BoxScoreMatchupsJSON struct {
 	Props struct {
 		PageProps struct {
 			Game struct {
-				GameStatus int32                `json:"gameStatus"` // "gameStatus": 3
-				EventID    string               `json:"gameId"`     // "gameId": "0022500240"
-				HomeTeam   BoxScoreMatchupStats `json:"homeTeam"`
-				AwayTeam   BoxScoreMatchupStats `json:"awayTeam"`
+				GameStatus int32                 `json:"gameStatus"` // "gameStatus": 3
+				EventID    string                `json:"gameId"`     // "gameId": "0022500240"
+				HomeTeam   BoxScoreMatchupsStats `json:"homeTeam"`
+				AwayTeam   BoxScoreMatchupsStats `json:"awayTeam"`
 			} `json:"game"`
 		} `json:"pageProps"`
 	} `json:"props"`
 }
 
-type BoxScoreMatchupStats struct {
+type BoxScoreMatchupsStats struct {
 	TeamID      int64  `json:"teamId"`      // "teamId": 1610612762
 	TeamName    string `json:"teamName"`    // "teamName": "Jazz"
 	TeamCity    string `json:"teamCity"`    // "teamCity": "Utah"
@@ -46,14 +46,14 @@ type BoxScoreMatchupStats struct {
 				MatchupBlocks                  int32   `json:"matchupBlocks"`                  // "matchupBlocks": 0
 				MatchupFieldGoalsMade          int32   `json:"matchupFieldGoalsMade"`          // "matchupFieldGoalsMade": 1
 				MatchupFieldGoalsAttempted     int32   `json:"matchupFieldGoalsAttempted"`     // "matchupFieldGoalsAttempted": 1
-				MatchupFieldGoalsPercentage    int32   `json:"matchupFieldGoalsPercentage"`    // "matchupFieldGoalsPercentage": 1
+				MatchupFieldGoalsPercentage    float32 `json:"matchupFieldGoalsPercentage"`    // "matchupFieldGoalsPercentage": 1
 				MatchupThreePointersMade       int32   `json:"matchupThreePointersMade"`       // "matchupThreePointersMade": 1
 				MatchupThreePointersAttempted  int32   `json:"matchupThreePointersAttempted"`  // "matchupThreePointersAttempted": 1
-				MatchupThreePointersPercentage int32   `json:"matchupThreePointersPercentage"` // "matchupThreePointersPercentage": 1
+				MatchupThreePointersPercentage float32 `json:"matchupThreePointersPercentage"` // "matchupThreePointersPercentage": 1
 				HelpBlocks                     int32   `json:"helpBlocks"`                     // "helpBlocks": 0
 				HelpFieldGoalsMade             int32   `json:"helpFieldGoalsMade"`             // "helpFieldGoalsMade": 0
 				HelpFieldGoalsAttempted        int32   `json:"helpFieldGoalsAttempted"`        // "helpFieldGoalsAttempted": 0
-				HelpFieldGoalsPercentage       int32   `json:"helpFieldGoalsPercentage"`       // "helpFieldGoalsPercentage": 0
+				HelpFieldGoalsPercentage       float32 `json:"helpFieldGoalsPercentage"`       // "helpFieldGoalsPercentage": 0
 				MatchupFreeThrowsMade          int32   `json:"matchupFreeThrowsMade"`          // "matchupFreeThrowsMade": 0
 				MatchupFreeThrowsAttempted     int32   `json:"matchupFreeThrowsAttempted"`     // "matchupFreeThrowsAttempted": 0
 				ShootingFouls                  int32   `json:"shootingFouls"`                  // "shootingFouls": 0
