@@ -58,6 +58,7 @@ func main() {
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 - [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
 - [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
+- [nba.com NBA scraping examples](dataprovider/nba/example_test.go)
 
 ## Data providers
 
@@ -88,6 +89,20 @@ func main() {
 | https://baseballsavant.mlb.com		 | MLB	     | Play by play                         |        Live, Full			         |        [model](dataprovider/baseballsavantmlb/model/play_by_play.go)         ||✅|
 | https://www.espn.com/mma/     		 | UFC/PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
 | https://www.espn.com/mma/     		 | UFC/PFL	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Matchup |           Live, Full			            |             [model](dataprovider/nba/model/matchup.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Matchup Periods |           Live, Full			            |             [model](dataprovider/nba/model/matchup_periods.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Traditional box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full			            |             [model](dataprovider/nba/model/box_score_traditional.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Advanced box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_advanced.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Scoring box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_scoring.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Four factors box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_four_factors.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Misc box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_misc.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Usage box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_usage.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Defense box score stats | Full			            |             [model](dataprovider/nba/model/box_score_defense.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Tracking box score stats | Full			            |             [model](dataprovider/nba/model/box_score_tracking.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Hustle box score stats | Full			            |             [model](dataprovider/nba/model/box_score_hustle.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Matchups box score stats | Full			            |             [model](dataprovider/nba/model/box_score_matchups.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Live box score stats | Live			            |             [model](dataprovider/nba/model/box_score_live.go)             ||✅|
+
 ## Supported Formats
 File formats the constructed data models support on export and import.
 |Format|Export|Import|Go Package|
