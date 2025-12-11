@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - BoxScoreFourFactorsScraper
     - BoxScoreDefenseScraper
     - BoxScoreAdvancedScraper
+### Fixed
+- Resolved ESPNMMAFightDetailsScraper test issues
 
 ## [0.16.3] - 2025-10-31
 ### Changed
