@@ -23,5 +23,5 @@ func TestDeprecatedESPNMMMAMatchupScraper_PFL(T *testing.T) {
 
 	r, err := matchupRunner.Run()
 	assert.Error(T, err, "deprecated")
-	assert.Nil(t, r)
+	assert.Nil(T, r)
 }
