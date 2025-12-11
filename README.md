@@ -102,6 +102,7 @@ func main() {
 | https://www.nba.com     		 | NBA	 | Hustle box score stats | Full			            |             [model](dataprovider/nba/model/box_score_hustle.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Matchups box score stats | Full			            |             [model](dataprovider/nba/model/box_score_matchups.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Live box score stats | Live			            |             [model](dataprovider/nba/model/box_score_live.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | play by play | Live, Full			            |             [model](dataprovider/nba/model/play_by_play.go)             ||✅|
 
 ## Supported Formats
 File formats the constructed data models support on export and import.
