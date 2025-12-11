@@ -90,7 +90,7 @@ func main() {
 | https://www.espn.com/mma/     		 | UFC/PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
 | https://www.espn.com/mma/     		 | UFC/PFL	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Matchup |           Live, Full			            |             [model](dataprovider/nba/model/matchup.go)             ||✅|
-| https://www.nba.com     		 | NBA	 | Matchup Periods |           Live, Full			            |             [model](dataprovider/nba/model/matchup_periods.go)             ||✅|
+| https://www.nba.com     		 | NBA	 | Matchup periods |           Live, Full			            |             [model](dataprovider/nba/model/matchup_periods.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Traditional box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full			            |             [model](dataprovider/nba/model/box_score_traditional.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Advanced box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_advanced.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Scoring box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full |             [model](dataprovider/nba/model/box_score_scoring.go)             ||✅|
