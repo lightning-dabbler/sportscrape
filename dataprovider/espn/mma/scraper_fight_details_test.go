@@ -18,6 +18,9 @@ func int32ptr(i int32) *int32 {
 }
 
 func TestESPNMMAFightDetailsScraper(T *testing.T) {
+	if testing.Short() {
+		T.Skip("Skipping integration test")
+	}
 	scraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 3 * time.Minute}}
 
 	mockTime := time.Now()

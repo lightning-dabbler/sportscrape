@@ -22,8 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - BoxScoreDefenseScraper
     - BoxScoreAdvancedScraper
     - PlayByPlayScraper
+
 ### Fixed
 - Resolved ESPNMMAFightDetailsScraper test issues
+
+### Changed
+- Deprecated baseball-reference mlb data provider (baseball savant mlb is a better data provider)
+- Deprecated ESPN mma pfl matchup and fight details scrapers (no useful data available)
 
 ## [0.16.3] - 2025-10-31
 ### Changed

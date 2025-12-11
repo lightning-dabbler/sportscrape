@@ -2,7 +2,6 @@ package sportscrape
 
 import (
 	"fmt"
-	"log"
 )
 
 type Provider string
@@ -124,7 +123,7 @@ var (
 func (p Provider) Deprecated() bool {
 	switch p {
 	case BaseballReference:
-		log.Printf("Warning: %s provider will be deprecated in future releases\n", p)
+		return true
 	}
 	return false
 }
@@ -132,7 +131,7 @@ func (p Provider) Deprecated() bool {
 func (f Feed) Deprecated() bool {
 	switch f {
 	case ESPNPFLMatchups, ESPNPFLFightDetails:
-		log.Printf("Warning: %s feed will be deprecated in future releases\n", f)
+		return true
 	}
 	return false
 }

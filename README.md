@@ -54,7 +54,7 @@ func main() {
 
 ## Usage
 - [basketball-reference.com NBA scrape examples](dataprovider/basketballreferencenba/example_test.go)
-- [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go)
+- [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go) (Deprecated)
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 - [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
 - [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
@@ -64,12 +64,12 @@ func main() {
 
 | Source                           | League   | Feed                                 |      Periods Available       |                                  Data Model                                  |	Deprecated	| Point-in-time|
 |----------------------------------|----------|--------------------------------------|:----------------------------:|:----------------------------------------------------------------------------:|:---------------------:|:------------:|
-| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         |		|✅|
-| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  |		|✅|
+| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         | |✅|
+| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  ||✅|
 | https://basketball-reference.com | NBA      | Advanced box score stats             |             Full             |  [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)   ||✅|
-| https://baseball-reference.com   | MLB      | Matchup                              |             Full             |         [model](dataprovider/baseballreferencemlb/model/matchup.go)          ||✅|
-| https://baseball-reference.com   | MLB      | Batting box score stats              |             Full             | [model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)  ||✅|
-| https://baseball-reference.com   | MLB      | Pitching box score stats             |             Full             | [model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go) ||✅|
+| https://baseball-reference.com   | MLB      | Matchup                              |             Full             |         [model](dataprovider/baseballreferencemlb/model/matchup.go)          | 🚩 |✅|
+| https://baseball-reference.com   | MLB      | Batting box score stats              |             Full             | [model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)  | 🚩 |✅|
+| https://baseball-reference.com   | MLB      | Pitching box score stats             |             Full             | [model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go) | 🚩 |✅|
 | https://www.foxsports.com		      | NBA	     | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
 | https://www.foxsports.com		      | NBA	     | Box score stats		                    |        Live, Full			         |         [model](dataprovider/foxsports/model/nba_box_score_stats.go)         ||✅|
 | https://www.foxsports.com		      | WNBA	    | Matchup				                          |        Live, Full			         |               [model](dataprovider/foxsports/model/matchup.go)               ||✅|
@@ -87,8 +87,10 @@ func main() {
 | https://baseballsavant.mlb.com		 | MLB	     | Pitching box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/pitching_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	     | Fielding box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/fielding_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	     | Play by play                         |        Live, Full			         |        [model](dataprovider/baseballsavantmlb/model/play_by_play.go)         ||✅|
-| https://www.espn.com/mma/     		 | UFC/PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
-| https://www.espn.com/mma/     		 | UFC/PFL	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|
+| https://www.espn.com/mma/     		 | UFC	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
+| https://www.espn.com/mma/     		 | PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                | 🚩 |✅|
+| https://www.espn.com/mma/     		 | UFC	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|
+| https://www.espn.com/mma/     		 | PFL	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             | 🚩 |✅|
 | https://www.nba.com     		 | NBA	 | Matchup |           Live, Full			            |             [model](dataprovider/nba/model/matchup.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Matchup periods |           Live, Full			            |             [model](dataprovider/nba/model/matchup_periods.go)             ||✅|
 | https://www.nba.com     		 | NBA	 | Traditional box score stats | Q1, Q2, Q3, Q4, H1, H2, All OT, Full			            |             [model](dataprovider/nba/model/box_score_traditional.go)             ||✅|
