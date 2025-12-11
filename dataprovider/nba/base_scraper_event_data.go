@@ -93,28 +93,24 @@ func (beds BaseEventDataScraper) URL(share_url string) (string, error) {
 
 func (beds BaseEventDataScraper) PeriodMatches(period int32) bool {
 	switch beds.Period {
-	case AllOT:
-		if period > 4 {
-			return true
-		}
-	case Q1, H1:
-		if period >= 1 {
+	case Q1, H1, Full:
+		if period > 0 {
 			return true
 		}
 	case Q2:
-		if period >= 2 {
+		if period > 1 {
 			return true
 		}
 	case Q3, H2:
-		if period >= 3 {
+		if period > 2 {
 			return true
 		}
 	case Q4:
-		if period >= 4 {
+		if period > 3 {
 			return true
 		}
-	case Full:
-		if period > 0 {
+	case AllOT:
+		if period > 4 {
 			return true
 		}
 	}
