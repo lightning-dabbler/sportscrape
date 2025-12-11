@@ -64,9 +64,9 @@ func main() {
 
 | Source                           | League   | Feed                                 |      Periods Available       |                                  Data Model                                  |	Deprecated	| Point-in-time|
 |----------------------------------|----------|--------------------------------------|:----------------------------:|:----------------------------------------------------------------------------:|:---------------------:|:------------:|
-| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         | 🚩 |✅|
-| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  | 🚩 |✅|
-| https://basketball-reference.com | NBA      | Advanced box score stats             |             Full             |  [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)   | 🚩 |✅|
+| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         | |✅|
+| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  ||✅|
+| https://basketball-reference.com | NBA      | Advanced box score stats             |             Full             |  [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)   ||✅|
 | https://baseball-reference.com   | MLB      | Matchup                              |             Full             |         [model](dataprovider/baseballreferencemlb/model/matchup.go)          | 🚩 |✅|
 | https://baseball-reference.com   | MLB      | Batting box score stats              |             Full             | [model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)  | 🚩 |✅|
 | https://baseball-reference.com   | MLB      | Pitching box score stats             |             Full             | [model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go) | 🚩 |✅|
