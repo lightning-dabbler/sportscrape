@@ -49,7 +49,7 @@ func TestBoxScoreTrackingScraper(t *testing.T) {
 	assert.Equal(t, "Oklahoma City Thunder", testRecord.OpponentNameFull)
 	assert.Equal(t, int64(1630169), testRecord.PlayerID)
 	assert.Equal(t, "Tyrese Haliburton", testRecord.PlayerName)
-	assert.Equal(t, "F", testRecord.Position)
+	assert.Equal(t, "G", testRecord.Position)
 	assert.Equal(t, true, testRecord.Starter)
 	assert.Equal(t, float32(38.92), testRecord.Minutes)
 	assert.Equal(t, float32(4.45), testRecord.Speed)
