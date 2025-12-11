@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2025-12-11
+### Added
+- Added the following scrapers for nba.com data provider (#114):
+    - MatchupScraper
+    - MatchupPeriodsScraper
+    - BoxScoreUsageScraper
+    - BoxScoreTraditionalScraper
+    - BoxScoreTrackingScraper
+    - BoxScoreScoringScraper
+    - BoxScoreMiscScraper
+    - BoxScoreMatchupsScraper
+    - BoxScoreLiveScraper
+    - BoxScoreHustleScraper
+    - BoxScoreFourFactorsScraper
+    - BoxScoreDefenseScraper
+    - BoxScoreAdvancedScraper
+    - PlayByPlayScraper
+
+### Fixed
+- Resolved ESPNMMAFightDetailsScraper test issues (#114)
+
+### Changed
+- Deprecated baseball-reference mlb data provider (baseball savant mlb is a better data provider) (#115)
+- Deprecated ESPN mma pfl matchup and fight details scrapers (no useful data available) (#115)
+
 ## [0.16.3] - 2025-10-31
 ### Changed
 - Deprecation warning for espn pfl data feeds (#112)

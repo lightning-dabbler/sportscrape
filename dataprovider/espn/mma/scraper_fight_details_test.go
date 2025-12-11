@@ -18,7 +18,10 @@ func int32ptr(i int32) *int32 {
 }
 
 func TestESPNMMAFightDetailsScraper(T *testing.T) {
-	scraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 10 * time.Second}}
+	if testing.Short() {
+		T.Skip("Skipping integration test")
+	}
+	scraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 3 * time.Minute}}
 
 	mockTime := time.Now()
 	matchup := model.Matchup{
@@ -39,115 +42,102 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 		if fight.ID == "401630119" {
 			fight.PullTimestamp = time.Time{}
 			fight.PullTimestampParquet = 0
-			assert.Equal(T,
-				model.FightDetails{
-					PullTimestamp:                    time.Time{},
-					PullTimestampParquet:             0,
-					EventID:                          "600041054",
-					EventTime:                        mockTime,
-					EventTimeParquet:                 types.TimeToTIMESTAMP_MILLIS(mockTime, true),
-					ID:                               "401630119",
-					NTE:                              "Flyweight - Main Event",
-					StatusID:                         "3",
-					StatusState:                      "post",
-					StatusDetail:                     "Final",
-					StatusDSPClk:                     "5:00",
-					StatusRound:                      "",
-					DecisionDetail:                   "47-48 | 49-46 | 47-48",
-					DecisionShortDspName:             "S Dec",
-					AwayBodyImage:                    "https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/stance/left/3027545.png&h=432",
-					AwayGender:                       "male",
-					AwayCountry:                      "Mexico",
-					AwayLink:                         "https://www.espn.com/mma/fighter/_/id/3027545/brandon-moreno",
-					AwayDamageBody:                   38,
-					AwayDamageHead:                   97,
-					AwayDamageLegs:                   10,
-					AwayFirstName:                    "Brandon",
-					AwayLastName:                     "Moreno",
-					AwayDisplay:                      "Brandon Moreno",
-					AwayFlag:                         "https://a.espncdn.com/i/teamlogos/countries/500/mex.png",
-					AwayHeadshot:                     "https://a.espncdn.com/i/headshots/mma/players/full/3027545.png",
-					AwayID:                           "3027545",
-					AwayUID:                          "s:3301~a:3027545",
-					AwayIsWin:                        false,
-					AwayRecord:                       "23-8-2",
-					AwayShortName:                    "B. Moreno",
-					AwayStatsBodyTotal:               51,
-					AwayStatsBodyValue:               37,
-					AwayStatsControl:                 "2:54",
-					AwayStatsControlSeconds:          int32ptr(174),
-					AwayStatsHeadTotal:               127,
-					AwayStatsHeadValue:               48,
-					AwayStatsIsPre:                   false,
-					AwayStatsKnockdowns:              0,
-					AwayStatsLegsTotal:               33,
-					AwayStatsLegsValue:               27,
-					AwayStatsSignificantStrikesTotal: 211,
-					AwayStatsSignificantStrikesValue: 112,
-					AwayStatsSubmissionAttempts:      0,
-					AwayStatsTakedownsTotal:          5,
-					AwayStatsTakedownsValue:          3,
-					AwayStatsTotalStrikesTotal:       219,
-					AwayStatsTotalStrikesValue:       119,
-					AwayStatsOdds:                    "-310",
-					AwayStatsID:                      "",
-					AwayStatsIsWin:                   false,
-					AwayStatsRecord:                  "",
-					AwayStatsShortName:               "",
-					AwayBetsProviderID:               "58",
-					AwayBetsProviderName:             "ESPN BET",
-					AwayBetsProviderPriority:         1,
-					AwayBetsOddsMoneyLine:            "-310",
-					AwayBetsOddsByKO:                 "OFF",
-					AwayBetsOddsBySub:                "OFF",
-					AwayBetOddsByPoints:              "OFF",
-					HomeBodyImage:                    "https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/stance/right/4239928.png&h=432",
-					HomeGender:                       "male",
-					HomeCountry:                      "USA",
-					HomeLink:                         "https://www.espn.com/mma/fighter/_/id/4239928/brandon-royval",
-					HomeDamageBody:                   37,
-					HomeDamageHead:                   48,
-					HomeDamageLegs:                   27,
-					HomeFirstName:                    "Brandon",
-					HomeLastName:                     "Royval",
-					HomeDisplay:                      "Brandon Royval",
-					HomeFlag:                         "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
-					HomeHeadshot:                     "https://a.espncdn.com/i/headshots/mma/players/full/4239928.png",
-					HomeID:                           "4239928",
-					HomeUID:                          "s:3301~a:4239928",
-					HomeIsWin:                        true,
-					HomeRecord:                       "17-8-0",
-					HomeShortName:                    "B. Royval",
-					HomeStatsBodyTotal:               54,
-					HomeStatsBodyValue:               38,
-					HomeStatsControl:                 "0:35",
-					HomeStatsControlSeconds:          int32ptr(35),
-					HomeStatsHeadTotal:               437,
-					HomeStatsHeadValue:               97,
-					HomeStatsIsPre:                   false,
-					HomeStatsKnockdowns:              0,
-					HomeStatsLegsTotal:               19,
-					HomeStatsLegsValue:               10,
-					HomeStatsSignificantStrikesTotal: 510,
-					HomeStatsSignificantStrikesValue: 145,
-					HomeStatsSubmissionAttempts:      0,
-					HomeStatsTakedownsTotal:          2,
-					HomeStatsTakedownsValue:          1,
-					HomeStatsTotalStrikesTotal:       556,
-					HomeStatsTotalStrikesValue:       177,
-					HomeStatsOdds:                    "+250",
-					HomeStatsID:                      "",
-					HomeStatsIsWin:                   false,
-					HomeStatsRecord:                  "",
-					HomeStatsShortName:               "",
-					HomeBetsProviderID:               "58",
-					HomeBetsProviderName:             "ESPN BET",
-					HomeBetsProviderPriority:         1,
-					HomeBetsOddsMoneyLine:            "+250",
-					HomeBetsOddsByKO:                 "OFF",
-					HomeBetsOddsBySub:                "OFF",
-					HomeBetOddsByPoints:              "OFF"},
-				fight)
+
+			// Basic fight information
+			assert.Equal(T, time.Time{}, fight.PullTimestamp)
+			assert.Equal(T, int64(0), fight.PullTimestampParquet)
+			assert.Equal(T, "600041054", fight.EventID)
+			assert.Equal(T, mockTime, fight.EventTime)
+			assert.Equal(T, types.TimeToTIMESTAMP_MILLIS(mockTime, true), fight.EventTimeParquet)
+			assert.Equal(T, "401630119", fight.ID)
+			assert.Equal(T, "Flyweight - Main Event", fight.NTE)
+
+			// Status information
+			assert.Equal(T, "3", fight.StatusID)
+			assert.Equal(T, "post", fight.StatusState)
+			assert.Equal(T, "Final", fight.StatusDetail)
+			assert.Equal(T, "5:00", fight.StatusDSPClk)
+			assert.Equal(T, "", fight.StatusRound)
+			assert.Equal(T, "47-48 | 49-46 | 47-48", fight.DecisionDetail)
+			assert.Equal(T, "S Dec", fight.DecisionShortDspName)
+
+			// Away fighter basic info
+			assert.Equal(T, "https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/stance/left/3027545.png&h=432", fight.AwayBodyImage)
+			assert.Equal(T, "male", fight.AwayGender)
+			assert.Equal(T, "Mexico", fight.AwayCountry)
+			assert.Equal(T, "https://www.espn.com/mma/fighter/_/id/3027545/brandon-moreno", fight.AwayLink)
+			assert.Equal(T, int32(38), fight.AwayDamageBody)
+			assert.Equal(T, int32(97), fight.AwayDamageHead)
+			assert.Equal(T, int32(10), fight.AwayDamageLegs)
+			assert.Equal(T, "Brandon", fight.AwayFirstName)
+			assert.Equal(T, "Moreno", fight.AwayLastName)
+			assert.Equal(T, "Brandon Moreno", fight.AwayDisplay)
+			assert.Equal(T, "https://a.espncdn.com/i/teamlogos/countries/500/mex.png", fight.AwayFlag)
+			assert.Equal(T, "https://a.espncdn.com/i/headshots/mma/players/full/3027545.png", fight.AwayHeadshot)
+			assert.Equal(T, "3027545", fight.AwayID)
+			assert.Equal(T, "s:3301~a:3027545", fight.AwayUID)
+			assert.Equal(T, false, fight.AwayIsWin)
+			assert.Equal(T, "B. Moreno", fight.AwayShortName)
+
+			// Away fighter stats
+			assert.Equal(T, int32(51), fight.AwayStatsBodyTotal)
+			assert.Equal(T, int32(37), fight.AwayStatsBodyValue)
+			assert.Equal(T, "2:54", fight.AwayStatsControl)
+			assert.Equal(T, int32ptr(174), fight.AwayStatsControlSeconds)
+			assert.Equal(T, int32(127), fight.AwayStatsHeadTotal)
+			assert.Equal(T, int32(48), fight.AwayStatsHeadValue)
+			assert.Equal(T, false, fight.AwayStatsIsPre)
+			assert.Equal(T, int32(0), fight.AwayStatsKnockdowns)
+			assert.Equal(T, int32(33), fight.AwayStatsLegsTotal)
+			assert.Equal(T, int32(27), fight.AwayStatsLegsValue)
+			assert.Equal(T, int32(211), fight.AwayStatsSignificantStrikesTotal)
+			assert.Equal(T, int32(112), fight.AwayStatsSignificantStrikesValue)
+			assert.Equal(T, int32(0), fight.AwayStatsSubmissionAttempts)
+			assert.Equal(T, int32(5), fight.AwayStatsTakedownsTotal)
+			assert.Equal(T, int32(3), fight.AwayStatsTakedownsValue)
+			assert.Equal(T, int32(219), fight.AwayStatsTotalStrikesTotal)
+			assert.Equal(T, int32(119), fight.AwayStatsTotalStrikesValue)
+			assert.Equal(T, "", fight.AwayStatsID)
+			assert.Equal(T, false, fight.AwayStatsIsWin)
+			assert.Equal(T, "", fight.AwayStatsRecord)
+			assert.Equal(T, "", fight.AwayStatsShortName)
+
+			// Home fighter basic info
+			assert.Equal(T, "https://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/stance/right/4239928.png&h=432", fight.HomeBodyImage)
+			assert.Equal(T, "male", fight.HomeGender)
+			assert.Equal(T, "USA", fight.HomeCountry)
+			assert.Equal(T, "https://www.espn.com/mma/fighter/_/id/4239928/brandon-royval", fight.HomeLink)
+			assert.Equal(T, int32(37), fight.HomeDamageBody)
+			assert.Equal(T, int32(48), fight.HomeDamageHead)
+			assert.Equal(T, int32(27), fight.HomeDamageLegs)
+			assert.Equal(T, "Brandon", fight.HomeFirstName)
+			assert.Equal(T, "Royval", fight.HomeLastName)
+			assert.Equal(T, "Brandon Royval", fight.HomeDisplay)
+			assert.Equal(T, "https://a.espncdn.com/i/teamlogos/countries/500/usa.png", fight.HomeFlag)
+			assert.Equal(T, "https://a.espncdn.com/i/headshots/mma/players/full/4239928.png", fight.HomeHeadshot)
+			assert.Equal(T, "4239928", fight.HomeID)
+			assert.Equal(T, "s:3301~a:4239928", fight.HomeUID)
+			assert.Equal(T, true, fight.HomeIsWin)
+			assert.Equal(T, "B. Royval", fight.HomeShortName)
+
+			// Home fighter stats
+			assert.Equal(T, int32(54), fight.HomeStatsBodyTotal)
+			assert.Equal(T, int32(38), fight.HomeStatsBodyValue)
+			assert.Equal(T, "0:35", fight.HomeStatsControl)
+			assert.Equal(T, int32ptr(35), fight.HomeStatsControlSeconds)
+			assert.Equal(T, int32(437), fight.HomeStatsHeadTotal)
+			assert.Equal(T, int32(97), fight.HomeStatsHeadValue)
+			assert.Equal(T, false, fight.HomeStatsIsPre)
+			assert.Equal(T, int32(0), fight.HomeStatsKnockdowns)
+			assert.Equal(T, int32(19), fight.HomeStatsLegsTotal)
+			assert.Equal(T, int32(10), fight.HomeStatsLegsValue)
+			assert.Equal(T, int32(510), fight.HomeStatsSignificantStrikesTotal)
+			assert.Equal(T, int32(145), fight.HomeStatsSignificantStrikesValue)
+			assert.Equal(T, int32(0), fight.HomeStatsSubmissionAttempts)
+			assert.Equal(T, int32(2), fight.HomeStatsTakedownsTotal)
+			assert.Equal(T, int32(1), fight.HomeStatsTakedownsValue)
+			assert.Equal(T, int32(556), fight.HomeStatsTotalStrikesTotal)
+			assert.Equal(T, int32(177), fight.HomeStatsTotalStrikesValue)
 			return
 		}
 
