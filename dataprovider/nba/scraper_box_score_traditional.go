@@ -57,7 +57,7 @@ type BoxScoreTraditionalScraper struct {
 func (bs *BoxScoreTraditionalScraper) Init() {
 	// FeedType is BoxScore
 	bs.FeedType = BoxScore
-	// FeedType is Usage
+	// FeedType is Traditional
 	bs.BoxScoreType = Traditional
 	// Base validations
 	bs.BaseEventDataScraper.Init()

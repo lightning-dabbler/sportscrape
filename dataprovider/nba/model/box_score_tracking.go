@@ -79,5 +79,5 @@ type BoxScoreTracking struct {
 	// DefendedAtRimFieldGoalsAttempted
 	DefendedAtRimFieldGoalsAttempted int32 `json:"defended_at_rim_field_goals_attempted" parquet:"name=defended_at_rim_field_goals_attempted, type=INT32"`
 	// DefendedAtRimFieldGoalPercentage
-	DefendedAtRimFieldGoalPercentage float32 `json:"defended_at_rim_field_goalp_ercentage" parquet:"name=defended_at_rim_field_goalp_ercentage, type=FLOAT"`
+	DefendedAtRimFieldGoalPercentage float32 `json:"defended_at_rim_field_goal_percentage" parquet:"name=defended_at_rim_field_goal_percentage, type=FLOAT"`
 }

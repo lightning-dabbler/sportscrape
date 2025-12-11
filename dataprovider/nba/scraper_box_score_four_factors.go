@@ -57,7 +57,7 @@ type BoxScoreFourFactorsScraper struct {
 func (bs *BoxScoreFourFactorsScraper) Init() {
 	// FeedType is BoxScore
 	bs.FeedType = BoxScore
-	// FeedType is Usage
+	// FeedType is FourFactors
 	bs.BoxScoreType = FourFactors
 	// Base validations
 	bs.BaseEventDataScraper.Init()

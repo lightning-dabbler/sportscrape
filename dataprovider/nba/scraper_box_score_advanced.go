@@ -57,7 +57,7 @@ type BoxScoreAdvancedScraper struct {
 func (bs *BoxScoreAdvancedScraper) Init() {
 	// FeedType is BoxScore
 	bs.FeedType = BoxScore
-	// FeedType is Usage
+	// FeedType is Advanced
 	bs.BoxScoreType = Advanced
 	// Base validations
 	bs.BaseEventDataScraper.Init()
