@@ -23,6 +23,6 @@ func TestDeprecatedProvider(t *testing.T) {
 	)
 	// Retrieve MLB matchups associated with date
 	matchups, err := matchuprunner.Run()
-	assert.NoError(t, err, "deprecated")
+	assert.Error(t, err, "deprecated")
 	assert.Nil(t, matchups)
 }
