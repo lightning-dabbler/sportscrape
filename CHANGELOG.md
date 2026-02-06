@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.1] - 2026-02-06
+### Added
+- Added common user agent to base scraper for nba.com provider
+
 ## [0.17.0] - 2025-12-11
 ### Added
 - Added the following scrapers for nba.com data provider (#114):
