@@ -17,7 +17,9 @@ type Scraper struct {
 }
 
 func (s Scraper) FetchDoc(URL string) (string, error) {
-	doc, err := s.RetrieveDocument(URL, network.Headers{}, Selector)
+	doc, err := s.RetrieveDocument(URL, network.Headers{
+		"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+	}, Selector)
 	if err != nil {
 		return "", err
 	}
