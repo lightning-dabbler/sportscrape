@@ -112,6 +112,26 @@ func TestTransformMinutesPlayed(t *testing.T) {
 			minutes: "20:",
 			isError: true,
 		},
+		{
+			name:        "valid conversion PT10M43.00S",
+			minutes:     "PT10M43.00S",
+			expectation: float32(10.72),
+		},
+		{
+			name:        "valid conversion PT10M",
+			minutes:     "PT10M",
+			expectation: float32(10),
+		},
+		{
+			name:        "valid conversion PT00M07.70S",
+			minutes:     "PT00M07.70S",
+			expectation: float32(0.13),
+		},
+		{
+			name:    "invalid conversion (missing minute)",
+			minutes: "PT1S",
+			isError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

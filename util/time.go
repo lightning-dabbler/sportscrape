@@ -2,8 +2,14 @@ package util
 
 import (
 	"fmt"
-	"strings"
+	"regexp"
+	"strconv"
 	"time"
+)
+
+var (
+	colonFormatRe   = regexp.MustCompile(`^(\d+):(\d+)$`)                   // 03:50
+	iso8601FormatRe = regexp.MustCompile(`^PT(\d+)M(?:(\d+(?:\.\d+)?)S)?$`) // PT10M43.00S | PT11M
 )
 
 func TimeToDays(t time.Time) int32 {
@@ -32,25 +38,70 @@ func DateStrToTime(date string) (time.Time, error) {
 func RFC3339ToTime(str string) (time.Time, error) {
 	timestamp, err := time.Parse(time.RFC3339, str)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("Could not convert RFC3339 string %s to time.Time: %w", str, err)
+		return time.Time{}, fmt.Errorf("could not convert RFC3339 string %s to time.Time: %w", str, err)
 	}
 	return timestamp, nil
 }
 
-// TransformMinutesPlayed
-// minutesPlayed in the form \d+\:\d+ (e.g. 20:59)
+// TransformMinutesPlayed parses "10:43", "PT10M43.00S", or "PT10M" formats
+// Returns duration in minutes as float32 rounded to 2 decimal places
 func TransformMinutesPlayed(minutesPlayed string) (float32, error) {
-	minutesPlayedSplit := strings.Split(minutesPlayed, ":")
-	minutes, err := TextToInt(minutesPlayedSplit[0])
-	if err != nil {
-		return 0, fmt.Errorf("Could not convert minutes %s to integer: %w", minutesPlayedSplit[0], err)
+
+	// Check for MM:SS format
+	if matches := colonFormatRe.FindStringSubmatch(minutesPlayed); matches != nil {
+		return parseColonFormat(matches)
 	}
 
-	seconds, err := TextToInt(minutesPlayedSplit[1])
-	if err != nil {
-		return 0, fmt.Errorf("Could not convert seconds %s to integer: %w", minutesPlayedSplit[1], err)
+	// Check for ISO 8601 format PT[M]M[S]S or PT[M]M
+	if matches := iso8601FormatRe.FindStringSubmatch(minutesPlayed); matches != nil {
+		return parseISO8601Format(matches)
 	}
 
-	totalMinutes := float32(minutes) + float32(Round((float64(seconds)/float64(60)), 2))
-	return totalMinutes, nil
+	return 0, fmt.Errorf("invalid duration format: %s", minutesPlayed)
+}
+
+func parseColonFormat(matches []string) (float32, error) {
+	// matches[0] is the full match, matches[1] and matches[2] are capture groups
+	if len(matches) < 3 {
+		return 0, fmt.Errorf("insufficient match groups for colon format")
+	}
+
+	minutes, err := strconv.Atoi(matches[1])
+	if err != nil {
+		return 0, fmt.Errorf("invalid minutes: %w", err)
+	}
+
+	seconds, err := strconv.Atoi(matches[2])
+	if err != nil {
+		return 0, fmt.Errorf("invalid seconds: %w", err)
+	}
+
+	dur := time.Duration(minutes)*time.Minute + time.Duration(seconds)*time.Second
+	return float32(Round(dur.Minutes(), 2)), nil
+}
+
+func parseISO8601Format(matches []string) (float32, error) {
+	// matches[0] is full match, matches[1] is minutes, matches[2] is optional seconds
+	if len(matches) < 2 {
+		return 0, fmt.Errorf("insufficient match groups for ISO 8601 format")
+	}
+
+	minutes, err := strconv.Atoi(matches[1])
+	if err != nil {
+		return 0, fmt.Errorf("invalid minutes: %w", err)
+	}
+
+	var seconds float64
+
+	// Seconds are optional (matches[2])
+	if len(matches) > 2 && matches[2] != "" {
+		seconds, err = strconv.ParseFloat(matches[2], 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid seconds: %w", err)
+		}
+	}
+
+	dur := time.Duration(minutes)*time.Minute +
+		time.Duration(seconds*float64(time.Second))
+	return float32(Round(dur.Minutes(), 2)), nil
 }
