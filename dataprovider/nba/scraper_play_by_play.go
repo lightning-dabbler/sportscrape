@@ -8,6 +8,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
+	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/xitongsys/parquet-go/types"
 )
 
@@ -90,7 +91,6 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 			EventStatus:          matchupModel.EventStatus,
 			EventStatusText:      matchupModel.EventStatusText,
 			ActionNumber:         action.ActionNumber,
-			Clock:                action.Clock,
 			Period:               action.Period,
 			TeamID:               action.TeamID,
 			TeamAbbreviation:     action.TeamTricode,
@@ -110,6 +110,12 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 			ShotValue:            action.ShotValue,
 			ActionID:             action.ActionID,
 		}
+		mins, err := util.TransformMinutesPlayed(action.Clock)
+		if err != nil {
+			return sportscrape.EventDataOutput{Error: err, Context: context}
+		}
+		playbyplay.Clock = mins
+
 		data = append(data, playbyplay)
 	}
 	diff := time.Now().UTC().Sub(start)
