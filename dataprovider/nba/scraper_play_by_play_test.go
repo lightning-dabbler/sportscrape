@@ -45,7 +45,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	assert.Equal(t, int32(3), testRecord.EventStatus)
 	assert.Equal(t, "Final", testRecord.EventStatusText)
 	assert.Equal(t, int32(745), testRecord.ActionNumber)
-	assert.Equal(t, "PT00M07.70S", testRecord.Clock)
+	assert.Equal(t, float32(0.13), testRecord.Clock)
 	assert.Equal(t, int32(4), testRecord.Period)
 	assert.Equal(t, int64(1610612754), testRecord.TeamID)
 	assert.Equal(t, "IND", testRecord.TeamAbbreviation)
