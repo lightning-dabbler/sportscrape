@@ -77,7 +77,7 @@ func parseColonFormat(matches []string) (float32, error) {
 	}
 
 	dur := time.Duration(minutes)*time.Minute + time.Duration(seconds)*time.Second
-	return float32(dur.Minutes()), nil
+	return float32(Round(dur.Minutes(), 2)), nil
 }
 
 func parseISO8601Format(matches []string) (float32, error) {
