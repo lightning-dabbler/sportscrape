@@ -69,9 +69,9 @@ type BoxScoreLive struct {
 	// Minus
 	Minus int32 `json:"minus" parquet:"name=minus, type=INT32"`
 	// Minutes
-	Minutes string `json:"minutes" parquet:"name=minutes, type=BYTE_ARRAY, convertedtype=UTF8"`
+	Minutes float32 `json:"minutes" parquet:"name=minutes, type=FLOAT"`
 	// MinutesCalculated
-	MinutesCalculated string `json:"minutes_calculated" parquet:"name=minutes_calculated, type=BYTE_ARRAY, convertedtype=UTF8"`
+	MinutesCalculated float32 `json:"minutes_calculated" parquet:"name=minutes_calculated, type=FLOAT"`
 	// Plus
 	Plus int32 `json:"plus" parquet:"name=plus, type=INT32"`
 	// PlusMinusPoints

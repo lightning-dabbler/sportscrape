@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+### Added
+- Support conversion of ISO 8601 duration format (`PT10M43.00S`) to minutes in float32 for `util.TransformMinutesPlayed` (#118)
+- Convert ISO 8601 duration format string data to float32 in nba scrapers (not a backwards compatible change for `PlayByPlay.Clock`, `BoxScoreLive.Minutes`, and `BoxScoreLive.MinutesCalculated`) (#118)
+### Fixed
+- Fixed minutes conversion within nba `BoxScoreAdvancedScraper` (`BoxScoreAdvanced.Minutes`) as ISO 8601 duration format is now an expected input (#118)
 ## [0.17.1] - 2026-02-06
 ### Added
 - Added common user agent to base scraper for nba.com provider

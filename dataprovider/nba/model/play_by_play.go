@@ -21,7 +21,7 @@ type PlayByPlay struct {
 	// ActionNumber
 	ActionNumber int32 `json:"action_number" parquet:"name=action_number, type=INT32"`
 	// Clock
-	Clock string `json:"clock" parquet:"name=clock, type=BYTE_ARRAY, convertedtype=UTF8"`
+	Clock float32 `json:"clock" parquet:"name=clock, type=FLOAT"`
 	// Period
 	Period int32 `json:"period" parquet:"name=period, type=INT32"`
 	// TeamID

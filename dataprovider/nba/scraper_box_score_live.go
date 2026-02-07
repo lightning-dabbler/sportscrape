@@ -9,6 +9,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
+	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/xitongsys/parquet-go/types"
 )
 
@@ -127,8 +128,6 @@ func (bs BoxScoreLiveScraper) Scrape(matchup interface{}) sportscrape.EventDataO
 			FreeThrowsMade:          stats.Statistics.FreeThrowsMade,
 			FreeThrowsPercentage:    stats.Statistics.FreeThrowsPercentage,
 			Minus:                   stats.Statistics.Minus,
-			Minutes:                 stats.Statistics.Minutes,
-			MinutesCalculated:       stats.Statistics.MinutesCalculated,
 			Plus:                    stats.Statistics.Plus,
 			PlusMinusPoints:         stats.Statistics.PlusMinusPoints,
 			Points:                  stats.Statistics.Points,
@@ -147,6 +146,16 @@ func (bs BoxScoreLiveScraper) Scrape(matchup interface{}) sportscrape.EventDataO
 			TwoPointersMade:         stats.Statistics.TwoPointersMade,
 			TwoPointersPercentage:   stats.Statistics.TwoPointersPercentage,
 		}
+		mins, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
+		if err != nil {
+			return sportscrape.EventDataOutput{Error: err, Context: context}
+		}
+		minsCalc, err := util.TransformMinutesPlayed(stats.Statistics.MinutesCalculated)
+		if err != nil {
+			return sportscrape.EventDataOutput{Error: err, Context: context}
+		}
+		boxscore.Minutes = mins
+		boxscore.MinutesCalculated = minsCalc
 		data = append(data, boxscore)
 	}
 
@@ -189,8 +198,6 @@ func (bs BoxScoreLiveScraper) Scrape(matchup interface{}) sportscrape.EventDataO
 			FreeThrowsMade:          stats.Statistics.FreeThrowsMade,
 			FreeThrowsPercentage:    stats.Statistics.FreeThrowsPercentage,
 			Minus:                   stats.Statistics.Minus,
-			Minutes:                 stats.Statistics.Minutes,
-			MinutesCalculated:       stats.Statistics.MinutesCalculated,
 			Plus:                    stats.Statistics.Plus,
 			PlusMinusPoints:         stats.Statistics.PlusMinusPoints,
 			Points:                  stats.Statistics.Points,
@@ -209,6 +216,17 @@ func (bs BoxScoreLiveScraper) Scrape(matchup interface{}) sportscrape.EventDataO
 			TwoPointersMade:         stats.Statistics.TwoPointersMade,
 			TwoPointersPercentage:   stats.Statistics.TwoPointersPercentage,
 		}
+
+		mins, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
+		if err != nil {
+			return sportscrape.EventDataOutput{Error: err, Context: context}
+		}
+		minsCalc, err := util.TransformMinutesPlayed(stats.Statistics.MinutesCalculated)
+		if err != nil {
+			return sportscrape.EventDataOutput{Error: err, Context: context}
+		}
+		boxscore.Minutes = mins
+		boxscore.MinutesCalculated = minsCalc
 		data = append(data, boxscore)
 	}
 
