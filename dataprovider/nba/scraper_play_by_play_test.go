@@ -52,7 +52,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	assert.Equal(t, int64(1627783), testRecord.PersonID)
 	assert.Equal(t, "Siakam", testRecord.PlayerName)
 	assert.Equal(t, "P. Siakam", testRecord.PlayerNameInitial)
-	assert.Equal(t, int32(1), testRecord.ShotDistance)
+	assert.Equal(t, float32(1), testRecord.ShotDistance)
 	assert.Equal(t, "Made", testRecord.ShotResult)
 	assert.Equal(t, int32(1), testRecord.IsFieldGoal)
 	assert.Equal(t, "116", testRecord.ScoreHome)

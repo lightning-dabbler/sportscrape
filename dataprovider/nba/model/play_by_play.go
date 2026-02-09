@@ -35,7 +35,7 @@ type PlayByPlay struct {
 	// PlayerNameInitial
 	PlayerNameInitial string `json:"player_name_initial" parquet:"name=player_name_initial, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// ShotDistance
-	ShotDistance int32 `json:"shot_distance" parquet:"name=shot_distance, type=INT32"`
+	ShotDistance float32 `json:"shot_distance" parquet:"name=shot_distance, type=FLOAT"`
 	// ShotResult
 	ShotResult string `json:"shot_result" parquet:"name=shot_result, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// IsFieldGoal

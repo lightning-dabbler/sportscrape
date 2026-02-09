@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Correct conversion of nba play by play shot distance from int32 to float32 (#120)
 
 ## [0.18.0] - 2026-02-07
 ### Added
