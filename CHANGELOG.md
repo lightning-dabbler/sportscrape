@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-02-08
+### Fixed
+- Correct conversion of nba play by play shot distance from int32 to float32 (#120)
+
 ## [0.18.0] - 2026-02-07
 ### Added
 - Support conversion of ISO 8601 duration format (`PT10M43.00S`) to minutes in float32 for `util.TransformMinutesPlayed` (#118)
