@@ -82,25 +82,24 @@ func (s BattingBoxScoreScraper) Feed() sportscrape.Feed {
 }
 
 // Scrape retrieves MLB batting box score statistics for a single matchup.
-func (s *BattingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	matchupModel := matchup.(model.MLBMatchup)
-	context := s.ConstructContext(matchupModel)
-	output := sportscrape.EventDataOutput{
+func (s *BattingBoxScoreScraper) Scrape(matchup model.MLBMatchup) sportscrape.EventDataOutput[model.MLBBattingBoxScoreStats] {
+	context := s.ConstructContext(matchup)
+	output := sportscrape.EventDataOutput[model.MLBBattingBoxScoreStats]{
 		Context: context,
 	}
 
-	url := matchupModel.BoxScoreLink
+	url := matchup.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
-	var boxScoreStats []interface{}
+	var boxScoreStats []model.MLBBattingBoxScoreStats
 	log.Println("Scraping batting Box Score: " + url)
 	doc, err := s.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
 		output.Error = err
 		return output
 	}
-	homeTeamSelector := generateStatTableSelector(matchupModel.HomeTeam, Batting)
-	awayTeamSelector := generateStatTableSelector(matchupModel.AwayTeam, Batting)
+	homeTeamSelector := generateStatTableSelector(matchup.HomeTeam, Batting)
+	awayTeamSelector := generateStatTableSelector(matchup.AwayTeam, Batting)
 	// Home team batting stat box
 	homeStatBox := doc.Find(homeTeamSelector)
 	// Away team batting stat box
@@ -147,14 +146,14 @@ func (s *BattingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDa
 			return false
 		}
 		statline.PullTimestamp = PullTimestamp
-		statline.EventID = matchupModel.EventID
-		statline.Team = matchupModel.HomeTeam
-		statline.TeamID = matchupModel.HomeTeamID
-		statline.Opponent = matchupModel.AwayTeam
-		statline.OpponentID = matchupModel.AwayTeamID
-		statline.EventDate = matchupModel.EventDate
+		statline.EventID = matchup.EventID
+		statline.Team = matchup.HomeTeam
+		statline.TeamID = matchup.HomeTeamID
+		statline.Opponent = matchup.AwayTeam
+		statline.OpponentID = matchup.AwayTeamID
+		statline.EventDate = matchup.EventDate
 		statline.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
-		statline.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
+		statline.EventDateParquet = util.TimeToDays(matchup.EventDate)
 		boxScoreStats = append(boxScoreStats, *statline)
 		return true
 	})
@@ -172,14 +171,14 @@ func (s *BattingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDa
 			return false
 		}
 		statline.PullTimestamp = PullTimestamp
-		statline.EventID = matchupModel.EventID
-		statline.Team = matchupModel.AwayTeam
-		statline.TeamID = matchupModel.AwayTeamID
-		statline.Opponent = matchupModel.HomeTeam
-		statline.OpponentID = matchupModel.HomeTeamID
-		statline.EventDate = matchupModel.EventDate
+		statline.EventID = matchup.EventID
+		statline.Team = matchup.AwayTeam
+		statline.TeamID = matchup.AwayTeamID
+		statline.Opponent = matchup.HomeTeam
+		statline.OpponentID = matchup.HomeTeamID
+		statline.EventDate = matchup.EventDate
 		statline.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
-		statline.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
+		statline.EventDateParquet = util.TimeToDays(matchup.EventDate)
 		boxScoreStats = append(boxScoreStats, *statline)
 		return true
 	})

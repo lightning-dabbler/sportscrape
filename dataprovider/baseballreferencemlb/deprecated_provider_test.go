@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballreferencemlb/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +20,9 @@ func TestDeprecatedProvider(t *testing.T) {
 		WithMatchupTimeout(5*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.MLBMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve MLB matchups associated with date
 	matchups, err := matchuprunner.Run()

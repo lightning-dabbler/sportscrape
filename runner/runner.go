@@ -12,44 +12,32 @@ import (
 	"github.com/lightning-dabbler/sportscrape/scraper"
 )
 
-// EventDataRunnerOption
-type EventDataRunnerOption func(*EventDataRunner)
+// EventDataRunnerConfig
 
-// EventDataRunnerConcurrency option
-func EventDataRunnerConcurrency(concurrency int) EventDataRunnerOption {
-	return func(r *EventDataRunner) {
-		r.Concurrency = concurrency
-	}
+type EventDataRunnerConfig[M, E any] struct {
+	Concurrency int
+	Scraper     scraper.EventDataScraper[M, E]
 }
 
-// EventDataRunnerScraper option
-func EventDataRunnerScraper(scraper scraper.EventDataScraper) EventDataRunnerOption {
-	return func(r *EventDataRunner) {
-		r.Scraper = scraper
+func NewEventDataRunner[M, E any](config EventDataRunnerConfig[M, E]) *EventDataRunner[M, E] {
+	if config.Concurrency <= 0 {
+		config.Concurrency = 1
 	}
-}
-
-// NewEventDataRunner Instantiates a new EventDataRunner
-func NewEventDataRunner(options ...EventDataRunnerOption) *EventDataRunner {
-	r := &EventDataRunner{}
-	// Default
-	r.Concurrency = 1
-	// Apply all options
-	for _, option := range options {
-		option(r)
+	r := &EventDataRunner[M, E]{
+		Concurrency: config.Concurrency,
+		Scraper:     config.Scraper,
 	}
-
 	r.Scraper.Init()
 	return r
 }
 
-type EventDataRunner struct {
+type EventDataRunner[M, E any] struct {
 	Concurrency int
-	Scraper     scraper.EventDataScraper
+	Scraper     scraper.EventDataScraper[M, E]
 }
 
 // Deprecated is a deprecation check for the feed/provider
-func (t *EventDataRunner) Deprecated() bool {
+func (t *EventDataRunner[M, E]) Deprecated() bool {
 	provider := t.Scraper.Provider()
 	feed := t.Scraper.Feed()
 	if provider.Deprecated() {
@@ -58,7 +46,7 @@ func (t *EventDataRunner) Deprecated() bool {
 	return feed.Deprecated()
 }
 
-func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
+func (t *EventDataRunner[M, E]) Run(matchups []M) ([]E, error) {
 	if t.Deprecated() {
 		return nil, t.Scraper.Feed().Deprecation()
 	}
@@ -70,8 +58,8 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	}
 
 	var wg sync.WaitGroup
-	workerMatchups := make(chan interface{}, concurrency)
-	eventData := make(chan sportscrape.EventDataOutput, len(matchups))
+	workerMatchups := make(chan M, concurrency)
+	eventData := make(chan sportscrape.EventDataOutput[E], len(matchups))
 
 	// Start worker goroutines
 	for i := 0; i < cap(workerMatchups); i++ {
@@ -92,7 +80,7 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 
 	// Collect results
 	var errCnt int
-	var output []interface{}
+	var output []E
 	var outputErr error
 	for ow := range eventData {
 		if ow.Error != nil {
@@ -115,7 +103,7 @@ func (t *EventDataRunner) Run(matchups ...interface{}) ([]interface{}, error) {
 	return output, nil
 }
 
-func (t *EventDataRunner) Worker(wg *sync.WaitGroup, workerMatchups <-chan interface{}, eventData chan<- sportscrape.EventDataOutput) {
+func (t *EventDataRunner[M, E]) Worker(wg *sync.WaitGroup, workerMatchups <-chan M, eventData chan<- sportscrape.EventDataOutput[E]) {
 	for matchup := range workerMatchups {
 		ow := t.Scraper.Scrape(matchup)
 		eventData <- ow
@@ -123,36 +111,28 @@ func (t *EventDataRunner) Worker(wg *sync.WaitGroup, workerMatchups <-chan inter
 	}
 }
 
-// MatchupRunnerOption
-type MatchupRunnerOption func(*MatchupRunner)
-
-// MatchupRunnerScraper option
-func MatchupRunnerScraper(scraper scraper.MatchupScraper) MatchupRunnerOption {
-	return func(r *MatchupRunner) {
-		r.Scraper = scraper
-	}
+// MatchupRunnerConfig
+type MatchupRunnerConfig[M any] struct {
+	Scraper scraper.MatchupScraper[M]
 }
 
 // NewMatchupRunner Instantiates a new MatchupRunner
-func NewMatchupRunner(options ...MatchupRunnerOption) *MatchupRunner {
-	r := &MatchupRunner{}
-	// Apply all options
-	for _, option := range options {
-		option(r)
+func NewMatchupRunner[M any](config MatchupRunnerConfig[M]) *MatchupRunner[M] {
+	r := &MatchupRunner[M]{
+		Scraper: config.Scraper,
 	}
-
 	r.Scraper.Init()
 	return r
 }
 
 // MatchupRunner is a general matchup runner for scraping NBA, MLB, NCAAB, etc. matchup data.
-type MatchupRunner struct {
+type MatchupRunner[M any] struct {
 	// Scraper
-	Scraper scraper.MatchupScraper
+	Scraper scraper.MatchupScraper[M]
 }
 
 // Deprecated is a deprecation check for the feed/provider
-func (r *MatchupRunner) Deprecated() bool {
+func (r *MatchupRunner[M]) Deprecated() bool {
 	provider := r.Scraper.Provider()
 	feed := r.Scraper.Feed()
 	if provider.Deprecated() {
@@ -162,7 +142,7 @@ func (r *MatchupRunner) Deprecated() bool {
 }
 
 // Run gets all matchups
-func (r *MatchupRunner) Run() ([]interface{}, error) {
+func (r *MatchupRunner[M]) Run() ([]M, error) {
 	if r.Deprecated() {
 		return nil, r.Scraper.Feed().Deprecation()
 	}

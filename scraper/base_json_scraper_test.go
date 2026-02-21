@@ -106,7 +106,7 @@ func TestSetBytesField_Errors(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		target    interface{}
+		target    any
 		field     string
 		expectErr string
 	}{
