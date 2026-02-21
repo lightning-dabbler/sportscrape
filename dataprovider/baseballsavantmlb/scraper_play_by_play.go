@@ -35,23 +35,22 @@ func (s PlayByPlayScraper) Feed() sportscrape.Feed {
 	return sportscrape.BaseballSavantMLBPlayByPlay
 }
 
-func (s PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	matchupmodel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupmodel)
-	url := ConstructEventDataURL(matchupmodel.EventID)
+func (s PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.PlayByPlay] {
+	context := s.ConstructContext(matchup)
+	url := ConstructEventDataURL(matchup.EventID)
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
 	gf, err := s.FetchGameFeed(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
-	var data []interface{}
+	var data []model.PlayByPlay
 	// home pitchers
 	res, err := s.constructPlayByPlay(gf.HomePitchers, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
@@ -59,19 +58,19 @@ func (s PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOutp
 	// away pitchers
 	res, err = s.constructPlayByPlay(gf.AwayPitchers, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
 	}
-	return sportscrape.EventDataOutput{Error: err, Context: context, Output: data}
+	return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context, Output: data}
 }
 
-func (s PlayByPlayScraper) constructPlayByPlay(plays *jsonresponse.Plays, context sportscrape.EventDataContext) ([]interface{}, error) {
+func (s PlayByPlayScraper) constructPlayByPlay(plays *jsonresponse.Plays, context sportscrape.EventDataContext) ([]model.PlayByPlay, error) {
 	if plays == nil {
 		return nil, nil
 	}
-	var data []interface{}
+	var data []model.PlayByPlay
 	eventid := context.EventID.(int64)
 	for _, events := range *plays {
 		for _, event := range events {

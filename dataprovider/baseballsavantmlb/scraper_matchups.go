@@ -55,9 +55,9 @@ func (s MatchupScraper) Feed() sportscrape.Feed {
 	return sportscrape.BaseballSavantMLBMatchup
 }
 
-func (s MatchupScraper) Scrape() sportscrape.MatchupOutput {
-	var matchups []interface{}
-	output := sportscrape.MatchupOutput{}
+func (s MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
+	var matchups []model.Matchup
+	output := sportscrape.MatchupOutput[model.Matchup]{}
 
 	url, err := ConstructMatchupURL(s.Date)
 	if err != nil {
