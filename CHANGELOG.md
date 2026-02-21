@@ -7,17 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changes
-- `MatchupOutput` and `EventDataOutput` are now generic: `MatchupOutput[M any]` and `EventDataOutput[E any]`
-- `MatchupScraper` and `EventDataScraper` interfaces are now generic
-- `MatchupRunner[M]` and `EventDataRunner[M, E]` are now generic with typed `Run()` return values
-- Replaced functional options pattern with config structs (`MatchupRunnerConfig[M]`, `EventDataRunnerConfig[M, E]`) to avoid type inference failures on option functions
-- Concrete scraper implementations updated to satisfy generic interfaces
-- Updated tests and example functions to use new API
+- `MatchupOutput` and `EventDataOutput` are now generic: `MatchupOutput[M any]` and `EventDataOutput[E any]` (#122)
+- `MatchupScraper` and `EventDataScraper` interfaces are now generic (#122)
+- `MatchupRunner[M]` and `EventDataRunner[M, E]` are now generic with typed `Run()` return values (#122)
+- Replaced functional options pattern with config structs (`MatchupRunnerConfig[M]`, `EventDataRunnerConfig[M, E]`) to avoid type inference failures on option functions (#122)
+- Concrete scraper implementations updated to satisfy generic interfaces (#122)
+- Updated tests and example functions to use new API (#122)
 
 ### Breaking changes
-- `MatchupRunner.Run()` now returns `([]M, error)` instead of `([]interface{}, error)`
-- `EventDataRunner.Run()` now takes `[]M` instead of `...interface{}` and returns `([]E, error)`
-- `NewMatchupRunner` and `NewEventDataRunner` now take a config struct instead of functional options
+- `MatchupRunner.Run()` now returns `([]M, error)` instead of `([]interface{}, error)` (#122)
+- `EventDataRunner.Run()` now takes `[]M` instead of `...interface{}` and returns `([]E, error)` (#122)
+- `NewMatchupRunner` and `NewEventDataRunner` now take a config struct instead of functional options (#122)
 
 ## [0.19.0] - 2026-02-08
 ### Fixed
