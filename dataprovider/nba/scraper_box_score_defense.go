@@ -59,13 +59,12 @@ func (bs BoxScoreDefenseScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBADefenseBoxScore
 }
 
-func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (bs BoxScoreDefenseScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreDefense] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := bs.ConstructContext(matchupModel)
-	url, err := bs.URL(matchupModel.ShareURL)
+	context := bs.ConstructContext(matchup)
+	url, err := bs.URL(matchup.ShareURL)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreDefense]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -73,18 +72,18 @@ func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDa
 	context.PullTimestamp = pullTimestamp
 	jsonstr, err := bs.FetchDoc(url)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreDefense]{Error: err, Context: context}
 	}
 	var jsonPayload jsonresponse.BoxScoreDefenseJSON
-	var data []interface{}
+	var data []model.BoxScoreDefense
 
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreDefense]{Error: err, Context: context}
 	}
 	// Check period matches with response payload data
 	if !bs.NonPeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.GameStatus) {
-		return sportscrape.EventDataOutput{Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreDefense]{Context: context}
 	}
 	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)
 	awayTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.AwayTeam.TeamCity, jsonPayload.Props.PageProps.Game.AwayTeam.TeamName)
@@ -98,16 +97,16 @@ func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDa
 		boxscore := model.BoxScoreDefense{
 			PullTimestamp:                 pullTimestamp,
 			PullTimestampParquet:          pullTimestampParquet,
-			EventID:                       matchupModel.EventID,
-			EventTime:                     matchupModel.EventTime,
-			EventTimeParquet:              matchupModel.EventTimeParquet,
-			EventStatus:                   matchupModel.EventStatus,
-			EventStatusText:               matchupModel.EventStatusText,
-			TeamID:                        matchupModel.HomeTeamID,
-			TeamName:                      matchupModel.HomeTeam,
+			EventID:                       matchup.EventID,
+			EventTime:                     matchup.EventTime,
+			EventTimeParquet:              matchup.EventTimeParquet,
+			EventStatus:                   matchup.EventStatus,
+			EventStatusText:               matchup.EventStatusText,
+			TeamID:                        matchup.HomeTeamID,
+			TeamName:                      matchup.HomeTeam,
 			TeamNameFull:                  homeTeamFull,
-			OpponentID:                    matchupModel.AwayTeamID,
-			OpponentName:                  matchupModel.AwayTeam,
+			OpponentID:                    matchup.AwayTeamID,
+			OpponentName:                  matchup.AwayTeam,
 			OpponentNameFull:              awayTeamFull,
 			PlayerID:                      stats.PersonID,
 			PlayerName:                    player,
@@ -131,7 +130,7 @@ func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDa
 		if stats.Statistics.MatchupMinutes != "" {
 			minutes, err := util.TransformMinutesPlayed(stats.Statistics.MatchupMinutes)
 			if err != nil {
-				return sportscrape.EventDataOutput{Error: err, Context: context}
+				return sportscrape.EventDataOutput[model.BoxScoreDefense]{Error: err, Context: context}
 			}
 			boxscore.MatchupMinutes = minutes
 		}
@@ -147,16 +146,16 @@ func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDa
 		boxscore := model.BoxScoreDefense{
 			PullTimestamp:                 pullTimestamp,
 			PullTimestampParquet:          pullTimestampParquet,
-			EventID:                       matchupModel.EventID,
-			EventTime:                     matchupModel.EventTime,
-			EventTimeParquet:              matchupModel.EventTimeParquet,
-			EventStatus:                   matchupModel.EventStatus,
-			EventStatusText:               matchupModel.EventStatusText,
-			TeamID:                        matchupModel.AwayTeamID,
-			TeamName:                      matchupModel.AwayTeam,
+			EventID:                       matchup.EventID,
+			EventTime:                     matchup.EventTime,
+			EventTimeParquet:              matchup.EventTimeParquet,
+			EventStatus:                   matchup.EventStatus,
+			EventStatusText:               matchup.EventStatusText,
+			TeamID:                        matchup.AwayTeamID,
+			TeamName:                      matchup.AwayTeam,
 			TeamNameFull:                  awayTeamFull,
-			OpponentID:                    matchupModel.HomeTeamID,
-			OpponentName:                  matchupModel.HomeTeam,
+			OpponentID:                    matchup.HomeTeamID,
+			OpponentName:                  matchup.HomeTeam,
 			OpponentNameFull:              homeTeamFull,
 			PlayerID:                      stats.PersonID,
 			PlayerName:                    player,
@@ -180,7 +179,7 @@ func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDa
 		if stats.Statistics.MatchupMinutes != "" {
 			minutes, err := util.TransformMinutesPlayed(stats.Statistics.MatchupMinutes)
 			if err != nil {
-				return sportscrape.EventDataOutput{Error: err, Context: context}
+				return sportscrape.EventDataOutput[model.BoxScoreDefense]{Error: err, Context: context}
 			}
 			boxscore.MatchupMinutes = minutes
 		}
@@ -189,5 +188,5 @@ func (bs BoxScoreDefenseScraper) Scrape(matchup interface{}) sportscrape.EventDa
 
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %s (%s vs %s) completed in %s\n", context.EventID, context.AwayTeam, context.HomeTeam, diff)
-	return sportscrape.EventDataOutput{Context: context, Output: data}
+	return sportscrape.EventDataOutput[model.BoxScoreDefense]{Context: context, Output: data}
 }

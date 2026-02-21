@@ -56,10 +56,10 @@ func (ms MatchupScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBAMatchup
 }
 
-func (ms MatchupScraper) Scrape() sportscrape.MatchupOutput {
-	var matchups []interface{}
+func (ms MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
+	var matchups []model.Matchup
 	var jsonPayload jsonresponse.MatchupJSON
-	output := sportscrape.MatchupOutput{}
+	output := sportscrape.MatchupOutput[model.Matchup]{}
 	context := sportscrape.MatchupContext{}
 	var firstErr error
 	url, err := ms.URL()

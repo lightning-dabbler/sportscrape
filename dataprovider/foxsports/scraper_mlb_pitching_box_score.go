@@ -48,18 +48,17 @@ func (s MLBPitchingBoxScoreScraper) Feed() sportscrape.Feed {
 	return sportscrape.FSMLBPitchingBoxScore
 }
 
-func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (s *MLBPitchingBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupModel)
+	context := s.ConstructContext(matchup)
 
-	var data []interface{}
+	var data []model.MLBPitchingBoxScoreStats
 	// Construct event data URL
 	log.Println("Constructing event data URL")
-	url, err := s.ConstructEventDataURL(matchupModel.EventID)
+	url, err := s.ConstructEventDataURL(matchup.EventID)
 	if err != nil {
 		log.Println("Issue constructing event data URL")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -67,45 +66,45 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.Eve
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.MLBEventData
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 	// Check for box score data
 	if responsePayload.BoxScore == nil || responsePayload.BoxScore.BoxScoreSections == nil {
-		log.Printf("No MLB pitching box score data available for event id: %d\n", matchupModel.EventID)
-		return sportscrape.EventDataOutput{Output: data, Context: context}
+		log.Printf("No MLB pitching box score data available for event id: %d\n", matchup.EventID)
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Output: data, Context: context}
 	}
 
 	// Check that both Away and Home team box score stats are populated
 	if responsePayload.BoxScore.BoxScoreSections.AwayStats == nil {
-		log.Printf("No MLB pitching box score data available for away team (%s) for event id: %d\n", matchupModel.AwayTeamNameFull, matchupModel.EventID)
-		return sportscrape.EventDataOutput{Output: data, Context: context}
+		log.Printf("No MLB pitching box score data available for away team (%s) for event id: %d\n", matchup.AwayTeamNameFull, matchup.EventID)
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Output: data, Context: context}
 	}
 
 	if responsePayload.BoxScore.BoxScoreSections.AwayStats == nil {
-		log.Printf("No MLB pitching box score data available for home team (%s) for event id: %d\n", matchupModel.HomeTeamNameFull, matchupModel.EventID)
-		return sportscrape.EventDataOutput{Output: data, Context: context}
+		log.Printf("No MLB pitching box score data available for home team (%s) for event id: %d\n", matchup.HomeTeamNameFull, matchup.EventID)
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Output: data, Context: context}
 	}
 
 	// validate MLBPitchingBoxScoreStats home and away positions
 	uriSplit := strings.Split(responsePayload.BoxScore.BoxScoreSections.HomeStats.ContentURI, "/")
 	actualHomeID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
-	if actualHomeID != matchupModel.HomeTeamID {
-		log.Printf("Home team ID, %d (%s), does not match expected, %d (%s)\n", actualHomeID, responsePayload.BoxScore.BoxScoreSections.HomeStats.Title, matchupModel.HomeTeamID, matchupModel.HomeTeamNameFull)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+	if actualHomeID != matchup.HomeTeamID {
+		log.Printf("Home team ID, %d (%s), does not match expected, %d (%s)\n", actualHomeID, responsePayload.BoxScore.BoxScoreSections.HomeStats.Title, matchup.HomeTeamID, matchup.HomeTeamNameFull)
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 
 	uriSplit = strings.Split(responsePayload.BoxScore.BoxScoreSections.AwayStats.ContentURI, "/")
 	actualAwayID, err := util.TextToInt64(uriSplit[len(uriSplit)-1])
-	if actualAwayID != matchupModel.AwayTeamID {
-		log.Printf("Away team ID, %d (%s), does not match expected, %d (%s)\n", actualAwayID, responsePayload.BoxScore.BoxScoreSections.AwayStats.Title, matchupModel.AwayTeamID, matchupModel.AwayTeamNameFull)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+	if actualAwayID != matchup.AwayTeamID {
+		log.Printf("Away team ID, %d (%s), does not match expected, %d (%s)\n", actualAwayID, responsePayload.BoxScore.BoxScoreSections.AwayStats.Title, matchup.AwayTeamID, matchup.AwayTeamNameFull)
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 
 	// validate headers
@@ -116,12 +115,12 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.Eve
 	actualHeaderSize := len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
 		err = fmt.Errorf("home team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != pitchingHeaders[idx] {
 			err = fmt.Errorf("home team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
-			return sportscrape.EventDataOutput{Error: err, Context: context}
+			return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 		}
 	}
 
@@ -130,24 +129,24 @@ func (s *MLBPitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.Eve
 	actualHeaderSize = len(actualHeaders)
 	if actualHeaderSize != expectedHeadersSize {
 		err = fmt.Errorf("away team pitching headers size mismatch. actual: %d expected: %d", actualHeaderSize, expectedHeadersSize)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 	for idx, column := range actualHeaders {
 		if column.Text != pitchingHeaders[idx] {
 			err = fmt.Errorf("away team pitching header '%s' unexpect at index %d. Expected %s", column.Text, idx, pitchingHeaders[idx])
-			return sportscrape.EventDataOutput{Error: err, Context: context}
+			return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 		}
 	}
 	stats, err := s.parsePitchingStats(responsePayload, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Error: err, Context: context}
 	}
 	for _, obj := range stats {
 		data = append(data, *obj)
 	}
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return sportscrape.EventDataOutput{Output: data, Context: context}
+	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchup.EventID, matchup.AwayTeamNameFull, matchup.HomeTeamNameFull, diff)
+	return sportscrape.EventDataOutput[model.MLBPitchingBoxScoreStats]{Output: data, Context: context}
 }
 
 func (s *MLBPitchingBoxScoreScraper) parsePitchingStats(responsePayload jsonresponse.MLBEventData, context sportscrape.EventDataContext) ([]*model.MLBPitchingBoxScoreStats, error) {

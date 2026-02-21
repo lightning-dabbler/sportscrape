@@ -22,7 +22,9 @@ func TestMLBOddsTotalScraper(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -30,17 +32,17 @@ func TestMLBOddsTotalScraper(t *testing.T) {
 
 	oddsScraper := NewMLBOddsTotalScraper()
 	oddsrunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(
-			oddsScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBOddsTotal]{
+			Scraper:     oddsScraper,
+			Concurrency: 1,
+		},
 	)
-	odds, err := oddsrunner.Run(matchups...)
+	odds, err := oddsrunner.Run(matchups)
 	assert.NoError(t, err)
 	n_records := len(odds)
 	n_expected := 1
 	assert.Equal(t, n_expected, n_records, "1 odds record")
-	record := odds[0].(model.MLBOddsTotal)
+	record := odds[0]
 
 	assert.Equal(t, int32(-101), *record.OverOdds)
 	assert.Equal(t, int32(-119), *record.UnderOdds)

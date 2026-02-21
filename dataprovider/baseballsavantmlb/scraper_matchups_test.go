@@ -18,13 +18,15 @@ func TestMatchupScraper_NBA(t *testing.T) {
 		MatchupScraperDate("2024-10-18"),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
-	testMatchup := matchups[1].(model.Matchup)
+	testMatchup := matchups[1]
 	assert.Equal(t, int64(775311), testMatchup.EventID)
 	assert.Equal(t, "Final", testMatchup.Status)
 	assert.Equal(t, int64(5), testMatchup.VenueID)
@@ -60,7 +62,7 @@ func TestMatchupScraper_NBA(t *testing.T) {
 
 	assert.Equal(t, int64(147), *testMatchup.Loser)
 	assert.Equal(t, "L", testMatchup.GameType)
-	assert.Equal(t, "League Championship Series", testMatchup.SeriesDescription)
+	assert.Equal(t, "AL Championship Series", testMatchup.SeriesDescription)
 	assert.Equal(t, int32(7), testMatchup.GamesInSeries)
 	assert.Equal(t, int32(4), testMatchup.SeriesGameNumber)
 	assert.Equal(t, int32(2024), testMatchup.Season)

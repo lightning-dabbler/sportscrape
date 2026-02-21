@@ -1,7 +1,9 @@
 package basketballreferencenba_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba"
@@ -17,17 +19,23 @@ func ExampleMatchupRunner() {
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
-	runner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
-	matchups, err := runner.Run()
+	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
 
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup.(model.NBAMatchup))
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -40,7 +48,9 @@ func ExampleBasicBoxScoreScraper_full() {
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -52,17 +62,23 @@ func ExampleBasicBoxScoreScraper_full() {
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.Full),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	basicBoxScoreStats, err := runner.Run(matchups...)
+	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	for _, stats := range basicBoxScoreStats {
-		fmt.Printf("%#v\n", stats.(model.NBABasicBoxScoreStats))
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -75,7 +91,9 @@ func ExampleBasicBoxScoreScraper_q2() {
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -87,17 +105,23 @@ func ExampleBasicBoxScoreScraper_q2() {
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.Q2),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	basicBoxScoreStats, err := runner.Run(matchups...)
+	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	for _, stats := range basicBoxScoreStats {
-		fmt.Printf("%#v\n", stats.(model.NBABasicBoxScoreStats))
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -110,7 +134,9 @@ func ExampleBasicBoxScoreScraper_h2() {
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -122,17 +148,23 @@ func ExampleBasicBoxScoreScraper_h2() {
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.H2),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	basicBoxScoreStats, err := runner.Run(matchups...)
+	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	for _, stats := range basicBoxScoreStats {
-		fmt.Printf("%#v\n", stats.(model.NBABasicBoxScoreStats))
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -145,7 +177,9 @@ func ExampleAdvBoxScoreScraper() {
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -156,16 +190,22 @@ func ExampleAdvBoxScoreScraper() {
 	boxscorescraper := basketballreferencenba.NewAdvBoxScoreScraper(
 		basketballreferencenba.WithAdvBoxScoreTimeout(4 * time.Minute),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBAAdvBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	advBoxScoreStats, err := runner.Run(matchups...)
+	advBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	for _, stats := range advBoxScoreStats {
-		fmt.Printf("%#v\n", stats.(model.NBAAdvBoxScoreStats))
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }

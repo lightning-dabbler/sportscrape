@@ -22,7 +22,9 @@ func TestPlayByPlayScraper(t *testing.T) {
 		WithMatchupTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
@@ -31,15 +33,17 @@ func TestPlayByPlayScraper(t *testing.T) {
 	)
 
 	playbyplayrunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(playbyplayscraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
+			Scraper:     playbyplayscraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := playbyplayrunner.Run(matchups...)
+	records, err := playbyplayrunner.Run(matchups)
 	assert.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 521, n_records, "521 plays")
-	testRecord := records[517].(model.PlayByPlay)
+	testRecord := records[517]
 
 	assert.Equal(t, "0042400403", testRecord.EventID)
 	assert.Equal(t, int32(3), testRecord.EventStatus)

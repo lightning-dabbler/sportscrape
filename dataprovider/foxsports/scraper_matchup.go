@@ -222,9 +222,9 @@ func (s *MatchupScraper) ParseMatchup(eventPayload jsonresponse.Event) (model.Ma
 }
 
 // Scrape gets all matchups of a League and segment ID
-func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput {
-	var matchups []interface{}
-	output := sportscrape.MatchupOutput{}
+func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
+	var matchups []model.Matchup
+	output := sportscrape.MatchupOutput[model.Matchup]{}
 	// Construct full url
 	log.Println("Constructing full URL")
 	url, err := s.ConstructFullURL()

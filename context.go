@@ -10,10 +10,10 @@ type MatchupContext struct {
 type EventDataContext struct {
 	PullTimestamp time.Time
 	EventTime     time.Time
-	EventID       interface{}
+	EventID       any
 	URL           string
-	AwayID        interface{}
+	AwayID        any
 	AwayTeam      string
-	HomeID        interface{}
+	HomeID        any
 	HomeTeam      string
 }

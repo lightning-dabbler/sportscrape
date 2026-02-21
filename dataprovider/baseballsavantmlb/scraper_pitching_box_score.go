@@ -35,23 +35,22 @@ func (s PitchingBoxScoreScraper) Feed() sportscrape.Feed {
 	return sportscrape.BaseballSavantMLBPitchingBoxScore
 }
 
-func (s PitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	matchupmodel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupmodel)
-	url := ConstructEventDataURL(matchupmodel.EventID)
+func (s PitchingBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.PitchingBoxScore] {
+	context := s.ConstructContext(matchup)
+	url := ConstructEventDataURL(matchup.EventID)
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
 	gf, err := s.FetchGameFeed(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PitchingBoxScore]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
-	var data []interface{}
+	var data []model.PitchingBoxScore
 	// home pitchers
 	res, err := s.constructPitching("home", gf.HomePitchers, gf, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PitchingBoxScore]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
@@ -59,22 +58,22 @@ func (s PitchingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDa
 	// away pitchers
 	res, err = s.constructPitching("away", gf.AwayPitchers, gf, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PitchingBoxScore]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
 	}
-	return sportscrape.EventDataOutput{Error: err, Context: context, Output: data}
+	return sportscrape.EventDataOutput[model.PitchingBoxScore]{Error: err, Context: context, Output: data}
 }
 
-func (s PitchingBoxScoreScraper) constructPitching(team string, plays *jsonresponse.Plays, gf jsonresponse.GameFeed, context sportscrape.EventDataContext) ([]interface{}, error) {
+func (s PitchingBoxScoreScraper) constructPitching(team string, plays *jsonresponse.Plays, gf jsonresponse.GameFeed, context sportscrape.EventDataContext) ([]model.PitchingBoxScore, error) {
 	if plays == nil {
 		return nil, nil
 	}
 	var teamName, opponentName string
 	var teamid, opponentid int64
 	var boxscoreteam jsonresponse.BoxScoreTeam
-	var data []interface{}
+	var data []model.PitchingBoxScore
 	var err error
 	eventid := context.EventID.(int64)
 	switch team {

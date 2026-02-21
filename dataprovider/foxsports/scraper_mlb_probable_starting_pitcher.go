@@ -53,18 +53,17 @@ func (s MLBProbableStartingPitcherScraper) Feed() sportscrape.Feed {
 	return sportscrape.FSMLBProbableStartingPitcher
 }
 
-func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (s *MLBProbableStartingPitcherScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.MLBProbableStartingPitcher] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupModel)
+	context := s.ConstructContext(matchup)
 
-	var data []interface{}
+	var data []model.MLBProbableStartingPitcher
 	// Construct event data URL
 	log.Println("Constructing event data URL")
-	url, err := s.ConstructMatchupComparisonURL(matchupModel.EventID)
+	url, err := s.ConstructMatchupComparisonURL(matchup.EventID)
 	if err != nil {
 		log.Println("Issue constructing matchup comparison URL")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -72,27 +71,27 @@ func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) sportscr
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching matchup comparison")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.MLBMatchupComparison
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Error: err, Context: context}
 	}
 	if responsePayload.FeaturedPairing == nil {
-		log.Printf("No probable starting pitcher data available for event %d\n", matchupModel.EventID)
-		return sportscrape.EventDataOutput{Context: context}
+		log.Printf("No probable starting pitcher data available for event %d\n", matchup.EventID)
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Context: context}
 	}
 	if responsePayload.FeaturedPairing.Title != probablePitcherTitle {
 		err = fmt.Errorf("unknown title '%s', expected '%s'", responsePayload.FeaturedPairing.Title, probablePitcherTitle)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Error: err, Context: context}
 	}
 
 	pitcher, err := s.pitcher("home", responsePayload, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Error: err, Context: context}
 	}
 	if pitcher != nil {
 		data = append(data, *pitcher)
@@ -100,15 +99,15 @@ func (s *MLBProbableStartingPitcherScraper) Scrape(matchup interface{}) sportscr
 
 	pitcher, err = s.pitcher("away", responsePayload, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Error: err, Context: context}
 	}
 	if pitcher != nil {
 		data = append(data, *pitcher)
 	}
 
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return sportscrape.EventDataOutput{Output: data, Context: context}
+	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchup.EventID, matchup.AwayTeamNameFull, matchup.HomeTeamNameFull, diff)
+	return sportscrape.EventDataOutput[model.MLBProbableStartingPitcher]{Output: data, Context: context}
 }
 
 func (s *MLBProbableStartingPitcherScraper) era(rawStatline string) (float32, error) {

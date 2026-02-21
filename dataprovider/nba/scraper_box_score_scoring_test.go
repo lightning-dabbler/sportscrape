@@ -20,7 +20,9 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 		WithMatchupTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
@@ -30,15 +32,17 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreScoring]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 21, n_records, "21 stat lines")
-	testRecord := records[4].(model.BoxScoreScoring)
+	testRecord := records[4]
 
 	assert.Equal(t, "0042400401", testRecord.EventID)
 	assert.Equal(t, int32(3), testRecord.EventStatus)

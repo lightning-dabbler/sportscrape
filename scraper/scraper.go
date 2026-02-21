@@ -2,15 +2,15 @@ package scraper
 
 import "github.com/lightning-dabbler/sportscrape"
 
-type MatchupScraper interface {
-	Scrape() sportscrape.MatchupOutput
+type MatchupScraper[M any] interface {
+	Scrape() sportscrape.MatchupOutput[M]
 	Init()
 	Feed() sportscrape.Feed
 	Provider() sportscrape.Provider
 }
 
-type EventDataScraper interface {
-	Scrape(matchup interface{}) sportscrape.EventDataOutput
+type EventDataScraper[M, E any] interface {
+	Scrape(matchup M) sportscrape.EventDataOutput[E]
 	Feed() sportscrape.Feed
 	Provider() sportscrape.Provider
 	Init()

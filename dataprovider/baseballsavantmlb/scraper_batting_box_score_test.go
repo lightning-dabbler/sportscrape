@@ -18,22 +18,26 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 		MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 
 	boxscorescraper := NewBattingBoxScoreScraper()
+
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BattingBoxScore]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
-	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	assert.Equal(t, 18, len(boxScoreStats), "18 statlines")
 	GavinLuxTested := false
-	for _, statline := range boxScoreStats {
-		s := statline.(model.BattingBoxScore)
+	for _, s := range boxScoreStats {
 		if s.Player == "Gavin Lux" {
 			GavinLuxTested = true
 			assert.Equal(t, int64(775296), s.EventID)

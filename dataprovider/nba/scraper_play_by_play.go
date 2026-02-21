@@ -58,13 +58,12 @@ func (pbp PlayByPlayScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBAPlayByPlay
 }
 
-func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (pbp PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.PlayByPlay] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := pbp.ConstructContext(matchupModel)
-	url, err := pbp.URL(matchupModel.ShareURL)
+	context := pbp.ConstructContext(matchup)
+	url, err := pbp.URL(matchup.ShareURL)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -72,24 +71,24 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 	context.PullTimestamp = pullTimestamp
 	jsonstr, err := pbp.FetchDoc(url)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	var jsonPayload jsonresponse.PlayByPlayJSON
-	var data []interface{}
+	var data []model.PlayByPlay
 
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	for _, action := range jsonPayload.Props.PageProps.PlayByPlay.Actions {
 		playbyplay := model.PlayByPlay{
 			PullTimestamp:        pullTimestamp,
 			PullTimestampParquet: pullTimestampParquet,
-			EventID:              matchupModel.EventID,
-			EventTime:            matchupModel.EventTime,
-			EventTimeParquet:     matchupModel.EventTimeParquet,
-			EventStatus:          matchupModel.EventStatus,
-			EventStatusText:      matchupModel.EventStatusText,
+			EventID:              matchup.EventID,
+			EventTime:            matchup.EventTime,
+			EventTimeParquet:     matchup.EventTimeParquet,
+			EventStatus:          matchup.EventStatus,
+			EventStatusText:      matchup.EventStatusText,
 			ActionNumber:         action.ActionNumber,
 			Period:               action.Period,
 			TeamID:               action.TeamID,
@@ -112,7 +111,7 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 		}
 		mins, err := util.TransformMinutesPlayed(action.Clock)
 		if err != nil {
-			return sportscrape.EventDataOutput{Error: err, Context: context}
+			return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 		}
 		playbyplay.Clock = mins
 
@@ -120,5 +119,5 @@ func (pbp PlayByPlayScraper) Scrape(matchup interface{}) sportscrape.EventDataOu
 	}
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %s (%s vs %s) completed in %s\n", context.EventID, context.AwayTeam, context.HomeTeam, diff)
-	return sportscrape.EventDataOutput{Context: context, Output: data}
+	return sportscrape.EventDataOutput[model.PlayByPlay]{Context: context, Output: data}
 }

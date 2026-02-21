@@ -19,25 +19,28 @@ func TestFieldingBoxScoreScraper(t *testing.T) {
 		MatchupScraperDate(date),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 
 	boxscorescraper := NewFieldingBoxScoreScraper()
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.FieldingBoxScore]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
-	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	assert.Equal(t, 64, len(boxScoreStats), "64 statlines")
 
 	playerToTest := map[string]bool{
 		"Austin Wells": false,
 	}
-	for _, statline := range boxScoreStats {
-		stats := statline.(model.FieldingBoxScore)
+	for _, stats := range boxScoreStats {
 		if stats.Player == "Austin Wells" {
 			playerToTest[stats.Player] = true
 			assert.Equal(t, int64(775332), stats.EventID)

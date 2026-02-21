@@ -7,7 +7,7 @@ import (
 	"github.com/chromedp/cdproto/network"
 )
 
-var networkHeaders network.Headers = network.Headers(map[string]interface{}{
+var networkHeaders network.Headers = network.Headers(map[string]any{
 	"authority":                 "www.baseball-reference.com",
 	"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
 	"accept-language":           "en-US,en;q=0.9",
