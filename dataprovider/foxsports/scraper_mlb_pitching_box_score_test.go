@@ -29,7 +29,9 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -38,12 +40,12 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	// Get boxscore data
 	boxscoreScraper := NewMLBPitchingBoxScoreScraper()
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(
-			boxscoreScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBPitchingBoxScoreStats]{
+			Scraper:     boxscoreScraper,
+			Concurrency: 1,
+		},
 	)
-	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	n_expected := 13
@@ -70,8 +72,7 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 	}
 	pw.CompressionType = parquet.CompressionCodec_SNAPPY
 
-	for _, statline := range boxScoreStats {
-		s := statline.(model.MLBPitchingBoxScoreStats)
+	for _, s := range boxScoreStats {
 		if s.Player == "Luke Weaver" {
 			LukeWeaverTested = true
 			assert.Equal(t, int64(91226), s.EventID, "EventID")

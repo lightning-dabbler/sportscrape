@@ -29,7 +29,9 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -38,12 +40,12 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 	// Get boxscore data
 	boxscoreScraper := NewMLBBattingBoxScoreScraper()
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(
-			boxscoreScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBBattingBoxScoreStats]{
+			Scraper:     boxscoreScraper,
+			Concurrency: 1,
+		},
 	)
-	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	n_expected := 19
@@ -69,8 +71,7 @@ func TestMLBBattingBoxScoreScraper(t *testing.T) {
 		t.Fatalf("Can't create parquet writer %v\n", err)
 	}
 	pw.CompressionType = parquet.CompressionCodec_SNAPPY
-	for _, statline := range boxScoreStats {
-		s := statline.(model.MLBBattingBoxScoreStats)
+	for _, s := range boxScoreStats {
 		if s.Player == "Gavin Lux" {
 			GavinLuxTested = true
 			assert.Equal(t, int64(91226), s.EventID, "EventID")

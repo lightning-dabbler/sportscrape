@@ -1,7 +1,9 @@
 package mma_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma"
@@ -23,7 +25,11 @@ func ExampleESPNMMAMatchupScraper() {
 		panic(err)
 	}
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup)
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -51,6 +57,10 @@ func ExampleESPNMMAFightDetailsScraper() {
 		panic(err)
 	}
 	for _, fight := range fightDetails {
-		fmt.Printf("%#v\n", fight)
+		jsonBytes, err := json.MarshalIndent(fight, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }

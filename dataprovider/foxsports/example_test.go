@@ -17,7 +17,9 @@ func ExampleMatchupScraper_nba() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2023-01-10"}),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -41,7 +43,9 @@ func ExampleMatchupScraper_wnba() {
 		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: "2025-08-07"}),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -66,7 +70,9 @@ func ExampleMatchupScraper_mlb() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -91,7 +97,9 @@ func ExampleMatchupScraper_ncaab() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -116,7 +124,9 @@ func ExampleMatchupScraper_nfl() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -142,7 +152,9 @@ func ExampleNBABoxScoreScraper_nba() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -152,13 +164,13 @@ func ExampleNBABoxScoreScraper_nba() {
 
 	// Get boxscore data
 	eventdatascraper := foxsports.NewNBABoxScoreScraper()
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -181,7 +193,9 @@ func ExampleNBABoxScoreScraper_wnba() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -193,13 +207,14 @@ func ExampleNBABoxScoreScraper_wnba() {
 	eventdatascraper := foxsports.NewNBABoxScoreScraper(
 		foxsports.NBABoxScoreScraperLeague(foxsports.WNBA),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -222,7 +237,9 @@ func ExampleMLBBattingBoxScoreScraper() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -232,19 +249,22 @@ func ExampleMLBBattingBoxScoreScraper() {
 
 	// Get boxscore data
 	eventdatascraper := foxsports.NewMLBBattingBoxScoreScraper()
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBBattingBoxScoreStats]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
-
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	for _, statline := range boxScoreStats {
-		fmt.Printf("%#v\n", statline.(model.MLBBattingBoxScoreStats))
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -257,7 +277,9 @@ func ExampleMLBPitchingBoxScoreScraper() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -267,14 +289,14 @@ func ExampleMLBPitchingBoxScoreScraper() {
 
 	// Get boxscore data
 	eventdatascraper := foxsports.NewMLBPitchingBoxScoreScraper()
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBPitchingBoxScoreStats]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
 
-	boxScoreStats, err := runner.Run(matchups...)
+	boxScoreStats, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -297,7 +319,9 @@ func ExampleMLBProbableStartingPitcherScraper() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -307,14 +331,14 @@ func ExampleMLBProbableStartingPitcherScraper() {
 
 	// Get starting pitcher data
 	eventdatascraper := foxsports.NewMLBProbableStartingPitcherScraper()
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBProbableStartingPitcher]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
 
-	probablePitchers, err := runner.Run(matchups...)
+	probablePitchers, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -336,7 +360,9 @@ func ExampleMLBOddsTotalScraper() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -346,14 +372,14 @@ func ExampleMLBOddsTotalScraper() {
 
 	// Get odds total line data
 	eventdatascraper := foxsports.NewMLBOddsTotalScraper()
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBOddsTotal]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
 
-	events, err := runner.Run(matchups...)
+	events, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -375,7 +401,9 @@ func ExampleMLBOddsMoneyLineScraper() {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -385,14 +413,14 @@ func ExampleMLBOddsMoneyLineScraper() {
 
 	// Get odds money line data
 	eventdatascraper := foxsports.NewMLBOddsMoneyLineScraper()
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(4),
-		runner.EventDataRunnerScraper(
-			eventdatascraper,
-		),
+	eventdatarunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBOddsMoneyLine]{
+			Scraper:     eventdatascraper,
+			Concurrency: 4,
+		},
 	)
 
-	events, err := runner.Run(matchups...)
+	events, err := eventdatarunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}

@@ -32,7 +32,11 @@ func ExampleMatchupRunner() {
 	}
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup)
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 

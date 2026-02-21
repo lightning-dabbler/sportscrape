@@ -22,7 +22,9 @@ func TestMatchupScraper_NBA(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -30,7 +32,7 @@ func TestMatchupScraper_NBA(t *testing.T) {
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 11, n_matchups, "11 events")
-	testMatchup := matchups[4].(model.Matchup)
+	testMatchup := matchups[4]
 	assert.Equal(t, int64(43190), testMatchup.EventID)
 	assert.Equal(t, time.Date(2025, time.April, 6, 22, 0, 0, 0, time.UTC), testMatchup.EventTime) // 2025-04-06T22:00:00Z
 	assert.Equal(t, int32(3), testMatchup.EventStatus)
@@ -65,7 +67,9 @@ func TestMatchupScraper_WNBA(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -73,7 +77,7 @@ func TestMatchupScraper_WNBA(t *testing.T) {
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
-	testMatchup := matchups[1].(model.Matchup)
+	testMatchup := matchups[1]
 	assert.Equal(t, int64(2179), testMatchup.EventID)
 	assert.Equal(t, time.Date(2025, time.May, 3, 1, 0, 0, 0, time.UTC), testMatchup.EventTime) // 2025-04-06T22:00:00Z
 	assert.Equal(t, int32(3), testMatchup.EventStatus)
@@ -108,7 +112,9 @@ func TestMatchupScraper_MLB(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -116,7 +122,7 @@ func TestMatchupScraper_MLB(t *testing.T) {
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
-	testMatchup := matchups[0].(model.Matchup)
+	testMatchup := matchups[0]
 	assert.Equal(t, int64(91212), testMatchup.EventID)
 	assert.Equal(t, time.Date(2024, time.October, 18, 21, 8, 0, 0, time.UTC), testMatchup.EventTime) // 2024-10-18T21:08:00Z
 	assert.Equal(t, int32(3), testMatchup.EventStatus)
@@ -152,14 +158,16 @@ func TestMatchupScraper_NFL(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	n_matchups := len(matchups)
 	assert.Equal(t, 2, n_matchups, "2 events")
-	testMatchup := matchups[1].(model.Matchup)
+	testMatchup := matchups[1]
 	assert.Equal(t, int64(10701), testMatchup.EventID)
 	assert.Equal(t, time.Date(2025, time.January, 26, 23, 30, 0, 0, time.UTC), testMatchup.EventTime) // 2025-01-26T23:30:00Z
 	assert.Equal(t, int32(3), testMatchup.EventStatus)
@@ -193,7 +201,9 @@ func TestMatchupScraper_NCAAB(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -201,7 +211,7 @@ func TestMatchupScraper_NCAAB(t *testing.T) {
 
 	n_matchups := len(matchups)
 	assert.Equal(t, 4, n_matchups, "4 events")
-	testMatchup := matchups[2].(model.Matchup)
+	testMatchup := matchups[2]
 	assert.Equal(t, int64(258066), testMatchup.EventID)
 	assert.Equal(t, time.Date(2025, time.April, 5, 22, 9, 0, 0, time.UTC), testMatchup.EventTime) // 2025-04-05T22:09:00Z
 	assert.Equal(t, int32(3), testMatchup.EventStatus)

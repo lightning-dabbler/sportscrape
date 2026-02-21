@@ -1,7 +1,9 @@
 package nba_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba"
@@ -27,7 +29,11 @@ func ExampleMatchupScraper() {
 	}
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup)
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -49,7 +55,11 @@ func ExampleMatchupPeriodsScraper() {
 	}
 	// Output each statline as pretty json
 	for _, period := range records {
-		fmt.Printf("%#v\n", period)
+		jsonBytes, err := json.MarshalIndent(period, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -87,7 +97,11 @@ func ExamplePlayByPlayScraper() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -126,7 +140,11 @@ func ExampleBoxScoreUsageScraper_full() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -165,7 +183,11 @@ func ExampleBoxScoreUsageScraper_h2() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -204,7 +226,11 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -243,7 +269,11 @@ func ExampleBoxScoreAdvancedScraper_full() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -282,7 +312,11 @@ func ExampleBoxScoreScoringScraper_h1() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -321,7 +355,11 @@ func ExampleBoxScoreMiscScraper_full() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -360,7 +398,11 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -398,7 +440,11 @@ func ExampleBoxScoreLiveScraper() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -436,7 +482,11 @@ func ExampleBoxScoreTrackingScraper() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -474,7 +524,11 @@ func ExampleBoxScoreMatchupsScraper() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -512,7 +566,11 @@ func ExampleBoxScoreDefenseScraper() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -550,6 +608,10 @@ func ExampleBoxScoreHustleScraper() {
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		fmt.Printf("%#v\n", record)
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }

@@ -1,7 +1,9 @@
 package baseballsavantmlb_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb/model"
@@ -25,7 +27,11 @@ func ExampleMatchupScraper() {
 	}
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup)
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -58,7 +64,11 @@ func ExampleFieldingBoxScoreScraper() {
 
 	// Output each statline as pretty json
 	for _, statline := range stats {
-		fmt.Printf("%#v\n", statline)
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -92,7 +102,11 @@ func ExampleBattingBoxScoreScraper() {
 
 	// Output each statline as pretty json
 	for _, statline := range stats {
-		fmt.Printf("%#v\n", statline)
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 
 }
@@ -127,7 +141,11 @@ func ExamplePitchingBoxScoreScraper() {
 
 	// Output each statline as pretty json
 	for _, statline := range stats {
-		fmt.Printf("%#v\n", statline)
+		jsonBytes, err := json.MarshalIndent(statline, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -161,7 +179,11 @@ func ExamplePlayByPlayScraper() {
 
 	// Output each play as pretty json
 	for _, play := range plays {
-		fmt.Printf("%#v\n", play)
+		jsonBytes, err := json.MarshalIndent(play, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 
 }

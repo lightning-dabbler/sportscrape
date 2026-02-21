@@ -1,7 +1,9 @@
 package basketballreferencenba_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/basketballreferencenba"
@@ -29,7 +31,11 @@ func ExampleMatchupRunner() {
 	}
 
 	for _, matchup := range matchups {
-		fmt.Printf("%#v\n", matchup)
+		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -68,7 +74,11 @@ func ExampleBasicBoxScoreScraper_full() {
 		panic(err)
 	}
 	for _, stats := range basicBoxScoreStats {
-		fmt.Printf("%#v\n", stats)
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -107,7 +117,11 @@ func ExampleBasicBoxScoreScraper_q2() {
 		panic(err)
 	}
 	for _, stats := range basicBoxScoreStats {
-		fmt.Printf("%#v\n", stats)
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -146,7 +160,11 @@ func ExampleBasicBoxScoreScraper_h2() {
 		panic(err)
 	}
 	for _, stats := range basicBoxScoreStats {
-		fmt.Printf("%#v\n", stats)
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
 
@@ -184,6 +202,10 @@ func ExampleAdvBoxScoreScraper() {
 		panic(err)
 	}
 	for _, stats := range advBoxScoreStats {
-		fmt.Printf("%#v\n", stats)
+		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 }
