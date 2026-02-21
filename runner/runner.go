@@ -68,7 +68,7 @@ func (t *EventDataRunner[M, E]) Run(matchups []M) ([]E, error) {
 
 	// Send matchups to workers
 	matchupsCount := len(matchups)
-	log.Printf("Processing %d matchups", matchupsCount)
+	log.Printf("Processing %d matchup(s)", matchupsCount)
 	for _, matchup := range matchups {
 		wg.Add(1)
 		workerMatchups <- matchup

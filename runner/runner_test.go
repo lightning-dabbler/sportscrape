@@ -8,39 +8,43 @@ import (
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/internal/mocks/scraper"
 	"github.com/stretchr/testify/assert"
-	mock "github.com/stretchr/testify/mock"
 )
 
 func TestMatchupRunner(t *testing.T) {
-	mockscraper := scraper.NewMockMatchupScraper(t)
-	dummyoutput := sportscrape.MatchupOutput{
+	mockscraper := scraper.NewMockMatchupScraper[any](t)
+	dummyoutput := sportscrape.MatchupOutput[any]{
 		Context: sportscrape.MatchupContext{},
 	}
 	mockscraper.EXPECT().Init().Return()
 	mockscraper.EXPECT().Scrape().Return(dummyoutput).Once()
 	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed)
 	mockscraper.EXPECT().Provider().Return(sportscrape.DummyProvider).Once()
-	runner := NewMatchupRunner(
-		MatchupRunnerScraper(mockscraper),
+	matchuprunner := NewMatchupRunner(
+		MatchupRunnerConfig[any]{Scraper: mockscraper},
 	)
-	matchups, err := runner.Run()
+	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	assert.Nil(t, matchups)
 }
 
 func TestEventDataRunner(t *testing.T) {
-	mockscraper := scraper.NewMockEventDataScraper(t)
-	dummyoutput := sportscrape.EventDataOutput{
+	type fakeMatchup struct{}
+	type fakeEvent struct{}
+	mockscraper := scraper.NewMockEventDataScraper[fakeMatchup, fakeEvent](t)
+	dummyoutput := sportscrape.EventDataOutput[fakeEvent]{
 		Context: sportscrape.EventDataContext{},
 	}
 	mockscraper.EXPECT().Init().Return()
-	mockscraper.EXPECT().Scrape(mock.Anything).Return(dummyoutput).Once()
-	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed)
+	mockscraper.EXPECT().Scrape(fakeMatchup{}).Return(dummyoutput).Once()
+	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed).Times(3)
 	mockscraper.EXPECT().Provider().Return(sportscrape.DummyProvider).Once()
-	runner := NewEventDataRunner(
-		EventDataRunnerScraper(mockscraper),
+	eventDataRunner := NewEventDataRunner(
+		EventDataRunnerConfig[fakeMatchup, fakeEvent]{
+			Concurrency: 1,
+			Scraper:     mockscraper,
+		},
 	)
-	data, err := runner.Run(2)
+	data, err := eventDataRunner.Run([]fakeMatchup{{}})
 	assert.NoError(t, err)
-	assert.Nil(t, data)
+	assert.Empty(t, data)
 }

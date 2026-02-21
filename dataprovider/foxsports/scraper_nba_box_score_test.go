@@ -97,7 +97,7 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 		MatchupScraperSegmenter(&GeneralSegmenter{Date: "2019-10-06"}),
 	)
 
-	matchuprunner := runner.NewMatchupRunner(
+	matchuprunner = runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
 		},
@@ -108,7 +108,7 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 
 	// Get boxscore data
 	boxscoreScraper = NewNBABoxScoreScraper()
-	boxscorerunner := runner.NewEventDataRunner(
+	boxscorerunner = runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
 			Scraper:     boxscoreScraper,
 			Concurrency: 2,

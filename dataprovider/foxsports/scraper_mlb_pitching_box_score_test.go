@@ -93,7 +93,7 @@ func TestMLBPitchingBoxScoreScraper(t *testing.T) {
 			assert.Equal(t, int32(0), s.HomeRunsAllowed, "HomeRunsAllowed")
 			assert.Equal(t, float32(1.76), s.EarnedRunAverage, "EarnedRunAverage")
 		}
-		if err = pw.Write(statline); err != nil {
+		if err = pw.Write(s); err != nil {
 			t.Fatalf("Write error %v\n", err)
 		}
 	}

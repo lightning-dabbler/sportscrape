@@ -39,7 +39,7 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 		},
 	)
 
-	result, err := fightdetailsrunner.Run(matchup)
+	result, err := fightdetailsrunner.Run([]model.Matchup{matchup})
 	assert.NoError(T, err)
 	assert.NotEmpty(T, result)
 	for _, fight := range result {
