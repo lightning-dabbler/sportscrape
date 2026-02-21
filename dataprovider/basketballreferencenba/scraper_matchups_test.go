@@ -47,7 +47,9 @@ func TestMatchupScraper(t *testing.T) {
 				WithMatchupTimeout(5*time.Minute),
 			)
 			matchuprunner := runner.NewMatchupRunner(
-				runner.MatchupRunnerScraper(scraper),
+				runner.MatchupRunnerConfig[model.NBAMatchup]{
+					Scraper: scraper,
+				},
 			)
 			matchups, err := matchuprunner.Run()
 			if err != nil {

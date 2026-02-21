@@ -206,16 +206,15 @@ func (s *BasicBoxScoreScraper) Feed() sportscrape.Feed {
 }
 
 // Scrape retrieves NBA basic box score statistics for a single matchup.
-func (bs *BasicBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	matchupModel := matchup.(model.NBAMatchup)
-	context := bs.ConstructContext(matchupModel)
-	output := sportscrape.EventDataOutput{
+func (bs *BasicBoxScoreScraper) Scrape(matchup model.NBAMatchup) sportscrape.EventDataOutput[model.NBABasicBoxScoreStats] {
+	context := bs.ConstructContext(matchup)
+	output := sportscrape.EventDataOutput[model.NBABasicBoxScoreStats]{
 		Context: context,
 	}
-	url := matchupModel.BoxScoreLink
+	url := matchup.BoxScoreLink
 	PullTimestamp := time.Now().UTC()
 	start := time.Now().UTC()
-	var basicNBABoxScoreStats []interface{}
+	var basicNBABoxScoreStats []model.NBABasicBoxScoreStats
 	log.Printf("Scraping %s Basic Box Score: %s\n", bs.Period.String(), url)
 	doc, err := bs.RetrieveDocument(url, networkHeaders, contentReadySelector)
 	if err != nil {
@@ -244,20 +243,20 @@ func (bs *BasicBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDat
 			if j < 5 || j > 5 {
 				boxScoreStats.PullTimestamp = PullTimestamp
 				boxScoreStats.PullTimestampParquet = types.TimeToTIMESTAMP_MILLIS(PullTimestamp, true)
-				boxScoreStats.EventID = matchupModel.EventID
+				boxScoreStats.EventID = matchup.EventID
 				if i == 0 {
-					boxScoreStats.Team = matchupModel.AwayTeam
-					boxScoreStats.TeamID = matchupModel.AwayTeamID
-					boxScoreStats.Opponent = matchupModel.HomeTeam
-					boxScoreStats.OpponentID = matchupModel.HomeTeamID
+					boxScoreStats.Team = matchup.AwayTeam
+					boxScoreStats.TeamID = matchup.AwayTeamID
+					boxScoreStats.Opponent = matchup.HomeTeam
+					boxScoreStats.OpponentID = matchup.HomeTeamID
 				} else {
-					boxScoreStats.Team = matchupModel.HomeTeam
-					boxScoreStats.TeamID = matchupModel.HomeTeamID
-					boxScoreStats.Opponent = matchupModel.AwayTeam
-					boxScoreStats.OpponentID = matchupModel.AwayTeamID
+					boxScoreStats.Team = matchup.HomeTeam
+					boxScoreStats.TeamID = matchup.HomeTeamID
+					boxScoreStats.Opponent = matchup.AwayTeam
+					boxScoreStats.OpponentID = matchup.AwayTeamID
 				}
-				boxScoreStats.EventDate = matchupModel.EventDate
-				boxScoreStats.EventDateParquet = util.TimeToDays(matchupModel.EventDate)
+				boxScoreStats.EventDate = matchup.EventDate
+				boxScoreStats.EventDateParquet = util.TimeToDays(matchup.EventDate)
 				if j < 5 {
 					boxScoreStats.Starter = true
 				} else {

@@ -23,7 +23,9 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 		WithMatchupTimeout(4*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -33,12 +35,14 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 	boxscorescraper := NewAdvBoxScoreScraper(
 		WithAdvBoxScoreTimeout(4 * time.Minute),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBAAdvBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	advBoxScoreStats, err := runner.Run(matchups...)
+	advBoxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 
 	numAwayPlayers := 0
@@ -49,8 +53,7 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 	expectedNumHomePlayers := 15
 	expectedAwayDNP := 2
 	expectedHomeDNP := 5
-	for _, s := range advBoxScoreStats {
-		stats := s.(model.NBAAdvBoxScoreStats)
+	for _, stats := range advBoxScoreStats {
 		if stats.Team == "LA Lakers" {
 			// Actual home players
 			numHomePlayers += 1

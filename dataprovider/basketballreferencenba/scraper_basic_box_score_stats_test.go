@@ -22,7 +22,9 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 		WithMatchupTimeout(5*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -32,12 +34,14 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(Full),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	basicBoxScoreStats, err := runner.Run(matchups...)
+	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 
 	numAwayPlayers := 0
@@ -48,8 +52,7 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 	expectedNumHomePlayers := 15
 	expectedAwayDNP := 2
 	expectedHomeDNP := 5
-	for _, s := range basicBoxScoreStats {
-		stats := s.(model.NBABasicBoxScoreStats)
+	for _, stats := range basicBoxScoreStats {
 		if stats.Team == "LA Lakers" {
 			// Actual home players
 			numHomePlayers += 1
@@ -113,7 +116,9 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		WithMatchupTimeout(4*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -123,12 +128,14 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(H1),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	basicBoxScoreStats, err := runner.Run(matchups...)
+	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 
 	playerToTest := map[string]bool{
@@ -137,8 +144,7 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		"Gabe Vincent": false,
 	}
 
-	for _, s := range basicBoxScoreStats {
-		stats := s.(model.NBABasicBoxScoreStats)
+	for _, stats := range basicBoxScoreStats {
 		if stats.Player == "LaMelo Ball" {
 			playerToTest["LaMelo Ball"] = true
 			assert.Equal(t, true, stats.Starter, "LaMelo is a starter")
@@ -244,7 +250,9 @@ func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 		WithMatchupTimeout(4*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.NBAMatchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
@@ -254,20 +262,21 @@ func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(Q3),
 	)
-	runner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(boxscorescraper),
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 	// Retrieve NBA basic box score stats associated with matchups
-	basicBoxScoreStats, err := runner.Run(matchups...)
+	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	playerToTest := map[string]bool{
 		"Tidjane Salaün": false,
 		"Rui Hachimura":  false,
 	}
 
-	for _, s := range basicBoxScoreStats {
-		stats := s.(model.NBABasicBoxScoreStats)
+	for _, stats := range basicBoxScoreStats {
 		if stats.Player == "Tidjane Salaün" {
 			playerToTest["Tidjane Salaün"] = true
 			assert.Equal(t, false, stats.Starter, "Tidjane is a reserves player")

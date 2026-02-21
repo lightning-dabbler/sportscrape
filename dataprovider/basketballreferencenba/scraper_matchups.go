@@ -98,9 +98,9 @@ func (ms MatchupScraper) Feed() sportscrape.Feed {
 }
 
 // GetMatchups retrieves NBA matchups for the specified date.
-func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput {
-	var matchups []interface{}
-	output := sportscrape.MatchupOutput{}
+func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput[model.NBAMatchup] {
+	var matchups []model.NBAMatchup
+	output := sportscrape.MatchupOutput[model.NBAMatchup]{}
 	timestamp, err := util.DateStrToTime(ms.Date)
 	if err != nil {
 		output.Error = err
