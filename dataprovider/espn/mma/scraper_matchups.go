@@ -81,9 +81,7 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup]
 	data.PullTime = time.Now()
 	matchups := data.GetScrapableMatchup()
 	output := make([]model.Matchup, 0, len(matchups))
-	for _, matchup := range matchups {
-		output = append(output, matchup)
-	}
+	output = append(output, matchups...)
 
 	return sportscrape.MatchupOutput[model.Matchup]{
 		Context: sportscrape.MatchupContext{
