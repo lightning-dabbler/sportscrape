@@ -29,21 +29,14 @@ func (e ESPNMMAFightDetailsScraper) Init() {
 	}
 }
 
-func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (e ESPNMMAFightDetailsScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.FightDetails] {
 
 	jsonRetriever := scraper.BaseJsonScraper[jsonresponse.ESPNEventData]{}
 
-	m, ok := matchup.(model.Matchup)
-	if !ok {
-		return sportscrape.EventDataOutput{
-			Error: fmt.Errorf("Input is not of type espn.mma.model.Matchup"),
-		}
-	}
-
-	url := fmt.Sprintf(ESPNMMAEventURL, m.EventID, e.League)
+	url := fmt.Sprintf(ESPNMMAEventURL, matchup.EventID, e.League)
 	doc, err := e.RetrieveDocument(url, network.Headers{}, "html")
 	if err != nil {
-		return sportscrape.EventDataOutput{
+		return sportscrape.EventDataOutput[model.FightDetails]{
 			Error: err,
 		}
 	}
@@ -66,20 +59,17 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 
 	data.PullTime = time.Now()
 
-	fights := data.GetFightDetails(m)
+	fights := data.GetFightDetails(matchup)
 
-	out := make([]interface{}, 0, len(fights))
-	for _, fight := range fights {
-		out = append(out, fight)
-	}
-
-	return sportscrape.EventDataOutput{
+	out := make([]model.FightDetails, 0, len(fights))
+	out = append(out, fights...)
+	return sportscrape.EventDataOutput[model.FightDetails]{
 		Error:  nil,
 		Output: out,
 		Context: sportscrape.EventDataContext{
 			PullTimestamp: data.PullTime,
-			EventTime:     m.EventTime,
-			EventID:       m.EventID,
+			EventTime:     matchup.EventTime,
+			EventID:       matchup.EventID,
 			URL:           url,
 			AwayID:        "NA/Multiple",
 			AwayTeam:      "NA/Multiple",
@@ -90,12 +80,14 @@ func (e ESPNMMAFightDetailsScraper) Scrape(matchup interface{}) sportscrape.Even
 }
 
 func (e ESPNMMAFightDetailsScraper) Feed() sportscrape.Feed {
-	if e.League == "ufc" {
+	switch e.League {
+	case "ufc":
 		return sportscrape.ESPNUFCFightDetails
-	} else if e.League == "pfl" {
+	case "pfl":
 		return sportscrape.ESPNPFLFightDetails
+	default:
+		return ""
 	}
-	return ""
 }
 
 func (e ESPNMMAFightDetailsScraper) Provider() sportscrape.Provider {

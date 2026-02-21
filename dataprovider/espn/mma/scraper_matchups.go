@@ -11,6 +11,7 @@ import (
 	"github.com/chromedp/cdproto/network"
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/jsonresponse"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/lightning-dabbler/sportscrape/scraper"
 )
 
@@ -36,12 +37,12 @@ func (m ESPNMMAMatchupScraper) Init() {
 	}
 }
 
-func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {
+func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 	url := fmt.Sprintf(ESPNMMAEventsFeedURL, m.Year, m.League)
 
 	doc, err := m.RetrieveDocument(url, network.Headers{}, "html")
 	if err != nil {
-		return sportscrape.MatchupOutput{
+		return sportscrape.MatchupOutput[model.Matchup]{
 			Context: sportscrape.MatchupContext{
 				Errors: 1,
 				Skips:  0,
@@ -69,7 +70,7 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {
 
 	empty := &jsonresponse.ESPNMMASchedule{}
 	if data == empty {
-		return sportscrape.MatchupOutput{
+		return sportscrape.MatchupOutput[model.Matchup]{
 			Context: sportscrape.MatchupContext{
 				Errors: 1,
 				Skips:  1,
@@ -79,12 +80,12 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput {
 	}
 	data.PullTime = time.Now()
 	matchups := data.GetScrapableMatchup()
-	output := make([]interface{}, 0, len(matchups))
+	output := make([]model.Matchup, 0, len(matchups))
 	for _, matchup := range matchups {
 		output = append(output, matchup)
 	}
 
-	return sportscrape.MatchupOutput{
+	return sportscrape.MatchupOutput[model.Matchup]{
 		Context: sportscrape.MatchupContext{
 			Errors: 0,
 		},
