@@ -23,7 +23,9 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -32,12 +34,12 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 	// Get boxscore data
 	boxscoreScraper := NewNBABoxScoreScraper()
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(2),
-		runner.EventDataRunnerScraper(
-			boxscoreScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
+			Scraper:     boxscoreScraper,
+			Concurrency: 2,
+		},
 	)
-	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	assert.Equal(t, 41, n_stats, "41 statlines")
@@ -50,8 +52,7 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 	actualStatlineCountGroupedByEventID := make(map[int64]int)
 	KeonEllisTested := false
 
-	for _, statline := range boxScoreStats {
-		s := statline.(model.NBABoxScoreStats)
+	for _, s := range boxScoreStats {
 		actualStatlineCountGroupedByEventID[s.EventID] += 1
 		if s.Player == "Keon Ellis" {
 			KeonEllisTested = true
@@ -97,7 +98,9 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 	)
 
 	matchuprunner = runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err = matchuprunner.Run()
@@ -106,12 +109,12 @@ func TestNBABoxScoreScraper_nba(t *testing.T) {
 	// Get boxscore data
 	boxscoreScraper = NewNBABoxScoreScraper()
 	boxscorerunner = runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(2),
-		runner.EventDataRunnerScraper(
-			boxscoreScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
+			Scraper:     boxscoreScraper,
+			Concurrency: 2,
+		},
 	)
-	boxScoreStats, err = boxscorerunner.Run(matchups...)
+	boxScoreStats, err = boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_stats = len(boxScoreStats)
 	assert.Equal(t, 69, n_stats, "69 statlines")
@@ -129,7 +132,9 @@ func TestNBABoxScoreScraper_wnba(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -140,19 +145,18 @@ func TestNBABoxScoreScraper_wnba(t *testing.T) {
 		NBABoxScoreScraperLeague(WNBA),
 	)
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(2),
-		runner.EventDataRunnerScraper(
-			boxscoreScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
+			Scraper:     boxscoreScraper,
+			Concurrency: 2,
+		},
 	)
-	boxScoreStats, err := boxscorerunner.Run(matchups...)
+	boxScoreStats, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_stats := len(boxScoreStats)
 	assert.Equal(t, 48, n_stats, "48 statlines")
 	NaLyssaTested := false
 
-	for _, statline := range boxScoreStats {
-		s := statline.(model.NBABoxScoreStats)
+	for _, s := range boxScoreStats {
 		if s.Player == "NaLyssa Smith" {
 			NaLyssaTested = true
 			assert.Equal(t, int64(2182), s.EventID, "EventID")

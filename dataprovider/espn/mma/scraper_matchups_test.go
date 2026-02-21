@@ -8,7 +8,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
-	scraper2 "github.com/lightning-dabbler/sportscrape/scraper"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,20 +17,17 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 	if testing.Short() {
 		T.Skip("Skipping integration test")
 	}
-	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 3 * time.Minute}}
-
-	matchupRunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(
-			scraper,
-		),
+	matchupscraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: 3 * time.Minute}}
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
-
-	r, err := matchupRunner.Run()
+	r, err := matchuprunner.Run()
 	assert.NoError(T, err)
 	output := r
 	assert.NotEmpty(T, output)
-	for _, untyped := range output {
-		matchup := untyped.(model.Matchup)
+	for _, matchup := range output {
 		if matchup.EventID == "600039853" {
 			matchup.PullTimestamp = time.Time{}
 			matchup.PullTimestampParquet = 0

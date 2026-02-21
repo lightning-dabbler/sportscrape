@@ -22,7 +22,9 @@ func TestMLBProbableStartingPitcherScraper(t *testing.T) {
 	)
 
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -30,18 +32,18 @@ func TestMLBProbableStartingPitcherScraper(t *testing.T) {
 
 	boxscoreScraper := NewMLBProbableStartingPitcherScraper()
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerConcurrency(1),
-		runner.EventDataRunnerScraper(
-			boxscoreScraper,
-		),
+		runner.EventDataRunnerConfig[model.Matchup, model.MLBProbableStartingPitcher]{
+			Scraper:     boxscoreScraper,
+			Concurrency: 1,
+		},
 	)
-	probablePitchers, err := boxscorerunner.Run(matchups...)
+	probablePitchers, err := boxscorerunner.Run(matchups)
 	assert.NoError(t, err)
 	n_records := len(probablePitchers)
 	n_expected := 2
 	assert.Equal(t, n_expected, n_records, "2 starting pitchers")
-	homeStartingPitcher := probablePitchers[0].(model.MLBProbableStartingPitcher)
-	awayStartingPitcher := probablePitchers[1].(model.MLBProbableStartingPitcher)
+	homeStartingPitcher := probablePitchers[0]
+	awayStartingPitcher := probablePitchers[1]
 
 	assert.Equal(t, "Jack Flaherty", homeStartingPitcher.StartingPitcher)
 	assert.Equal(t, "1-2", *homeStartingPitcher.StartingPitcherRecord)

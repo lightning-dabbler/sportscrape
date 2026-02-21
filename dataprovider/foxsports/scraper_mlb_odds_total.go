@@ -55,18 +55,17 @@ func (s MLBOddsTotalScraper) Feed() sportscrape.Feed {
 	return sportscrape.FSMLBOddsTotal
 }
 
-func (s *MLBOddsTotalScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (s *MLBOddsTotalScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.MLBOddsTotal] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupModel)
+	context := s.ConstructContext(matchup)
 
-	var data []interface{}
+	var data []model.MLBOddsTotal
 	// Construct event data URL
 	log.Println("Constructing event data URL")
-	url, err := s.ConstructMatchupComparisonURL(matchupModel.EventID)
+	url, err := s.ConstructMatchupComparisonURL(matchup.EventID)
 	if err != nil {
 		log.Println("Issue constructing matchup comparison URL")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsTotal]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -74,27 +73,27 @@ func (s *MLBOddsTotalScraper) Scrape(matchup interface{}) sportscrape.EventDataO
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching matchup comparison")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsTotal]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.MLBMatchupComparison
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsTotal]{Error: err, Context: context}
 	}
 	if responsePayload.BetSection == nil {
-		log.Printf("No betting odds data available for event %d\n", matchupModel.EventID)
-		return sportscrape.EventDataOutput{Context: context}
+		log.Printf("No betting odds data available for event %d\n", matchup.EventID)
+		return sportscrape.EventDataOutput[model.MLBOddsTotal]{Context: context}
 	}
 	if responsePayload.BetSection.Name != betSectionTitle {
 		err = fmt.Errorf("unknown title '%s'. expected '%s'", responsePayload.BetSection.Name, betSectionTitle)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsTotal]{Error: err, Context: context}
 	}
 
-	odds, err := s.record(matchupModel, responsePayload, context)
+	odds, err := s.record(matchup, responsePayload, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsTotal]{Error: err, Context: context}
 	}
 
 	if odds != nil {
@@ -102,8 +101,8 @@ func (s *MLBOddsTotalScraper) Scrape(matchup interface{}) sportscrape.EventDataO
 	}
 
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return sportscrape.EventDataOutput{Output: data, Context: context}
+	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchup.EventID, matchup.AwayTeamNameFull, matchup.HomeTeamNameFull, diff)
+	return sportscrape.EventDataOutput[model.MLBOddsTotal]{Output: data, Context: context}
 }
 
 func (s *MLBOddsTotalScraper) parseLine(lineText string) (float32, error) {
@@ -118,7 +117,7 @@ func (s *MLBOddsTotalScraper) parseLine(lineText string) (float32, error) {
 	return line, nil
 }
 
-func (s *MLBOddsTotalScraper) record(matchupModel model.Matchup, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBOddsTotal, error) {
+func (s *MLBOddsTotalScraper) record(matchup model.Matchup, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBOddsTotal, error) {
 	var lineText string
 	var line float32
 	var err error

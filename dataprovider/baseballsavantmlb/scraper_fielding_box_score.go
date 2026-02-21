@@ -34,23 +34,22 @@ func (s FieldingBoxScoreScraper) Feed() sportscrape.Feed {
 	return sportscrape.BaseballSavantMLBFieldingBoxScore
 }
 
-func (s FieldingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
-	matchupmodel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupmodel)
-	url := ConstructEventDataURL(matchupmodel.EventID)
+func (s FieldingBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.FieldingBoxScore] {
+	context := s.ConstructContext(matchup)
+	url := ConstructEventDataURL(matchup.EventID)
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
 	gf, err := s.FetchGameFeed(url)
 	if err != nil {
 		log.Println("Issue fetching event data")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.FieldingBoxScore]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
-	var data []interface{}
+	var data []model.FieldingBoxScore
 	// home pitchers
 	res, err := s.constructFielding("home", gf.HomePitchers, gf, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.FieldingBoxScore]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
@@ -58,7 +57,7 @@ func (s FieldingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDa
 	// home batters
 	res, err = s.constructFielding("home", gf.HomeBatters, gf, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.FieldingBoxScore]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
@@ -66,7 +65,7 @@ func (s FieldingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDa
 	// away pitchers
 	res, err = s.constructFielding("away", gf.AwayPitchers, gf, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.FieldingBoxScore]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
@@ -74,22 +73,22 @@ func (s FieldingBoxScoreScraper) Scrape(matchup interface{}) sportscrape.EventDa
 	// away batters
 	res, err = s.constructFielding("away", gf.AwayBatters, gf, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.FieldingBoxScore]{Error: err, Context: context}
 	}
 	if res != nil {
 		data = append(data, res...)
 	}
-	return sportscrape.EventDataOutput{Error: err, Context: context, Output: data}
+	return sportscrape.EventDataOutput[model.FieldingBoxScore]{Error: err, Context: context, Output: data}
 }
 
-func (s FieldingBoxScoreScraper) constructFielding(team string, plays *jsonresponse.Plays, gf jsonresponse.GameFeed, context sportscrape.EventDataContext) ([]interface{}, error) {
+func (s FieldingBoxScoreScraper) constructFielding(team string, plays *jsonresponse.Plays, gf jsonresponse.GameFeed, context sportscrape.EventDataContext) ([]model.FieldingBoxScore, error) {
 	if plays == nil {
 		return nil, nil
 	}
 	var teamName, opponentName string
 	var teamid, opponentid int64
 	var boxscoreteam jsonresponse.BoxScoreTeam
-	var data []interface{}
+	var data []model.FieldingBoxScore
 	eventid := context.EventID.(int64)
 	switch team {
 	case "home":

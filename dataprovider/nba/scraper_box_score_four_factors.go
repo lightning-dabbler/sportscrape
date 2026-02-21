@@ -85,13 +85,12 @@ func (bs BoxScoreFourFactorsScraper) Feed() sportscrape.Feed {
 	}
 }
 
-func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (bs BoxScoreFourFactorsScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreFourFactors] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := bs.ConstructContext(matchupModel)
-	url, err := bs.URL(matchupModel.ShareURL)
+	context := bs.ConstructContext(matchup)
+	url, err := bs.URL(matchup.ShareURL)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -99,19 +98,19 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.Eve
 	context.PullTimestamp = pullTimestamp
 	jsonstr, err := bs.FetchDoc(url)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Error: err, Context: context}
 	}
 	var jsonPayload jsonresponse.BoxScoreFourFactorsJSON
-	var data []interface{}
+	var data []model.BoxScoreFourFactors
 
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Error: err, Context: context}
 	}
 
 	// Check period matches with response payload data
 	if !bs.PeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.Period, jsonPayload.Props.PageProps.Game.GameStatus) {
-		return sportscrape.EventDataOutput{Context: context}
+		return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Context: context}
 	}
 
 	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)
@@ -126,16 +125,16 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.Eve
 		boxscore := model.BoxScoreFourFactors{
 			PullTimestamp:                   pullTimestamp,
 			PullTimestampParquet:            pullTimestampParquet,
-			EventID:                         matchupModel.EventID,
-			EventTime:                       matchupModel.EventTime,
-			EventTimeParquet:                matchupModel.EventTimeParquet,
-			EventStatus:                     matchupModel.EventStatus,
-			EventStatusText:                 matchupModel.EventStatusText,
-			TeamID:                          matchupModel.HomeTeamID,
-			TeamName:                        matchupModel.HomeTeam,
+			EventID:                         matchup.EventID,
+			EventTime:                       matchup.EventTime,
+			EventTimeParquet:                matchup.EventTimeParquet,
+			EventStatus:                     matchup.EventStatus,
+			EventStatusText:                 matchup.EventStatusText,
+			TeamID:                          matchup.HomeTeamID,
+			TeamName:                        matchup.HomeTeam,
 			TeamNameFull:                    homeTeamFull,
-			OpponentID:                      matchupModel.AwayTeamID,
-			OpponentName:                    matchupModel.AwayTeam,
+			OpponentID:                      matchup.AwayTeamID,
+			OpponentName:                    matchup.AwayTeam,
 			OpponentNameFull:                awayTeamFull,
 			PlayerID:                        stats.PersonID,
 			PlayerName:                      player,
@@ -153,7 +152,7 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.Eve
 		if stats.Statistics.Minutes != "" {
 			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
 			if err != nil {
-				return sportscrape.EventDataOutput{Error: err, Context: context}
+				return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Error: err, Context: context}
 			}
 			boxscore.Minutes = minutes
 		}
@@ -169,16 +168,16 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.Eve
 		boxscore := model.BoxScoreFourFactors{
 			PullTimestamp:                   pullTimestamp,
 			PullTimestampParquet:            pullTimestampParquet,
-			EventID:                         matchupModel.EventID,
-			EventTime:                       matchupModel.EventTime,
-			EventTimeParquet:                matchupModel.EventTimeParquet,
-			EventStatus:                     matchupModel.EventStatus,
-			EventStatusText:                 matchupModel.EventStatusText,
-			TeamID:                          matchupModel.AwayTeamID,
-			TeamName:                        matchupModel.AwayTeam,
+			EventID:                         matchup.EventID,
+			EventTime:                       matchup.EventTime,
+			EventTimeParquet:                matchup.EventTimeParquet,
+			EventStatus:                     matchup.EventStatus,
+			EventStatusText:                 matchup.EventStatusText,
+			TeamID:                          matchup.AwayTeamID,
+			TeamName:                        matchup.AwayTeam,
 			TeamNameFull:                    awayTeamFull,
-			OpponentID:                      matchupModel.HomeTeamID,
-			OpponentName:                    matchupModel.HomeTeam,
+			OpponentID:                      matchup.HomeTeamID,
+			OpponentName:                    matchup.HomeTeam,
 			OpponentNameFull:                homeTeamFull,
 			PlayerID:                        stats.PersonID,
 			PlayerName:                      player,
@@ -196,7 +195,7 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.Eve
 		if stats.Statistics.Minutes != "" {
 			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
 			if err != nil {
-				return sportscrape.EventDataOutput{Error: err, Context: context}
+				return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Error: err, Context: context}
 			}
 			boxscore.Minutes = minutes
 		}
@@ -205,5 +204,5 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup interface{}) sportscrape.Eve
 
 	diff := time.Now().UTC().Sub(start)
 	log.Printf("Scraping of event %s (%s vs %s) completed in %s\n", context.EventID, context.AwayTeam, context.HomeTeam, diff)
-	return sportscrape.EventDataOutput{Context: context, Output: data}
+	return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Context: context, Output: data}
 }

@@ -12,7 +12,7 @@ go get github.com/lightning-dabbler/sportscrape
 ```
 
 ## Quick start
-Retrieve and output `2025-02-20` NBA matchups from https://foxsports.com
+Retrieve and output `2025-06-05` NBA traditional box score data from https://nba.com
 ```go
 package main
 
@@ -20,36 +20,54 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
 func main() {
-	date := "2025-02-20"
-	// define matchup scraper
-	matchupScraper := foxsports.NewMatchupScraper(
-		foxsports.MatchupScraperLeague(foxsports.NBA),
-		foxsports.MatchupScraperSegmenter(&foxsports.GeneralSegmenter{Date: date}),
+	matchupScraper := nba.NewMatchupScraper(
+		nba.WithMatchupDate("2025-06-05"),
+		nba.WithMatchupTimeout(2*time.Minute),
 	)
-	// define matchup runner
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
-	// Retrieve matchups
+
 	matchups, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
 	}
-	// Output each matchup as pretty json
-	for _, matchup := range matchups {
-		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
+
+	boxscorescraper := nba.NewBoxScoreTraditionalScraper(
+		nba.WithBoxScoreTraditionalTimeout(2 * time.Minute),
+	)
+
+	boxscorerunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTraditional]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
+	)
+
+	records, err := boxscorerunner.Run(matchups)
+	if err != nil {
+		panic(err)
+	}
+	// Output each statline as pretty json
+	for _, record := range records {
+		jsonBytes, err := json.MarshalIndent(record, "", "  ")
 		if err != nil {
 			log.Fatalf("Error marshaling to JSON: %v\n", err)
 		}
 		fmt.Println(string(jsonBytes))
 	}
 }
+
 ```
 
 ## Usage

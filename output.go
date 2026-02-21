@@ -1,13 +1,13 @@
 package sportscrape
 
-type MatchupOutput struct {
+type MatchupOutput[M any] struct {
 	Error   error
-	Output  []interface{}
+	Output  []M
 	Context MatchupContext
 }
 
-type EventDataOutput struct {
+type EventDataOutput[E any] struct {
 	Error   error
-	Output  []interface{}
+	Output  []E
 	Context EventDataContext
 }

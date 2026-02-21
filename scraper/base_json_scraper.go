@@ -63,7 +63,7 @@ func (s BaseJsonScraper[T]) RetrieveModel(url string) (*T, error) {
 // This is useful for setting the Raw field on a model if it's present, without forcing an interface on the model struct.
 // I tried the interface approach, but it was more verbose and challenging to deal with an embedded pointer struct.
 // Could be improved in the future.
-func setBytesField(s interface{}, fieldName string, data []byte) error {
+func setBytesField(s any, fieldName string, data []byte) error {
 	// Must pass a pointer to the struct to allow modification.
 	v := reflect.ValueOf(s)
 	if v.Kind() != reflect.Ptr || v.IsNil() {

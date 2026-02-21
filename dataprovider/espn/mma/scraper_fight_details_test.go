@@ -8,7 +8,7 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
-	scraper2 "github.com/lightning-dabbler/sportscrape/scraper"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 	"github.com/stretchr/testify/assert"
 	"github.com/xitongsys/parquet-go/types"
 )
@@ -21,7 +21,7 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 	if testing.Short() {
 		T.Skip("Skipping integration test")
 	}
-	scraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper2.BaseScraper{Timeout: 3 * time.Minute}}
+	fightdetailsscraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: 3 * time.Minute}}
 
 	mockTime := time.Now()
 	matchup := model.Matchup{
@@ -32,13 +32,17 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 		LeagueName:       "Ultimate Fighting Championship",
 	}
 
-	runner := runner.NewEventDataRunner(runner.EventDataRunnerScraper(scraper))
+	fightdetailsrunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.FightDetails]{
+			Scraper:     fightdetailsscraper,
+			Concurrency: 1,
+		},
+	)
 
-	result, err := runner.Run(matchup)
+	result, err := fightdetailsrunner.Run([]model.Matchup{matchup})
 	assert.NoError(T, err)
 	assert.NotEmpty(T, result)
-	for _, untyped := range result {
-		fight := (untyped).(model.FightDetails)
+	for _, fight := range result {
 		if fight.ID == "401630119" {
 			fight.PullTimestamp = time.Time{}
 			fight.PullTimestampParquet = 0

@@ -6,22 +6,23 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
-	scraper2 "github.com/lightning-dabbler/sportscrape/scraper"
+	"github.com/lightning-dabbler/sportscrape/scraper"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDeprecatedESPNMMMAMatchupScraper_PFL(T *testing.T) {
-	scraper := ESPNMMAMatchupScraper{Year: "2024", League: "pfl", BaseScraper: scraper2.BaseScraper{Timeout: 3 * time.Minute}}
+	matchupscraper := ESPNMMAMatchupScraper{Year: "2024", League: "pfl", BaseScraper: scraper.BaseScraper{Timeout: 3 * time.Minute}}
 
-	matchupRunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(
-			scraper,
-		),
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 
-	r, err := matchupRunner.Run()
+	r, err := matchuprunner.Run()
 	assert.Error(T, err, "deprecated")
 	assert.Nil(T, r)
 }

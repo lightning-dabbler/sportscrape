@@ -49,18 +49,17 @@ func (s MLBOddsMoneyLineScraper) Feed() sportscrape.Feed {
 	return sportscrape.FSMLBOddsMoneyLine
 }
 
-func (s *MLBOddsMoneyLineScraper) Scrape(matchup interface{}) sportscrape.EventDataOutput {
+func (s *MLBOddsMoneyLineScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.MLBOddsMoneyLine] {
 	start := time.Now().UTC()
-	matchupModel := matchup.(model.Matchup)
-	context := s.ConstructContext(matchupModel)
+	context := s.ConstructContext(matchup)
 
-	var data []interface{}
+	var data []model.MLBOddsMoneyLine
 	// Construct event data URL
 	log.Println("Constructing event data URL")
-	url, err := s.ConstructMatchupComparisonURL(matchupModel.EventID)
+	url, err := s.ConstructMatchupComparisonURL(matchup.EventID)
 	if err != nil {
 		log.Println("Issue constructing matchup comparison URL")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Error: err, Context: context}
 	}
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -68,27 +67,27 @@ func (s *MLBOddsMoneyLineScraper) Scrape(matchup interface{}) sportscrape.EventD
 	responseBody, err := s.FetchData(url)
 	if err != nil {
 		log.Println("Issue fetching matchup comparison")
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Error: err, Context: context}
 	}
 	context.PullTimestamp = pullTimestamp
 	// Unmarshal JSON
 	var responsePayload jsonresponse.MLBMatchupComparison
 	err = json.Unmarshal(responseBody, &responsePayload)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Error: err, Context: context}
 	}
 	if responsePayload.BetSection == nil {
-		log.Printf("No betting odds data available for event %d\n", matchupModel.EventID)
-		return sportscrape.EventDataOutput{Context: context}
+		log.Printf("No betting odds data available for event %d\n", matchup.EventID)
+		return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Context: context}
 	}
 	if responsePayload.BetSection.Name != betSectionTitle {
 		err = fmt.Errorf("unknown title '%s'. expected '%s'", responsePayload.BetSection.Name, betSectionTitle)
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Error: err, Context: context}
 	}
 
-	odds, err := s.record(matchupModel, responsePayload, context)
+	odds, err := s.record(matchup, responsePayload, context)
 	if err != nil {
-		return sportscrape.EventDataOutput{Error: err, Context: context}
+		return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Error: err, Context: context}
 	}
 
 	if odds != nil {
@@ -96,11 +95,11 @@ func (s *MLBOddsMoneyLineScraper) Scrape(matchup interface{}) sportscrape.EventD
 	}
 
 	diff := time.Now().UTC().Sub(start)
-	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchupModel.EventID, matchupModel.AwayTeamNameFull, matchupModel.HomeTeamNameFull, diff)
-	return sportscrape.EventDataOutput{Output: data, Context: context}
+	log.Printf("Scraping of event %d (%s vs %s) completed in %s\n", matchup.EventID, matchup.AwayTeamNameFull, matchup.HomeTeamNameFull, diff)
+	return sportscrape.EventDataOutput[model.MLBOddsMoneyLine]{Output: data, Context: context}
 }
 
-func (s *MLBOddsMoneyLineScraper) record(matchupModel model.Matchup, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBOddsMoneyLine, error) {
+func (s *MLBOddsMoneyLineScraper) record(matchup model.Matchup, responsePayload jsonresponse.MLBMatchupComparison, context sportscrape.EventDataContext) (*model.MLBOddsMoneyLine, error) {
 	var oddsText string
 	for _, bet := range responsePayload.BetSection.Bets {
 		if bet.Model.Subtitle != oddsMoneyLineTitle {
@@ -127,12 +126,12 @@ func (s *MLBOddsMoneyLineScraper) record(matchupModel model.Matchup, responsePay
 			if err != nil {
 				return nil, err
 			}
-			if matchupModel.AwayTeamAbbreviation == oddsItem.SubText {
+			if matchup.AwayTeamAbbreviation == oddsItem.SubText {
 				record.AwayTeamOdds = odds
-			} else if matchupModel.HomeTeamAbbreviation == oddsItem.SubText {
+			} else if matchup.HomeTeamAbbreviation == oddsItem.SubText {
 				record.HomeTeamOdds = odds
 			} else {
-				return nil, fmt.Errorf("unexpected team abbreviation identifed '%s'. expected %s or %s", oddsItem.SubText, matchupModel.HomeTeamAbbreviation, matchupModel.AwayTeamAbbreviation)
+				return nil, fmt.Errorf("unexpected team abbreviation identifed '%s'. expected %s or %s", oddsItem.SubText, matchup.HomeTeamAbbreviation, matchup.AwayTeamAbbreviation)
 			}
 		}
 		return record, nil

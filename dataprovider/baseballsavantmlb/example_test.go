@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
@@ -16,7 +17,9 @@ func ExampleMatchupScraper() {
 		baseballsavantmlb.MatchupScraperDate(date),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -38,7 +41,9 @@ func ExampleFieldingBoxScoreScraper() {
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -46,13 +51,13 @@ func ExampleFieldingBoxScoreScraper() {
 	}
 
 	boxscorescraper := baseballsavantmlb.NewFieldingBoxScoreScraper()
-
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.FieldingBoxScore]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
-
-	stats, err := boxscorerunner.Run(matchups...)
+	stats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +70,6 @@ func ExampleFieldingBoxScoreScraper() {
 		}
 		fmt.Println(string(jsonBytes))
 	}
-
 }
 
 // Example for baseballsavantmlb.BattingBoxScoreScraper
@@ -74,7 +78,9 @@ func ExampleBattingBoxScoreScraper() {
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -82,13 +88,14 @@ func ExampleBattingBoxScoreScraper() {
 	}
 
 	boxscorescraper := baseballsavantmlb.NewBattingBoxScoreScraper()
-
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BattingBoxScore]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	stats, err := boxscorerunner.Run(matchups...)
+	stats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +117,9 @@ func ExamplePitchingBoxScoreScraper() {
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -118,13 +127,14 @@ func ExamplePitchingBoxScoreScraper() {
 	}
 
 	boxscorescraper := baseballsavantmlb.NewPitchingBoxScoreScraper()
-
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.PitchingBoxScore]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	stats, err := boxscorerunner.Run(matchups...)
+	stats, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
@@ -145,7 +155,9 @@ func ExamplePlayByPlayScraper() {
 		baseballsavantmlb.MatchupScraperDate("2024-10-30"),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupscraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
@@ -153,13 +165,14 @@ func ExamplePlayByPlayScraper() {
 	}
 
 	playbyplayscraper := baseballsavantmlb.NewPlayByPlayScraper()
-
 	playbyplayrunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(playbyplayscraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
+			Scraper:     playbyplayscraper,
+			Concurrency: 1,
+		},
 	)
 
-	plays, err := playbyplayrunner.Run(matchups...)
+	plays, err := playbyplayrunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}

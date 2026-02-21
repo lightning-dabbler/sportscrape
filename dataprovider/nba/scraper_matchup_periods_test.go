@@ -17,19 +17,20 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 		t.Skip("Skipping integration test")
 	}
 
-	scraper := NewMatchupPeriodsScraper(
+	matchupScraper := NewMatchupPeriodsScraper(
 		WithMatchupPeriodsDate("2025-06-05"),
 		WithMatchupPeriodsTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(scraper),
+		runner.MatchupRunnerConfig[model.MatchupPeriods]{
+			Scraper: matchupScraper,
+		},
 	)
-
 	records, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 4, n_records, "4 records")
-	testPeriod := records[3].(model.MatchupPeriods)
+	testPeriod := records[3]
 	assert.Equal(t, "0042400401", testPeriod.EventID)
 	assert.Equal(t, int32(3), testPeriod.EventStatus)
 	assert.Equal(t, "Final", testPeriod.EventStatusText)
