@@ -1,12 +1,11 @@
 package nba_test
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
@@ -17,7 +16,9 @@ func ExampleMatchupScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -26,11 +27,7 @@ func ExampleMatchupScraper() {
 	}
 	// Output each statline as pretty json
 	for _, matchup := range matchups {
-		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", matchup)
 	}
 }
 
@@ -41,7 +38,9 @@ func ExampleMatchupPeriodsScraper() {
 		nba.WithMatchupPeriodsTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.MatchupPeriods]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	records, err := matchuprunner.Run()
@@ -50,11 +49,7 @@ func ExampleMatchupPeriodsScraper() {
 	}
 	// Output each statline as pretty json
 	for _, period := range records {
-		jsonBytes, err := json.MarshalIndent(period, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", period)
 	}
 }
 
@@ -65,7 +60,9 @@ func ExamplePlayByPlayScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -78,21 +75,19 @@ func ExamplePlayByPlayScraper() {
 	)
 
 	playbyplayrunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(playbyplayscraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
+			Scraper:     playbyplayscraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := playbyplayrunner.Run(matchups...)
+	records, err := playbyplayrunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -103,7 +98,9 @@ func ExampleBoxScoreUsageScraper_full() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -117,21 +114,19 @@ func ExampleBoxScoreUsageScraper_full() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreUsage]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -142,7 +137,9 @@ func ExampleBoxScoreUsageScraper_h2() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -156,21 +153,19 @@ func ExampleBoxScoreUsageScraper_h2() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreUsage]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -181,7 +176,9 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -195,21 +192,19 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTraditional]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -220,7 +215,9 @@ func ExampleBoxScoreAdvancedScraper_full() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -234,21 +231,19 @@ func ExampleBoxScoreAdvancedScraper_full() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreAdvanced]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -259,7 +254,9 @@ func ExampleBoxScoreScoringScraper_h1() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -273,21 +270,19 @@ func ExampleBoxScoreScoringScraper_h1() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreScoring]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -298,7 +293,9 @@ func ExampleBoxScoreMiscScraper_full() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -312,21 +309,19 @@ func ExampleBoxScoreMiscScraper_full() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMisc]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -337,7 +332,9 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -351,21 +348,19 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreFourFactors]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -376,7 +371,9 @@ func ExampleBoxScoreLiveScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -389,21 +386,19 @@ func ExampleBoxScoreLiveScraper() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreLive]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -414,7 +409,9 @@ func ExampleBoxScoreTrackingScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -427,21 +424,19 @@ func ExampleBoxScoreTrackingScraper() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTracking]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -452,7 +447,9 @@ func ExampleBoxScoreMatchupsScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -465,21 +462,19 @@ func ExampleBoxScoreMatchupsScraper() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMatchups]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -490,7 +485,9 @@ func ExampleBoxScoreDefenseScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -503,21 +500,19 @@ func ExampleBoxScoreDefenseScraper() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreDefense]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }
 
@@ -528,7 +523,9 @@ func ExampleBoxScoreHustleScraper() {
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
 
 	matchups, err := matchuprunner.Run()
@@ -541,20 +538,18 @@ func ExampleBoxScoreHustleScraper() {
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(
-		runner.EventDataRunnerScraper(boxscorescraper),
-		runner.EventDataRunnerConcurrency(1),
+		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreHustle]{
+			Scraper:     boxscorescraper,
+			Concurrency: 1,
+		},
 	)
 
-	records, err := boxscorerunner.Run(matchups...)
+	records, err := boxscorerunner.Run(matchups)
 	if err != nil {
 		panic(err)
 	}
 	// Output each statline as pretty json
 	for _, record := range records {
-		jsonBytes, err := json.MarshalIndent(record, "", "  ")
-		if err != nil {
-			log.Fatalf("Error marshaling to JSON: %v\n", err)
-		}
-		fmt.Println(string(jsonBytes))
+		fmt.Printf("%#v\n", record)
 	}
 }

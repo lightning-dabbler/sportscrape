@@ -22,14 +22,15 @@ func TestMatchupScraper(t *testing.T) {
 		WithMatchupTimeout(3*time.Minute),
 	)
 	matchuprunner := runner.NewMatchupRunner(
-		runner.MatchupRunnerScraper(matchupScraper),
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupScraper,
+		},
 	)
-
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	n_matchups := len(matchups)
 	assert.Equal(t, 1, n_matchups, "1 event")
-	matchup := matchups[0].(model.Matchup)
+	matchup := matchups[0]
 	assert.Equal(t, "0042400401", matchup.EventID)
 	assert.Equal(t, int32(3), matchup.EventStatus)
 	assert.Equal(t, "Final", matchup.EventStatusText)
