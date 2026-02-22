@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ import (
 // Get performs a GET request
 // Returns an http response
 func Get(url string) (*http.Response, error) {
-	fmt.Printf("Fetching from %s\n", url)
+	log.Printf("Fetching from %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP Error at %s: %w", url, err)
@@ -117,7 +118,7 @@ func (dr *DocumentRetriever) RetrieveDocument(url string, networkHeaders network
 	defer cancel()
 	ctx, cancel = context.WithTimeout(ctx, dr.Timeout)
 	defer cancel()
-	fmt.Println("Retrieving document from: " + url)
+	slog.Info("Retrieving document", "url", url)
 	var outer string
 	if err := dr.ChromeRun(ctx,
 		network.Enable(),
