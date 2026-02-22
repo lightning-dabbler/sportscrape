@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-02-22
+### Changes
+- Update `fmt.Print*` to `log.Print*` and `slog.Info` (#124)
+
 ## [0.20.0] - 2026-02-21
 ### Changes
 - `MatchupOutput` and `EventDataOutput` are now generic: `MatchupOutput[M any]` and `EventDataOutput[E any]` (#122)
