@@ -27,5 +27,5 @@ func EmbedTimeoutFlag(cmd *cobra.Command) {
 }
 
 func EmbedDateFlag(cmd *cobra.Command) {
-	cmd.Flags().String("date", "", "YYYY-MM-DD date to scrape.")
+	cmd.Flags().String("date", "", "YYYY-MM-DD date to extract.")
 }

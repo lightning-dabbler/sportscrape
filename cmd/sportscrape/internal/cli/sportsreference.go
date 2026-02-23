@@ -12,14 +12,14 @@ import (
 func createSRNBACmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "nba",
-		Short: "Scrape and download NBA data",
-		Long:  "Scrape and download NBA data",
+		Short: "Extract NBA data",
+		Long:  "Extract NBA data",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return shared.Run(cmd, "sportsreference", "nba")
 		},
 	}
 	cmd.Flags().IntP("concurrency", "c", 1, fmt.Sprintf("Max number of concurrent goroutines. Dependent on data feed (%s)", feed.SRNBAConcurrencyOptions))
-	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to scrape and export. Options: %s", feed.SRNBAOptions))
+	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.SRNBAOptions))
 	shared.EmbedDateFlag(cmd)
 	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)
@@ -34,8 +34,8 @@ func CreateSRCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "sportsreference",
 		Aliases: []string{"sr"},
-		Short:   "Scrape sports reference data",
-		Long:    "Scrape sports reference data",
+		Short:   "Extract sports reference data",
+		Long:    "Extract sports reference data",
 	}
 	// Store subcommands (nba)
 	cmd.AddCommand(createSRNBACmd())
