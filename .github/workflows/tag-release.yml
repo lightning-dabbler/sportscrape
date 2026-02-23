@@ -8,7 +8,7 @@ jobs:
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
-    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built }}
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built && needs.build-binary.outputs.sportscrape_binary_successfully_built }}
     needs: build-binary
     uses: ./.github/workflows/require-bump.yml
 
@@ -21,7 +21,7 @@ jobs:
       successful_tag_release: ${{steps.output.outputs.successful_tag_release}}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0

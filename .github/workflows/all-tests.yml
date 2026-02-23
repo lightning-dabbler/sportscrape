@@ -2,14 +2,6 @@ name: All tests
 
 on:
   pull_request:
-    # paths:
-    #   - 'go.mod'
-    #   - 'go.sum'
-    #   - 'util/**'
-    #   - 'dataprovider/**'
-    #   - '.github/workflows/all-tests.yml'
-    #   - '.github/actions/setup-go/actions.yml'
-    #   - '*.go'
 
   workflow_call:
     outputs:
@@ -24,7 +16,7 @@ jobs:
       successful_run: ${{steps.output.outputs.successful_run}}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
