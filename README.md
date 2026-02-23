@@ -25,7 +25,10 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
 
+Run `sportscrape <command> --help` for feeds, flags, and defaults per provider.
+
 ### Example
+Extract `2025-06-05` NBA traditional box score data from https://nba.com and store in `./tmp/nba-traditional-box-score-2025-06-05.jsonl` in JSONL format
 ```console
 bin/sportscrape nba \
   --feed traditional-box-score \
