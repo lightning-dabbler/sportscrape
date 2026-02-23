@@ -36,3 +36,6 @@ bin/
 
 # scratch
 tmp
+
+# vscode
+.vscode
