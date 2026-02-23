@@ -15,7 +15,7 @@ func EmbedParquetFlags(cmd *cobra.Command) {
 
 func EmbedS3Flags(cmd *cobra.Command) {
 	cmd.Flags().String("aws-region", "us-east-1", "Region of bucket")
-	cmd.Flags().String("aws-endpoint", "", "intermediary transfer location to a service specific (e.g. https://nyc3.digitaloceanspaces.com)")
+	cmd.Flags().String("aws-endpoint", "", "Custom endpoint URL for S3-compatible storage. Leave empty to use AWS S3.")
 }
 
 func EmbedDestinationFlag(cmd *cobra.Command) {
