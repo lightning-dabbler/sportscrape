@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `sportscrape` CLI (#126)
 - sportscrape extraction destination support: local & s3 (#126)
 ### Fixed
-- Added more headers to requests for nba.com
+- Added more headers for nba.com requests to resolve `page load error net::ERR_HTTP2_PROTOCOL_ERROR` (#127)
 
 ## [0.20.1] - 2026-02-22
 ### Changes
