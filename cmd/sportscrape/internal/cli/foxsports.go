@@ -79,7 +79,7 @@ func CreateFSCmd() *cobra.Command {
 		Short:   "Scrape fox sports data",
 		Long:    "Scrape fox sports data",
 	}
-	// Store subcommands (mlb, nba)
+	// Store subcommands (mlb, nba, wnba)
 	cmd.AddCommand(createFSMLBCmd(), createFSNBACmd(), createFSWNBACmd())
 	return cmd
 }

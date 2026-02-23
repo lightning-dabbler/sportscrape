@@ -36,7 +36,7 @@ func CreateESPNCmd() *cobra.Command {
 		Short: "Scrape ESPN sports data",
 		Long:  "Scrape ESPN sports data",
 	}
-	// Store subcommands (ufc, pfl)
+	// Store subcommands (ufc)
 	cmd.AddCommand(createESPNUFCCmd())
 	return cmd
 }
