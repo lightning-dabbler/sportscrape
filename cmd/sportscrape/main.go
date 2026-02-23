@@ -46,7 +46,7 @@ func main() {
 	rootCmd := &cobra.Command{
 		Use:   "sportscrape",
 		Short: "Extract sports data",
-		Long:  "The intention behind this cli tool is to extract sports data from various providers",
+		Long:  "Extract sports data from supported providers",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			return initLogger(cmd)
 		},
