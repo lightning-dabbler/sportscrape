@@ -35,3 +35,6 @@ all-tests: # Run all tests regardless of tags
 
 build-tools: # Compile binary for tools
 	go build -v -o bin/tools internal/tools/cli/*.go
+
+build-sportscrape: # Compile binary for sportscrape
+	go build -o bin/sportscrape ./cmd/sportscrape
