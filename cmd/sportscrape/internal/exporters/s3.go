@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -30,14 +31,13 @@ func WithEndpoint(endpoint string) AWSConfigOption {
 	}
 }
 
-func WithStaticCredentials(accessKey, secretKey string) AWSConfigOption {
-	return func(c *aws.Config) {
-		c.Credentials = credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")
-	}
-}
-
 func newAWSConfig(opts ...AWSConfigOption) aws.Config {
-	cfg := aws.Config{Region: "us-east-1"}
+	key := os.Getenv("AWS_ACCESS_KEY_ID")
+	secret := os.Getenv("AWS_SECRET_ACCESS_KEY")
+	cfg := aws.Config{
+		Region:      "us-east-1",
+		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
+	}
 	for _, o := range opts {
 		o(&cfg)
 	}
