@@ -147,7 +147,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 	}
 
 	if fileFormat == "parquet" {
-		slog.Debug("Parquet config", "compression_type", parquetOptions[0], "row_group_size", parquetOptions[1], "page_size", parquetOptions[2], "write_parallelism", parquetOptions[3])
+		slog.Debug("Parquet config", "compression_type", parquetCompression, "row_group_size", parquetRowGroupSize, "page_size", parquetPageSize, "write_parallelism", parquetWriteParallelism)
 	}
 
 	s3config := exporters.S3Config{
