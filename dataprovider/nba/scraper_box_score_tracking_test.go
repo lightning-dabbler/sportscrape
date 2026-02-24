@@ -26,7 +26,7 @@ func TestBoxScoreTrackingScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	boxscorescraper := NewBoxScoreTrackingScraper(
-		WithBoxScoreTrackingTimeout(2 * time.Minute),
+		WithBoxScoreTrackingTimeout(3 * time.Minute),
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(

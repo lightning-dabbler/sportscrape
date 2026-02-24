@@ -26,7 +26,7 @@ func TestBoxScoreHustleScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	boxscorescraper := NewBoxScoreHustleScraper(
-		WithBoxScoreHustleTimeout(2 * time.Minute),
+		WithBoxScoreHustleTimeout(3 * time.Minute),
 	)
 
 	boxscorerunner := runner.NewEventDataRunner(

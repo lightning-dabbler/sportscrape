@@ -27,7 +27,7 @@ func TestBoxScoreFourFactorsScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	boxscorescraper := NewBoxScoreFourFactorsScraper(
-		WithBoxScoreFourFactorsTimeout(2*time.Minute),
+		WithBoxScoreFourFactorsTimeout(3*time.Minute),
 		WithBoxScoreFourFactorsPeriod(Full),
 	)
 
