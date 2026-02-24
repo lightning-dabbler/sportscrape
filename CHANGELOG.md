@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-02-22
+## [1.0.0] - 2026-02-23
 ### Added
 - `sportscrape` CLI (#126)
 - sportscrape extraction destination support: local & s3 (#126)
