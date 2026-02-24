@@ -26,6 +26,7 @@ func (s Scraper) FetchDoc(URL string) (string, error) {
 		"sec-fetch-mode":   "navigate",
 		"sec-fetch-site":   "same-origin",
 		"sec-fetch-user":   "?1",
+		"referer":          "https://www.nba.com/",
 	}, Selector)
 	if err != nil {
 		return "", err
