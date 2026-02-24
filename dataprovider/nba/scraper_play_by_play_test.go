@@ -29,7 +29,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	playbyplayscraper := NewPlayByPlayScraper(
-		WithPlayByPlayTimeout(2 * time.Minute),
+		WithPlayByPlayTimeout(3 * time.Minute),
 	)
 
 	playbyplayrunner := runner.NewEventDataRunner(

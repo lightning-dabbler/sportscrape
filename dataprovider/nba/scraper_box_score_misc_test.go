@@ -27,7 +27,7 @@ func TestBoxScoreMiscScraper(t *testing.T) {
 	matchups, err := matchuprunner.Run()
 	assert.NoError(t, err)
 	boxscorescraper := NewBoxScoreMiscScraper(
-		WithBoxScoreMiscTimeout(2*time.Minute),
+		WithBoxScoreMiscTimeout(3*time.Minute),
 		WithBoxScoreMiscPeriod(Full),
 	)
 

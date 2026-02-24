@@ -6,6 +6,9 @@ on:
       tool_binary_successfully_built:
         description: "Indication that the tools binary was built and uploaded"
         value: ${{ jobs.build-tools-binary.outputs.tool_binary_successfully_built }}
+      sportscrape_binary_successfully_built:
+        description: "Indication that the sportscrape binary was successfully built"
+        value: ${{ jobs.build-sportscrape-binary.outputs.sportscrape_binary_successfully_built }}
 
 jobs:
   build-tools-binary:
@@ -15,7 +18,7 @@ jobs:
       tool_binary_successfully_built: ${{steps.output.outputs.tool_binary_successfully_built}}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
@@ -31,7 +34,7 @@ jobs:
           bin/tools version
       - name: Upload tools binary
         id: upload_tools_binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: tools-artifact
           path: bin/tools
@@ -48,4 +51,37 @@ jobs:
           else
             echo "tool_binary_successfully_built=false"
             echo "tool_binary_successfully_built=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-sportscrape-binary:
+    name: Build sportscrape binary
+    runs-on: ubuntu-latest
+    outputs:
+      sportscrape_binary_successfully_built: ${{steps.output.outputs.sportscrape_binary_successfully_built}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Install Go
+        uses: ./.github/actions/setup-go
+        with:
+          go-version: '1.24.2'
+      - name: Build sportscrape binary
+        id: build_sportscrape
+        run: |
+          make build-sportscrape
+      - name: outputs
+        id: output
+        if: ${{!cancelled()}}
+        env:
+          WORKFLOW_SUCCESS: "${{ steps.build_sportscrape.outcome }}"
+        run: |
+          if [[ "$WORKFLOW_SUCCESS" == "success" ]]; then
+            echo "sportscrape_binary_successfully_built=true"
+            echo "sportscrape_binary_successfully_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "sportscrape_binary_successfully_built=false"
+            echo "sportscrape_binary_successfully_built=false" >> $GITHUB_OUTPUT
           fi
