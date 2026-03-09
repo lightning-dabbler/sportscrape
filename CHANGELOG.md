@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## [1.0.2] - 2026-03-08
 ### Added
-- Added version to sportscrape cli
+- Added version to sportscrape cli (#132)
 
 ## [1.0.1] - 2026-02-24
 ### Fixed
