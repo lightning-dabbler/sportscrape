@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/lightning-dabbler/sportscrape/cmd/sportscrape/internal/cli"
+	"github.com/lightning-dabbler/sportscrape/version"
 
 	"github.com/spf13/cobra"
 )
@@ -44,9 +45,10 @@ func initLogger(cmd *cobra.Command) error {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:   "sportscrape",
-		Short: "Extract sports data",
-		Long:  "Extract sports data from supported providers",
+		Use:     "sportscrape",
+		Short:   "Extract sports data",
+		Long:    "Extract sports data from supported providers",
+		Version: version.Version,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			return initLogger(cmd)
 		},
