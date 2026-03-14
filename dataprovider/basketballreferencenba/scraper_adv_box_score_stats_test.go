@@ -25,7 +25,8 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 	matchupscraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
 	// Retrieve NBA matchups associated with date

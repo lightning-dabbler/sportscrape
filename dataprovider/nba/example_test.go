@@ -21,7 +21,6 @@ func ExampleMatchupScraper() {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
-			Close:   true,
 		},
 	)
 
@@ -49,7 +48,6 @@ func ExampleMatchupPeriodsScraper() {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
 			Scraper: matchupScraper,
-			Close:   true,
 		},
 	)
 
@@ -76,7 +74,8 @@ func ExamplePlayByPlayScraper() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -119,7 +118,8 @@ func ExampleBoxScoreUsageScraper_full() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -163,7 +163,8 @@ func ExampleBoxScoreUsageScraper_h2() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -207,7 +208,8 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -251,7 +253,8 @@ func ExampleBoxScoreAdvancedScraper_full() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -295,7 +298,8 @@ func ExampleBoxScoreScoringScraper_h1() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -339,7 +343,8 @@ func ExampleBoxScoreMiscScraper_full() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -383,7 +388,8 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -427,7 +433,8 @@ func ExampleBoxScoreLiveScraper() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -470,7 +477,8 @@ func ExampleBoxScoreTrackingScraper() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -513,7 +521,8 @@ func ExampleBoxScoreMatchupsScraper() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -556,7 +565,8 @@ func ExampleBoxScoreDefenseScraper() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -599,7 +609,8 @@ func ExampleBoxScoreHustleScraper() {
 	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 

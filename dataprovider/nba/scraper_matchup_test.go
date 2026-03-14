@@ -25,7 +25,6 @@ func TestMatchupScraper(t *testing.T) {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
-			Close:   true,
 		},
 	)
 	matchups, err := matchuprunner.Run()

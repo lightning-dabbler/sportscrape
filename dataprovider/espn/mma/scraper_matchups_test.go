@@ -28,7 +28,6 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: &matchupscraper,
-			Close:   true,
 		},
 	)
 	r, err := matchuprunner.Run()

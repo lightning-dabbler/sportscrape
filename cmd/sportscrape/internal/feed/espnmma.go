@@ -58,7 +58,7 @@ func (e *ESPNMMAExtractor) Scrape(ctx context.Context) error {
 	}
 }
 
-func (e *ESPNMMAExtractor) retrieveMatchup(league string, close bool) ([]model.Matchup, error) {
+func (e *ESPNMMAExtractor) retrieveMatchup(league string, keepAlive bool) ([]model.Matchup, error) {
 	matchupscraper := &mma.ESPNMMAMatchupScraper{}
 	matchupscraper.Timeout = e.Timeout
 	matchupscraper.League = league
@@ -67,8 +67,8 @@ func (e *ESPNMMAExtractor) retrieveMatchup(league string, close bool) ([]model.M
 
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupscraper,
-			Close:   close,
+			Scraper:   matchupscraper,
+			KeepAlive: keepAlive,
 		},
 	)
 	m, err := matchuprunner.Run()
@@ -81,7 +81,7 @@ func (e *ESPNMMAExtractor) retrieveMatchup(league string, close bool) ([]model.M
 }
 
 func (e *ESPNMMAExtractor) scrapeMatchup(ctx context.Context, league string) error {
-	m, err := e.retrieveMatchup(league, true)
+	m, err := e.retrieveMatchup(league, false)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (e *ESPNMMAExtractor) scrapeMatchup(ctx context.Context, league string) err
 }
 
 func (e *ESPNMMAExtractor) scrapeFightDetails(ctx context.Context, league string) error {
-	m, err := e.retrieveMatchup(league, false)
+	m, err := e.retrieveMatchup(league, true)
 	if err != nil {
 		return err
 	}

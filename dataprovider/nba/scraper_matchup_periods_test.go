@@ -25,7 +25,6 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
 			Scraper: matchupScraper,
-			Close:   true,
 		},
 	)
 	records, err := matchuprunner.Run()

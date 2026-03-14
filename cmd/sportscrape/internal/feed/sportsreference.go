@@ -75,7 +75,7 @@ func (e *SportsReferenceExtractor) Scrape(ctx context.Context) error {
 	}
 }
 
-func (e *SportsReferenceExtractor) retrieveMatchup(close bool) ([]model.NBAMatchup, error) {
+func (e *SportsReferenceExtractor) retrieveMatchup(keepAlive bool) ([]model.NBAMatchup, error) {
 	scraper := basketballreferencenba.NewMatchupScraper(
 		basketballreferencenba.WithMatchupDate(e.Date),
 		basketballreferencenba.WithMatchupTimeout(e.Timeout),
@@ -84,8 +84,8 @@ func (e *SportsReferenceExtractor) retrieveMatchup(close bool) ([]model.NBAMatch
 
 	m, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: scraper,
-			Close:   close,
+			Scraper:   scraper,
+			KeepAlive: keepAlive,
 		},
 	).Run()
 	if err != nil {
@@ -97,7 +97,7 @@ func (e *SportsReferenceExtractor) retrieveMatchup(close bool) ([]model.NBAMatch
 }
 
 func (e *SportsReferenceExtractor) scrapeMatchup(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(true)
+	matchups, err := e.retrieveMatchup(false)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (e *SportsReferenceExtractor) scrapeMatchup(ctx context.Context) error {
 }
 
 func (e *SportsReferenceExtractor) scrapeBasicBoxScore(ctx context.Context, period basketballreferencenba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -128,7 +128,7 @@ func (e *SportsReferenceExtractor) scrapeBasicBoxScore(ctx context.Context, peri
 }
 
 func (e *SportsReferenceExtractor) scrapeAdvBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}

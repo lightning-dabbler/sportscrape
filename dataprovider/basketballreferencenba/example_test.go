@@ -23,7 +23,6 @@ func ExampleMatchupRunner() {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
-			Close:   true,
 		},
 	)
 	// Retrieve NBA matchups associated with date
@@ -52,7 +51,8 @@ func ExampleBasicBoxScoreScraper_full() {
 	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
 	// Retrieve NBA matchups associated with date
@@ -97,7 +97,8 @@ func ExampleBasicBoxScoreScraper_q2() {
 	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
 	// Retrieve NBA matchups associated with date
@@ -142,7 +143,8 @@ func ExampleBasicBoxScoreScraper_h2() {
 	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
 	// Retrieve NBA matchups associated with date
@@ -187,7 +189,8 @@ func ExampleAdvBoxScoreScraper() {
 	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
 	// Retrieve NBA matchups associated with date

@@ -50,7 +50,6 @@ func TestMatchupScraper(t *testing.T) {
 			matchuprunner := runner.NewMatchupRunner(
 				runner.MatchupRunnerConfig[model.NBAMatchup]{
 					Scraper: scraper,
-					Close:   true,
 				},
 			)
 			matchups, err := matchuprunner.Run()

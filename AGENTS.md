@@ -45,10 +45,10 @@ make mocks-gen               # regenerate internal/mocks/ via mockery
   call when already nil.
 
 ### Runner owns Init/Close for EventDataScraper
-- `EventDataRunner.Run()` calls `Init()` then `defer Close()` automatically.
-- `MatchupRunner.Run()` calls `Init()` always; calls `defer Close()` only when
-  `MatchupRunnerConfig.Close == true`. If `Close` is false, the caller must
-  call `Close()` manually.
+- `EventDataRunner.Run()` calls `Init()` then `defer Close()` automatically unless
+  `EventDataRunnerConfig.KeepAlive == true`, in which case the caller must call `Close()` manually.
+- `MatchupRunner.Run()` calls `Init()` then `defer Close()` automatically unless
+  `MatchupRunnerConfig.KeepAlive == true`, in which case the caller must call `Close()` manually.
 - **Do not call `Init()` before passing a scraper to a runner.**
 - `EventDataRunner` defaults `Concurrency` to `1` — it does **not** auto-detect
   CPU count. Set `Concurrency` explicitly if parallelism is needed.

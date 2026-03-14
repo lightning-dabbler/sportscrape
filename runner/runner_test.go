@@ -19,6 +19,7 @@ func TestMatchupRunner(t *testing.T) {
 	mockscraper.EXPECT().Scrape().Return(dummyoutput).Once()
 	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed)
 	mockscraper.EXPECT().Provider().Return(sportscrape.DummyProvider).Once()
+	mockscraper.EXPECT().Close().Once()
 	matchuprunner := NewMatchupRunner(
 		MatchupRunnerConfig[any]{Scraper: mockscraper},
 	)

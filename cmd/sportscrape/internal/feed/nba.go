@@ -122,7 +122,7 @@ func (e *NBAExtractor) period() nba.Period {
 	}
 }
 
-func (e *NBAExtractor) retrieveMatchup(close bool) ([]model.Matchup, error) {
+func (e *NBAExtractor) retrieveMatchup(keepAlive bool) ([]model.Matchup, error) {
 	scraper := nba.NewMatchupScraper(
 		nba.WithMatchupDate(e.Date),
 		nba.WithMatchupTimeout(e.Timeout),
@@ -130,8 +130,8 @@ func (e *NBAExtractor) retrieveMatchup(close bool) ([]model.Matchup, error) {
 	scraper.NetworkHeaders = nba.NetworkHeaders
 	m, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: scraper,
-			Close:   close,
+			Scraper:   scraper,
+			KeepAlive: keepAlive,
 		},
 	).Run()
 	if err != nil {
@@ -143,7 +143,7 @@ func (e *NBAExtractor) retrieveMatchup(close bool) ([]model.Matchup, error) {
 }
 
 func (e *NBAExtractor) scrapeMatchup(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(true)
+	matchups, err := e.retrieveMatchup(false)
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,6 @@ func (e *NBAExtractor) scrapeMatchupPeriods(ctx context.Context) error {
 				nba.WithMatchupPeriodsDate(e.Date),
 				nba.WithMatchupPeriodsTimeout(e.Timeout),
 			),
-			Close: true,
 		},
 	).Run()
 	if err != nil {
@@ -167,7 +166,7 @@ func (e *NBAExtractor) scrapeMatchupPeriods(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapeLiveBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -186,7 +185,7 @@ func (e *NBAExtractor) scrapeLiveBoxScore(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapeAdvancedBoxScore(ctx context.Context, period nba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -208,7 +207,7 @@ func (e *NBAExtractor) scrapeAdvancedBoxScore(ctx context.Context, period nba.Pe
 }
 
 func (e *NBAExtractor) scrapeTraditionalBoxScore(ctx context.Context, period nba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -230,7 +229,7 @@ func (e *NBAExtractor) scrapeTraditionalBoxScore(ctx context.Context, period nba
 }
 
 func (e *NBAExtractor) scrapeScoringBoxScore(ctx context.Context, period nba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -252,7 +251,7 @@ func (e *NBAExtractor) scrapeScoringBoxScore(ctx context.Context, period nba.Per
 }
 
 func (e *NBAExtractor) scrapeUsageBoxScore(ctx context.Context, period nba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -274,7 +273,7 @@ func (e *NBAExtractor) scrapeUsageBoxScore(ctx context.Context, period nba.Perio
 }
 
 func (e *NBAExtractor) scrapeMiscBoxScore(ctx context.Context, period nba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -296,7 +295,7 @@ func (e *NBAExtractor) scrapeMiscBoxScore(ctx context.Context, period nba.Period
 }
 
 func (e *NBAExtractor) scrapeFourFactorsBoxScore(ctx context.Context, period nba.Period) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -318,7 +317,7 @@ func (e *NBAExtractor) scrapeFourFactorsBoxScore(ctx context.Context, period nba
 }
 
 func (e *NBAExtractor) scrapeHustleBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -337,7 +336,7 @@ func (e *NBAExtractor) scrapeHustleBoxScore(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapeMatchupsBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -356,7 +355,7 @@ func (e *NBAExtractor) scrapeMatchupsBoxScore(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapeDefenseBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -375,7 +374,7 @@ func (e *NBAExtractor) scrapeDefenseBoxScore(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapeTrackingBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -394,7 +393,7 @@ func (e *NBAExtractor) scrapeTrackingBoxScore(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapePlayByPlay(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup(false)
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}

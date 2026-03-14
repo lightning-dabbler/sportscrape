@@ -24,7 +24,6 @@ func ExampleESPNMMAMatchupScraper() {
 					NetworkHeaders: mma.NetworkHeaders,
 				},
 			},
-			Close: true,
 		},
 	)
 
