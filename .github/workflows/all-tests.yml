@@ -36,7 +36,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=sportscrape
       - name: Run all tests
         id: test_run
-        run: docker compose -p sportscrape -f docker-compose.yml --project-directory . run --rm -T --no-build sportscrape-local make all-tests
+        run: docker compose -p sportscrape -f docker-compose.yml --project-directory . run --rm -T sportscrape-local make all-tests
       - name: Archive test output and coverage
         uses: actions/upload-artifact@v4
         with:
