@@ -22,6 +22,7 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(4*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -35,6 +36,7 @@ func TestAdvBoxScoreScraper(t *testing.T) {
 	boxscorescraper := NewAdvBoxScoreScraper(
 		WithAdvBoxScoreTimeout(4 * time.Minute),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBAAdvBoxScoreStats]{
 			Scraper:     boxscorescraper,

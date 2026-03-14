@@ -25,3 +25,5 @@ func (e EventDataScraper) ConstructContext(matchup model.MLBMatchup) sportscrape
 		URL:       matchup.BoxScoreLink,
 	}
 }
+
+func (e EventDataScraper) Close() {}

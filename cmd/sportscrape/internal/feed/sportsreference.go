@@ -19,14 +19,15 @@ var (
 )
 
 type SportsReferenceExtractor struct {
-	Feed           string
-	Date           string
-	Timeout        time.Duration
-	Concurrency    int
-	OutputPath     string
-	Format         string
-	S3Config       exporters.S3Config
-	ParquetOptions []exporters.ParquetConfigOption
+	Feed              string
+	Date              string
+	Timeout           time.Duration
+	Concurrency       int
+	OutputPath        string
+	Format            string
+	S3Config          exporters.S3Config
+	ParquetOptions    []exporters.ParquetConfigOption
+	nbaMatchupScraper *basketballreferencenba.MatchupScraper
 }
 
 func (e *SportsReferenceExtractor) ValidateFeed() error {
@@ -74,19 +75,29 @@ func (e *SportsReferenceExtractor) Scrape(ctx context.Context) error {
 	}
 }
 
-func (e *SportsReferenceExtractor) retrieveMatchup() ([]model.NBAMatchup, error) {
-	return runner.NewMatchupRunner(
+func (e *SportsReferenceExtractor) retrieveMatchup(close bool) ([]model.NBAMatchup, error) {
+	scraper := basketballreferencenba.NewMatchupScraper(
+		basketballreferencenba.WithMatchupDate(e.Date),
+		basketballreferencenba.WithMatchupTimeout(e.Timeout),
+	)
+	scraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
+
+	m, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: basketballreferencenba.NewMatchupScraper(
-				basketballreferencenba.WithMatchupDate(e.Date),
-				basketballreferencenba.WithMatchupTimeout(e.Timeout),
-			),
+			Scraper: scraper,
+			Close:   close,
 		},
 	).Run()
+	if err != nil {
+		scraper.Close()
+		return m, err
+	}
+	e.nbaMatchupScraper = scraper
+	return m, err
 }
 
 func (e *SportsReferenceExtractor) scrapeMatchup(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup()
+	matchups, err := e.retrieveMatchup(true)
 	if err != nil {
 		return err
 	}
@@ -94,17 +105,20 @@ func (e *SportsReferenceExtractor) scrapeMatchup(ctx context.Context) error {
 }
 
 func (e *SportsReferenceExtractor) scrapeBasicBoxScore(ctx context.Context, period basketballreferencenba.Period) error {
-	matchups, err := e.retrieveMatchup()
+	matchups, err := e.retrieveMatchup(false)
 	if err != nil {
 		return err
 	}
+	scraper := basketballreferencenba.NewBasicBoxScoreScraper(
+		basketballreferencenba.WithBasicBoxScorePeriod(period),
+		basketballreferencenba.WithBasicBoxScoreTimeout(e.Timeout),
+	)
+	scraper.DocumentRetriever = e.nbaMatchupScraper.DocumentRetriever
+
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Concurrency: e.Concurrency,
-			Scraper: basketballreferencenba.NewBasicBoxScoreScraper(
-				basketballreferencenba.WithBasicBoxScorePeriod(period),
-				basketballreferencenba.WithBasicBoxScoreTimeout(e.Timeout),
-			),
+			Scraper:     scraper,
 		},
 	).Run(matchups)
 	if err != nil {
@@ -114,16 +128,18 @@ func (e *SportsReferenceExtractor) scrapeBasicBoxScore(ctx context.Context, peri
 }
 
 func (e *SportsReferenceExtractor) scrapeAdvBoxScore(ctx context.Context) error {
-	matchups, err := e.retrieveMatchup()
+	matchups, err := e.retrieveMatchup(false)
 	if err != nil {
 		return err
 	}
+	scraper := basketballreferencenba.NewAdvBoxScoreScraper(
+		basketballreferencenba.WithAdvBoxScoreTimeout(e.Timeout),
+	)
+	scraper.DocumentRetriever = e.nbaMatchupScraper.DocumentRetriever
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBAAdvBoxScoreStats]{
 			Concurrency: e.Concurrency,
-			Scraper: basketballreferencenba.NewAdvBoxScoreScraper(
-				basketballreferencenba.WithAdvBoxScoreTimeout(e.Timeout),
-			),
+			Scraper:     scraper,
 		},
 	).Run(matchups)
 	if err != nil {

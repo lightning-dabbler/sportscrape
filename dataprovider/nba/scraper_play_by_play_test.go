@@ -21,6 +21,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 		WithMatchupDate("2025-06-11"),
 		WithMatchupTimeout(3*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
@@ -31,7 +32,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	playbyplayscraper := NewPlayByPlayScraper(
 		WithPlayByPlayTimeout(3 * time.Minute),
 	)
-
+	playbyplayscraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	playbyplayrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
 			Scraper:     playbyplayscraper,

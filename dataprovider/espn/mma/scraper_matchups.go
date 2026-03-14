@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/chromedp/cdproto/network"
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
@@ -19,13 +18,12 @@ import (
 const ESPNMMAEventsFeedURL = "https://www.espn.com/mma/schedule/_/year/%s/league/%s"
 
 type ESPNMMAMatchupScraper struct {
-	scraper.BaseScraper
+	scraper.BaseDocumentScraper
 	Year   string
 	League string
 }
 
-func (m ESPNMMAMatchupScraper) Init() {
-	m.BaseScraper.Init()
+func (m *ESPNMMAMatchupScraper) Init() {
 	if m.Year == "" {
 		log.Fatalln("Year is a required argument")
 	}
@@ -35,12 +33,13 @@ func (m ESPNMMAMatchupScraper) Init() {
 	if m.League != "pfl" && m.League != "ufc" {
 		log.Fatalln("League must be either pfl or ufc")
 	}
+	m.BaseDocumentScraper.Init()
 }
 
-func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
+func (m *ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 	url := fmt.Sprintf(ESPNMMAEventsFeedURL, m.Year, m.League)
 
-	doc, err := m.RetrieveDocument(url, network.Headers{}, "html")
+	doc, err := m.FetchDoc(url, "html")
 	if err != nil {
 		return sportscrape.MatchupOutput[model.Matchup]{
 			Context: sportscrape.MatchupContext{
@@ -92,7 +91,7 @@ func (m ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup]
 	}
 }
 
-func (m ESPNMMAMatchupScraper) Feed() sportscrape.Feed {
+func (m *ESPNMMAMatchupScraper) Feed() sportscrape.Feed {
 	if m.League == "ufc" {
 		return sportscrape.ESPNUFCMatchups
 	} else if m.League == "pfl" {
@@ -101,6 +100,6 @@ func (m ESPNMMAMatchupScraper) Feed() sportscrape.Feed {
 	return ""
 }
 
-func (m ESPNMMAMatchupScraper) Provider() sportscrape.Provider {
+func (m *ESPNMMAMatchupScraper) Provider() sportscrape.Provider {
 	return sportscrape.ESPNMMA
 }

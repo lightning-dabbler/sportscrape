@@ -27,7 +27,6 @@ func NewEventDataRunner[M, E any](config EventDataRunnerConfig[M, E]) *EventData
 		Concurrency: config.Concurrency,
 		Scraper:     config.Scraper,
 	}
-	r.Scraper.Init()
 	return r
 }
 
@@ -51,6 +50,7 @@ func (t *EventDataRunner[M, E]) Run(matchups []M) ([]E, error) {
 		return nil, t.Scraper.Feed().Deprecation()
 	}
 	t.Scraper.Init()
+	defer t.Scraper.Close()
 	start := time.Now().UTC()
 	concurrency := t.Concurrency
 	if concurrency <= 0 {
@@ -114,14 +114,15 @@ func (t *EventDataRunner[M, E]) Worker(wg *sync.WaitGroup, workerMatchups <-chan
 // MatchupRunnerConfig
 type MatchupRunnerConfig[M any] struct {
 	Scraper scraper.MatchupScraper[M]
+	Close   bool
 }
 
 // NewMatchupRunner Instantiates a new MatchupRunner
 func NewMatchupRunner[M any](config MatchupRunnerConfig[M]) *MatchupRunner[M] {
 	r := &MatchupRunner[M]{
 		Scraper: config.Scraper,
+		Close:   config.Close,
 	}
-	r.Scraper.Init()
 	return r
 }
 
@@ -129,6 +130,7 @@ func NewMatchupRunner[M any](config MatchupRunnerConfig[M]) *MatchupRunner[M] {
 type MatchupRunner[M any] struct {
 	// Scraper
 	Scraper scraper.MatchupScraper[M]
+	Close   bool
 }
 
 // Deprecated is a deprecation check for the feed/provider
@@ -147,6 +149,9 @@ func (r *MatchupRunner[M]) Run() ([]M, error) {
 		return nil, r.Scraper.Feed().Deprecation()
 	}
 	r.Scraper.Init()
+	if r.Close {
+		defer r.Scraper.Close()
+	}
 	start := time.Now().UTC()
 	ou := r.Scraper.Scrape()
 	if ou.Context.Errors != 0 {

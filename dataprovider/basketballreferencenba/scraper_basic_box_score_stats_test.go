@@ -21,6 +21,7 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(5*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -34,6 +35,7 @@ func TestBasicBoxScoreScraper(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(Full),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
@@ -115,6 +117,7 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(4*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -128,6 +131,7 @@ func TestBasicBoxScoreScraper_H1(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(H1),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
@@ -249,6 +253,7 @@ func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 		WithMatchupDate(date),
 		WithMatchupTimeout(4*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -262,6 +267,7 @@ func TestBasicBoxScoreScraper_Q3(t *testing.T) {
 		WithBasicBoxScoreTimeout(4*time.Minute),
 		WithBasicBoxScorePeriod(Q3),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,

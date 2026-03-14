@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/chromedp/cdproto/network"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/lightning-dabbler/sportscrape/scraper"
@@ -14,11 +15,19 @@ import (
 )
 
 func TestDeprecatedESPNMMMAMatchupScraper_PFL(T *testing.T) {
-	matchupscraper := ESPNMMAMatchupScraper{Year: "2024", League: "pfl", BaseScraper: scraper.BaseScraper{Timeout: 3 * time.Minute}}
+	matchupscraper := ESPNMMAMatchupScraper{
+		Year:   "2024",
+		League: "pfl",
+		BaseDocumentScraper: scraper.BaseDocumentScraper{
+			Timeout:        3 * time.Minute,
+			NetworkHeaders: network.Headers{},
+		},
+	}
 
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupscraper,
+			Scraper: &matchupscraper,
+			Close:   true,
 		},
 	)
 

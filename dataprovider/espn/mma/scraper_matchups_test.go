@@ -17,10 +17,18 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 	if testing.Short() {
 		T.Skip("Skipping integration test")
 	}
-	matchupscraper := ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: 3 * time.Minute}}
+	matchupscraper := ESPNMMAMatchupScraper{
+		Year:   "2024",
+		League: "ufc",
+		BaseDocumentScraper: scraper.BaseDocumentScraper{
+			Timeout:        3 * time.Minute,
+			NetworkHeaders: NetworkHeaders,
+		},
+	}
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupscraper,
+			Scraper: &matchupscraper,
+			Close:   true,
 		},
 	)
 	r, err := matchuprunner.Run()

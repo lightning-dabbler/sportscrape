@@ -7,6 +7,7 @@ type MatchupScraper[M any] interface {
 	Init()
 	Feed() sportscrape.Feed
 	Provider() sportscrape.Provider
+	Close()
 }
 
 type EventDataScraper[M, E any] interface {
@@ -14,4 +15,5 @@ type EventDataScraper[M, E any] interface {
 	Feed() sportscrape.Feed
 	Provider() sportscrape.Provider
 	Init()
+	Close()
 }

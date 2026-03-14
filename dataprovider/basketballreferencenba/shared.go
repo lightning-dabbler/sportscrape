@@ -4,12 +4,12 @@ import (
 	"github.com/chromedp/cdproto/network"
 )
 
-var networkHeaders network.Headers = network.Headers(map[string]any{
-	"authority":                 "www.basketball-reference.com",
-	"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-	"accept-language":           "en-US;q=0.8",
-	"cookie":                    "is_live=true; sr_note_box_countdown=57",
-	"if-modified-since":         "Tue, 08 Nov 2022 01:08:31 GMT",
+var NetworkHeaders network.Headers = network.Headers(map[string]any{
+	"authority":       "www.basketball-reference.com",
+	"accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+	"accept-language": "en-US;q=0.8",
+	// "cookie":                    "is_live=true; sr_note_box_countdown=57",
+	// "if-modified-since":         "Tue, 08 Nov 2022 01:08:31 GMT",
 	"sec-fetch-dest":            "document",
 	"sec-fetch-mode":            "navigate",
 	"sec-fetch-site":            "none",

@@ -40,7 +40,6 @@ func NewMLBProbableStartingPitcherScraper(options ...MLBProbableStartingPitcherS
 		option(s)
 	}
 	s.League = MLB
-	s.Init()
 
 	return s
 }

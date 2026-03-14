@@ -32,7 +32,6 @@ func NewMatchupScraper(options ...MatchupScraperOption) *MatchupScraper {
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }
@@ -166,3 +165,4 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 	output.Output = matchups
 	return output
 }
+func (s MatchupScraper) Close() {}

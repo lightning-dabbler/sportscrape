@@ -19,9 +19,11 @@ func ExampleMatchupRunner() {
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
+			Close:   true,
 		},
 	)
 	// Retrieve NBA matchups associated with date
@@ -47,6 +49,7 @@ func ExampleBasicBoxScoreScraper_full() {
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -62,6 +65,7 @@ func ExampleBasicBoxScoreScraper_full() {
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.Full),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
@@ -90,6 +94,7 @@ func ExampleBasicBoxScoreScraper_q2() {
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -105,6 +110,7 @@ func ExampleBasicBoxScoreScraper_q2() {
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.Q2),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
@@ -133,6 +139,7 @@ func ExampleBasicBoxScoreScraper_h2() {
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -148,6 +155,7 @@ func ExampleBasicBoxScoreScraper_h2() {
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.H2),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
@@ -176,6 +184,7 @@ func ExampleAdvBoxScoreScraper() {
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
@@ -190,6 +199,7 @@ func ExampleAdvBoxScoreScraper() {
 	boxscorescraper := basketballreferencenba.NewAdvBoxScoreScraper(
 		basketballreferencenba.WithAdvBoxScoreTimeout(4 * time.Minute),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBAAdvBoxScoreStats]{
 			Scraper:     boxscorescraper,

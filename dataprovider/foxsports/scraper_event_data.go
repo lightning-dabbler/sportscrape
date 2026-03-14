@@ -77,3 +77,5 @@ func (e *EventDataScraper) FetchData(url string) ([]byte, error) {
 func (e EventDataScraper) Provider() sportscrape.Provider {
 	return sportscrape.FS
 }
+
+func (e EventDataScraper) Close() {}

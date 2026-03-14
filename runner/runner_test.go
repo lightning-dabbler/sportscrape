@@ -38,6 +38,7 @@ func TestEventDataRunner(t *testing.T) {
 	mockscraper.EXPECT().Scrape(fakeMatchup{}).Return(dummyoutput).Once()
 	mockscraper.EXPECT().Feed().Return(sportscrape.DummyFeed).Times(3)
 	mockscraper.EXPECT().Provider().Return(sportscrape.DummyProvider).Once()
+	mockscraper.EXPECT().Close().Once()
 	eventDataRunner := NewEventDataRunner(
 		EventDataRunnerConfig[fakeMatchup, fakeEvent]{
 			Concurrency: 1,

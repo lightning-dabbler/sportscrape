@@ -6,9 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.0.2] - 2026-03-08
 ### Added
-- Added version to sportscrape cli (#132)
+- Added version to sportscrape cli
+- `DocumentRetrieverV2` (`util/request`) — a persistent headless Chrome browser session that reuses a single browser context (including cookies and network headers) across all `RetrieveDocument` calls, replacing the per-request browser lifecycle of `DocumentRetriever`
+- `BaseDocumentScraper` (`scraper`) — a new base struct wrapping `DocumentRetrieverV2` with `Init()`, `FetchDoc()`, and `Close()` lifecycle methods for scrapers that require a headless browser
+- `Close()` method to the `MatchupScraper` and `EventDataScraper` interfaces for explicit browser session teardown
+- `Close` field to `MatchupRunnerConfig` and `MatchupRunner` to optionally call `Close()` on the scraper after `Run()` completes
+- Package-level `NetworkHeaders` variables in `dataprovider/nba` and `dataprovider/espn/mma` for shared HTTP header configuration
+- Mock implementations of `Close()` for `MockMatchupScraper` and `MockEventDataScraper`
+
+### Changed
+- NBA, ESPN MMA, and Basketball Reference NBA scrapers migrated from `BaseScraper` to `BaseDocumentScraper`, gaining persistent browser sessions and explicit lifecycle management
+- All chromedp-based scraper methods converted from value receivers to pointer receivers to support stateful browser session management
+- Scraper constructors (e.g. `NewMatchupScraper`) no longer call `Init()` at construction time; initialization is deferred to `Run()`
+- `NewEventDataRunner` no longer calls `Init()` (already called in `Run()`); `EventDataRunner.Run()` now calls `defer Close()` after `Init()`, scoping the browser session to a single invocation
+- `NewMatchupRunner` no longer calls `Init()` (already called in `Run()`); `MatchupRunner.Run()` now optionally calls `defer Close()` based on the `Close` config field
 
 ## [1.0.1] - 2026-02-24
 ### Fixed

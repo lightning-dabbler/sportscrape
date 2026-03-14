@@ -22,7 +22,6 @@ func NewBattingBoxScoreScraper(options ...BattingBoxScoreScraperOption) *Batting
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }

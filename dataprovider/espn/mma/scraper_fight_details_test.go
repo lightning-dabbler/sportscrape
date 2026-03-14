@@ -21,7 +21,14 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 	if testing.Short() {
 		T.Skip("Skipping integration test")
 	}
-	fightdetailsscraper := ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: 3 * time.Minute}}
+
+	fightdetailsscraper := ESPNMMAFightDetailsScraper{
+		League: "ufc",
+		BaseDocumentScraper: scraper.BaseDocumentScraper{
+			Timeout:        3 * time.Minute,
+			NetworkHeaders: NetworkHeaders,
+		},
+	}
 
 	mockTime := time.Now()
 	matchup := model.Matchup{
@@ -34,7 +41,7 @@ func TestESPNMMAFightDetailsScraper(T *testing.T) {
 
 	fightdetailsrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.FightDetails]{
-			Scraper:     fightdetailsscraper,
+			Scraper:     &fightdetailsscraper,
 			Concurrency: 1,
 		},
 	)

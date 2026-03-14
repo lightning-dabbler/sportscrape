@@ -35,7 +35,6 @@ func NewMLBBattingBoxScoreScraper(options ...MLBBattingBoxScoreScraperOption) *M
 		option(s)
 	}
 	s.League = MLB
-	s.Init()
 
 	return s
 }

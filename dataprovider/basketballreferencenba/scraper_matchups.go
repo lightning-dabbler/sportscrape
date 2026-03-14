@@ -71,29 +71,28 @@ func NewMatchupScraper(options ...MatchupOption) *MatchupScraper {
 	for _, option := range options {
 		option(mr)
 	}
-	mr.Init()
 
 	return mr
 }
 
 // MatchupScraper specialized Runner for retrieving NBA matchup information.
 type MatchupScraper struct {
-	scraper.BaseScraper
+	scraper.BaseDocumentScraper
 	Date string
 }
 
-func (ms MatchupScraper) Provider() sportscrape.Provider {
+func (ms *MatchupScraper) Provider() sportscrape.Provider {
 	return sportscrape.BasketballReference
 }
 
-func (ms MatchupScraper) Init() {
-	ms.BaseScraper.Init()
+func (ms *MatchupScraper) Init() {
 	if ms.Date == "" {
 		log.Fatalln("Date is a required argument")
 	}
+	ms.BaseDocumentScraper.Init()
 }
 
-func (ms MatchupScraper) Feed() sportscrape.Feed {
+func (ms *MatchupScraper) Feed() sportscrape.Feed {
 	return sportscrape.BasketballReferenceNBAMatchup
 }
 
@@ -123,7 +122,7 @@ func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput[model.NBAMatchup] {
 		output.Error = err
 		return output
 	}
-	doc, err := ms.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := ms.FetchDoc(url, contentReadySelector)
 	if err != nil {
 		output.Error = err
 		return output
