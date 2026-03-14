@@ -16,16 +16,20 @@ import (
 
 // DocumentRetrieverV2 manages a persistent headless Chrome browser session for
 // fetching and parsing web documents. Unlike DocumentRetriever, the browser
-// context and cookies are shared across all RetrieveDocument calls.
-// Create with NewDocumentRetrieverV2 and call Close when done.
+// process and cookies are shared across all RetrieveDocument calls.
+// Each RetrieveDocument call opens a new tab within the shared browser session,
+// allowing safe concurrent use. Create with NewDocumentRetrieverV2 and call
+// Close when done.
 type DocumentRetrieverV2 struct {
 	Timeout        time.Duration
 	Debug          bool
 	ChromeRun      func(ctx context.Context, actions ...chromedp.Action) error
 	DocumentReader func(r io.Reader) (*goquery.Document, error)
-	// Persistent browser context — shared across all RetrieveDocument calls
-	browserCtx    context.Context
-	browserCancel context.CancelFunc
+	NewTabContext  func(ctx context.Context) (context.Context, context.CancelFunc)
+	// Persistent browser context — parent for all per-call tab contexts
+	browserCtx     context.Context
+	browserCancel  context.CancelFunc
+	networkHeaders network.Headers
 }
 
 // RetrieverOptionV2 is a functional option for configuring a DocumentRetrieverV2.
@@ -52,7 +56,7 @@ func WithDebugV2(debug bool) RetrieverOptionV2 {
 }
 
 // NewDocumentRetrieverV2 creates and initializes a persistent browser session,
-// setting network headers and applying any provided options.
+// storing network headers for per-tab setup and applying any provided options.
 // Call Close() when done.
 func NewDocumentRetrieverV2(networkHeaders network.Headers, options ...RetrieverOptionV2) (*DocumentRetrieverV2, error) {
 	dr := &DocumentRetrieverV2{
@@ -60,6 +64,10 @@ func NewDocumentRetrieverV2(networkHeaders network.Headers, options ...Retriever
 		Debug:          false,
 		ChromeRun:      chromedp.Run,
 		DocumentReader: goquery.NewDocumentFromReader,
+		NewTabContext: func(ctx context.Context) (context.Context, context.CancelFunc) {
+			return chromedp.NewContext(ctx)
+		},
+		networkHeaders: networkHeaders,
 	}
 	for _, option := range options {
 		option(dr)
@@ -78,11 +86,9 @@ func NewDocumentRetrieverV2(networkHeaders network.Headers, options ...Retriever
 
 	browserCtx, browserCancel := chromedp.NewContext(allocCtx, contextOptions...)
 
-	// One-time session setup: enable network and set headers globally
-	if err := chromedp.Run(browserCtx,
-		network.Enable(),
-		network.SetExtraHTTPHeaders(networkHeaders),
-	); err != nil {
+	// Warm up the browser process with an initial target so subsequent tab
+	// creation is fast.
+	if err := chromedp.Run(browserCtx); err != nil {
 		allocCancel()
 		browserCancel()
 		return nil, fmt.Errorf("failed to initialize browser session: %w", err)
@@ -104,14 +110,21 @@ func (dr *DocumentRetrieverV2) Close() {
 	}
 }
 
-// RetrieveDocument navigates within the existing browser session — cookies persist.
+// RetrieveDocument opens a new tab within the existing browser session,
+// navigates to url, waits for waitReadySelector, and returns the parsed
+// document. The tab is closed when the call returns. Safe to call concurrently.
 func (dr *DocumentRetrieverV2) RetrieveDocument(url string, waitReadySelector string) (*goquery.Document, error) {
-	ctx, cancel := context.WithTimeout(dr.browserCtx, dr.Timeout)
+	tabCtx, tabCancel := dr.NewTabContext(dr.browserCtx)
+	defer tabCancel()
+
+	ctx, cancel := context.WithTimeout(tabCtx, dr.Timeout)
 	defer cancel()
 
 	slog.Info("Retrieving document", "url", url)
 	var outer string
 	if err := dr.ChromeRun(ctx,
+		network.Enable(),
+		network.SetExtraHTTPHeaders(dr.networkHeaders),
 		chromedp.Navigate(url),
 		chromedp.WaitReady(waitReadySelector),
 		chromedp.OuterHTML(waitReadySelector, &outer, chromedp.ByQuery),

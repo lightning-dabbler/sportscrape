@@ -114,8 +114,11 @@ Never write mocks by hand. Run `make mocks-gen`. Mock files live in
 ### Chrome in tests
 `request.NewDocumentRetriever` and `request.NewDocumentRetrieverV2` launch a
 real Chrome process and **cannot be called in unit tests**.
-- Inside `package request`: inject stubs via the `ChromeRun` and
-  `DocumentReader` fields on `DocumentRetrieverV2`.
+- Inside `package request`: inject stubs via the `ChromeRun`, `DocumentReader`,
+  and `NewTabContext` fields on `DocumentRetrieverV2`. Tests that call
+  `RetrieveDocument` must stub `NewTabContext` as
+  `func(parent context.Context) (context.Context, context.CancelFunc) { return context.WithCancel(parent) }`
+  to avoid launching a real browser.
 - Outside `package request`: test nil-`DocumentRetriever` error paths and
   struct-level assertions only. Use mocks from `internal/mocks/scraper/` for
   interface-level tests.

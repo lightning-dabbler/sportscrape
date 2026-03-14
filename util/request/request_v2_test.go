@@ -97,6 +97,9 @@ func TestDocumentRetrieverV2RetrieveDocument(t *testing.T) {
 					}
 					return goquery.NewDocumentFromReader(strings.NewReader("<html><body>Test</body></html>"))
 				},
+				NewTabContext: func(parent context.Context) (context.Context, context.CancelFunc) {
+					return context.WithCancel(parent)
+				},
 				browserCtx: ctx,
 			}
 

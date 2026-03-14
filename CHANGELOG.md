@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Added version to sportscrape cli
-- `DocumentRetrieverV2` (`util/request`) — a persistent headless Chrome browser session that reuses a single browser context (including cookies and network headers) across all `RetrieveDocument` calls, replacing the per-request browser lifecycle of `DocumentRetriever`
+- `DocumentRetrieverV2` (`util/request`) — a persistent headless Chrome browser session; each `RetrieveDocument` call opens a new tab within the shared browser (via injectable `NewTabContext`), enabling safe concurrent use while preserving cookies and network headers across calls
 - `BaseDocumentScraper` (`scraper`) — a new base struct wrapping `DocumentRetrieverV2` with `Init()`, `FetchDoc()`, and `Close()` lifecycle methods for scrapers that require a headless browser
 - `Close()` method to the `MatchupScraper` and `EventDataScraper` interfaces for explicit browser session teardown
 - `Close` field to `MatchupRunnerConfig` and `MatchupRunner` to optionally call `Close()` on the scraper after `Run()` completes
