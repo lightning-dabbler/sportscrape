@@ -28,6 +28,8 @@ jobs:
         run: sudo apt-get install chromium-browser
       - name: Run all tests
         id: test_run
+        env:
+          GOMAXPROCS: 5
         run: make all-tests
       - name: Archive test output and coverage
         uses: actions/upload-artifact@v4
