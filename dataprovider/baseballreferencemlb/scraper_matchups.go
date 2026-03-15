@@ -290,3 +290,5 @@ func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput[model.MLBMatchup] {
 	output.Output = matchups
 	return output
 }
+
+func (ms MatchupScraper) Close() {}

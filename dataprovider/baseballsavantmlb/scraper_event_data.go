@@ -50,3 +50,5 @@ func (e EventDataScraper) Provider() sportscrape.Provider {
 func (e EventDataScraper) FmtID(playerid string) string {
 	return "ID" + playerid
 }
+
+func (e EventDataScraper) Close() {}

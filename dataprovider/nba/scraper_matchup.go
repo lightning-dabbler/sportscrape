@@ -43,7 +43,6 @@ func NewMatchupScraper(options ...MatchupScraperOption) *MatchupScraper {
 	for _, option := range options {
 		option(ms)
 	}
-	ms.Init()
 
 	return ms
 }
@@ -52,11 +51,11 @@ type MatchupScraper struct {
 	BaseMatchupScraper
 }
 
-func (ms MatchupScraper) Feed() sportscrape.Feed {
+func (ms *MatchupScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBAMatchup
 }
 
-func (ms MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
+func (ms *MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 	var matchups []model.Matchup
 	var jsonPayload jsonresponse.MatchupJSON
 	output := sportscrape.MatchupOutput[model.Matchup]{}
@@ -68,12 +67,12 @@ func (ms MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 		return output
 	}
 	pullts := time.Now().UTC()
-	jsonstr, err := ms.FetchDoc(url)
+	doc, err := ms.FetchDoc(url, Selector)
 	if err != nil {
 		output.Error = err
 		return output
 	}
-
+	jsonstr := doc.Find(Selector).Text()
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
 		output.Error = err

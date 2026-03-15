@@ -122,7 +122,7 @@ var (
 
 func (p Provider) Deprecated() bool {
 	switch p {
-	case BaseballReference:
+	case BaseballReference, BasketballReference:
 		return true
 	}
 	return false

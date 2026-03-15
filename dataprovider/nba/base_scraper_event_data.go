@@ -17,7 +17,6 @@ type BaseEventDataScraper struct {
 }
 
 func (beds *BaseEventDataScraper) Init() {
-	beds.Scraper.Init()
 	if beds.FeedType.Undefined() {
 		log.Fatalln("FeedType is a required argument")
 	}
@@ -43,6 +42,7 @@ func (beds *BaseEventDataScraper) Init() {
 			beds.Period = Full
 		}
 	}
+	beds.Scraper.Init()
 }
 
 func (beds BaseEventDataScraper) ConstructContext(matchup model.Matchup) sportscrape.EventDataContext {

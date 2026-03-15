@@ -49,7 +49,6 @@ func NewNBABoxScoreScraper(options ...NBABoxScoreScraperOption) *NBABoxScoreScra
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }
@@ -59,10 +58,10 @@ type NBABoxScoreScraper struct {
 }
 
 func (s *NBABoxScoreScraper) Init() {
-	s.EventDataScraper.Init()
 	if !slices.Contains(NBABoxScoreLeagueSupported, s.League) {
 		log.Fatalf("League %s is not supported for NBABoxScoreScraper. Only NBA and WNBA are supported.\n", s.League.String())
 	}
+	s.EventDataScraper.Init()
 }
 
 func (s NBABoxScoreScraper) Feed() sportscrape.Feed {

@@ -36,7 +36,6 @@ func NewMLBOddsMoneyLineScraper(options ...MLBOddsMoneyLineScraperOption) *MLBOd
 		option(s)
 	}
 	s.League = MLB
-	s.Init()
 
 	return s
 }

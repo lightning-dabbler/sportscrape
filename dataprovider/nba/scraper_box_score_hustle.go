@@ -38,7 +38,6 @@ func NewBoxScoreHustleScraper(options ...BoxScoreHustleScraperOption) *BoxScoreH
 	for _, option := range options {
 		option(bs)
 	}
-	bs.Init()
 
 	return bs
 }
@@ -55,11 +54,11 @@ func (bs *BoxScoreHustleScraper) Init() {
 	// Base validations
 	bs.BaseEventDataScraper.Init()
 }
-func (bs BoxScoreHustleScraper) Feed() sportscrape.Feed {
+func (bs *BoxScoreHustleScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBAHustleBoxScore
 }
 
-func (bs BoxScoreHustleScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreHustle] {
+func (bs *BoxScoreHustleScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreHustle] {
 	start := time.Now().UTC()
 	context := bs.ConstructContext(matchup)
 	url, err := bs.URL(matchup.ShareURL)
@@ -70,10 +69,11 @@ func (bs BoxScoreHustleScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	jsonstr, err := bs.FetchDoc(url)
+	doc, err := bs.FetchDoc(url, Selector)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.BoxScoreHustle]{Error: err, Context: context}
 	}
+	jsonstr := doc.Find(Selector).Text()
 	var jsonPayload jsonresponse.BoxScoreHustleJSON
 	var data []model.BoxScoreHustle
 

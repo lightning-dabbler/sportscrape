@@ -36,6 +36,39 @@ func (_m *MockMatchupScraper[M]) EXPECT() *MockMatchupScraper_Expecter[M] {
 	return &MockMatchupScraper_Expecter[M]{mock: &_m.Mock}
 }
 
+// Close provides a mock function for the type MockMatchupScraper
+func (_mock *MockMatchupScraper[M]) Close() {
+	_mock.Called()
+	return
+}
+
+// MockMatchupScraper_Close_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Close'
+type MockMatchupScraper_Close_Call[M any] struct {
+	*mock.Call
+}
+
+// Close is a helper method to define mock.On call
+func (_e *MockMatchupScraper_Expecter[M]) Close() *MockMatchupScraper_Close_Call[M] {
+	return &MockMatchupScraper_Close_Call[M]{Call: _e.mock.On("Close")}
+}
+
+func (_c *MockMatchupScraper_Close_Call[M]) Run(run func()) *MockMatchupScraper_Close_Call[M] {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockMatchupScraper_Close_Call[M]) Return() *MockMatchupScraper_Close_Call[M] {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *MockMatchupScraper_Close_Call[M]) RunAndReturn(run func()) *MockMatchupScraper_Close_Call[M] {
+	_c.Run(run)
+	return _c
+}
+
 // Feed provides a mock function for the type MockMatchupScraper
 func (_mock *MockMatchupScraper[M]) Feed() sportscrape.Feed {
 	ret := _mock.Called()

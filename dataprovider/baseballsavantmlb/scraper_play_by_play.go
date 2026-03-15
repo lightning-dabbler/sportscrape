@@ -22,7 +22,6 @@ func NewPlayByPlayScraper(options ...PlayByPlayScraperOption) *PlayByPlayScraper
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }

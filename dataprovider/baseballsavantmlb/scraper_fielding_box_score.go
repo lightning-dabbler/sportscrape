@@ -21,7 +21,6 @@ func NewFieldingBoxScoreScraper(options ...FieldingBoxScoreScraperOption) *Field
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }

@@ -167,7 +167,6 @@ func NewBasicBoxScoreScraper(options ...BasicBoxScoreOption) *BasicBoxScoreScrap
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }
@@ -183,6 +182,7 @@ func (s *BasicBoxScoreScraper) Init() {
 	if s.Period.Undefined() {
 		log.Fatalln("Period is a required argument for basketball reference nba BasicBoxScoreScraper")
 	}
+	s.EventDataScraper.Init()
 }
 
 func (s *BasicBoxScoreScraper) Feed() sportscrape.Feed {
@@ -216,7 +216,7 @@ func (bs *BasicBoxScoreScraper) Scrape(matchup model.NBAMatchup) sportscrape.Eve
 	start := time.Now().UTC()
 	var basicNBABoxScoreStats []model.NBABasicBoxScoreStats
 	log.Printf("Scraping %s Basic Box Score: %s\n", bs.Period.String(), url)
-	doc, err := bs.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := bs.FetchDoc(url, contentReadySelector)
 	if err != nil {
 		output.Error = err
 		return output

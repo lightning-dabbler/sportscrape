@@ -45,7 +45,6 @@ func NewBoxScoreFourFactorsScraper(options ...BoxScoreFourFactorsScraperOption) 
 	for _, option := range options {
 		option(bs)
 	}
-	bs.Init()
 
 	return bs
 }
@@ -62,7 +61,7 @@ func (bs *BoxScoreFourFactorsScraper) Init() {
 	// Base validations
 	bs.BaseEventDataScraper.Init()
 }
-func (bs BoxScoreFourFactorsScraper) Feed() sportscrape.Feed {
+func (bs *BoxScoreFourFactorsScraper) Feed() sportscrape.Feed {
 	switch bs.Period {
 	case Q1:
 		return sportscrape.NBAFourFactorsBoxScoreQ1
@@ -85,7 +84,7 @@ func (bs BoxScoreFourFactorsScraper) Feed() sportscrape.Feed {
 	}
 }
 
-func (bs BoxScoreFourFactorsScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreFourFactors] {
+func (bs *BoxScoreFourFactorsScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreFourFactors] {
 	start := time.Now().UTC()
 	context := bs.ConstructContext(matchup)
 	url, err := bs.URL(matchup.ShareURL)
@@ -96,10 +95,11 @@ func (bs BoxScoreFourFactorsScraper) Scrape(matchup model.Matchup) sportscrape.E
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	jsonstr, err := bs.FetchDoc(url)
+	doc, err := bs.FetchDoc(url, Selector)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.BoxScoreFourFactors]{Error: err, Context: context}
 	}
+	jsonstr := doc.Find(Selector).Text()
 	var jsonPayload jsonresponse.BoxScoreFourFactorsJSON
 	var data []model.BoxScoreFourFactors
 

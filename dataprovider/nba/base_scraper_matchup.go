@@ -21,8 +21,7 @@ type BaseMatchupScraper struct {
 	Date string
 }
 
-func (bms BaseMatchupScraper) Init() {
-	bms.Scraper.Init()
+func (bms *BaseMatchupScraper) Init() {
 	if bms.Date == "" {
 		log.Fatalln("Date is a required argument")
 	}
@@ -31,9 +30,10 @@ func (bms BaseMatchupScraper) Init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	bms.Scraper.Init()
 }
 
-func (bms BaseMatchupScraper) URL() (string, error) {
+func (bms *BaseMatchupScraper) URL() (string, error) {
 	URL, err := url.Parse(BaseURL)
 	if err != nil {
 		return "", err

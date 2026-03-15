@@ -28,6 +28,7 @@ type ESPNMMAExtractor struct {
 	Format         string
 	S3Config       exporters.S3Config
 	ParquetOptions []exporters.ParquetConfigOption
+	matchupScraper *mma.ESPNMMAMatchupScraper
 }
 
 func (e *ESPNMMAExtractor) ValidateFeed() error {
@@ -57,23 +58,30 @@ func (e *ESPNMMAExtractor) Scrape(ctx context.Context) error {
 	}
 }
 
-func (e *ESPNMMAExtractor) retrieveMatchup(league string) ([]model.Matchup, error) {
-	matchupscraper := mma.ESPNMMAMatchupScraper{}
+func (e *ESPNMMAExtractor) retrieveMatchup(league string, keepAlive bool) ([]model.Matchup, error) {
+	matchupscraper := &mma.ESPNMMAMatchupScraper{}
 	matchupscraper.Timeout = e.Timeout
 	matchupscraper.League = league
 	matchupscraper.Year = e.Year
+	matchupscraper.NetworkHeaders = mma.NetworkHeaders
 
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: keepAlive,
 		},
 	)
-
-	return matchuprunner.Run()
+	m, err := matchuprunner.Run()
+	if err != nil {
+		matchupscraper.Close()
+		return m, err
+	}
+	e.matchupScraper = matchupscraper
+	return m, err
 }
 
 func (e *ESPNMMAExtractor) scrapeMatchup(ctx context.Context, league string) error {
-	m, err := e.retrieveMatchup(league)
+	m, err := e.retrieveMatchup(league, false)
 	if err != nil {
 		return err
 	}
@@ -81,13 +89,14 @@ func (e *ESPNMMAExtractor) scrapeMatchup(ctx context.Context, league string) err
 }
 
 func (e *ESPNMMAExtractor) scrapeFightDetails(ctx context.Context, league string) error {
-	m, err := e.retrieveMatchup(league)
+	m, err := e.retrieveMatchup(league, true)
 	if err != nil {
 		return err
 	}
-	fightdetailsscraper := mma.ESPNMMAFightDetailsScraper{}
+	fightdetailsscraper := &mma.ESPNMMAFightDetailsScraper{}
 	fightdetailsscraper.Timeout = e.Timeout
 	fightdetailsscraper.League = league
+	fightdetailsscraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.FightDetails]{
 			Concurrency: e.Concurrency,

@@ -38,7 +38,6 @@ func NewBoxScoreTrackingScraper(options ...BoxScoreTrackingScraperOption) *BoxSc
 	for _, option := range options {
 		option(bs)
 	}
-	bs.Init()
 
 	return bs
 }
@@ -55,11 +54,11 @@ func (bs *BoxScoreTrackingScraper) Init() {
 	// Base validations
 	bs.BaseEventDataScraper.Init()
 }
-func (bs BoxScoreTrackingScraper) Feed() sportscrape.Feed {
+func (bs *BoxScoreTrackingScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBATrackingBoxScore
 }
 
-func (bs BoxScoreTrackingScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreTracking] {
+func (bs *BoxScoreTrackingScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreTracking] {
 	start := time.Now().UTC()
 	context := bs.ConstructContext(matchup)
 	url, err := bs.URL(matchup.ShareURL)
@@ -70,10 +69,11 @@ func (bs BoxScoreTrackingScraper) Scrape(matchup model.Matchup) sportscrape.Even
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	jsonstr, err := bs.FetchDoc(url)
+	doc, err := bs.FetchDoc(url, Selector)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.BoxScoreTracking]{Error: err, Context: context}
 	}
+	jsonstr := doc.Find(Selector).Text()
 	var jsonPayload jsonresponse.BoxScoreTrackingJSON
 	var data []model.BoxScoreTracking
 

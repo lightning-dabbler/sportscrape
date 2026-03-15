@@ -42,7 +42,6 @@ func NewMLBOddsTotalScraper(options ...MLBOddsTotalScraperOption) *MLBOddsTotalS
 		option(s)
 	}
 	s.League = MLB
-	s.Init()
 
 	return s
 }

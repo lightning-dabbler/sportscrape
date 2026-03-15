@@ -17,6 +17,9 @@ import (
 type EventDataRunnerConfig[M, E any] struct {
 	Concurrency int
 	Scraper     scraper.EventDataScraper[M, E]
+	// KeepAlive, when true, skips calling Close() after Run() — the caller is
+	// responsible for closing the scraper. Default false = runner closes automatically.
+	KeepAlive bool
 }
 
 func NewEventDataRunner[M, E any](config EventDataRunnerConfig[M, E]) *EventDataRunner[M, E] {
@@ -26,14 +29,15 @@ func NewEventDataRunner[M, E any](config EventDataRunnerConfig[M, E]) *EventData
 	r := &EventDataRunner[M, E]{
 		Concurrency: config.Concurrency,
 		Scraper:     config.Scraper,
+		KeepAlive:   config.KeepAlive,
 	}
-	r.Scraper.Init()
 	return r
 }
 
 type EventDataRunner[M, E any] struct {
 	Concurrency int
 	Scraper     scraper.EventDataScraper[M, E]
+	KeepAlive   bool
 }
 
 // Deprecated is a deprecation check for the feed/provider
@@ -51,6 +55,9 @@ func (t *EventDataRunner[M, E]) Run(matchups []M) ([]E, error) {
 		return nil, t.Scraper.Feed().Deprecation()
 	}
 	t.Scraper.Init()
+	if !t.KeepAlive {
+		defer t.Scraper.Close()
+	}
 	start := time.Now().UTC()
 	concurrency := t.Concurrency
 	if concurrency <= 0 {
@@ -114,21 +121,25 @@ func (t *EventDataRunner[M, E]) Worker(wg *sync.WaitGroup, workerMatchups <-chan
 // MatchupRunnerConfig
 type MatchupRunnerConfig[M any] struct {
 	Scraper scraper.MatchupScraper[M]
+	// KeepAlive, when true, skips calling Close() after Run() — the caller is
+	// responsible for closing the scraper. Default false = runner closes automatically.
+	KeepAlive bool
 }
 
 // NewMatchupRunner Instantiates a new MatchupRunner
 func NewMatchupRunner[M any](config MatchupRunnerConfig[M]) *MatchupRunner[M] {
 	r := &MatchupRunner[M]{
-		Scraper: config.Scraper,
+		Scraper:   config.Scraper,
+		KeepAlive: config.KeepAlive,
 	}
-	r.Scraper.Init()
 	return r
 }
 
 // MatchupRunner is a general matchup runner for scraping NBA, MLB, NCAAB, etc. matchup data.
 type MatchupRunner[M any] struct {
 	// Scraper
-	Scraper scraper.MatchupScraper[M]
+	Scraper   scraper.MatchupScraper[M]
+	KeepAlive bool
 }
 
 // Deprecated is a deprecation check for the feed/provider
@@ -147,6 +158,9 @@ func (r *MatchupRunner[M]) Run() ([]M, error) {
 		return nil, r.Scraper.Feed().Deprecation()
 	}
 	r.Scraper.Init()
+	if !r.KeepAlive {
+		defer r.Scraper.Close()
+	}
 	start := time.Now().UTC()
 	ou := r.Scraper.Scrape()
 	if ou.Context.Errors != 0 {
