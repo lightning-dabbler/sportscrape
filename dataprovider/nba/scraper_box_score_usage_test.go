@@ -21,9 +21,11 @@ func TestBoxScoreUsageScraper(t *testing.T) {
 		WithMatchupDate("2025-06-11"),
 		WithMatchupTimeout(3*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 	matchups, err := matchuprunner.Run()
@@ -32,7 +34,7 @@ func TestBoxScoreUsageScraper(t *testing.T) {
 		WithBoxScoreUsageTimeout(3*time.Minute),
 		WithBoxScoreUsagePeriod(Full),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreUsage]{
 			Scraper:     boxscorescraper,

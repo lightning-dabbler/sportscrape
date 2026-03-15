@@ -8,14 +8,14 @@ import (
 )
 
 type EventDataScraper struct {
-	scraper.BaseScraper
+	scraper.BaseDocumentScraper
 }
 
-func (e EventDataScraper) Provider() sportscrape.Provider {
+func (e *EventDataScraper) Provider() sportscrape.Provider {
 	return sportscrape.BasketballReference
 }
 
-func (e EventDataScraper) ConstructContext(matchup model.NBAMatchup) sportscrape.EventDataContext {
+func (e *EventDataScraper) ConstructContext(matchup model.NBAMatchup) sportscrape.EventDataContext {
 	return sportscrape.EventDataContext{
 		AwayTeam:  matchup.AwayTeam,
 		AwayID:    matchup.AwayTeamID,

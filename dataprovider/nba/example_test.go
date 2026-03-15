@@ -17,6 +17,7 @@ func ExampleMatchupScraper() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
@@ -43,6 +44,7 @@ func ExampleMatchupPeriodsScraper() {
 		nba.WithMatchupPeriodsDate("2025-06-05"),
 		nba.WithMatchupPeriodsTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
 			Scraper: matchupScraper,
@@ -69,9 +71,11 @@ func ExamplePlayByPlayScraper() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -83,7 +87,7 @@ func ExamplePlayByPlayScraper() {
 	playbyplayscraper := nba.NewPlayByPlayScraper(
 		nba.WithPlayByPlayTimeout(2 * time.Minute),
 	)
-
+	playbyplayscraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	playbyplayrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
 			Scraper:     playbyplayscraper,
@@ -111,9 +115,11 @@ func ExampleBoxScoreUsageScraper_full() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -126,7 +132,7 @@ func ExampleBoxScoreUsageScraper_full() {
 		nba.WithBoxScoreUsageTimeout(2*time.Minute),
 		nba.WithBoxScoreUsagePeriod(nba.Full),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreUsage]{
 			Scraper:     boxscorescraper,
@@ -154,9 +160,11 @@ func ExampleBoxScoreUsageScraper_h2() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -169,7 +177,7 @@ func ExampleBoxScoreUsageScraper_h2() {
 		nba.WithBoxScoreUsageTimeout(2*time.Minute),
 		nba.WithBoxScoreUsagePeriod(nba.H2),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreUsage]{
 			Scraper:     boxscorescraper,
@@ -197,9 +205,11 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -212,7 +222,7 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 		nba.WithBoxScoreTraditionalTimeout(2*time.Minute),
 		nba.WithBoxScoreTraditionalPeriod(nba.Q1),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTraditional]{
 			Scraper:     boxscorescraper,
@@ -240,9 +250,11 @@ func ExampleBoxScoreAdvancedScraper_full() {
 		nba.WithMatchupDate("2025-06-11"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -255,7 +267,7 @@ func ExampleBoxScoreAdvancedScraper_full() {
 		nba.WithBoxScoreAdvancedTimeout(2*time.Minute),
 		nba.WithBoxScoreAdvancedPeriod(nba.Full),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreAdvanced]{
 			Scraper:     boxscorescraper,
@@ -283,9 +295,11 @@ func ExampleBoxScoreScoringScraper_h1() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -298,7 +312,7 @@ func ExampleBoxScoreScoringScraper_h1() {
 		nba.WithBoxScoreScoringTimeout(2*time.Minute),
 		nba.WithBoxScoreScoringPeriod(nba.H1),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreScoring]{
 			Scraper:     boxscorescraper,
@@ -326,9 +340,11 @@ func ExampleBoxScoreMiscScraper_full() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -341,7 +357,7 @@ func ExampleBoxScoreMiscScraper_full() {
 		nba.WithBoxScoreMiscTimeout(2*time.Minute),
 		nba.WithBoxScoreMiscPeriod(nba.Full),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMisc]{
 			Scraper:     boxscorescraper,
@@ -369,9 +385,11 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -384,7 +402,7 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 		nba.WithBoxScoreFourFactorsTimeout(2*time.Minute),
 		nba.WithBoxScoreFourFactorsPeriod(nba.Full),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreFourFactors]{
 			Scraper:     boxscorescraper,
@@ -412,9 +430,11 @@ func ExampleBoxScoreLiveScraper() {
 		nba.WithMatchupDate("2025-12-10"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -426,7 +446,7 @@ func ExampleBoxScoreLiveScraper() {
 	boxscorescraper := nba.NewBoxScoreLiveScraper(
 		nba.WithBoxScoreLiveTimeout(2 * time.Minute),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreLive]{
 			Scraper:     boxscorescraper,
@@ -454,9 +474,11 @@ func ExampleBoxScoreTrackingScraper() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -468,7 +490,7 @@ func ExampleBoxScoreTrackingScraper() {
 	boxscorescraper := nba.NewBoxScoreTrackingScraper(
 		nba.WithBoxScoreTrackingTimeout(2 * time.Minute),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTracking]{
 			Scraper:     boxscorescraper,
@@ -496,9 +518,11 @@ func ExampleBoxScoreMatchupsScraper() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -510,7 +534,7 @@ func ExampleBoxScoreMatchupsScraper() {
 	boxscorescraper := nba.NewBoxScoreMatchupsScraper(
 		nba.WithBoxScoreMatchupsTimeout(2 * time.Minute),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMatchups]{
 			Scraper:     boxscorescraper,
@@ -538,9 +562,11 @@ func ExampleBoxScoreDefenseScraper() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -552,7 +578,7 @@ func ExampleBoxScoreDefenseScraper() {
 	boxscorescraper := nba.NewBoxScoreDefenseScraper(
 		nba.WithBoxScoreDefenseTimeout(2 * time.Minute),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreDefense]{
 			Scraper:     boxscorescraper,
@@ -580,9 +606,11 @@ func ExampleBoxScoreHustleScraper() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
@@ -594,7 +622,7 @@ func ExampleBoxScoreHustleScraper() {
 	boxscorescraper := nba.NewBoxScoreHustleScraper(
 		nba.WithBoxScoreHustleTimeout(2 * time.Minute),
 	)
-
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreHustle]{
 			Scraper:     boxscorescraper,

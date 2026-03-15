@@ -11,25 +11,25 @@ import (
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
-// Example for nba.MatchupRunner
+// Deprecated: basketball-reference.com provider is deprecated.
+// Example for basketballreferencenba.MatchupRunner
 func ExampleMatchupRunner() {
 	date := "2025-02-20"
-	// Instantiate MatchupRunner
 	matchupscraper := basketballreferencenba.NewMatchupScraper(
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
 			Scraper: matchupscraper,
 		},
 	)
-	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-
 	for _, matchup := range matchups {
 		jsonBytes, err := json.MarshalIndent(matchup, "", "  ")
 		if err != nil {
@@ -39,39 +39,41 @@ func ExampleMatchupRunner() {
 	}
 }
 
+// Deprecated: basketball-reference.com provider is deprecated.
 // Example for basketballreferencenba.BasicBoxScoreScraper Full basic box score stats
 func ExampleBasicBoxScoreScraper_full() {
 	date := "2025-02-19"
-	// Instantiate MatchupRunner
 	matchupscraper := basketballreferencenba.NewMatchupScraper(
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
-	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-	// Instantiate BasicBoxScoreScraper
 	boxscorescraper := basketballreferencenba.NewBasicBoxScoreScraper(
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.Full),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
 			Concurrency: 1,
 		},
 	)
-	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 	for _, stats := range basicBoxScoreStats {
 		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
@@ -82,39 +84,41 @@ func ExampleBasicBoxScoreScraper_full() {
 	}
 }
 
+// Deprecated: basketball-reference.com provider is deprecated.
 // Example for basketballreferencenba.BasicBoxScoreScraper Q2 basic box score stats
 func ExampleBasicBoxScoreScraper_q2() {
 	date := "2025-02-19"
-	// Instantiate MatchupRunner
 	matchupscraper := basketballreferencenba.NewMatchupScraper(
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
-	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-	// Instantiate BasicBoxScoreScraper
 	boxscorescraper := basketballreferencenba.NewBasicBoxScoreScraper(
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.Q2),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
 			Concurrency: 1,
 		},
 	)
-	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 	for _, stats := range basicBoxScoreStats {
 		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
@@ -125,39 +129,41 @@ func ExampleBasicBoxScoreScraper_q2() {
 	}
 }
 
+// Deprecated: basketball-reference.com provider is deprecated.
 // Example for basketballreferencenba.BasicBoxScoreScraper H2 basic box score stats
 func ExampleBasicBoxScoreScraper_h2() {
 	date := "2025-02-19"
-	// Instantiate MatchupRunner
 	matchupscraper := basketballreferencenba.NewMatchupScraper(
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
-	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-	// Instantiate BasicBoxScoreScraper
 	boxscorescraper := basketballreferencenba.NewBasicBoxScoreScraper(
 		basketballreferencenba.WithBasicBoxScoreTimeout(4*time.Minute),
 		basketballreferencenba.WithBasicBoxScorePeriod(basketballreferencenba.H2),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBABasicBoxScoreStats]{
 			Scraper:     boxscorescraper,
 			Concurrency: 1,
 		},
 	)
-	// Retrieve NBA basic box score stats associated with matchups
 	basicBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 	for _, stats := range basicBoxScoreStats {
 		jsonBytes, err := json.MarshalIndent(stats, "", "  ")
@@ -168,38 +174,40 @@ func ExampleBasicBoxScoreScraper_h2() {
 	}
 }
 
+// Deprecated: basketball-reference.com provider is deprecated.
 // Example for basketballreferencenba.AdvBoxScoreScraper
 func ExampleAdvBoxScoreScraper() {
 	date := "2025-02-19"
-	// Instantiate MatchupRunner
 	matchupscraper := basketballreferencenba.NewMatchupScraper(
 		basketballreferencenba.WithMatchupDate(date),
 		basketballreferencenba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupscraper.NetworkHeaders = basketballreferencenba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.NBAMatchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
-	// Retrieve NBA matchups associated with date
 	matchups, err := matchuprunner.Run()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-	// Instantiate AdvBoxScoreScraper
 	boxscorescraper := basketballreferencenba.NewAdvBoxScoreScraper(
 		basketballreferencenba.WithAdvBoxScoreTimeout(4 * time.Minute),
 	)
+	boxscorescraper.DocumentRetriever = matchupscraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.NBAMatchup, model.NBAAdvBoxScoreStats]{
 			Scraper:     boxscorescraper,
 			Concurrency: 1,
 		},
 	)
-	// Retrieve NBA basic box score stats associated with matchups
 	advBoxScoreStats, err := boxscorerunner.Run(matchups)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 	for _, stats := range advBoxScoreStats {
 		jsonBytes, err := json.MarshalIndent(stats, "", "  ")

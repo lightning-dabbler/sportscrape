@@ -86,7 +86,6 @@ func NewAdvBoxScoreScraper(options ...AdvBoxScoreOption) *AdvBoxScoreScraper {
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }
@@ -112,7 +111,7 @@ func (abs *AdvBoxScoreScraper) Scrape(matchup model.NBAMatchup) sportscrape.Even
 	start := time.Now().UTC()
 	var advNBABoxScoreStats []model.NBAAdvBoxScoreStats
 	log.Println("Scraping Advanced Box Score: " + url)
-	doc, err := abs.RetrieveDocument(url, networkHeaders, contentReadySelector)
+	doc, err := abs.FetchDoc(url, contentReadySelector)
 	if err != nil {
 		output.Error = err
 		return output

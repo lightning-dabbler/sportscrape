@@ -22,7 +22,6 @@ func NewPitchingBoxScoreScraper(options ...PitchingBoxScoreScraperOption) *Pitch
 	for _, option := range options {
 		option(s)
 	}
-	s.Init()
 
 	return s
 }

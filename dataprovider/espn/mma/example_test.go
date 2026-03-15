@@ -16,7 +16,14 @@ import (
 func ExampleESPNMMAMatchupScraper() {
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: mma.ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: time.Second * 10}},
+			Scraper: &mma.ESPNMMAMatchupScraper{
+				Year:   "2024",
+				League: "ufc",
+				BaseDocumentScraper: scraper.BaseDocumentScraper{
+					Timeout:        time.Second * 10,
+					NetworkHeaders: mma.NetworkHeaders,
+				},
+			},
 		},
 	)
 
@@ -35,12 +42,19 @@ func ExampleESPNMMAMatchupScraper() {
 
 // Example for mma.ESPNMMAFightDetailsScraper
 func ExampleESPNMMAFightDetailsScraper() {
+	matchupscraper := &mma.ESPNMMAMatchupScraper{
+		Year:   "2024",
+		League: "ufc",
+		BaseDocumentScraper: scraper.BaseDocumentScraper{
+			Timeout:        time.Second * 10,
+			NetworkHeaders: mma.NetworkHeaders,
+		},
+	}
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: mma.ESPNMMAMatchupScraper{Year: "2024", League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: time.Second * 10}},
+			Scraper: matchupscraper,
 		},
 	)
-
 	result, err := matchuprunner.Run()
 	if err != nil {
 		panic(err)
@@ -48,7 +62,13 @@ func ExampleESPNMMAFightDetailsScraper() {
 
 	eventRunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.FightDetails]{
-			Scraper: mma.ESPNMMAFightDetailsScraper{League: "ufc", BaseScraper: scraper.BaseScraper{Timeout: 10 * time.Second}},
+			Scraper: &mma.ESPNMMAFightDetailsScraper{
+				League: "ufc",
+				BaseDocumentScraper: scraper.BaseDocumentScraper{
+					Timeout:           10 * time.Second,
+					NetworkHeaders:    mma.NetworkHeaders,
+					DocumentRetriever: matchupscraper.DocumentRetriever,
+				}},
 		},
 	)
 

@@ -21,6 +21,7 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 		WithMatchupPeriodsDate("2025-06-05"),
 		WithMatchupPeriodsTimeout(3*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
 			Scraper: matchupScraper,

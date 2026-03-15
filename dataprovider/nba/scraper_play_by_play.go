@@ -37,7 +37,6 @@ func NewPlayByPlayScraper(options ...PlayByPlayScraperOption) *PlayByPlayScraper
 	for _, option := range options {
 		option(pbp)
 	}
-	pbp.Init()
 
 	return pbp
 }
@@ -54,11 +53,11 @@ func (pbp *PlayByPlayScraper) Init() {
 	// Base validations
 	pbp.BaseEventDataScraper.Init()
 }
-func (pbp PlayByPlayScraper) Feed() sportscrape.Feed {
+func (pbp *PlayByPlayScraper) Feed() sportscrape.Feed {
 	return sportscrape.NBAPlayByPlay
 }
 
-func (pbp PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.PlayByPlay] {
+func (pbp *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.PlayByPlay] {
 	start := time.Now().UTC()
 	context := pbp.ConstructContext(matchup)
 	url, err := pbp.URL(matchup.ShareURL)
@@ -69,13 +68,13 @@ func (pbp PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventData
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	jsonstr, err := pbp.FetchDoc(url)
+	doc, err := pbp.FetchDoc(url, Selector)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
 	var jsonPayload jsonresponse.PlayByPlayJSON
 	var data []model.PlayByPlay
-
+	jsonstr := doc.Find(Selector).Text()
 	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
