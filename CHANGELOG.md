@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.1.0] - 2026-03-15
 ### Added
 - Added version to sportscrape cli
 - `DocumentRetrieverV2` (`util/request`) — a persistent headless Chrome browser session; each `RetrieveDocument` call opens a new tab within the shared browser (via injectable `NewTabContext`), enabling safe concurrent use while preserving cookies and network headers across calls (#133)
