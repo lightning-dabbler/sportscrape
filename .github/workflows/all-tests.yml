@@ -28,9 +28,7 @@ jobs:
         run: sudo apt-get install chromium-browser
       - name: Run all tests
         id: test_run
-        env:
-          GOMAXPROCS: 1
-        run: make all-tests
+        run: make all-tests test_timeout=20m
       - name: Archive test output and coverage
         uses: actions/upload-artifact@v4
         with:
