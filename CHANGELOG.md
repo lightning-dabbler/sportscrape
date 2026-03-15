@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseDocumentScraper` (`scraper`) — a new base struct wrapping `DocumentRetrieverV2` with `Init()`, `FetchDoc()`, and `Close()` lifecycle methods for scrapers that require a headless browser (#133)
 - `Close()` method to the `MatchupScraper` and `EventDataScraper` interfaces for explicit browser session teardown (#133)
 - `KeepAlive` field to `MatchupRunnerConfig` and `MatchupRunner` to optionally skip calling `Close()` on the scraper after `Run()` completes (#133)
+- `KeepAlive` field to `EventDataRunnerConfig` and `EventDataRunner` to optionally skip calling `Close()` on the scraper after `Run()` completes
 - Package-level `NetworkHeaders` variables in `dataprovider/nba` and `dataprovider/espn/mma` for shared HTTP header configuration (#133)
 - Mock implementations of `Close()` for `MockMatchupScraper` and `MockEventDataScraper` (#133)
 
@@ -19,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NBA, ESPN MMA, and Basketball Reference NBA scrapers migrated from `BaseScraper` to `BaseDocumentScraper`, gaining persistent browser sessions and explicit lifecycle management (#133)
 - All chromedp-based scraper methods converted from value receivers to pointer receivers to support stateful browser session management (#133)
 - Scraper constructors (e.g. `NewMatchupScraper`) no longer call `Init()` at construction time; initialization is deferred to `Run()` (#133)
-- `NewEventDataRunner` no longer calls `Init()` (already called in `Run()`); `EventDataRunner.Run()` now calls `defer Close()` after `Init()`, scoping the browser session to a single invocation (#133)
+- `NewEventDataRunner` no longer calls `Init()` (already called in `Run()`); `EventDataRunner.Run()` now optionally calls `defer Close()` based on the `KeepAlive` config field (#133)
 - `NewMatchupRunner` no longer calls `Init()` (already called in `Run()`); `MatchupRunner.Run()` now optionally calls `defer Close()` based on the `KeepAlive` config field (#133)
 
 ## [1.0.1] - 2026-02-24
