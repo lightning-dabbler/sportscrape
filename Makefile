@@ -1,5 +1,4 @@
 .DEFAULT_GOAL := help
-test_timeout = 10m
 
 help: # generate annotations of each target
 	@grep -hE '^[a-zA-Z_-]+:.*?#+ .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?#+ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -31,7 +30,7 @@ unit-tests: # Run unit tests
 	$(MAKE) coverage-html
 
 all-tests: # Run all tests regardless of tags
-	go test -v -tags="unit integration" -timeout $(test_timeout) -coverprofile=coverage.out ./...
+	go test -v -tags="unit integration" -coverprofile=coverage.out ./...
 	$(MAKE) coverage-html
 
 build-tools: # Compile binary for tools
