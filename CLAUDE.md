@@ -57,7 +57,7 @@ make mocks-gen               # regenerate internal/mocks/ via mockery
 - `Provider.Deprecated()` and `Feed.Deprecated()` are defined in `catalog.go`.
 - Runners check `Deprecated()` at the start of `Run()` and return
   `Feed.Deprecation()` as an error if true — no scraping occurs.
-- `BaseballReference` provider is deprecated. `ESPNPFLMatchups` and
+- `BaseballReference` and `BasketballReference` providers are deprecated. `ESPNPFLMatchups` and
   `ESPNPFLFightDetails` feeds are deprecated.
 - When adding a new deprecated feed/provider, add a case to the relevant
   `Deprecated()` switch in `catalog.go`.

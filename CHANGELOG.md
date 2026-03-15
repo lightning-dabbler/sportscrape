@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Package-level `NetworkHeaders` variables in `dataprovider/nba` and `dataprovider/espn/mma` for shared HTTP header configuration (#133)
 - Mock implementations of `Close()` for `MockMatchupScraper` and `MockEventDataScraper` (#133)
 
+### Deprecated
+- `BasketballReference` provider (`basketball-reference.com`) and all associated feeds (`BasketballReferenceNBAMatchup`, `BasketballReferenceNBABoxScore*`, `BasketballReferenceNBAAdvBoxScore`) — runners return an error immediately without scraping
+
+### Removed
+- `sportsreference` CLI command and all subcommands (`nba`) removed from `sportscrape` binary
+
 ### Changed
 - NBA, ESPN MMA, and Basketball Reference NBA scrapers migrated from `BaseScraper` to `BaseDocumentScraper`, gaining persistent browser sessions and explicit lifecycle management (#133)
 - All chromedp-based scraper methods converted from value receivers to pointer receivers to support stateful browser session management (#133)

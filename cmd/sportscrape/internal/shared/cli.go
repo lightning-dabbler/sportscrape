@@ -115,7 +115,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 	}
 
 	switch provider {
-	case "sportsreference", "espn", "nba":
+	case "espn", "nba":
 		// --timeout
 		timeout, err := cmd.Flags().GetInt("timeout")
 		if err != nil {
@@ -160,17 +160,6 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		e = &feed.FoxSportsExtractor{
 			Feed:           feedstring,
 			Date:           date,
-			Concurrency:    concurrency,
-			OutputPath:     destination,
-			Format:         fileFormat,
-			S3Config:       s3config,
-			ParquetOptions: parquetOptions,
-		}
-	case "sportsreference":
-		e = &feed.SportsReferenceExtractor{
-			Feed:           feedstring,
-			Date:           date,
-			Timeout:        timeoutDuration,
 			Concurrency:    concurrency,
 			OutputPath:     destination,
 			Format:         fileFormat,

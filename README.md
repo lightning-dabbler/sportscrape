@@ -21,7 +21,6 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 |---------|------------|----------|
 | `sportscrape baseballsavant` | | baseballsavant.mlb.com |
 | `sportscrape foxsports` | `mlb`, `nba`, `wnba` | foxsports.com |
-| `sportscrape sportsreference` | `nba` | basketball-reference.com |
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
 
@@ -103,7 +102,7 @@ func main() {
 ```
 
 ### Usage
-- [basketball-reference.com NBA scrape examples](dataprovider/basketballreferencenba/example_test.go)
+- [basketball-reference.com NBA scrape examples](dataprovider/basketballreferencenba/example_test.go) (Deprecated)
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go) (Deprecated)
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 - [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
@@ -114,9 +113,9 @@ func main() {
 
 | Source                           | League   | Feed                                 |      Periods Available       |                                  Data Model                                  |	Deprecated	| Point-in-time|
 |----------------------------------|----------|--------------------------------------|:----------------------------:|:----------------------------------------------------------------------------:|:---------------------:|:------------:|
-| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         | |✅|
-| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  ||✅|
-| https://basketball-reference.com | NBA      | Advanced box score stats             |             Full             |  [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)   ||✅|
+| https://basketball-reference.com | NBA      | Matchup                              |             Full             |        [model](dataprovider/basketballreferencenba/model/matchup.go)         | 🚩 |✅|
+| https://basketball-reference.com | NBA      | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  | 🚩 |✅|
+| https://basketball-reference.com | NBA      | Advanced box score stats             |             Full             |  [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)   | 🚩 |✅|
 | https://baseball-reference.com   | MLB      | Matchup                              |             Full             |         [model](dataprovider/baseballreferencemlb/model/matchup.go)          | 🚩 |✅|
 | https://baseball-reference.com   | MLB      | Batting box score stats              |             Full             | [model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)  | 🚩 |✅|
 | https://baseball-reference.com   | MLB      | Pitching box score stats             |             Full             | [model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go) | 🚩 |✅|
