@@ -17,13 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mock implementations of `Close()` for `MockMatchupScraper` and `MockEventDataScraper` (#133)
 
 ### Deprecated
-- `BasketballReference` provider (`basketball-reference.com`) and all associated feeds (`BasketballReferenceNBAMatchup`, `BasketballReferenceNBABoxScore*`, `BasketballReferenceNBAAdvBoxScore`) — runners return an error immediately without scraping
+- `BasketballReference` provider (`basketball-reference.com`) and all associated feeds (`BasketballReferenceNBAMatchup`, `BasketballReferenceNBABoxScore*`, `BasketballReferenceNBAAdvBoxScore`) — runners return an error immediately without scraping (#133)
 
 ### Removed
-- `sportsreference` CLI command and all subcommands (`nba`) removed from `sportscrape` binary
+- `sportsreference` CLI command and all subcommands (`nba`) removed from `sportscrape` binary (#133)
 
 ### Changed
-- NBA, ESPN MMA, and Basketball Reference NBA scrapers migrated from `BaseScraper` to `BaseDocumentScraper`, gaining persistent browser sessions and explicit lifecycle management (#133)
+- NBA and ESPN MMA scrapers migrated from `BaseScraper` to `BaseDocumentScraper`, gaining persistent browser sessions and explicit lifecycle management (#133)
 - All chromedp-based scraper methods converted from value receivers to pointer receivers to support stateful browser session management (#133)
 - Scraper constructors (e.g. `NewMatchupScraper`) no longer call `Init()` at construction time; initialization is deferred to `Run()` (#133)
 - `NewEventDataRunner` no longer calls `Init()` (already called in `Run()`); `EventDataRunner.Run()` now optionally calls `defer Close()` based on the `KeepAlive` config field (#133)
