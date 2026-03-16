@@ -81,6 +81,7 @@ func ExamplePlayByPlayScraper() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -125,6 +126,7 @@ func ExampleBoxScoreUsageScraper_full() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -170,6 +172,7 @@ func ExampleBoxScoreUsageScraper_h2() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -215,6 +218,7 @@ func ExampleBoxScoreTraditionalScraper_q1() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -260,6 +264,7 @@ func ExampleBoxScoreAdvancedScraper_full() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -305,6 +310,7 @@ func ExampleBoxScoreScoringScraper_h1() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -350,6 +356,7 @@ func ExampleBoxScoreMiscScraper_full() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -395,6 +402,7 @@ func ExampleBoxScoreFourFactorsScraper_full() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -440,6 +448,7 @@ func ExampleBoxScoreLiveScraper() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -484,6 +493,7 @@ func ExampleBoxScoreTrackingScraper() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -528,6 +538,7 @@ func ExampleBoxScoreMatchupsScraper() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -572,6 +583,7 @@ func ExampleBoxScoreDefenseScraper() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
@@ -616,6 +628,7 @@ func ExampleBoxScoreHustleScraper() {
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
