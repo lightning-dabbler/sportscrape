@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Call `Close()` on the matchup scraper when `KeepAlive: true` and `MatchupRunner.Run()` returns an error, in all `example_test.go` files (`dataprovider/nba`, `dataprovider/basketballreferencenba`, `dataprovider/espn/mma`) and all NBA integration test files (#135)
+- Replace bare `assert.NoError(t, err)` after `matchuprunner.Run()` with an explicit `if err != nil` guard that calls `matchupScraper.Close()` then `t.Fatal(err)` in NBA integration tests (`dataprovider/nba/scraper_box_score_*_test.go`, `scraper_play_by_play_test.go`) (#135)
+
+### Documentation
+- Updated Quick start example in README to reflect current NBA provider usage: set `NetworkHeaders`, `KeepAlive: true`, inject `DocumentRetriever` into box score scraper, close on error, and use `nba.Full` period (#135)
 
 ## [1.1.0] - 2026-03-15
 ### Added

@@ -63,20 +63,25 @@ func main() {
 		nba.WithMatchupDate("2025-06-05"),
 		nba.WithMatchupTimeout(2*time.Minute),
 	)
+	matchupScraper.NetworkHeaders = nba.NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupScraper,
+			Scraper:   matchupScraper,
+			KeepAlive: true,
 		},
 	)
 
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupScraper.Close()
 		panic(err)
 	}
 
 	boxscorescraper := nba.NewBoxScoreTraditionalScraper(
-		nba.WithBoxScoreTraditionalTimeout(2 * time.Minute),
+		nba.WithBoxScoreTraditionalTimeout(2*time.Minute),
+		nba.WithBoxScoreTraditionalPeriod(nba.Full),
 	)
+	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTraditional]{
