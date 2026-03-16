@@ -56,6 +56,7 @@ func ExampleBasicBoxScoreScraper_full() {
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupscraper.Close()
 		log.Println(err)
 		return
 	}
@@ -101,6 +102,7 @@ func ExampleBasicBoxScoreScraper_q2() {
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupscraper.Close()
 		log.Println(err)
 		return
 	}
@@ -146,6 +148,7 @@ func ExampleBasicBoxScoreScraper_h2() {
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupscraper.Close()
 		log.Println(err)
 		return
 	}
@@ -191,6 +194,7 @@ func ExampleAdvBoxScoreScraper() {
 	)
 	matchups, err := matchuprunner.Run()
 	if err != nil {
+		matchupscraper.Close()
 		log.Println(err)
 		return
 	}

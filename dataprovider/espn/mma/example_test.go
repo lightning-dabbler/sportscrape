@@ -52,11 +52,13 @@ func ExampleESPNMMAFightDetailsScraper() {
 	}
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: matchupscraper,
+			Scraper:   matchupscraper,
+			KeepAlive: true,
 		},
 	)
 	result, err := matchuprunner.Run()
 	if err != nil {
+		matchupscraper.Close()
 		panic(err)
 	}
 

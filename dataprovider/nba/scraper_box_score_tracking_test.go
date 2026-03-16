@@ -26,7 +26,10 @@ func TestBoxScoreTrackingScraper(t *testing.T) {
 		},
 	)
 	matchups, err := matchuprunner.Run()
-	assert.NoError(t, err)
+	if err != nil {
+		matchupScraper.Close()
+		t.Fatal(err)
+	}
 	boxscorescraper := NewBoxScoreTrackingScraper(
 		WithBoxScoreTrackingTimeout(3 * time.Minute),
 	)
