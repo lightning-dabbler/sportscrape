@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Set `NetworkHeaders` on the `matchup-periods` scraper in the CLI NBA feed handler (`cmd/sportscrape/internal/feed/nba.go`); previously `scrapeMatchupPeriods` constructed the scraper inline and never assigned `nba.NetworkHeaders`, causing requests to be sent without the required headers
+- Set `NetworkHeaders` on the `matchup-periods` scraper in the CLI NBA feed handler (`cmd/sportscrape/internal/feed/nba.go`); previously `scrapeMatchupPeriods` constructed the scraper inline and never assigned `nba.NetworkHeaders`, causing requests to be sent without the required headers (#137)
 
 ## [1.1.1] - 2026-03-16
 ### Fixed
