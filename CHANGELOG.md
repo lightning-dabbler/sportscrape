@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-03-21
+### Fixed
+- Set `NetworkHeaders` on the `matchup-periods` scraper in the CLI NBA feed handler (`cmd/sportscrape/internal/feed/nba.go`); previously `scrapeMatchupPeriods` constructed the scraper inline and never assigned `nba.NetworkHeaders`, causing requests to be sent without the required headers (#137)
+
 ## [1.1.1] - 2026-03-16
 ### Fixed
 - Call `Close()` on the matchup scraper when `KeepAlive: true` and `MatchupRunner.Run()` returns an error, in all `example_test.go` files (`dataprovider/nba`, `dataprovider/basketballreferencenba`, `dataprovider/espn/mma`) and all NBA integration test files (#135)
