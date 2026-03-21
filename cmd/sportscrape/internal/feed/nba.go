@@ -151,12 +151,14 @@ func (e *NBAExtractor) scrapeMatchup(ctx context.Context) error {
 }
 
 func (e *NBAExtractor) scrapeMatchupPeriods(ctx context.Context) error {
+	scraper := nba.NewMatchupPeriodsScraper(
+		nba.WithMatchupPeriodsDate(e.Date),
+		nba.WithMatchupPeriodsTimeout(e.Timeout),
+	)
+	scraper.NetworkHeaders = nba.NetworkHeaders
 	matchups, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
-			Scraper: nba.NewMatchupPeriodsScraper(
-				nba.WithMatchupPeriodsDate(e.Date),
-				nba.WithMatchupPeriodsTimeout(e.Timeout),
-			),
+			Scraper: scraper,
 		},
 	).Run()
 	if err != nil {
