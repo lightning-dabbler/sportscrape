@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- ESPN MMA (`dataprovider/espn/mma`) matchup and fight details scrapers now retry fetching a page if ESPN serves a bot-check interstitial in place of the real content (detected by the absence of the `window['__espnfitt__']` payload); previously this silently produced 0 records with no error
-- Fixed a dead pointer-equality check in the ESPN MMA matchup scraper (`data == empty`) that could never trigger, masking JSON unmarshal failures
+- ESPN MMA (`dataprovider/espn/mma`) matchup and fight details scrapers now retry fetching a page if ESPN serves a bot-check interstitial in place of the real content (detected by the absence of the `window['__espnfitt__']` payload); previously this silently produced 0 records with no error (#140)
+- Fixed a dead pointer-equality check in the ESPN MMA matchup scraper (`data == empty`) that could never trigger, masking JSON unmarshal failures (#140)
 
 ### Added
-- `--fetch-attempts` and `--fetch-retry-backoff` CLI flags for `sportscrape espn ufc`, wired through to the ESPN MMA scrapers' new `FetchAttempts`/`FetchRetryBackoff` fields
+- `--fetch-attempts` and `--fetch-retry-backoff` CLI flags for `sportscrape espn ufc`, wired through to the ESPN MMA scrapers' new `FetchAttempts`/`FetchRetryBackoff` fields (#140)
 
 ### Changed
-- `TestESPNMMMAMatchupScraper` and `TestESPNMMAFightDetailsScraper` (`dataprovider/espn/mma`) now skip when running in GitHub Actions (`GITHUB_ACTIONS=true`); confirmed via CI that ESPN's bot-check consistently blocks these runners' IPs even after 6 retry attempts over ~50s, so the live fetch cannot pass there regardless of retry budget. The tests still run normally locally and in this repo's Docker dev container, where they pass reliably
+- `TestESPNMMMAMatchupScraper` and `TestESPNMMAFightDetailsScraper` (`dataprovider/espn/mma`) now skip when running in GitHub Actions (`GITHUB_ACTIONS=true`); confirmed via CI that ESPN's bot-check consistently blocks these runners' IPs even after 6 retry attempts over ~50s, so the live fetch cannot pass there regardless of retry budget. The tests still run normally locally and in this repo's Docker dev container, where they pass reliably (#140)
 
 ## [1.1.2] - 2026-03-21
 ### Fixed
