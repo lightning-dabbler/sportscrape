@@ -154,10 +154,10 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 		}
 
 		if game.Teams.Away.IsWinner != nil && *game.Teams.Away.IsWinner {
-			matchup.Loser = &game.Teams.Away.Team.ID
+			matchup.Loser = &game.Teams.Home.Team.ID
 		}
 		if game.Teams.Home.IsWinner != nil && *game.Teams.Home.IsWinner {
-			matchup.Loser = &game.Teams.Home.Team.ID
+			matchup.Loser = &game.Teams.Away.Team.ID
 		}
 
 		matchups = append(matchups, matchup)
