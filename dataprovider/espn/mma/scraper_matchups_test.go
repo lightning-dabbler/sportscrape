@@ -24,6 +24,11 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 			Timeout:        3 * time.Minute,
 			NetworkHeaders: NetworkHeaders,
 		},
+		// CI runners hit ESPN's bot-check interstitial more persistently than
+		// local/dev networks; give this test more room to ride it out than
+		// the package default.
+		FetchAttempts:     6,
+		FetchRetryBackoff: 10 * time.Second,
 	}
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
