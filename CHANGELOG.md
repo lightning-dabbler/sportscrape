@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] - 2026-08-05
 ### Fixed
-- Fixed inverted `Loser` team ID assignment in the `baseballsavantmlb` matchup scraper (`dataprovider/baseballsavantmlb/scraper_matchups.go`); previously the winning team's own ID was assigned to `Loser` instead of the opposing team's ID
+- Fixed inverted `Loser` team ID assignment in the `baseballsavantmlb` matchup scraper (`dataprovider/baseballsavantmlb/scraper_matchups.go`); previously the winning team's own ID was assigned to `Loser` instead of the opposing team's ID (#139)
 - ESPN MMA (`dataprovider/espn/mma`) matchup and fight details scrapers now retry fetching a page if ESPN serves a bot-check interstitial in place of the real content (detected by the absence of the `window['__espnfitt__']` payload); previously this silently produced 0 records with no error (#140)
 - Fixed a dead pointer-equality check in the ESPN MMA matchup scraper (`data == empty`) that could never trigger, masking JSON unmarshal failures (#140)
 
