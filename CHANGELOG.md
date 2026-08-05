@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `--fetch-attempts` and `--fetch-retry-backoff` CLI flags for `sportscrape espn ufc`, wired through to the ESPN MMA scrapers' new `FetchAttempts`/`FetchRetryBackoff` fields
 
+### Changed
+- `TestESPNMMMAMatchupScraper` and `TestESPNMMAFightDetailsScraper` (`dataprovider/espn/mma`) now skip when running in GitHub Actions (`GITHUB_ACTIONS=true`); confirmed via CI that ESPN's bot-check consistently blocks these runners' IPs even after 6 retry attempts over ~50s, so the live fetch cannot pass there regardless of retry budget. The tests still run normally locally and in this repo's Docker dev container, where they pass reliably
+
 ## [1.1.2] - 2026-03-21
 ### Fixed
 - Set `NetworkHeaders` on the `matchup-periods` scraper in the CLI NBA feed handler (`cmd/sportscrape/internal/feed/nba.go`); previously `scrapeMatchupPeriods` constructed the scraper inline and never assigned `nba.NetworkHeaders`, causing requests to be sent without the required headers (#137)
