@@ -20,15 +20,17 @@ var (
 )
 
 type ESPNMMAExtractor struct {
-	Feed           string
-	Year           string
-	Timeout        time.Duration
-	Concurrency    int
-	OutputPath     string
-	Format         string
-	S3Config       exporters.S3Config
-	ParquetOptions []exporters.ParquetConfigOption
-	matchupScraper *mma.ESPNMMAMatchupScraper
+	Feed              string
+	Year              string
+	Timeout           time.Duration
+	FetchAttempts     int
+	FetchRetryBackoff time.Duration
+	Concurrency       int
+	OutputPath        string
+	Format            string
+	S3Config          exporters.S3Config
+	ParquetOptions    []exporters.ParquetConfigOption
+	matchupScraper    *mma.ESPNMMAMatchupScraper
 }
 
 func (e *ESPNMMAExtractor) ValidateFeed() error {
@@ -64,6 +66,8 @@ func (e *ESPNMMAExtractor) retrieveMatchup(league string, keepAlive bool) ([]mod
 	matchupscraper.League = league
 	matchupscraper.Year = e.Year
 	matchupscraper.NetworkHeaders = mma.NetworkHeaders
+	matchupscraper.FetchAttempts = e.FetchAttempts
+	matchupscraper.FetchRetryBackoff = e.FetchRetryBackoff
 
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
@@ -97,6 +101,8 @@ func (e *ESPNMMAExtractor) scrapeFightDetails(ctx context.Context, league string
 	fightdetailsscraper.Timeout = e.Timeout
 	fightdetailsscraper.League = league
 	fightdetailsscraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	fightdetailsscraper.FetchAttempts = e.FetchAttempts
+	fightdetailsscraper.FetchRetryBackoff = e.FetchRetryBackoff
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.FightDetails]{
 			Concurrency: e.Concurrency,

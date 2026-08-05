@@ -3,10 +3,8 @@ package mma
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
@@ -19,6 +17,13 @@ const ESPNMMAEventURL = "https://www.espn.com/mma/fightcenter/_/id/%s/league/%s"
 type ESPNMMAFightDetailsScraper struct {
 	scraper.BaseDocumentScraper
 	League string //ufc or PFL
+	// FetchAttempts is the number of times to retry fetching the fight card
+	// page if ESPN serves a bot-check interstitial instead of real content.
+	// <= 0 falls back to DefaultFetchAttempts.
+	FetchAttempts int
+	// FetchRetryBackoff is the delay between retry attempts.
+	// <= 0 falls back to DefaultFetchRetryBackoff.
+	FetchRetryBackoff time.Duration
 }
 
 func (e *ESPNMMAFightDetailsScraper) Init() {
@@ -29,32 +34,22 @@ func (e *ESPNMMAFightDetailsScraper) Init() {
 }
 
 func (e *ESPNMMAFightDetailsScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.FightDetails] {
-
-	jsonRetriever := scraper.BaseJsonScraper[jsonresponse.ESPNEventData]{}
-
 	url := fmt.Sprintf(ESPNMMAEventURL, matchup.EventID, e.League)
-	doc, err := e.FetchDoc(url, "html")
+
+	payload, err := fetchESPNFittPayload(e.FetchDoc, url, "html", e.FetchAttempts, e.FetchRetryBackoff)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.FightDetails]{
 			Error: err,
 		}
 	}
 
-	data := &jsonresponse.ESPNEventData{}
-
-	doc.Find("script").Each(func(i int, s *goquery.Selection) {
-		// For each item found, get the title
-		text := s.Text()
-
-		if strings.Contains(text, "window['__espnfitt__']=") {
-			parts := strings.SplitAfter(text, "window['__espnfitt__']=")
-			payload := []byte(parts[1][0 : len(parts[1])-1])
-			result, err := jsonRetriever.HydrateModel(payload)
-			if err == nil {
-				data = result
-			}
+	jsonRetriever := scraper.BaseJsonScraper[jsonresponse.ESPNEventData]{}
+	data, err := jsonRetriever.HydrateModel(payload)
+	if err != nil {
+		return sportscrape.EventDataOutput[model.FightDetails]{
+			Error: fmt.Errorf("could not unmarshall event data: %w", err),
 		}
-	})
+	}
 
 	data.PullTime = time.Now()
 

@@ -3,6 +3,7 @@
 package mma
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -17,6 +18,9 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 	if testing.Short() {
 		T.Skip("Skipping integration test")
 	}
+	if os.Getenv("GITHUB_ACTIONS") == "true" {
+		T.Skip("Skipping: ESPN's bot-check consistently blocks GitHub Actions runner IPs (see CHANGELOG)")
+	}
 	matchupscraper := ESPNMMAMatchupScraper{
 		Year:   "2024",
 		League: "ufc",
@@ -24,6 +28,10 @@ func TestESPNMMMAMatchupScraper(T *testing.T) {
 			Timeout:        3 * time.Minute,
 			NetworkHeaders: NetworkHeaders,
 		},
+		// Give this test more retry budget than the package default in case
+		// of an occasional bot-check interstitial on non-CI networks.
+		FetchAttempts:     6,
+		FetchRetryBackoff: 10 * time.Second,
 	}
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{

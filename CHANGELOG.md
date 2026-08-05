@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-05
+### Fixed
+- Fixed inverted `Loser` team ID assignment in the `baseballsavantmlb` matchup scraper (`dataprovider/baseballsavantmlb/scraper_matchups.go`); previously the winning team's own ID was assigned to `Loser` instead of the opposing team's ID (#139)
+- ESPN MMA (`dataprovider/espn/mma`) matchup and fight details scrapers now retry fetching a page if ESPN serves a bot-check interstitial in place of the real content (detected by the absence of the `window['__espnfitt__']` payload); previously this silently produced 0 records with no error (#140)
+- Fixed a dead pointer-equality check in the ESPN MMA matchup scraper (`data == empty`) that could never trigger, masking JSON unmarshal failures (#140)
+
+### Added
+- `--fetch-attempts` and `--fetch-retry-backoff` CLI flags for `sportscrape espn ufc`, wired through to the ESPN MMA scrapers' new `FetchAttempts`/`FetchRetryBackoff` fields (#140)
+
+### Changed
+- `TestESPNMMMAMatchupScraper` and `TestESPNMMAFightDetailsScraper` (`dataprovider/espn/mma`) now skip when running in GitHub Actions (`GITHUB_ACTIONS=true`); confirmed via CI that ESPN's bot-check consistently blocks these runners' IPs even after 6 retry attempts over ~50s, so the live fetch cannot pass there regardless of retry budget. The tests still run normally locally and in this repo's Docker dev container, where they pass reliably (#140)
+
 ## [1.1.2] - 2026-03-21
 ### Fixed
 - Set `NetworkHeaders` on the `matchup-periods` scraper in the CLI NBA feed handler (`cmd/sportscrape/internal/feed/nba.go`); previously `scrapeMatchupPeriods` constructed the scraper inline and never assigned `nba.NetworkHeaders`, causing requests to be sent without the required headers (#137)

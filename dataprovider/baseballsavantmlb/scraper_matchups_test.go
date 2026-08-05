@@ -60,7 +60,7 @@ func TestMatchupScraper_NBA(t *testing.T) {
 	assert.Equal(t, int32(1), testMatchup.AwayLosses)
 	assert.Equal(t, int32(8), *testMatchup.AwayScore)
 
-	assert.Equal(t, int64(147), *testMatchup.Loser)
+	assert.Equal(t, int64(114), *testMatchup.Loser)
 	assert.Equal(t, "L", testMatchup.GameType)
 	assert.Equal(t, "AL Championship Series", testMatchup.SeriesDescription)
 	assert.Equal(t, int32(7), testMatchup.GamesInSeries)

@@ -22,6 +22,7 @@ func createESPNUFCCmd() *cobra.Command {
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.ESPNMMAOptions))
 	cmd.Flags().String("year", "", "YYYY year to extract.")
 	shared.EmbedTimeoutFlag(cmd)
+	shared.EmbedFetchRetryFlags(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)
