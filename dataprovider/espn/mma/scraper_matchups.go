@@ -1,13 +1,10 @@
 package mma
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/espn/mma/model"
@@ -21,6 +18,13 @@ type ESPNMMAMatchupScraper struct {
 	scraper.BaseDocumentScraper
 	Year   string
 	League string
+	// FetchAttempts is the number of times to retry fetching the schedule
+	// page if ESPN serves a bot-check interstitial instead of real content.
+	// <= 0 falls back to DefaultFetchAttempts.
+	FetchAttempts int
+	// FetchRetryBackoff is the delay between retry attempts.
+	// <= 0 falls back to DefaultFetchRetryBackoff.
+	FetchRetryBackoff time.Duration
 }
 
 func (m *ESPNMMAMatchupScraper) Init() {
@@ -39,7 +43,7 @@ func (m *ESPNMMAMatchupScraper) Init() {
 func (m *ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 	url := fmt.Sprintf(ESPNMMAEventsFeedURL, m.Year, m.League)
 
-	doc, err := m.FetchDoc(url, "html")
+	payload, err := fetchESPNFittPayload(m.FetchDoc, url, "html", m.FetchAttempts, m.FetchRetryBackoff)
 	if err != nil {
 		return sportscrape.MatchupOutput[model.Matchup]{
 			Context: sportscrape.MatchupContext{
@@ -49,32 +53,15 @@ func (m *ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup
 		}
 	}
 
-	data := &jsonresponse.ESPNMMASchedule{}
-
 	jsonRetriever := scraper.BaseJsonScraper[jsonresponse.ESPNMMASchedule]{}
-
-	doc.Find("script").Each(func(i int, s *goquery.Selection) {
-		// For each item found, get the title
-		text := s.Text()
-
-		if strings.Contains(text, "window['__espnfitt__']=") {
-			parts := strings.SplitAfter(text, "window['__espnfitt__']=")
-			payload := []byte(parts[1][0 : len(parts[1])-1])
-			result, err := jsonRetriever.HydrateModel(payload)
-			if err == nil {
-				data = result
-			}
-		}
-	})
-
-	empty := &jsonresponse.ESPNMMASchedule{}
-	if data == empty {
+	data, err := jsonRetriever.HydrateModel(payload)
+	if err != nil {
 		return sportscrape.MatchupOutput[model.Matchup]{
 			Context: sportscrape.MatchupContext{
 				Errors: 1,
 				Skips:  1,
 			},
-			Error: errors.New("could not unmarshall schedule data"),
+			Error: fmt.Errorf("could not unmarshall schedule data: %w", err),
 		}
 	}
 	data.PullTime = time.Now()
@@ -87,7 +74,6 @@ func (m *ESPNMMAMatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup
 			Errors: 0,
 		},
 		Output: output,
-		Error:  err,
 	}
 }
 

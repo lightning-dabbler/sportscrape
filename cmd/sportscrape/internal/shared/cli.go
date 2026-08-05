@@ -95,6 +95,8 @@ func Run(cmd *cobra.Command, provider, league string) error {
 
 	var date, year, feedstring string
 	var timeoutDuration time.Duration
+	var fetchAttempts int
+	var fetchRetryBackoff time.Duration
 
 	switch provider {
 	case "espn":
@@ -105,6 +107,17 @@ func Run(cmd *cobra.Command, provider, league string) error {
 			if err != nil {
 				return err
 			}
+			// --fetch-attempts
+			fetchAttempts, err = cmd.Flags().GetInt("fetch-attempts")
+			if err != nil {
+				return err
+			}
+			// --fetch-retry-backoff
+			fetchRetryBackoffSeconds, err := cmd.Flags().GetInt("fetch-retry-backoff")
+			if err != nil {
+				return err
+			}
+			fetchRetryBackoff = time.Duration(fetchRetryBackoffSeconds) * time.Second
 		}
 	default:
 		// --date
@@ -178,14 +191,16 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		}
 	case "espn":
 		e = &feed.ESPNMMAExtractor{
-			Feed:           feedstring,
-			Year:           year,
-			Timeout:        timeoutDuration,
-			Concurrency:    concurrency,
-			OutputPath:     destination,
-			Format:         fileFormat,
-			S3Config:       s3config,
-			ParquetOptions: parquetOptions,
+			Feed:              feedstring,
+			Year:              year,
+			Timeout:           timeoutDuration,
+			FetchAttempts:     fetchAttempts,
+			FetchRetryBackoff: fetchRetryBackoff,
+			Concurrency:       concurrency,
+			OutputPath:        destination,
+			Format:            fileFormat,
+			S3Config:          s3config,
+			ParquetOptions:    parquetOptions,
 		}
 	case "nba":
 		e = &feed.NBAExtractor{
