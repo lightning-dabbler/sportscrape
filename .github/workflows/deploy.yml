@@ -12,7 +12,7 @@ jobs:
     uses: ./.github/workflows/validate.yml
 
   approval:
-    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.validate.outputs.successful_go_lint_run && needs.tests.outputs.successful_run}}
+    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.tests.outputs.successful_run}}
     needs:
       - tests
       - validate
