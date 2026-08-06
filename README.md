@@ -20,6 +20,7 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 | Command | Subcommand | Provider |
 |---------|------------|----------|
 | `sportscrape baseballsavant` | | baseballsavant.mlb.com |
+| `sportscrape propfinder` | `mlb` | api.propfinder.app |
 | `sportscrape foxsports` | `mlb`, `nba`, `wnba` | foxsports.com |
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
@@ -111,6 +112,7 @@ func main() {
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go) (Deprecated)
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 - [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
+- [propfinder scraping examples](dataprovider/propfinder/mlb/example_test.go)
 - [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
 - [nba.com NBA scraping examples](dataprovider/nba/example_test.go)
 
@@ -141,6 +143,7 @@ func main() {
 | https://baseballsavant.mlb.com		 | MLB	     | Pitching box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/pitching_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	     | Fielding box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/fielding_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	     | Play by play                         |        Live, Full			         |        [model](dataprovider/baseballsavantmlb/model/play_by_play.go)         ||✅|
+| https://api.propfinder.app		     | MLB	     | Weather				                          |             Full			         |              [model](dataprovider/propfinder/mlb/model/weather.go)               ||✅|
 | https://www.espn.com/mma/     		 | UFC	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
 | https://www.espn.com/mma/     		 | PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                | 🚩 |✅|
 | https://www.espn.com/mma/     		 | UFC	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|

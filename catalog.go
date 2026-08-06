@@ -115,6 +115,10 @@ var (
 	NBATrackingBoxScore      Feed     = Feed(string(NBA) + " tracking box score")
 	NBAPlayByPlay            Feed     = Feed(string(NBA) + " play by play")
 
+	// prop finder
+	PropFinder           Provider = "prop finder"
+	PropFinderMLBWeather Feed     = Feed(string(PropFinder) + " mlb weather")
+
 	// testing
 	DummyProvider Provider = "dummy provider"
 	DummyFeed     Feed     = Feed(string(DummyProvider) + " dummy feed")
