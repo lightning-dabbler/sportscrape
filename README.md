@@ -2,7 +2,6 @@
 A Go package for collecting and transforming sports statistics from various sources into standardized formats.
 
 [![Deploy][sportscrape-ci-status]][sportscrape-ci]
-[![Go Report Card][go-report-status]][go-report]
 [![Go Reference][goref-sportscrape-status]][goref-sportscrape]
 [![Releases][release-status]][releases]
 
@@ -20,6 +19,7 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 | Command | Subcommand | Provider |
 |---------|------------|----------|
 | `sportscrape baseballsavant` | | baseballsavant.mlb.com |
+| `sportscrape propfinder` | `mlb` | api.propfinder.app |
 | `sportscrape foxsports` | `mlb`, `nba`, `wnba` | foxsports.com |
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
@@ -111,6 +111,7 @@ func main() {
 - [baseball-reference.com MLB scrape examples](dataprovider/baseballreferencemlb/example_test.go) (Deprecated)
 - [foxsports.com scraping examples](dataprovider/foxsports/example_test.go)
 - [baseballsavant.mlb.com scraping examples](dataprovider/baseballsavantmlb/example_test.go)
+- [propfinder scraping examples](dataprovider/propfinder/mlb/example_test.go)
 - [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
 - [nba.com NBA scraping examples](dataprovider/nba/example_test.go)
 
@@ -141,6 +142,7 @@ func main() {
 | https://baseballsavant.mlb.com		 | MLB	     | Pitching box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/pitching_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	     | Fielding box score stats             |        Live, Full			         |     [model](dataprovider/baseballsavantmlb/model/fielding_box_score.go)      ||✅|
 | https://baseballsavant.mlb.com		 | MLB	     | Play by play                         |        Live, Full			         |        [model](dataprovider/baseballsavantmlb/model/play_by_play.go)         ||✅|
+| https://api.propfinder.app		     | MLB	     | Weather				                          |             Full			         |              [model](dataprovider/propfinder/mlb/model/weather.go)               ||✅|
 | https://www.espn.com/mma/     		 | UFC	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                ||✅|
 | https://www.espn.com/mma/     		 | PFL	 | Matchups (Event Details)             |           Full			            |               [model](dataprovider/espn/mma/model/matchup.go)                | 🚩 |✅|
 | https://www.espn.com/mma/     		 | UFC	 | Fight details (Stats, Odds, Results) |           Full			            |             [model](dataprovider/espn/mma/model/fightdetails.go)             ||✅|
@@ -200,5 +202,3 @@ MIT
 [goref-sportscrape-status]: https://pkg.go.dev/badge/github.com/lightning-dabbler/sportscrape.svg
 [release-status]: https://img.shields.io/github/v/release/lightning-dabbler/sportscrape?display_name=tag&sort=semver (Latest Release)
 [releases]: https://github.com/lightning-dabbler/sportscrape/releases (Releases)
-[go-report]: https://goreportcard.com/report/github.com/lightning-dabbler/sportscrape (Go report)
-[go-report-status]: https://goreportcard.com/badge/github.com/lightning-dabbler/sportscrape (Go report Badge)

@@ -189,6 +189,15 @@ func Run(cmd *cobra.Command, provider, league string) error {
 			S3Config:       s3config,
 			ParquetOptions: parquetOptions,
 		}
+	case "propfinder":
+		e = &feed.PropFinderExtractor{
+			Feed:           feedstring,
+			Date:           date,
+			OutputPath:     destination,
+			Format:         fileFormat,
+			S3Config:       s3config,
+			ParquetOptions: parquetOptions,
+		}
 	case "espn":
 		e = &feed.ESPNMMAExtractor{
 			Feed:              feedstring,
