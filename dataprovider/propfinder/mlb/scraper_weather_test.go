@@ -43,17 +43,17 @@ func TestWeatherScraper(t *testing.T) {
 	assert.Equal(t, "Tropicana Field", testRecord.BallparkName)
 	assert.InDelta(t, float32(27.767778), testRecord.BallparkLatitude, 0.0001)
 	assert.InDelta(t, float32(-82.6525), testRecord.BallparkLongitude, 0.0001)
-	assert.Equal(t, float32(359), testRecord.BallparkAzimuthAngle)
-	assert.Equal(t, int32(15), testRecord.BallparkElevation)
+	assert.Equal(t, float32(359), *testRecord.BallparkAzimuthAngle)
+	assert.Equal(t, int32(15), *testRecord.BallparkElevation)
 	assert.Equal(t, int32(25025), testRecord.BallparkCapacity)
 	assert.Equal(t, "Artificial Turf", testRecord.BallparkTurfType)
 	assert.Equal(t, "Dome", testRecord.BallparkRoofType)
 	assert.Equal(t, int32(315), testRecord.BallparkLeftLine)
-	assert.Equal(t, int32(370), testRecord.BallparkLeft)
+	assert.Equal(t, int32(370), *testRecord.BallparkLeft)
 	assert.Equal(t, int32(410), testRecord.BallparkLeftCenter)
 	assert.Equal(t, int32(404), testRecord.BallparkCenter)
 	assert.Equal(t, int32(404), testRecord.BallparkRightCenter)
-	assert.Equal(t, int32(370), testRecord.BallparkRight)
+	assert.Equal(t, int32(370), *testRecord.BallparkRight)
 	assert.Equal(t, int32(322), testRecord.BallparkRightLine)
 	assert.Equal(t, int32(11), testRecord.BallparkFenceHeightLeft)
 	assert.Equal(t, int32(9), testRecord.BallparkFenceHeightCenter)
@@ -108,11 +108,50 @@ func TestWeatherScraper_FractionalBallparkAzimuthAngle(t *testing.T) {
 			found = true
 			assert.Equal(t, int64(1), w.BallparkID)
 			assert.Equal(t, "Angel Stadium", w.BallparkName)
-			assert.Equal(t, float32(43.61), w.BallparkAzimuthAngle)
+			assert.Equal(t, float32(43.61), *w.BallparkAzimuthAngle)
 			break
 		}
 	}
 	assert.True(t, found, "expected to find event_id 823999 (Angel Stadium, LAA vs MIL)")
+}
+
+// TestWeatherScraper_NullBallparkFields guards against a regression where
+// ballpark.left, ballpark.right, ballpark.azimuthAngle, and
+// ballpark.elevation were assumed to always be present and typed as plain
+// (non-pointer) fields; the API returns JSON null for these on many real
+// ballparks (a 10-date/126-game sample found null left/right on 23 distinct
+// ballparks including Yankee Stadium, Fenway Park, and Wrigley Field), which
+// silently unmarshaled to 0 instead of the actual "no data" state.
+func TestWeatherScraper_NullBallparkFields(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	weatherscraper := NewWeatherScraper(
+		WeatherScraperDate("2026-04-01"),
+	)
+	weatherrunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Weather]{
+			Scraper: weatherscraper,
+		},
+	)
+	weather, err := weatherrunner.Run()
+	assert.NoError(t, err)
+
+	found := false
+	for _, w := range weather {
+		if w.EventID == 825106 {
+			found = true
+			assert.Equal(t, int64(15), w.BallparkID)
+			assert.Equal(t, "Chase Field", w.BallparkName)
+			assert.Nil(t, w.BallparkAzimuthAngle)
+			assert.NotNil(t, w.BallparkLeft)
+			assert.Equal(t, int32(374), *w.BallparkLeft)
+			assert.NotNil(t, w.BallparkRight)
+			assert.Equal(t, int32(374), *w.BallparkRight)
+			break
+		}
+	}
+	assert.True(t, found, "expected to find event_id 825106 (Chase Field)")
 }
 
 func TestWeatherScraper_OffDay(t *testing.T) {

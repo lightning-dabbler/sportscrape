@@ -34,10 +34,10 @@ type Weather struct {
 	BallparkLatitude float32 `json:"ballpark_latitude" parquet:"name=ballpark_latitude, type=FLOAT"`
 	// BallparkLongitude
 	BallparkLongitude float32 `json:"ballpark_longitude" parquet:"name=ballpark_longitude, type=FLOAT"`
-	// BallparkAzimuthAngle is the ballpark's home plate azimuth angle in degrees
-	BallparkAzimuthAngle float32 `json:"ballpark_azimuth_angle" parquet:"name=ballpark_azimuth_angle, type=FLOAT"`
-	// BallparkElevation in feet
-	BallparkElevation int32 `json:"ballpark_elevation" parquet:"name=ballpark_elevation, type=INT32"`
+	// BallparkAzimuthAngle is the ballpark's home plate azimuth angle in degrees (nillable: not available for all ballparks)
+	BallparkAzimuthAngle *float32 `json:"ballpark_azimuth_angle" parquet:"name=ballpark_azimuth_angle, type=FLOAT"`
+	// BallparkElevation in feet (nillable: not available for all ballparks)
+	BallparkElevation *int32 `json:"ballpark_elevation" parquet:"name=ballpark_elevation, type=INT32"`
 	// BallparkCapacity
 	BallparkCapacity int32 `json:"ballpark_capacity" parquet:"name=ballpark_capacity, type=INT32"`
 	// BallparkTurfType e.g. Artificial Turf, Grass
@@ -46,16 +46,16 @@ type Weather struct {
 	BallparkRoofType string `json:"ballpark_roof_type" parquet:"name=ballpark_roof_type, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// BallparkLeftLine distance in feet
 	BallparkLeftLine int32 `json:"ballpark_left_line" parquet:"name=ballpark_left_line, type=INT32"`
-	// BallparkLeft distance in feet
-	BallparkLeft int32 `json:"ballpark_left" parquet:"name=ballpark_left, type=INT32"`
+	// BallparkLeft distance in feet (nillable: not available for all ballparks)
+	BallparkLeft *int32 `json:"ballpark_left" parquet:"name=ballpark_left, type=INT32"`
 	// BallparkLeftCenter distance in feet
 	BallparkLeftCenter int32 `json:"ballpark_left_center" parquet:"name=ballpark_left_center, type=INT32"`
 	// BallparkCenter distance in feet
 	BallparkCenter int32 `json:"ballpark_center" parquet:"name=ballpark_center, type=INT32"`
 	// BallparkRightCenter distance in feet
 	BallparkRightCenter int32 `json:"ballpark_right_center" parquet:"name=ballpark_right_center, type=INT32"`
-	// BallparkRight distance in feet
-	BallparkRight int32 `json:"ballpark_right" parquet:"name=ballpark_right, type=INT32"`
+	// BallparkRight distance in feet (nillable: not available for all ballparks)
+	BallparkRight *int32 `json:"ballpark_right" parquet:"name=ballpark_right, type=INT32"`
 	// BallparkRightLine distance in feet
 	BallparkRightLine int32 `json:"ballpark_right_line" parquet:"name=ballpark_right_line, type=INT32"`
 	// BallparkFenceHeightLeft in feet

@@ -11,26 +11,28 @@ type Team struct {
 }
 
 type Ballpark struct {
-	ID                int64   `json:"id"`
-	Name              string  `json:"name"`
-	Latitude          float32 `json:"latitude"`
-	Longitude         float32 `json:"longitude"`
-	AzimuthAngle      float32 `json:"azimuthAngle"`
-	Elevation         int32   `json:"elevation"`
-	Capacity          int32   `json:"capacity"`
-	TurfType          string  `json:"turfType"`
-	RoofType          string  `json:"roofType"`
-	LeftLine          int32   `json:"leftLine"`
-	Left              int32   `json:"left"`
-	LeftCenter        int32   `json:"leftCenter"`
-	Center            int32   `json:"center"`
-	RightCenter       int32   `json:"rightCenter"`
-	Right             int32   `json:"right"`
-	RightLine         int32   `json:"rightLine"`
-	FenceHeightLeft   int32   `json:"fenceHeightLeft"`
-	FenceHeightCenter int32   `json:"fenceHeightCenter"`
-	FenceHeightRight  int32   `json:"fenceHeightRight"`
-	Active            bool    `json:"active"`
+	ID        int64   `json:"id"`
+	Name      string  `json:"name"`
+	Latitude  float32 `json:"latitude"`
+	Longitude float32 `json:"longitude"`
+	// AzimuthAngle and Elevation are nillable: null for some ballparks
+	AzimuthAngle *float32 `json:"azimuthAngle"`
+	Elevation    *int32   `json:"elevation"`
+	Capacity     int32    `json:"capacity"`
+	TurfType     string   `json:"turfType"`
+	RoofType     string   `json:"roofType"`
+	LeftLine     int32    `json:"leftLine"`
+	// Left and Right are nillable: null for some ballparks
+	Left              *int32 `json:"left"`
+	LeftCenter        int32  `json:"leftCenter"`
+	Center            int32  `json:"center"`
+	RightCenter       int32  `json:"rightCenter"`
+	Right             *int32 `json:"right"`
+	RightLine         int32  `json:"rightLine"`
+	FenceHeightLeft   int32  `json:"fenceHeightLeft"`
+	FenceHeightCenter int32  `json:"fenceHeightCenter"`
+	FenceHeightRight  int32  `json:"fenceHeightRight"`
+	Active            bool   `json:"active"`
 	// Season is a string in the API response (e.g. "2026")
 	Season string `json:"season"`
 }
