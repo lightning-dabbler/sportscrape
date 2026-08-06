@@ -22,6 +22,6 @@ repos:
     -   id: actionlint-docker
         args: [-shellcheck=, -pyflakes=] # ignore shellcheck and pyflake
 -   repo: https://github.com/golangci/golangci-lint
-    rev: v2.12.2
+    rev: v2.8.0
     hooks:
     -   id: golangci-lint
