@@ -1,4 +1,4 @@
-package propfinder
+package mlb
 
 import (
 	"encoding/json"
@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/jsonresponse"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/model"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb/jsonresponse"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb/model"
 	"github.com/lightning-dabbler/sportscrape/util"
 	"github.com/lightning-dabbler/sportscrape/util/request"
 	"github.com/xitongsys/parquet-go/types"

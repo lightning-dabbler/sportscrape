@@ -6,8 +6,8 @@ import (
 
 	"github.com/lightning-dabbler/sportscrape/cmd/sportscrape/internal/exporters"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/model"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
@@ -49,8 +49,8 @@ func (e *PropFinderExtractor) Scrape(ctx context.Context) error {
 func (e *PropFinderExtractor) scrapeMLBWeather(ctx context.Context) error {
 	weatherrunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Weather]{
-			Scraper: propfinder.NewWeatherScraper(
-				propfinder.WeatherScraperDate(e.Date),
+			Scraper: mlb.NewWeatherScraper(
+				mlb.WeatherScraperDate(e.Date),
 			),
 		},
 	)

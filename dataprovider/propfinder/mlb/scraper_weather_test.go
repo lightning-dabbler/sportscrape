@@ -1,12 +1,12 @@
 //go:build integration
 
-package propfinder
+package mlb
 
 import (
 	"testing"
 	"time"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/model"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,7 +25,8 @@ func TestWeatherScraper(t *testing.T) {
 	)
 	weather, err := weatherrunner.Run()
 	assert.NoError(t, err)
-	assert.NotEmpty(t, weather)
+	// 10 games, 24 hourly weather readings each
+	assert.Equal(t, 240, len(weather), "240 weather records")
 
 	testRecord := weather[0]
 	assert.Equal(t, int64(822946), testRecord.EventID)

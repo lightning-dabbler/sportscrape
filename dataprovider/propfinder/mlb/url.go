@@ -1,4 +1,4 @@
-package propfinder
+package mlb
 
 import (
 	"github.com/lightning-dabbler/sportscrape/util"

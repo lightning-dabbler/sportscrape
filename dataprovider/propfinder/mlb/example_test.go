@@ -1,20 +1,20 @@
-package propfinder_test
+package mlb_test
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder"
-	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/model"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/propfinder/mlb/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 )
 
-// Example for propfinder.WeatherScraper
+// Example for mlb.WeatherScraper
 func ExampleWeatherScraper() {
 	date := "2026-07-30"
-	weatherscraper := propfinder.NewWeatherScraper(
-		propfinder.WeatherScraperDate(date),
+	weatherscraper := mlb.NewWeatherScraper(
+		mlb.WeatherScraperDate(date),
 	)
 	weatherrunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Weather]{
