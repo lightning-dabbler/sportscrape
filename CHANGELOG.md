@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.0] - 2026-08-05
+## [1.3.0] - 2026-08-06
 ### Added
 - `propfinder` data provider (`dataprovider/propfinder/mlb`) — MLB weather-by-game data from `api.propfinder.app`, flattening each game's hourly weather readings into one row per reading (composite key: `event_id`, `ballpark_id`, `weather_data_date_time`). Wired into the CLI as `sportscrape propfinder mlb --feed weather`
 
