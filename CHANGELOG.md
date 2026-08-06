@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Replaced the separate `go-lint` CI job (curl-installed `golangci-lint` v1.64.5) with a `golangci-lint` pre-commit hook (`github.com/golangci/golangci-lint` rev `v2.12.2`) run as part of the existing `pre-commit` job in `validate.yml`; removes the duplicate Go lint pass and its own CI job/output
+- Bumped `pre-commit/pre-commit-hooks` rev `v5.0.0` → `v6.0.0` and `rhysd/actionlint` rev `v1.7.7` → `v1.7.10` in `.pre-commit-config.yaml`
+- Bumped GitHub Actions across all workflows: `actions/checkout` `v6.0.2` → `v7.0.1`, `actions/setup-python` `v6.2.0` → `v7.0.0` (Python 3.11 → 3.13), `actions/setup-go` `v6.2.0` → `v6.5.0`, `actions/upload-artifact` `v4` → `v7.0.1` (`all-tests.yml`, `unit-tests.yml`), `actions/download-artifact` `v7.0.0` → `v8.0.1`
+- Pinned `pre-commit` to `4.5.1` in `validate.yml` (was unpinned)
+
+### Removed
+- `successful_go_lint_run` output from `validate.yml` and its reference in `deploy.yml`'s approval gate, now redundant with `golangci-lint` running via pre-commit
 
 ## [1.2.0] - 2026-08-05
 ### Fixed

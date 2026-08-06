@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     -   id: check-yaml
         exclude: .*templates/
@@ -17,7 +17,11 @@ repos:
     -   id: detect-aws-credentials
         args: [--allow-missing-credentials]
 -   repo: https://github.com/rhysd/actionlint
-    rev: v1.7.7
+    rev: v1.7.10
     hooks:
     -   id: actionlint-docker
         args: [-shellcheck=, -pyflakes=] # ignore shellcheck and pyflake
+-   repo: https://github.com/golangci/golangci-lint
+    rev: v2.12.2
+    hooks:
+    -   id: golangci-lint
