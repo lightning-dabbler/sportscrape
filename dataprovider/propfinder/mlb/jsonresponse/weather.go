@@ -39,26 +39,27 @@ type Ballpark struct {
 
 type WeatherEntry struct {
 	// DateTimeEpoch is a Unix timestamp (seconds)
-	DateTimeEpoch  int64   `json:"dateTimeEpoch"`
-	Temp           float32 `json:"temp"`
-	FeelsLike      float32 `json:"feelsLike"`
-	Humidity       float32 `json:"humidity"`
-	Dew            float32 `json:"dew"`
-	Precip         float32 `json:"precip"`
-	PrecipProb     float32 `json:"precipProb"`
-	Snow           float32 `json:"snow"`
-	SnowDepth      float32 `json:"snowDepth"`
-	WindGust       float32 `json:"windGust"`
-	WindSpeed      float32 `json:"windSpeed"`
-	WindDir        float32 `json:"windDir"`
-	Pressure       float32 `json:"pressure"`
-	Visibility     float32 `json:"visibility"`
-	CloudCover     float32 `json:"cloudCover"`
-	SolarRadiation float32 `json:"solarRadiation"`
-	SolarEnergy    float32 `json:"solarEnergy"`
-	UVIndex        float32 `json:"uvIndex"`
-	SevereRisk     float32 `json:"severeRisk"`
-	Conditions     string  `json:"conditions"`
+	DateTimeEpoch int64   `json:"dateTimeEpoch"`
+	Temp          float32 `json:"temp"`
+	FeelsLike     float32 `json:"feelsLike"`
+	Humidity      float32 `json:"humidity"`
+	Dew           float32 `json:"dew"`
+	Precip        float32 `json:"precip"`
+	PrecipProb    float32 `json:"precipProb"`
+	Snow          float32 `json:"snow"`
+	SnowDepth     float32 `json:"snowDepth"`
+	// WindGust is nillable: observed null at least once in the wild
+	WindGust       *float32 `json:"windGust"`
+	WindSpeed      float32  `json:"windSpeed"`
+	WindDir        float32  `json:"windDir"`
+	Pressure       float32  `json:"pressure"`
+	Visibility     float32  `json:"visibility"`
+	CloudCover     float32  `json:"cloudCover"`
+	SolarRadiation float32  `json:"solarRadiation"`
+	SolarEnergy    float32  `json:"solarEnergy"`
+	UVIndex        float32  `json:"uvIndex"`
+	SevereRisk     float32  `json:"severeRisk"`
+	Conditions     string   `json:"conditions"`
 }
 
 type Game struct {

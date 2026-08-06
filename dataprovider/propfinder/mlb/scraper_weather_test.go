@@ -70,7 +70,7 @@ func TestWeatherScraper(t *testing.T) {
 	assert.Equal(t, float32(0), testRecord.WeatherDataPrecipitationProbability)
 	assert.Equal(t, float32(0), testRecord.WeatherDataSnow)
 	assert.Equal(t, float32(0), testRecord.WeatherDataSnowDepth)
-	assert.Equal(t, float32(17.2), testRecord.WeatherDataWindGust)
+	assert.Equal(t, float32(17.2), *testRecord.WeatherDataWindGust)
 	assert.Equal(t, float32(9), testRecord.WeatherDataWindSpeed)
 	assert.Equal(t, float32(259), testRecord.WeatherDataWindDir)
 	assert.Equal(t, float32(1014), testRecord.WeatherDataPressure)
@@ -152,6 +152,40 @@ func TestWeatherScraper_NullBallparkFields(t *testing.T) {
 		}
 	}
 	assert.True(t, found, "expected to find event_id 825106 (Chase Field)")
+}
+
+// TestWeatherScraper_NullWindGust guards against a regression where
+// weatherData.windGust was assumed to always be present and typed as a
+// plain (non-pointer) field; the API returned JSON null for it at least
+// once in the wild (Angel Stadium, LAA vs ATH, 2026-05-19), which silently
+// unmarshaled to 0 instead of reflecting "no data available".
+func TestWeatherScraper_NullWindGust(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	weatherscraper := NewWeatherScraper(
+		WeatherScraperDate("2026-05-19"),
+	)
+	weatherrunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Weather]{
+			Scraper: weatherscraper,
+		},
+	)
+	weather, err := weatherrunner.Run()
+	assert.NoError(t, err)
+
+	found := false
+	for _, w := range weather {
+		if w.EventID == 824033 && w.WeatherDataDateTime.Equal(time.Date(2026, time.May, 19, 9, 0, 0, 0, time.UTC)) {
+			found = true
+			assert.Equal(t, int64(1), w.BallparkID)
+			assert.Equal(t, "Angel Stadium", w.BallparkName)
+			assert.Nil(t, w.WeatherDataWindGust)
+			assert.Equal(t, float32(60.9), w.WeatherDataTemp)
+			break
+		}
+	}
+	assert.True(t, found, "expected to find event_id 824033 (Angel Stadium, LAA vs ATH) weather reading at 2026-05-19T09:00:00Z")
 }
 
 func TestWeatherScraper_OffDay(t *testing.T) {

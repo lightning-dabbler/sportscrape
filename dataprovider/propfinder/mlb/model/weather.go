@@ -88,8 +88,8 @@ type Weather struct {
 	WeatherDataSnow float32 `json:"weather_data_snow" parquet:"name=weather_data_snow, type=FLOAT"`
 	// WeatherDataSnowDepth
 	WeatherDataSnowDepth float32 `json:"weather_data_snow_depth" parquet:"name=weather_data_snow_depth, type=FLOAT"`
-	// WeatherDataWindGust
-	WeatherDataWindGust float32 `json:"weather_data_wind_gust" parquet:"name=weather_data_wind_gust, type=FLOAT"`
+	// WeatherDataWindGust (nillable: observed null at least once in the wild)
+	WeatherDataWindGust *float32 `json:"weather_data_wind_gust" parquet:"name=weather_data_wind_gust, type=FLOAT"`
 	// WeatherDataWindSpeed
 	WeatherDataWindSpeed float32 `json:"weather_data_wind_speed" parquet:"name=weather_data_wind_speed, type=FLOAT"`
 	// WeatherDataWindDir in degrees
