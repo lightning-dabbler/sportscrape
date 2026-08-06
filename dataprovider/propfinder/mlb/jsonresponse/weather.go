@@ -15,7 +15,7 @@ type Ballpark struct {
 	Name              string  `json:"name"`
 	Latitude          float32 `json:"latitude"`
 	Longitude         float32 `json:"longitude"`
-	AzimuthAngle      int32   `json:"azimuthAngle"`
+	AzimuthAngle      float32 `json:"azimuthAngle"`
 	Elevation         int32   `json:"elevation"`
 	Capacity          int32   `json:"capacity"`
 	TurfType          string  `json:"turfType"`

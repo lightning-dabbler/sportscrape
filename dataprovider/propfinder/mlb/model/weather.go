@@ -35,7 +35,7 @@ type Weather struct {
 	// BallparkLongitude
 	BallparkLongitude float32 `json:"ballpark_longitude" parquet:"name=ballpark_longitude, type=FLOAT"`
 	// BallparkAzimuthAngle is the ballpark's home plate azimuth angle in degrees
-	BallparkAzimuthAngle int32 `json:"ballpark_azimuth_angle" parquet:"name=ballpark_azimuth_angle, type=INT32"`
+	BallparkAzimuthAngle float32 `json:"ballpark_azimuth_angle" parquet:"name=ballpark_azimuth_angle, type=FLOAT"`
 	// BallparkElevation in feet
 	BallparkElevation int32 `json:"ballpark_elevation" parquet:"name=ballpark_elevation, type=INT32"`
 	// BallparkCapacity

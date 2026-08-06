@@ -43,7 +43,7 @@ func TestWeatherScraper(t *testing.T) {
 	assert.Equal(t, "Tropicana Field", testRecord.BallparkName)
 	assert.InDelta(t, float32(27.767778), testRecord.BallparkLatitude, 0.0001)
 	assert.InDelta(t, float32(-82.6525), testRecord.BallparkLongitude, 0.0001)
-	assert.Equal(t, int32(359), testRecord.BallparkAzimuthAngle)
+	assert.Equal(t, float32(359), testRecord.BallparkAzimuthAngle)
 	assert.Equal(t, int32(15), testRecord.BallparkElevation)
 	assert.Equal(t, int32(25025), testRecord.BallparkCapacity)
 	assert.Equal(t, "Artificial Turf", testRecord.BallparkTurfType)
@@ -81,6 +81,38 @@ func TestWeatherScraper(t *testing.T) {
 	assert.Equal(t, float32(0), testRecord.WeatherDataUVIndex)
 	assert.Equal(t, float32(60), testRecord.WeatherDataSevereRisk)
 	assert.Equal(t, "Partially cloudy", testRecord.WeatherDataConditions)
+}
+
+// TestWeatherScraper_FractionalBallparkAzimuthAngle guards against a
+// regression where ballpark.azimuthAngle was assumed to always be a whole
+// number and typed int32; the API returns it as a float on some dates
+// (e.g. Angel Stadium was 43.61 on this date), which broke JSON unmarshaling.
+func TestWeatherScraper_FractionalBallparkAzimuthAngle(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	weatherscraper := NewWeatherScraper(
+		WeatherScraperDate("2026-07-31"),
+	)
+	weatherrunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Weather]{
+			Scraper: weatherscraper,
+		},
+	)
+	weather, err := weatherrunner.Run()
+	assert.NoError(t, err)
+
+	found := false
+	for _, w := range weather {
+		if w.EventID == 823999 {
+			found = true
+			assert.Equal(t, int64(1), w.BallparkID)
+			assert.Equal(t, "Angel Stadium", w.BallparkName)
+			assert.Equal(t, float32(43.61), w.BallparkAzimuthAngle)
+			break
+		}
+	}
+	assert.True(t, found, "expected to find event_id 823999 (Angel Stadium, LAA vs MIL)")
 }
 
 func TestWeatherScraper_OffDay(t *testing.T) {
