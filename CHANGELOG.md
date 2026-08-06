@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `propfinder` data provider (`dataprovider/propfinder`) — MLB weather-by-game data from `api.propfinder.app`, flattening each game's hourly weather readings into one row per reading (composite key: `event_id`, `ballpark_id`, `weather_data_date_time`). Wired into the CLI as `sportscrape propfinder mlb --feed weather`
+
 ### Changed
 - Replaced the separate `go-lint` CI job (curl-installed `golangci-lint` v1.64.5) with a `golangci-lint` pre-commit hook (`github.com/golangci/golangci-lint` rev `v2.8.0` — the latest release still on `go 1.24.0`, matching this project's `go.mod`; `v2.9.0`+ require Go 1.25) run as part of the existing `pre-commit` job in `validate.yml`; removes the duplicate Go lint pass and its own CI job/output
 - Bumped `pre-commit/pre-commit-hooks` rev `v5.0.0` → `v6.0.0` and `rhysd/actionlint` rev `v1.7.7` → `v1.7.10` in `.pre-commit-config.yaml`
