@@ -83,7 +83,14 @@ func (s WeatherScraper) Scrape() sportscrape.MatchupOutput[model.Weather] {
 		return output
 	}
 
+	var skipped int
 	for _, game := range games {
+		if game.Ballpark == nil {
+			log.Printf("SKIPPING event #%d as it has no ballpark/weather data yet\n", game.ID)
+			skipped++
+			continue
+		}
+
 		eventTime, err := util.RFC3339ToTime(game.GameDate)
 		if err != nil {
 			log.Printf("error parsing GameDate: %s", game.GameDate)
@@ -164,6 +171,9 @@ func (s WeatherScraper) Scrape() sportscrape.MatchupOutput[model.Weather] {
 	}
 
 	output.Output = weather
+	output.Context = sportscrape.MatchupContext{
+		Skips: skipped,
+	}
 	return output
 }
 
