@@ -188,6 +188,24 @@ func TestWeatherScraper_NullWindGust(t *testing.T) {
 	assert.True(t, found, "expected to find event_id 824033 (Angel Stadium, LAA vs ATH) weather reading at 2026-05-19T09:00:00Z")
 }
 
+// TestWeatherScraper_MissingBallpark guards against a regression where a
+// game with no ballpark/weather data yet (json ballpark: null, observed on
+// historical dates) crashed the whole scrape parsing ballpark.season ("")
+// as int32; such games are now skipped and counted in Context.Skips.
+func TestWeatherScraper_MissingBallpark(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	weatherscraper := NewWeatherScraper(
+		WeatherScraperDate("2019-07-13"),
+	)
+	weatherscraper.Init()
+	defer weatherscraper.Close()
+	output := weatherscraper.Scrape()
+	assert.NoError(t, output.Error)
+	assert.Equal(t, 2, output.Context.Skips, "2 games with no ballpark/weather data expected on this date")
+}
+
 func TestWeatherScraper_OffDay(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")

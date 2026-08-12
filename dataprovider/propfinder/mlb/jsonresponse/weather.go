@@ -67,6 +67,8 @@ type Game struct {
 	GameDate    string         `json:"gameDate"`
 	HomeTeam    Team           `json:"homeTeam"`
 	VisitorTeam Team           `json:"visitorTeam"`
-	Ballpark    Ballpark       `json:"ballpark"`
+	// Ballpark is nil for games without venue/weather data yet (observed on
+	// historical dates alongside an empty WeatherData)
+	Ballpark    *Ballpark      `json:"ballpark"`
 	WeatherData []WeatherEntry `json:"weatherData"`
 }
