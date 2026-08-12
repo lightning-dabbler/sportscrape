@@ -25,3 +25,12 @@ repos:
     rev: v2.8.0
     hooks:
     -   id: golangci-lint
+-   repo: local
+    hooks:
+    -   id: check-readme
+        name: check README Data providers table
+        description: Fails if README.md's Data providers table is out of date with internal/catalogdocs (run `make generate-readme` to fix)
+        entry: make check-readme
+        language: system
+        pass_filenames: false
+        files: ^(catalog\.go|internal/catalogdocs/|README\.md)

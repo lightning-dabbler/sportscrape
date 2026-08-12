@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `internal/catalogdocs` as the source of truth for the README "Data providers" table, and an `internal/tools/cli readme-table` subcommand (`make generate-readme` / `make check-readme`) that renders it from `catalog.go`. A pre-commit hook now fails if the table drifts out of sync (#145)
+
+### Changed
+- Merged `AGENTS.md` and `CLAUDE.md` into a single file — `CLAUDE.md` is now a symlink to `AGENTS.md` — so the two no longer need to be edited in parallel (#145)
 
 ## [1.3.0] - 2026-08-06
 ### Added

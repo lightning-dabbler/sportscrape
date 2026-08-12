@@ -12,8 +12,8 @@ func main() {
 		Short: "Utility suite",
 		Long:  "Utility suite of subcommands for automation",
 	}
-	// Store subcommands (git, version)
-	rootCmd.AddCommand(createGitCmd(), createVersionCmd())
+	// Store subcommands (git, version, readme-table)
+	rootCmd.AddCommand(createGitCmd(), createVersionCmd(), createReadmeCmd())
 	// Execute the root command
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
