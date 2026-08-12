@@ -1,4 +1,4 @@
-# AGENTS.md
+# Repository Guidelines
 
 Guidance for AI coding assistants working in this repository.
 
@@ -100,7 +100,9 @@ MyProviderFeed Feed = Feed(string(MyProvider) + " feed name")
 ```
 Add `Deprecated()` cases if applicable. Then wire the CLI subcommand in
 `cmd/sportscrape/internal/cli/` and feed handler in
-`cmd/sportscrape/internal/feed/`.
+`cmd/sportscrape/internal/feed/`. Also add a `FeedDoc` entry to
+`internal/catalogdocs/registry.go` (source for the README "Data providers"
+table) and run `make generate-readme`.
 
 ### Pointer receivers on chromedp-based scrapers
 All scrapers that embed `BaseDocumentScraper` or `BaseScraper` must use pointer
