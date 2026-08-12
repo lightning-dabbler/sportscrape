@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Merged `AGENTS.md` and `CLAUDE.md` into a single file — `CLAUDE.md` is now a symlink to `AGENTS.md` — so the two no longer need to be edited in parallel (#145)
 
+### Fixed
+- `propfinder` MLB weather scraper (`dataprovider/propfinder/mlb`) no longer errors on games with no ballpark/weather data yet (`ballpark: null` in the API response, observed on historical dates); such games are now skipped and counted in `Context.Skips` instead of failing the whole scrape while parsing `ballpark.season` as an empty string (#146)
+
 ## [1.3.0] - 2026-08-06
 ### Added
 - `propfinder` data provider (`dataprovider/propfinder/mlb`) — MLB weather-by-game data from `api.propfinder.app`, flattening each game's hourly weather readings into one row per reading (composite key: `event_id`, `ballpark_id`, `weather_data_date_time`). Wired into the CLI as `sportscrape propfinder mlb --feed weather` (#143)
