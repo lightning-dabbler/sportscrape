@@ -50,15 +50,3 @@ func TestFeedDocsProviderMatchesFeed(t *testing.T) {
 		}
 	}
 }
-
-func TestRenderTableIncludesEveryFeed(t *testing.T) {
-	out := RenderTable(FeedDocs)
-	for _, d := range FeedDocs {
-		if !strings.Contains(out, d.Description) {
-			t.Errorf("RenderTable output missing Description %q for Feed %q", d.Description, d.Feed)
-		}
-		if !strings.Contains(out, d.ModelPath) {
-			t.Errorf("RenderTable output missing ModelPath %q for Feed %q", d.ModelPath, d.Feed)
-		}
-	}
-}

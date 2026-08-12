@@ -2,6 +2,7 @@ package catalogdocs
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -37,10 +38,19 @@ func (d FeedDoc) row() []string {
 }
 
 // RenderTable renders docs as a GitHub-flavored markdown table matching the
-// README.md "Data providers" table format.
+// README.md "Data providers" table format, with rows sorted A-Z by Feed
+// regardless of docs' input order. Since every Feed is prefixed with its
+// Provider's string (enforced by TestFeedDocsProviderMatchesFeed), this
+// also groups rows by Provider.
 func RenderTable(docs []FeedDoc) string {
-	rows := make([][]string, 0, len(docs))
-	for _, d := range docs {
+	sorted := make([]FeedDoc, len(docs))
+	copy(sorted, docs)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].Feed < sorted[j].Feed
+	})
+
+	rows := make([][]string, 0, len(sorted))
+	for _, d := range sorted {
 		rows = append(rows, d.row())
 	}
 
