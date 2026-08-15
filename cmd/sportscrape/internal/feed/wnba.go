@@ -14,7 +14,12 @@ import (
 )
 
 var (
+	// Unlike NBA's matchup-periods (a MatchupScraper-family, discovery-phase
+	// feed with no Concurrency field at all), WNBA's matchup-periods is an
+	// EventDataScraper - one box-score-page fetch per game, same as the box
+	// score/play-by-play feeds below - so it genuinely uses --concurrency.
 	WNBAConcurrencyOptions string = strings.Join([]string{
+		"'matchup-periods'",
 		"'advanced-box-score[-q1|-q2|-q3|-q4|-h1|-h2|-ot]'",
 		"'traditional-box-score[-q1|-q2|-q3|-q4|-h1|-h2|-ot]'",
 		"'scoring-box-score[-q1|-q2|-q3|-q4|-h1|-h2|-ot]'",
@@ -23,7 +28,7 @@ var (
 		"'four-factors-box-score[-q1|-q2|-q3|-q4|-h1|-h2|-ot]'",
 		"'play-by-play'",
 	}, ", ")
-	WNBAOptions string = fmt.Sprintf("'matchup', 'matchup-periods', %s", WNBAConcurrencyOptions)
+	WNBAOptions string = fmt.Sprintf("'matchup', %s", WNBAConcurrencyOptions)
 	ErrWNBA     error  = fmt.Errorf("invalid wnba.com feed, valid options: %s", WNBAOptions)
 )
 
