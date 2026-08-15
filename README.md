@@ -162,6 +162,15 @@ func main() {
 | https://www.nba.com              | NBA    | Traditional box score stats          | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_traditional.go)                     |            | ✅             |
 | https://www.nba.com              | NBA    | Usage box score stats                | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_usage.go)                           |            | ✅             |
 | https://api.propfinder.app       | MLB    | Weather                              | Full                                 | [model](dataprovider/propfinder/mlb/model/weather.go)                        |            | ✅             |
+| https://www.wnba.com             | WNBA   | Advanced box score stats             | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/wnba/model/box_score_advanced.go)                       |            | ✅             |
+| https://www.wnba.com             | WNBA   | Four factors box score stats         | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/wnba/model/box_score_four_factors.go)                   |            | ✅             |
+| https://www.wnba.com             | WNBA   | Matchup                              | Full                                 | [model](dataprovider/wnba/model/matchup.go)                                  |            | ✅             |
+| https://www.wnba.com             | WNBA   | Matchup periods                      | Full                                 | [model](dataprovider/wnba/model/matchup_periods.go)                          |            | ✅             |
+| https://www.wnba.com             | WNBA   | Misc box score stats                 | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/wnba/model/box_score_misc.go)                           |            | ✅             |
+| https://www.wnba.com             | WNBA   | Play by play                         | Full                                 | [model](dataprovider/wnba/model/play_by_play.go)                             |            | ✅             |
+| https://www.wnba.com             | WNBA   | Scoring box score stats              | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/wnba/model/box_score_scoring.go)                        |            | ✅             |
+| https://www.wnba.com             | WNBA   | Traditional box score stats          | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/wnba/model/box_score_traditional.go)                    |            | ✅             |
+| https://www.wnba.com             | WNBA   | Usage box score stats                | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/wnba/model/box_score_usage.go)                          |            | ✅             |
 <!-- DATA_PROVIDERS_TABLE_END -->
 
 ## Supported Formats

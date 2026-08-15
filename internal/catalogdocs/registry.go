@@ -268,4 +268,51 @@ var FeedDocs = []FeedDoc{
 		Description: "Play by play", Periods: "Live, Full",
 		ModelPath: "dataprovider/nba/model/play_by_play.go", PointInTime: true,
 	},
+
+	// WNBA
+	{
+		Feed: sportscrape.WNBAMatchup, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Matchup", Periods: "Full",
+		ModelPath: "dataprovider/wnba/model/matchup.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAMatchupPeriods, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Matchup periods", Periods: "Full",
+		ModelPath: "dataprovider/wnba/model/matchup_periods.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBATraditionalBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Traditional box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_traditional.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAAdvancedBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Advanced box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_advanced.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAMiscBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Misc box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_misc.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAScoringBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Scoring box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_scoring.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAUsageBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Usage box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_usage.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAFourFactorsBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Four factors box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_four_factors.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAPlayByPlay, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Play by play", Periods: "Full",
+		ModelPath: "dataprovider/wnba/model/play_by_play.go", PointInTime: true,
+	},
 }

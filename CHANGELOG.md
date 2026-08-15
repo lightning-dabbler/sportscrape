@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `wnba` data provider (`dataprovider/wnba`) — matchup discovery (`Date`, plus an optional `EndDate` for date-range queries), matchup periods, 6 period-aware box score types (Traditional, Advanced, Misc, Scoring, Usage, Four Factors), and play-by-play for wnba.com. Wired into the CLI as `sportscrape wnba --feed <feed> --date YYYY-MM-DD [--end-date YYYY-MM-DD]` (#TBD)
+
+### Changed
+- Removed a `log.Printf` in `scraper.BaseJsonScraper.HydrateModel` (`scraper/base_json_scraper.go`) that fired on every JSON hydration for any provider whose model doesn't define an optional `Raw []byte` field — currently all of them, since none use it. The underlying `setBytesField` error was already silently swallowed; only the noisy log line is removed (#TBD)
 
 ## [1.3.1] - 2026-08-11
 ### Added

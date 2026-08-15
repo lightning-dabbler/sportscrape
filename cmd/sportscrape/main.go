@@ -54,13 +54,14 @@ func main() {
 		},
 	}
 	embedLoggerFlag(rootCmd)
-	// Store subcommands (foxsports, baseballsavant, propfinder, espn, nba)
+	// Store subcommands (foxsports, baseballsavant, propfinder, espn, nba, wnba)
 	rootCmd.AddCommand(
 		cli.CreateFSCmd(),
 		cli.CreateBaseballSavantCmd(),
 		cli.CreatePropFinderCmd(),
 		cli.CreateESPNCmd(),
 		cli.CreateNBACmd(),
+		cli.CreateWNBACmd(),
 	)
 	// Execute the root command
 	if err := rootCmd.Execute(); err != nil {

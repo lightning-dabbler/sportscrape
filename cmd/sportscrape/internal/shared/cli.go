@@ -93,7 +93,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		return err
 	}
 
-	var date, year, feedstring string
+	var date, year, feedstring, endDate string
 	var timeoutDuration time.Duration
 	var fetchAttempts int
 	var fetchRetryBackoff time.Duration
@@ -125,10 +125,17 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		if err != nil {
 			return err
 		}
+		if provider == "wnba" {
+			// --end-date
+			endDate, err = cmd.Flags().GetString("end-date")
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	switch provider {
-	case "espn", "nba":
+	case "espn", "nba", "wnba":
 		// --timeout
 		timeout, err := cmd.Flags().GetInt("timeout")
 		if err != nil {
@@ -215,6 +222,18 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		e = &feed.NBAExtractor{
 			Feed:           feedstring,
 			Date:           date,
+			Timeout:        timeoutDuration,
+			Concurrency:    concurrency,
+			OutputPath:     destination,
+			Format:         fileFormat,
+			S3Config:       s3config,
+			ParquetOptions: parquetOptions,
+		}
+	case "wnba":
+		e = &feed.WNBAExtractor{
+			Feed:           feedstring,
+			Date:           date,
+			EndDate:        endDate,
 			Timeout:        timeoutDuration,
 			Concurrency:    concurrency,
 			OutputPath:     destination,
