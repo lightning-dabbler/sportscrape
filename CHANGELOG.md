@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.4.0] - 2026-08-16
 ### Added
 - `wnba` data provider (`dataprovider/wnba`) — matchup discovery (`Date`, plus an optional `EndDate` for date-range queries), matchup periods, 6 period-aware box score types (Traditional, Advanced, Misc, Scoring, Usage, Four Factors), and play-by-play for wnba.com. Wired into the CLI as `sportscrape wnba --feed <feed> --date YYYY-MM-DD [--end-date YYYY-MM-DD]` (#148)
 
