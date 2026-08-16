@@ -23,6 +23,7 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 | `sportscrape foxsports` | `mlb`, `nba`, `wnba` | foxsports.com |
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
+| `sportscrape wnba` | | wnba.com |
 
 Run `sportscrape <command> --help` for feeds, flags, and defaults per provider.
 
@@ -114,55 +115,11 @@ func main() {
 - [propfinder scraping examples](dataprovider/propfinder/mlb/example_test.go)
 - [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
 - [nba.com NBA scraping examples](dataprovider/nba/example_test.go)
+- [wnba.com WNBA scraping examples](dataprovider/wnba/example_test.go)
 
 ## Data providers
 
-<!-- DATA_PROVIDERS_TABLE_START -->
-| Source                           | League | Feed                                 | Periods Available                    | Data Model                                                                   | Deprecated | Point-in-time |
-|--------------------------------|------|------------------------------------|:----------------------------------:|:--------------------------------------------------------------------------:|:--------:|:-----------:|
-| https://baseball-reference.com   | MLB    | Batting box score stats              | Full                                 | [model](dataprovider/baseballreferencemlb/model/batting_box_score_stats.go)  | 🚩          | ✅             |
-| https://baseball-reference.com   | MLB    | Matchup                              | Full                                 | [model](dataprovider/baseballreferencemlb/model/matchup.go)                  | 🚩          | ✅             |
-| https://baseball-reference.com   | MLB    | Pitching box score stats             | Full                                 | [model](dataprovider/baseballreferencemlb/model/pitching_box_score_stats.go) | 🚩          | ✅             |
-| https://baseballsavant.mlb.com   | MLB    | Batting box score stats              | Live, Full                           | [model](dataprovider/baseballsavantmlb/model/batting_box_score.go)           |            | ✅             |
-| https://baseballsavant.mlb.com   | MLB    | Fielding box score stats             | Live, Full                           | [model](dataprovider/baseballsavantmlb/model/fielding_box_score.go)          |            | ✅             |
-| https://baseballsavant.mlb.com   | MLB    | Matchup                              | Live, Full                           | [model](dataprovider/baseballsavantmlb/model/matchup.go)                     |            | ✅             |
-| https://baseballsavant.mlb.com   | MLB    | Pitching box score stats             | Live, Full                           | [model](dataprovider/baseballsavantmlb/model/pitching_box_score.go)          |            | ✅             |
-| https://baseballsavant.mlb.com   | MLB    | Play by play                         | Live, Full                           | [model](dataprovider/baseballsavantmlb/model/play_by_play.go)                |            | ✅             |
-| https://basketball-reference.com | NBA    | Advanced box score stats             | Full                                 | [model](dataprovider/basketballreferencenba/model/adv_box_score_stats.go)    | 🚩          | ✅             |
-| https://basketball-reference.com | NBA    | Basic box score stats                | H1, H2, Q1, Q2, Q3, Q4, Full         | [model](dataprovider/basketballreferencenba/model/basic_box_score_stats.go)  | 🚩          | ✅             |
-| https://basketball-reference.com | NBA    | Matchup                              | Full                                 | [model](dataprovider/basketballreferencenba/model/matchup.go)                | 🚩          | ✅             |
-| https://www.espn.com/mma/        | PFL    | Fight details (Stats, Odds, Results) | Full                                 | [model](dataprovider/espn/mma/model/fightdetails.go)                         | 🚩          | ✅             |
-| https://www.espn.com/mma/        | PFL    | Matchups (Event Details)             | Full                                 | [model](dataprovider/espn/mma/model/matchup.go)                              | 🚩          | ✅             |
-| https://www.espn.com/mma/        | UFC    | Fight details (Stats, Odds, Results) | Full                                 | [model](dataprovider/espn/mma/model/fightdetails.go)                         |            | ✅             |
-| https://www.espn.com/mma/        | UFC    | Matchups (Event Details)             | Full                                 | [model](dataprovider/espn/mma/model/matchup.go)                              |            | ✅             |
-| https://www.foxsports.com        | MLB    | Batting box score stats              | Live, Full                           | [model](dataprovider/foxsports/model/mlb_batting_box_score_stats.go)         |            | ✅             |
-| https://www.foxsports.com        | MLB    | Matchup                              | Live, Full                           | [model](dataprovider/foxsports/model/matchup.go)                             |            | ✅             |
-| https://www.foxsports.com        | MLB    | Betting odds money line              | Full                                 | [model](dataprovider/foxsports/model/mlb_odds_money_line.go)                 |            | ✅             |
-| https://www.foxsports.com        | MLB    | Betting odds total                   | Full                                 | [model](dataprovider/foxsports/model/mlb_odds_total.go)                      |            | ✅             |
-| https://www.foxsports.com        | MLB    | Pitching box score stats             | Live, Full                           | [model](dataprovider/foxsports/model/mlb_pitching_box_score_stats.go)        |            | ✅             |
-| https://www.foxsports.com        | MLB    | Probable starting pitcher            | Full                                 | [model](dataprovider/foxsports/model/mlb_probable_starting_pitcher.go)       |            | ✅             |
-| https://www.foxsports.com        | NBA    | Box score stats                      | Live, Full                           | [model](dataprovider/foxsports/model/nba_box_score_stats.go)                 |            | ✅             |
-| https://www.foxsports.com        | NBA    | Matchup                              | Live, Full                           | [model](dataprovider/foxsports/model/matchup.go)                             |            | ✅             |
-| https://www.foxsports.com        | NCAAB  | Matchup                              | Live, Full                           | [model](dataprovider/foxsports/model/matchup.go)                             |            | ✅             |
-| https://www.foxsports.com        | NFL    | Matchup                              | Live, Full                           | [model](dataprovider/foxsports/model/matchup.go)                             |            | ✅             |
-| https://www.foxsports.com        | WNBA   | Box score stats                      | Live, Full                           | [model](dataprovider/foxsports/model/nba_box_score_stats.go)                 |            | ✅             |
-| https://www.foxsports.com        | WNBA   | Matchup                              | Live, Full                           | [model](dataprovider/foxsports/model/matchup.go)                             |            | ✅             |
-| https://www.nba.com              | NBA    | Advanced box score stats             | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_advanced.go)                        |            | ✅             |
-| https://www.nba.com              | NBA    | Defense box score stats              | Full                                 | [model](dataprovider/nba/model/box_score_defense.go)                         |            | ✅             |
-| https://www.nba.com              | NBA    | Four factors box score stats         | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_four_factors.go)                    |            | ✅             |
-| https://www.nba.com              | NBA    | Hustle box score stats               | Full                                 | [model](dataprovider/nba/model/box_score_hustle.go)                          |            | ✅             |
-| https://www.nba.com              | NBA    | Live box score stats                 | Live                                 | [model](dataprovider/nba/model/box_score_live.go)                            |            | ✅             |
-| https://www.nba.com              | NBA    | Matchup                              | Live, Full                           | [model](dataprovider/nba/model/matchup.go)                                   |            | ✅             |
-| https://www.nba.com              | NBA    | Matchup periods                      | Live, Full                           | [model](dataprovider/nba/model/matchup_periods.go)                           |            | ✅             |
-| https://www.nba.com              | NBA    | Matchups box score stats             | Full                                 | [model](dataprovider/nba/model/box_score_matchups.go)                        |            | ✅             |
-| https://www.nba.com              | NBA    | Misc box score stats                 | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_misc.go)                            |            | ✅             |
-| https://www.nba.com              | NBA    | Play by play                         | Live, Full                           | [model](dataprovider/nba/model/play_by_play.go)                              |            | ✅             |
-| https://www.nba.com              | NBA    | Scoring box score stats              | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_scoring.go)                         |            | ✅             |
-| https://www.nba.com              | NBA    | Tracking box score stats             | Full                                 | [model](dataprovider/nba/model/box_score_tracking.go)                        |            | ✅             |
-| https://www.nba.com              | NBA    | Traditional box score stats          | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_traditional.go)                     |            | ✅             |
-| https://www.nba.com              | NBA    | Usage box score stats                | Q1, Q2, Q3, Q4, H1, H2, All OT, Full | [model](dataprovider/nba/model/box_score_usage.go)                           |            | ✅             |
-| https://api.propfinder.app       | MLB    | Weather                              | Full                                 | [model](dataprovider/propfinder/mlb/model/weather.go)                        |            | ✅             |
-<!-- DATA_PROVIDERS_TABLE_END -->
+See [docs/DATA_PROVIDERS.md](docs/DATA_PROVIDERS.md) for the full list of supported providers, feeds, and their data models.
 
 ## Supported Formats
 File formats the constructed data models support on export and import.

@@ -101,8 +101,8 @@ MyProviderFeed Feed = Feed(string(MyProvider) + " feed name")
 Add `Deprecated()` cases if applicable. Then wire the CLI subcommand in
 `cmd/sportscrape/internal/cli/` and feed handler in
 `cmd/sportscrape/internal/feed/`. Also add a `FeedDoc` entry to
-`internal/catalogdocs/registry.go` (source for the README "Data providers"
-table) and run `make generate-readme`.
+`internal/catalogdocs/registry.go` (source for the `docs/DATA_PROVIDERS.md`
+"Data providers" table) and run `make generate-data-providers-table`.
 
 ### Pointer receivers on chromedp-based scrapers
 All scrapers that embed `BaseDocumentScraper` or `BaseScraper` must use pointer

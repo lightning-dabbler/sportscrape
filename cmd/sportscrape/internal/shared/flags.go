@@ -30,6 +30,10 @@ func EmbedDateFlag(cmd *cobra.Command) {
 	cmd.Flags().String("date", "", "YYYY-MM-DD date to extract.")
 }
 
+func EmbedEndDateFlag(cmd *cobra.Command) {
+	cmd.Flags().String("end-date", "", "YYYY-MM-DD optional end date for a date range (WNBA only, applies to every feed).")
+}
+
 func EmbedFetchRetryFlags(cmd *cobra.Command) {
 	cmd.Flags().Int("fetch-attempts", 3, "Max number of times to fetch a page before giving up (retries on bot-check interstitials).")
 	cmd.Flags().Int("fetch-retry-backoff", 3, "Delay (in seconds) between fetch retry attempts.")

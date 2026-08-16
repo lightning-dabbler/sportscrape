@@ -1,0 +1,221 @@
+package wnba
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/lightning-dabbler/sportscrape"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/wnba/jsonresponse"
+	"github.com/lightning-dabbler/sportscrape/dataprovider/wnba/model"
+	"github.com/lightning-dabbler/sportscrape/util"
+	"github.com/xitongsys/parquet-go/types"
+)
+
+// BoxScoreMiscScraperOption defines a configuration option for BoxScoreMiscScraper
+type BoxScoreMiscScraperOption func(*BoxScoreMiscScraper)
+
+// WithBoxScoreMiscPeriod sets the period for box score misc scraper
+func WithBoxScoreMiscPeriod(period Period) BoxScoreMiscScraperOption {
+	return func(bs *BoxScoreMiscScraper) {
+		bs.Period = period
+	}
+}
+
+// WithBoxScoreMiscTimeout sets the timeout duration for box score misc scraper
+func WithBoxScoreMiscTimeout(timeout time.Duration) BoxScoreMiscScraperOption {
+	return func(bs *BoxScoreMiscScraper) {
+		bs.Timeout = timeout
+	}
+}
+
+// WithBoxScoreMiscDebug enables or disables debug mode for box score misc scraper
+func WithBoxScoreMiscDebug(debug bool) BoxScoreMiscScraperOption {
+	return func(bs *BoxScoreMiscScraper) {
+		bs.Debug = debug
+	}
+}
+
+// NewBoxScoreMiscScraper creates a new BoxScoreMiscScraper with the provided options
+func NewBoxScoreMiscScraper(options ...BoxScoreMiscScraperOption) *BoxScoreMiscScraper {
+	bs := &BoxScoreMiscScraper{}
+
+	// Apply all options
+	for _, option := range options {
+		option(bs)
+	}
+
+	return bs
+}
+
+type BoxScoreMiscScraper struct {
+	BaseEventDataScraper
+}
+
+func (bs *BoxScoreMiscScraper) Init() {
+	// FeedType is BoxScore
+	bs.FeedType = BoxScore
+	// BoxScoreType is Misc
+	bs.BoxScoreType = Misc
+	// Base validations
+	bs.BaseEventDataScraper.Init()
+}
+func (bs *BoxScoreMiscScraper) Feed() sportscrape.Feed {
+	switch bs.Period {
+	case Q1:
+		return sportscrape.WNBAMiscBoxScoreQ1
+	case Q2:
+		return sportscrape.WNBAMiscBoxScoreQ2
+	case Q3:
+		return sportscrape.WNBAMiscBoxScoreQ3
+	case Q4:
+		return sportscrape.WNBAMiscBoxScoreQ4
+	case H1:
+		return sportscrape.WNBAMiscBoxScoreH1
+	case H2:
+		return sportscrape.WNBAMiscBoxScoreH2
+	case AllOT:
+		return sportscrape.WNBAMiscBoxScoreOT
+	case Full:
+		return sportscrape.WNBAMiscBoxScore
+	default:
+		return sportscrape.WNBAMiscBoxScore
+	}
+}
+
+func (bs *BoxScoreMiscScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.BoxScoreMisc] {
+	start := time.Now().UTC()
+	context := bs.ConstructContext(matchup)
+	url, err := bs.URL(matchup.ShareURL)
+	if err != nil {
+		return sportscrape.EventDataOutput[model.BoxScoreMisc]{Error: err, Context: context}
+	}
+	context.URL = url
+	pullTimestamp := time.Now().UTC()
+	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
+	context.PullTimestamp = pullTimestamp
+	doc, err := bs.FetchDoc(url, Selector)
+	if err != nil {
+		return sportscrape.EventDataOutput[model.BoxScoreMisc]{Error: err, Context: context}
+	}
+	jsonstr := doc.Find(Selector).Text()
+	var jsonPayload jsonresponse.BoxScoreMiscJSON
+	var data []model.BoxScoreMisc
+
+	err = json.Unmarshal([]byte(jsonstr), &jsonPayload)
+	if err != nil {
+		return sportscrape.EventDataOutput[model.BoxScoreMisc]{Error: err, Context: context}
+	}
+
+	// In an OT case and number of periods aren't aligned with expected count, return
+	if bs.Period == AllOT && jsonPayload.Props.PageProps.Game.Period <= 4 {
+		return sportscrape.EventDataOutput[model.BoxScoreMisc]{Context: context}
+	}
+
+	// Check period matches with response payload data
+	if !bs.PeriodBasedBoxScoreDataAvailable(jsonPayload.Props.PageProps.Game.Period, jsonPayload.Props.PageProps.Game.GameStatus) {
+		return sportscrape.EventDataOutput[model.BoxScoreMisc]{Context: context}
+	}
+
+	homeTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.HomeTeam.TeamCity, jsonPayload.Props.PageProps.Game.HomeTeam.TeamName)
+	awayTeamFull := fmt.Sprintf("%s %s", jsonPayload.Props.PageProps.Game.AwayTeam.TeamCity, jsonPayload.Props.PageProps.Game.AwayTeam.TeamName)
+
+	for _, stats := range jsonPayload.Props.PageProps.Game.HomeTeam.Players {
+		var starter bool
+		if stats.Position != "" {
+			starter = true
+		}
+		player := fmt.Sprintf("%s %s", stats.FirstName, stats.FamilyName)
+		boxscore := model.BoxScoreMisc{
+			PullTimestamp:         pullTimestamp,
+			PullTimestampParquet:  pullTimestampParquet,
+			EventID:               matchup.EventID,
+			EventTime:             matchup.EventTime,
+			EventTimeParquet:      matchup.EventTimeParquet,
+			EventStatus:           matchup.EventStatus,
+			EventStatusText:       matchup.EventStatusText,
+			TeamID:                matchup.HomeTeamID,
+			TeamName:              matchup.HomeTeam,
+			TeamNameFull:          homeTeamFull,
+			OpponentID:            matchup.AwayTeamID,
+			OpponentName:          matchup.AwayTeam,
+			OpponentNameFull:      awayTeamFull,
+			PlayerID:              stats.PersonID,
+			PlayerName:            player,
+			Position:              stats.Position,
+			Starter:               starter,
+			PointsOffTurnovers:    stats.Statistics.PointsOffTurnovers,
+			PointsSecondChance:    stats.Statistics.PointsSecondChance,
+			PointsFastBreak:       stats.Statistics.PointsFastBreak,
+			PointsPaint:           stats.Statistics.PointsPaint,
+			OppPointsOffTurnovers: stats.Statistics.OppPointsOffTurnovers,
+			OppPointsSecondChance: stats.Statistics.OppPointsSecondChance,
+			OppPointsFastBreak:    stats.Statistics.OppPointsFastBreak,
+			OppPointsPaint:        stats.Statistics.OppPointsPaint,
+			Blocks:                stats.Statistics.Blocks,
+			BlocksAgainst:         stats.Statistics.BlocksAgainst,
+			FoulsPersonal:         stats.Statistics.FoulsPersonal,
+			FoulsDrawn:            stats.Statistics.FoulsDrawn,
+		}
+		if stats.Statistics.Minutes != "" {
+			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
+			if err != nil {
+				return sportscrape.EventDataOutput[model.BoxScoreMisc]{Error: err, Context: context}
+			}
+			boxscore.Minutes = minutes
+		}
+		data = append(data, boxscore)
+	}
+
+	for _, stats := range jsonPayload.Props.PageProps.Game.AwayTeam.Players {
+		var starter bool
+		if stats.Position != "" {
+			starter = true
+		}
+		player := fmt.Sprintf("%s %s", stats.FirstName, stats.FamilyName)
+		boxscore := model.BoxScoreMisc{
+			PullTimestamp:         pullTimestamp,
+			PullTimestampParquet:  pullTimestampParquet,
+			EventID:               matchup.EventID,
+			EventTime:             matchup.EventTime,
+			EventTimeParquet:      matchup.EventTimeParquet,
+			EventStatus:           matchup.EventStatus,
+			EventStatusText:       matchup.EventStatusText,
+			TeamID:                matchup.AwayTeamID,
+			TeamName:              matchup.AwayTeam,
+			TeamNameFull:          awayTeamFull,
+			OpponentID:            matchup.HomeTeamID,
+			OpponentName:          matchup.HomeTeam,
+			OpponentNameFull:      homeTeamFull,
+			PlayerID:              stats.PersonID,
+			PlayerName:            player,
+			Position:              stats.Position,
+			Starter:               starter,
+			PointsOffTurnovers:    stats.Statistics.PointsOffTurnovers,
+			PointsSecondChance:    stats.Statistics.PointsSecondChance,
+			PointsFastBreak:       stats.Statistics.PointsFastBreak,
+			PointsPaint:           stats.Statistics.PointsPaint,
+			OppPointsOffTurnovers: stats.Statistics.OppPointsOffTurnovers,
+			OppPointsSecondChance: stats.Statistics.OppPointsSecondChance,
+			OppPointsFastBreak:    stats.Statistics.OppPointsFastBreak,
+			OppPointsPaint:        stats.Statistics.OppPointsPaint,
+			Blocks:                stats.Statistics.Blocks,
+			BlocksAgainst:         stats.Statistics.BlocksAgainst,
+			FoulsPersonal:         stats.Statistics.FoulsPersonal,
+			FoulsDrawn:            stats.Statistics.FoulsDrawn,
+		}
+		if stats.Statistics.Minutes != "" {
+			minutes, err := util.TransformMinutesPlayed(stats.Statistics.Minutes)
+			if err != nil {
+				return sportscrape.EventDataOutput[model.BoxScoreMisc]{Error: err, Context: context}
+			}
+			boxscore.Minutes = minutes
+		}
+		data = append(data, boxscore)
+	}
+
+	diff := time.Now().UTC().Sub(start)
+	log.Printf("Scraping of event %s (%s vs %s) completed in %s\n", context.EventID, context.AwayTeam, context.HomeTeam, diff)
+	return sportscrape.EventDataOutput[model.BoxScoreMisc]{Context: context, Output: data}
+}

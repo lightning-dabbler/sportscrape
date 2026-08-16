@@ -1,0 +1,69 @@
+//go:build unit
+
+package cli
+
+import (
+	"testing"
+)
+
+func TestCreateWNBACmd(t *testing.T) {
+	cmd := CreateWNBACmd()
+
+	t.Run("command metadata", func(t *testing.T) {
+		if cmd.Use != "wnba" {
+			t.Errorf("Use = %q, want %q", cmd.Use, "wnba")
+		}
+	})
+
+	t.Run("required flags exist", func(t *testing.T) {
+		flags := []string{
+			"feed",
+			"date",
+			"end-date",
+			"concurrency",
+			"timeout",
+			"destination",
+			"file-format",
+			"parquet-compression",
+			"parquet-row-group-size",
+			"parquet-page-size",
+			"parquet-write-parallelism",
+			"aws-region",
+			"aws-endpoint",
+		}
+		for _, flag := range flags {
+			if cmd.Flags().Lookup(flag) == nil {
+				t.Errorf("expected flag --%s to be registered", flag)
+			}
+		}
+	})
+
+	t.Run("flag defaults", func(t *testing.T) {
+		cases := []struct {
+			flag string
+			want string
+		}{
+			{"concurrency", "1"},
+			{"timeout", "120"},
+			{"file-format", "jsonl"},
+			{"parquet-compression", "SNAPPY"},
+			{"parquet-row-group-size", "134217728"},
+			{"parquet-page-size", "8192"},
+			{"parquet-write-parallelism", "1"},
+			{"aws-region", "us-east-1"},
+			{"aws-endpoint", ""},
+			{"destination", ""},
+			{"date", ""},
+			{"end-date", ""},
+			{"feed", ""},
+		}
+		for _, tc := range cases {
+			t.Run(tc.flag, func(t *testing.T) {
+				got := cmd.Flags().Lookup(tc.flag).DefValue
+				if got != tc.want {
+					t.Errorf("flag --%s default = %q, want %q", tc.flag, got, tc.want)
+				}
+			})
+		}
+	})
+}

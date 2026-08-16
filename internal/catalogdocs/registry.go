@@ -1,5 +1,5 @@
-// Package catalogdocs is the single source of truth for the README.md
-// "Data providers" table. It exists so that table can be generated instead
+// Package catalogdocs is the single source of truth for the
+// docs/DATA_PROVIDERS.md "Data providers" table. It exists so that table can be generated instead
 // of hand-maintained: each FeedDoc references a real sportscrape.Feed
 // constant (so a renamed/removed feed fails the build here, not silently
 // in stale markdown), and Deprecated is derived from Feed.Deprecated()
@@ -12,7 +12,7 @@ package catalogdocs
 
 import "github.com/lightning-dabbler/sportscrape"
 
-// FeedDoc is one row of the README "Data providers" table.
+// FeedDoc is one row of the docs/DATA_PROVIDERS.md "Data providers" table.
 type FeedDoc struct {
 	// Feed is the real catalog.go constant this row documents.
 	Feed sportscrape.Feed
@@ -42,7 +42,7 @@ func (d FeedDoc) Deprecated() bool {
 	return d.Feed.Deprecated()
 }
 
-// FeedDocs is the ordered list backing the README "Data providers" table.
+// FeedDocs is the ordered list backing the docs/DATA_PROVIDERS.md "Data providers" table.
 // Order matches catalog.go's declaration order.
 var FeedDocs = []FeedDoc{
 	// basketball reference
@@ -267,5 +267,52 @@ var FeedDocs = []FeedDoc{
 		Feed: sportscrape.NBAPlayByPlay, Provider: sportscrape.NBA, Source: "https://www.nba.com", League: "NBA",
 		Description: "Play by play", Periods: "Live, Full",
 		ModelPath: "dataprovider/nba/model/play_by_play.go", PointInTime: true,
+	},
+
+	// WNBA
+	{
+		Feed: sportscrape.WNBAMatchup, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Matchup", Periods: "Full",
+		ModelPath: "dataprovider/wnba/model/matchup.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAMatchupPeriods, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Matchup periods", Periods: "Full",
+		ModelPath: "dataprovider/wnba/model/matchup_periods.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBATraditionalBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Traditional box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_traditional.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAAdvancedBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Advanced box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_advanced.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAMiscBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Misc box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_misc.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAScoringBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Scoring box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_scoring.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAUsageBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Usage box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_usage.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAFourFactorsBoxScore, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Four factors box score stats", Periods: "Q1, Q2, Q3, Q4, H1, H2, All OT, Full",
+		ModelPath: "dataprovider/wnba/model/box_score_four_factors.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.WNBAPlayByPlay, Provider: sportscrape.WNBA, Source: "https://www.wnba.com", League: "WNBA",
+		Description: "Play by play", Periods: "Full",
+		ModelPath: "dataprovider/wnba/model/play_by_play.go", PointInTime: true,
 	},
 }
