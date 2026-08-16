@@ -17,7 +17,7 @@ var columnsAlignedCenter = map[string]bool{
 	"Point-in-time":     true,
 }
 
-func (d FeedDoc) row() []string {
+func (d FeedDoc) row(linkPrefix string) []string {
 	deprecated := ""
 	if d.Deprecated() {
 		deprecated = "🚩"
@@ -31,18 +31,24 @@ func (d FeedDoc) row() []string {
 		d.League,
 		d.Description,
 		d.Periods,
-		fmt.Sprintf("[model](%s)", d.ModelPath),
+		fmt.Sprintf("[model](%s%s)", linkPrefix, d.ModelPath),
 		deprecated,
 		pointInTime,
 	}
 }
 
-// RenderTable renders docs as a GitHub-flavored markdown table matching the
-// README.md "Data providers" table format, with rows sorted A-Z by Feed
-// regardless of docs' input order. Since every Feed is prefixed with its
-// Provider's string (enforced by TestFeedDocsProviderMatchesFeed), this
-// also groups rows by Provider.
-func RenderTable(docs []FeedDoc) string {
+// RenderTable renders docs as a GitHub-flavored markdown table, with rows
+// sorted A-Z by Feed regardless of docs' input order. Since every Feed is
+// prefixed with its Provider's string (enforced by
+// TestFeedDocsProviderMatchesFeed), this also groups rows by Provider.
+//
+// linkPrefix is prepended to each row's ModelPath (which is always
+// repo-root-relative) to build its Data Model link - GitHub-flavored
+// markdown relative links resolve against the file they're rendered into,
+// not the repo root, so a target file living outside the repo root needs a
+// prefix (e.g. "../") to still resolve correctly. Pass "" when rendering
+// into a file at the repo root.
+func RenderTable(docs []FeedDoc, linkPrefix string) string {
 	sorted := make([]FeedDoc, len(docs))
 	copy(sorted, docs)
 	sort.SliceStable(sorted, func(i, j int) bool {
@@ -51,7 +57,7 @@ func RenderTable(docs []FeedDoc) string {
 
 	rows := make([][]string, 0, len(sorted))
 	for _, d := range sorted {
-		rows = append(rows, d.row())
+		rows = append(rows, d.row(linkPrefix))
 	}
 
 	widths := make([]int, len(tableHeaders))

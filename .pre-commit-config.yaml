@@ -28,9 +28,9 @@ repos:
 -   repo: local
     hooks:
     -   id: check-readme
-        name: check README Data providers table
-        description: Fails if README.md's Data providers table is out of date with internal/catalogdocs (run `make generate-readme` to fix)
+        name: check Data providers table
+        description: Fails if docs/DATA_PROVIDERS.md's table is out of date with internal/catalogdocs (run `make generate-readme` to fix)
         entry: make check-readme
         language: system
         pass_filenames: false
-        files: ^(catalog\.go|internal/catalogdocs/|README\.md)
+        files: ^(catalog\.go|internal/catalogdocs/|docs/DATA_PROVIDERS\.md)

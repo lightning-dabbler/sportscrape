@@ -1,5 +1,5 @@
-// Package catalogdocs is the single source of truth for the README.md
-// "Data providers" table. It exists so that table can be generated instead
+// Package catalogdocs is the single source of truth for the
+// docs/DATA_PROVIDERS.md "Data providers" table. It exists so that table can be generated instead
 // of hand-maintained: each FeedDoc references a real sportscrape.Feed
 // constant (so a renamed/removed feed fails the build here, not silently
 // in stale markdown), and Deprecated is derived from Feed.Deprecated()
