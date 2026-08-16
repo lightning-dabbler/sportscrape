@@ -36,11 +36,11 @@ all-tests: # Run all tests regardless of tags
 build-tools: # Compile binary for tools
 	go build -v -o bin/tools internal/tools/cli/*.go
 
-generate-readme: # Regenerate the README Data providers table from internal/catalogdocs
-	go run internal/tools/cli/*.go readme-table
+generate-data-providers-table: # Regenerate the Data providers table (docs/DATA_PROVIDERS.md) from internal/catalogdocs
+	go run internal/tools/cli/*.go data-providers-table --target docs/DATA_PROVIDERS.md
 
-check-readme: # Check the README Data providers table is up to date with internal/catalogdocs
-	go run internal/tools/cli/*.go readme-table --check
+check-data-providers-table: # Check the Data providers table (docs/DATA_PROVIDERS.md) is up to date with internal/catalogdocs
+	go run internal/tools/cli/*.go data-providers-table --target docs/DATA_PROVIDERS.md --check
 
 build-sportscrape: # Compile binary for sportscrape
 	go build -o bin/sportscrape ./cmd/sportscrape

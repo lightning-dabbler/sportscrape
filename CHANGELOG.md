@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-08-16
+### Added
+- `wnba` data provider (`dataprovider/wnba`) — matchup discovery (`Date`, plus an optional `EndDate` for date-range queries), matchup periods, 6 period-aware box score types (Traditional, Advanced, Misc, Scoring, Usage, Four Factors), and play-by-play for wnba.com. Wired into the CLI as `sportscrape wnba --feed <feed> --date YYYY-MM-DD [--end-date YYYY-MM-DD]` (#148)
+
+### Changed
+- Removed a `log.Printf` in `scraper.BaseJsonScraper.HydrateModel` (`scraper/base_json_scraper.go`) that fired on every JSON hydration for any provider whose model doesn't define an optional `Raw []byte` field — currently all of them, since none use it. The underlying `setBytesField` error was already silently swallowed; only the noisy log line is removed (#148)
+- Moved the "Data providers" table out of `README.md` into `docs/DATA_PROVIDERS.md`, linked from README, to keep README from growing with every new provider/feed; renamed the generating tool and `make` targets to match (`readme-table` → `data-providers-table`, `generate-readme`/`check-readme` → `generate-data-providers-table`/`check-data-providers-table`) (#148)
+
+### Documentation
+- Added `wnba` to README's `### Commands` table and `### Usage` examples list — it was added to the "Data providers" table (auto-generated) (#148)
+
 ## [1.3.1] - 2026-08-11
 ### Added
 - `internal/catalogdocs` as the source of truth for the README "Data providers" table, and an `internal/tools/cli readme-table` subcommand (`make generate-readme` / `make check-readme`) that renders it from `catalog.go`. A pre-commit hook now fails if the table drifts out of sync (#145)

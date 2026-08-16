@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"reflect"
 
 	"github.com/lightning-dabbler/sportscrape/util/request"
@@ -43,9 +42,7 @@ func (s BaseJsonScraper[T]) HydrateModel(payload []byte) (*T, error) {
 		return nil, err
 	}
 
-	if err := setBytesField(&model, "Raw", payload); err != nil {
-		log.Printf("Error setting Raw field: %v\n", err)
-	}
+	_ = setBytesField(&model, "Raw", payload)
 
 	return &model, nil
 }
