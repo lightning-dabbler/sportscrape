@@ -6,8 +6,8 @@ package jsonresponse
 // any `date` query param (which the API silently ignores).
 type MatchupJSON struct {
 	LeagueSchedule struct {
-		SeasonYear string `json:"seasonYear"` // "2026"
-		LeagueID   string `json:"leagueId"`   // "10"
+		SeasonYear int32  `json:"seasonYear,string"` // "2026"
+		LeagueID   string `json:"leagueId"`          // "10"
 		GameDates  []struct {
 			GameDate string         `json:"gameDate"` // "08/03/2026 00:00:00"
 			Games    []ScheduleGame `json:"games"`

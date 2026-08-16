@@ -47,7 +47,7 @@ type Matchup struct {
 	// SeasonType (e.g. "Regular Season")
 	SeasonType string `json:"season_type" parquet:"name=season_type, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// SeasonYear (e.g 2026)
-	SeasonYear string `json:"season_year" parquet:"name=season_year, type=BYTE_ARRAY, convertedtype=UTF8"`
+	SeasonYear int32 `json:"season_year" parquet:"name=season_year, type=INT32"`
 	// LeagueID
 	LeagueID string `json:"league_id" parquet:"name=league_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 }

@@ -132,7 +132,7 @@ func TestMatchupScraper(t *testing.T) {
 	assert.Equal(t, int32(12), found.HomeTeamLosses)
 	assert.Equal(t, "https://www.wnba.com/game/dal-vs-ind-1022600254", found.ShareURL)
 	assert.Equal(t, "Regular Season", found.SeasonType)
-	assert.Equal(t, "2026", found.SeasonYear)
+	assert.Equal(t, int32(2026), found.SeasonYear)
 	assert.Equal(t, "10", found.LeagueID)
 }
 

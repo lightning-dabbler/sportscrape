@@ -83,6 +83,6 @@ func TestMatchupPeriodsScraper(t *testing.T) {
 	assert.Equal(t, int32(15), q1.AwayTeamScore)
 	assert.Equal(t, int32(17), q1.HomeTeamScore)
 	assert.Equal(t, "Regular Season", q1.SeasonType)
-	assert.Equal(t, "2026", q1.SeasonYear)
+	assert.Equal(t, int32(2026), q1.SeasonYear)
 	assert.Equal(t, "10", q1.LeagueID)
 }
