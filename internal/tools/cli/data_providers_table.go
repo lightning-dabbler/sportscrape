@@ -19,15 +19,15 @@ var dataProvidersTableRe = regexp.MustCompile(
 	regexp.QuoteMeta(dataProvidersTableStart) + `(?s).*?` + regexp.QuoteMeta(dataProvidersTableEnd),
 )
 
-// createReadmeCmd creates the readme-table subcommand
-// Returns the readme-table Command object
-func createReadmeCmd() *cobra.Command {
+// createDataProvidersTableCmd creates the data-providers-table subcommand
+// Returns the data-providers-table Command object
+func createDataProvidersTableCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "readme-table",
+		Use:   "data-providers-table",
 		Short: "Generate or check the Data providers table",
-		Long:  "Regenerates the Data providers table (see --readme) from internal/catalogdocs, or checks (--check) that it's already up to date without writing.",
+		Long:  "Regenerates the Data providers table (see --target) from internal/catalogdocs, or checks (--check) that it's already up to date without writing.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			readmePath, err := cmd.Flags().GetString("readme")
+			targetPath, err := cmd.Flags().GetString("target")
 			if err != nil {
 				return err
 			}
@@ -35,27 +35,27 @@ func createReadmeCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return runReadmeTable(readmePath, check)
+			return runDataProvidersTable(targetPath, check)
 		},
 		SilenceUsage: true,
 	}
-	cmd.Flags().String("readme", "README.md", "Path to the markdown file containing the DATA_PROVIDERS_TABLE_START/END markers")
+	cmd.Flags().String("target", "docs/DATA_PROVIDERS.md", "Path to the markdown file containing the DATA_PROVIDERS_TABLE_START/END markers")
 	cmd.Flags().Bool("check", false, "Check the table is up to date instead of writing changes; exits non-zero on drift")
 	return cmd
 }
 
-func runReadmeTable(readmePath string, check bool) error {
-	original, err := os.ReadFile(readmePath)
+func runDataProvidersTable(targetPath string, check bool) error {
+	original, err := os.ReadFile(targetPath)
 	if err != nil {
 		return err
 	}
 
 	// ModelPath (in internal/catalogdocs/registry.go) is always repo-root-relative,
 	// but GitHub-flavored markdown relative links resolve against the file
-	// they're rendered into. Compute how far readmePath's directory sits from
+	// they're rendered into. Compute how far targetPath's directory sits from
 	// the repo root so links still resolve when the target isn't at the root
 	// (e.g. docs/DATA_PROVIDERS.md needs a "../" prefix; README.md needs none).
-	linkPrefix, err := filepath.Rel(filepath.Dir(readmePath), ".")
+	linkPrefix, err := filepath.Rel(filepath.Dir(targetPath), ".")
 	if err != nil {
 		return err
 	}
@@ -72,22 +72,22 @@ func runReadmeTable(readmePath string, check bool) error {
 	replacement := dataProvidersTableStart + "\n" + table + "\n" + dataProvidersTableEnd
 
 	if !dataProvidersTableRe.Match(original) {
-		return fmt.Errorf("could not find %s / %s markers in %s", dataProvidersTableStart, dataProvidersTableEnd, readmePath)
+		return fmt.Errorf("could not find %s / %s markers in %s", dataProvidersTableStart, dataProvidersTableEnd, targetPath)
 	}
 	updated := dataProvidersTableRe.ReplaceAll(original, []byte(replacement))
 
 	if string(updated) == string(original) {
-		fmt.Println("README Data providers table is up to date.")
+		fmt.Println("Data providers table is up to date.")
 		return nil
 	}
 
 	if check {
-		return fmt.Errorf("README Data providers table is out of date; run `make generate-readme`")
+		return fmt.Errorf("Data providers table is out of date; run `make generate-data-providers-table`")
 	}
 
-	if err := os.WriteFile(readmePath, updated, 0644); err != nil {
+	if err := os.WriteFile(targetPath, updated, 0644); err != nil {
 		return err
 	}
-	fmt.Printf("Updated %s\n", readmePath)
+	fmt.Printf("Updated %s\n", targetPath)
 	return nil
 }

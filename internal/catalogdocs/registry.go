@@ -12,7 +12,7 @@ package catalogdocs
 
 import "github.com/lightning-dabbler/sportscrape"
 
-// FeedDoc is one row of the README "Data providers" table.
+// FeedDoc is one row of the docs/DATA_PROVIDERS.md "Data providers" table.
 type FeedDoc struct {
 	// Feed is the real catalog.go constant this row documents.
 	Feed sportscrape.Feed
@@ -42,7 +42,7 @@ func (d FeedDoc) Deprecated() bool {
 	return d.Feed.Deprecated()
 }
 
-// FeedDocs is the ordered list backing the README "Data providers" table.
+// FeedDocs is the ordered list backing the docs/DATA_PROVIDERS.md "Data providers" table.
 // Order matches catalog.go's declaration order.
 var FeedDocs = []FeedDoc{
 	// basketball reference

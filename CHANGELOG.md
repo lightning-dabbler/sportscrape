@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Removed a `log.Printf` in `scraper.BaseJsonScraper.HydrateModel` (`scraper/base_json_scraper.go`) that fired on every JSON hydration for any provider whose model doesn't define an optional `Raw []byte` field — currently all of them, since none use it. The underlying `setBytesField` error was already silently swallowed; only the noisy log line is removed (#148)
-- Moved the "Data providers" table out of `README.md` into a new `docs/DATA_PROVIDERS.md`, linked from README, to keep README from growing linearly with every new provider/feed. `internal/catalogdocs.RenderTable` now takes a `linkPrefix` param so the table's Data Model links still resolve correctly from a file outside the repo root; `make generate-readme`/`make check-readme` now target the new file (#148)
+- Moved the "Data providers" table out of `README.md` into `docs/DATA_PROVIDERS.md`, linked from README, to keep README from growing with every new provider/feed; renamed the generating tool and `make` targets to match (`readme-table` → `data-providers-table`, `generate-readme`/`check-readme` → `generate-data-providers-table`/`check-data-providers-table`) (#148)
 
 ### Documentation
-- Added `wnba` to README's `### Commands` table and `### Usage` examples list — it was added to the "Data providers" table (auto-generated) but not these two hand-maintained sections (#148)
+- Added `wnba` to README's `### Commands` table and `### Usage` examples list — it was added to the "Data providers" table (auto-generated) (#148)
 
 ## [1.3.1] - 2026-08-11
 ### Added

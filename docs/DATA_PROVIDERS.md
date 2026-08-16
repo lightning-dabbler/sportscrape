@@ -1,6 +1,6 @@
 # Data providers
 
-Every feed `sportscrape` supports, generated from [`catalog.go`](../catalog.go) via `make generate-readme` — see [`internal/catalogdocs`](../internal/catalogdocs) for the source of truth and [`../README.md`](../README.md) for installation and usage.
+Every feed `sportscrape` supports, generated from [`catalog.go`](../catalog.go) via `make generate-data-providers-table` — see [`internal/catalogdocs`](../internal/catalogdocs) for the source of truth and [`../README.md`](../README.md) for installation and usage.
 
 <!-- DATA_PROVIDERS_TABLE_START -->
 | Source                           | League | Feed                                 | Periods Available                    | Data Model                                                                      | Deprecated | Point-in-time |
