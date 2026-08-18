@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-08-17
+### Removed
+- `--concurrency`/`-c` flag from `sportscrape propfinder mlb`; `propfinder`'s only feed runs through `runner.MatchupRunner`, which has no `Concurrency` field at all, so the flag was always silently discarded (#150)
+
 ## [1.4.0] - 2026-08-16
 ### Added
 - `wnba` data provider (`dataprovider/wnba`) — matchup discovery (`Date`, plus an optional `EndDate` for date-range queries), matchup periods, 6 period-aware box score types (Traditional, Advanced, Misc, Scoring, Usage, Four Factors), and play-by-play for wnba.com. Wired into the CLI as `sportscrape wnba --feed <feed> --date YYYY-MM-DD [--end-date YYYY-MM-DD]` (#148)
