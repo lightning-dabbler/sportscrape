@@ -18,7 +18,6 @@ func createPropFinderMLBCmd() *cobra.Command {
 			return shared.Run(cmd, "propfinder", "mlb")
 		},
 	}
-	cmd.Flags().IntP("concurrency", "c", 1, fmt.Sprintf("Max number of concurrent goroutines. Dependent on data feed (%s)", feed.PropFinderMLBOptions))
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.PropFinderMLBOptions))
 	shared.EmbedDateFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)

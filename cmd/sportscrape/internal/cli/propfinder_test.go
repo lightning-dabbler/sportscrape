@@ -44,7 +44,6 @@ func TestCreatePropFinderMLBCmd(t *testing.T) {
 		flags := []string{
 			"feed",
 			"date",
-			"concurrency",
 			"destination",
 			"file-format",
 			"parquet-compression",
@@ -66,7 +65,6 @@ func TestCreatePropFinderMLBCmd(t *testing.T) {
 			flag string
 			want string
 		}{
-			{"concurrency", "1"},
 			{"file-format", "jsonl"},
 			{"parquet-compression", "SNAPPY"},
 			{"parquet-row-group-size", "134217728"}, // 128*1024*1024

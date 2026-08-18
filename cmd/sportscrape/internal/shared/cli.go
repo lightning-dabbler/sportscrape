@@ -74,12 +74,6 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		return err
 	}
 
-	// --concurrency
-	concurrency, err := cmd.Flags().GetInt("concurrency")
-	if err != nil {
-		return err
-	}
-
 	// s3 arguments
 
 	// aws-region
@@ -97,6 +91,16 @@ func Run(cmd *cobra.Command, provider, league string) error {
 	var timeoutDuration time.Duration
 	var fetchAttempts int
 	var fetchRetryBackoff time.Duration
+	var concurrency int
+
+	switch provider {
+	case "foxsports", "baseballsavant", "espn", "nba", "wnba":
+		// --concurrency
+		concurrency, err = cmd.Flags().GetInt("concurrency")
+		if err != nil {
+			return err
+		}
+	}
 
 	switch provider {
 	case "espn":
