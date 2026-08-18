@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.5.0] - 2026-08-17
 ### Removed
 - `--concurrency`/`-c` flag from `sportscrape propfinder mlb`; `propfinder`'s only feed runs through `runner.MatchupRunner`, which has no `Concurrency` field at all, so the flag was always silently discarded (#150)
 
