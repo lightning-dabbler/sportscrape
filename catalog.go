@@ -48,6 +48,8 @@ var (
 	BaseballSavantMLBBattingBoxScore  Feed     = Feed(string(BaseballSavant) + " mlb batting box score")
 	BaseballSavantMLBFieldingBoxScore Feed     = Feed(string(BaseballSavant) + " mlb fielding box score")
 	BaseballSavantMLBPlayByPlay       Feed     = Feed(string(BaseballSavant) + " mlb play by play")
+	BaseballSavantMLBBattingLineup    Feed     = Feed(string(BaseballSavant) + " mlb batting lineup")
+	BaseballSavantMLBPitchingLineup   Feed     = Feed(string(BaseballSavant) + " mlb pitching lineup")
 
 	// ESPN MMA
 	ESPNMMA             Provider = "espn mma"

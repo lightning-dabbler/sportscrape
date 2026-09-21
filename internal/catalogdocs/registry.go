@@ -167,6 +167,16 @@ var FeedDocs = []FeedDoc{
 		Description: "Play by play", Periods: "Live, Full",
 		ModelPath: "dataprovider/baseballsavantmlb/model/play_by_play.go", PointInTime: true,
 	},
+	{
+		Feed: sportscrape.BaseballSavantMLBBattingLineup, Provider: sportscrape.BaseballSavant, Source: "https://baseballsavant.mlb.com", League: "MLB",
+		Description: "Batting lineup", Periods: "Live, Full",
+		ModelPath: "dataprovider/baseballsavantmlb/model/batting_lineup.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.BaseballSavantMLBPitchingLineup, Provider: sportscrape.BaseballSavant, Source: "https://baseballsavant.mlb.com", League: "MLB",
+		Description: "Pitching lineup", Periods: "Live, Full",
+		ModelPath: "dataprovider/baseballsavantmlb/model/pitching_lineup.go", PointInTime: true,
+	},
 
 	// prop finder
 	{
