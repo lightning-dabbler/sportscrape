@@ -20,6 +20,8 @@ func TestBaseballSavantExtractorValidateFeed(t *testing.T) {
 		{name: "batting-box-score", feed: "batting-box-score", format: "jsonl"},
 		{name: "fielding-box-score", feed: "fielding-box-score", format: "jsonl"},
 		{name: "play-by-play", feed: "play-by-play", format: "jsonl"},
+		{name: "batting-lineup", feed: "batting-lineup", format: "jsonl"},
+		{name: "pitching-lineup", feed: "pitching-lineup", format: "jsonl"},
 		// invalid feed
 		{name: "unsupported feed", feed: "invalid-feed", format: "jsonl", wantErr: true},
 		// invalid format

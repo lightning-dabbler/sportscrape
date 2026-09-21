@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - `TestBoxScoreDefenseScraper`, `TestBoxScoreMatchupsScraper` and `TestBoxScoreTrackingScraper` (`dataprovider/nba`) expected values updated to match current nba.com data for the 2025-06-05 game; the matchups test now finds its record by player and opponent player instead of by slice index (#153)
+### Added
+- `BattingLineupScraper` and `PitchingLineupScraper` for baseball savant mlb (`dataprovider/baseballsavantmlb`) — one row per lineup entry per team from the game feed's `away_lineup`/`home_lineup` and `away_pitcher_lineup`/`home_pitcher_lineup` arrays, with the array order preserved as a 1-based `LineupOrder`. Wired into the CLI as `sportscrape baseballsavant --feed batting-lineup` and `--feed pitching-lineup`
 
 ## [1.5.0] - 2026-08-17
 ### Removed
