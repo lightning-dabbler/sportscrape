@@ -187,3 +187,79 @@ func ExamplePlayByPlayScraper() {
 	}
 
 }
+
+// Example for baseballsavantmlb.BattingLineupScraper
+func ExampleBattingLineupScraper() {
+	matchupscraper := baseballsavantmlb.NewMatchupScraper(
+		baseballsavantmlb.MatchupScraperDate("2025-06-24"),
+	)
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
+	)
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	lineupscraper := baseballsavantmlb.NewBattingLineupScraper()
+	lineuprunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.BattingLineup]{
+			Scraper:     lineupscraper,
+			Concurrency: 1,
+		},
+	)
+
+	lineups, err := lineuprunner.Run(matchups)
+	if err != nil {
+		panic(err)
+	}
+
+	// Output each batter lineup entry as pretty json
+	for _, entry := range lineups {
+		jsonBytes, err := json.MarshalIndent(entry, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
+
+// Example for baseballsavantmlb.PitchingLineupScraper
+func ExamplePitchingLineupScraper() {
+	matchupscraper := baseballsavantmlb.NewMatchupScraper(
+		baseballsavantmlb.MatchupScraperDate("2025-06-24"),
+	)
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Matchup]{
+			Scraper: matchupscraper,
+		},
+	)
+	matchups, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	lineupscraper := baseballsavantmlb.NewPitchingLineupScraper()
+	lineuprunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.PitchingLineup]{
+			Scraper:     lineupscraper,
+			Concurrency: 1,
+		},
+	)
+
+	lineups, err := lineuprunner.Run(matchups)
+	if err != nil {
+		panic(err)
+	}
+
+	// Output each pitcher lineup entry as pretty json
+	for _, entry := range lineups {
+		jsonBytes, err := json.MarshalIndent(entry, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}

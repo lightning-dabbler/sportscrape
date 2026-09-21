@@ -18,6 +18,8 @@ var (
 		"'batting-box-score'",
 		"'fielding-box-score'",
 		"'play-by-play'",
+		"'batting-lineup'",
+		"'pitching-lineup'",
 	}, ", ")
 
 	BaseballSavantOptions string = fmt.Sprintf("'matchup', %s", BaseballSavantConcurrencyOptions)
@@ -39,7 +41,7 @@ func (e *BaseballSavantExtractor) ValidateFeed() error {
 		return err
 	}
 	switch e.Feed {
-	case "matchup", "pitching-box-score", "batting-box-score", "fielding-box-score", "play-by-play":
+	case "matchup", "pitching-box-score", "batting-box-score", "fielding-box-score", "play-by-play", "batting-lineup", "pitching-lineup":
 		return nil
 	default:
 		return fmt.Errorf("unsupported feed %q for baseball savant. %w", e.Feed, ErrBaseballSavant)
@@ -58,6 +60,10 @@ func (e *BaseballSavantExtractor) Scrape(ctx context.Context) error {
 		return e.scrapeFieldingBoxScore(ctx)
 	case "play-by-play":
 		return e.scrapePlayByPlay(ctx)
+	case "batting-lineup":
+		return e.scrapeBattingLineup(ctx)
+	case "pitching-lineup":
+		return e.scrapePitchingLineup(ctx)
 	default:
 		return fmt.Errorf("unsupported feed %q for baseball savant. %w", e.Feed, ErrBaseballSavant)
 	}
@@ -148,6 +154,44 @@ func (e *BaseballSavantExtractor) scrapePlayByPlay(ctx context.Context) error {
 	eventdatascraper := baseballsavantmlb.NewPlayByPlayScraper()
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
+			Concurrency: e.Concurrency,
+			Scraper:     eventdatascraper,
+		},
+	)
+	records, err := eventrunner.Run(m)
+	if err != nil {
+		return err
+	}
+	return exporters.BuildAndWrite(ctx, e.OutputPath, e.Format, e.S3Config, records, e.ParquetOptions...)
+}
+
+func (e *BaseballSavantExtractor) scrapeBattingLineup(ctx context.Context) error {
+	m, err := e.retrieveMatchup()
+	if err != nil {
+		return err
+	}
+	eventdatascraper := baseballsavantmlb.NewBattingLineupScraper()
+	eventrunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.BattingLineup]{
+			Concurrency: e.Concurrency,
+			Scraper:     eventdatascraper,
+		},
+	)
+	records, err := eventrunner.Run(m)
+	if err != nil {
+		return err
+	}
+	return exporters.BuildAndWrite(ctx, e.OutputPath, e.Format, e.S3Config, records, e.ParquetOptions...)
+}
+
+func (e *BaseballSavantExtractor) scrapePitchingLineup(ctx context.Context) error {
+	m, err := e.retrieveMatchup()
+	if err != nil {
+		return err
+	}
+	eventdatascraper := baseballsavantmlb.NewPitchingLineupScraper()
+	eventrunner := runner.NewEventDataRunner(
+		runner.EventDataRunnerConfig[model.Matchup, model.PitchingLineup]{
 			Concurrency: e.Concurrency,
 			Scraper:     eventdatascraper,
 		},
