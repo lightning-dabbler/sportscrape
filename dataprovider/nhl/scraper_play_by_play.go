@@ -52,6 +52,7 @@ func (s *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataO
 			EventID:               matchup.EventID,
 			EventTime:             matchup.EventTime,
 			EventTimeParquet:      matchup.EventTimeParquet,
+			LimitedScoring:        pbp.LimitedScoring,
 			HomeTeamID:            matchup.HomeTeamID,
 			AwayTeamID:            matchup.AwayTeamID,
 			PlayEventID:           play.EventID,

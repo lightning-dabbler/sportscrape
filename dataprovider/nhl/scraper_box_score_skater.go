@@ -39,7 +39,7 @@ func (s *SkaterBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	sides, err := s.FetchBoxScore(&context)
+	sides, limitedScoring, err := s.FetchBoxScore(&context)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.SkaterBoxScore]{Error: err, Context: context}
 	}
@@ -66,6 +66,7 @@ func (s *SkaterBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 				EventID:              matchup.EventID,
 				EventTime:            matchup.EventTime,
 				EventTimeParquet:     matchup.EventTimeParquet,
+				LimitedScoring:       limitedScoring,
 				TeamID:               side.TeamID,
 				Team:                 side.Team,
 				OpponentID:           side.OpponentID,

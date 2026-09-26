@@ -4,7 +4,9 @@ package jsonresponse
 type PlayByPlay struct {
 	ID        int64  `json:"id"`
 	GameState string `json:"gameState"`
-	Plays     []Play `json:"plays"`
+	// LimitedScoring is true when the NHL recorded only a limited set of stats for the game
+	LimitedScoring bool   `json:"limitedScoring"`
+	Plays          []Play `json:"plays"`
 }
 
 type Play struct {

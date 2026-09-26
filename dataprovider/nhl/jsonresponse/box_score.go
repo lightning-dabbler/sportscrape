@@ -4,6 +4,8 @@ package jsonresponse
 type BoxScore struct {
 	ID        int64  `json:"id"`
 	GameState string `json:"gameState"`
+	// LimitedScoring is true when the NHL recorded only a limited set of stats for the game
+	LimitedScoring bool `json:"limitedScoring"`
 	// PlayerByGameStats is absent before the game starts
 	PlayerByGameStats *PlayerByGameStats `json:"playerByGameStats"`
 }

@@ -22,17 +22,18 @@ type BaseBoxScoreScraper struct {
 	EventDataScraper
 }
 
-// FetchBoxScore retrieves the box score for the matchup in context and returns the away and home team sides.
+// FetchBoxScore retrieves the box score for the matchup in context and returns the away and home team sides
+// and the box score's limitedScoring flag.
 // Returns no team sides when player stats are not available yet (e.g. the game has not started).
-func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContext) ([]teamSide, error) {
+func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContext) ([]teamSide, bool, error) {
 	url := ConstructBoxScoreURL(context.EventID.(int64))
 	context.URL = url
 	boxscore, err := fetchJSON[jsonresponse.BoxScore](url, s.Fetcher)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	if boxscore.PlayerByGameStats == nil {
-		return nil, nil
+		return nil, boxscore.LimitedScoring, nil
 	}
 	awayID := context.AwayID.(int64)
 	homeID := context.HomeID.(int64)
@@ -51,7 +52,7 @@ func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContex
 			OpponentID: awayID,
 			Opponent:   context.AwayTeam,
 		},
-	}, nil
+	}, boxscore.LimitedScoring, nil
 }
 
 // parseSavesShots splits a "saves/shots" string e.g. "26/28" into saves and shots

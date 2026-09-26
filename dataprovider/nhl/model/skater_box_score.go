@@ -14,6 +14,11 @@ type SkaterBoxScore struct {
 	EventTime time.Time `json:"event_time"`
 	// EventTimeParquet is the scheduled start time of the matchup (in milliseconds)
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	// LimitedScoring is the API's limitedScoring flag. "Scoring" means stat recording (scorekeeping), not goals:
+	// true means the NHL recorded only a limited set of stats for the game. Goals, assists, points, plus/minus,
+	// penalty minutes, power play goals and shots on goal are recorded; TOI, giveaways, takeaways and faceoff
+	// winning pctg are nil; hits, blocked shots and shifts are reported as 0 because they were not tracked.
+	LimitedScoring bool `json:"limited_scoring" parquet:"name=limited_scoring, type=BOOLEAN"`
 	// TeamID
 	TeamID int64 `json:"team_id" parquet:"name=team_id, type=INT64"`
 	// Team e.g. Flames
