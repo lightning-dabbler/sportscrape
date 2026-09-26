@@ -76,36 +76,64 @@ type PlayByPlay struct {
 	GoalInGame *int32 `json:"goal_in_game" parquet:"name=goal_in_game, type=INT32"`
 	// ScoringPlayerID
 	ScoringPlayerID *int64 `json:"scoring_player_id" parquet:"name=scoring_player_id, type=INT64"`
+	// ScoringPlayer - full name from the play-by-play rosterSpots; nil when ScoringPlayerID is nil or not in rosterSpots
+	ScoringPlayer *string `json:"scoring_player" parquet:"name=scoring_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// ScoringPlayerTotal
 	ScoringPlayerTotal *int32 `json:"scoring_player_total" parquet:"name=scoring_player_total, type=INT32"`
 	// Assist1PlayerID
 	Assist1PlayerID *int64 `json:"assist1_player_id" parquet:"name=assist1_player_id, type=INT64"`
+	// Assist1Player - full name from the play-by-play rosterSpots; nil when Assist1PlayerID is nil or not in rosterSpots
+	Assist1Player *string `json:"assist1_player" parquet:"name=assist1_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Assist1PlayerTotal
 	Assist1PlayerTotal *int32 `json:"assist1_player_total" parquet:"name=assist1_player_total, type=INT32"`
 	// Assist2PlayerID
 	Assist2PlayerID *int64 `json:"assist2_player_id" parquet:"name=assist2_player_id, type=INT64"`
+	// Assist2Player - full name from the play-by-play rosterSpots; nil when Assist2PlayerID is nil or not in rosterSpots
+	Assist2Player *string `json:"assist2_player" parquet:"name=assist2_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Assist2PlayerTotal
 	Assist2PlayerTotal *int32 `json:"assist2_player_total" parquet:"name=assist2_player_total, type=INT32"`
 	// GoalieInNetID
 	GoalieInNetID *int64 `json:"goalie_in_net_id" parquet:"name=goalie_in_net_id, type=INT64"`
+	// GoalieInNet - full name from the play-by-play rosterSpots; nil when GoalieInNetID is nil or not in rosterSpots
+	GoalieInNet *string `json:"goalie_in_net" parquet:"name=goalie_in_net, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// ShootingPlayerID
 	ShootingPlayerID *int64 `json:"shooting_player_id" parquet:"name=shooting_player_id, type=INT64"`
+	// ShootingPlayer - full name from the play-by-play rosterSpots; nil when ShootingPlayerID is nil or not in rosterSpots
+	ShootingPlayer *string `json:"shooting_player" parquet:"name=shooting_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// BlockingPlayerID
 	BlockingPlayerID *int64 `json:"blocking_player_id" parquet:"name=blocking_player_id, type=INT64"`
+	// BlockingPlayer - full name from the play-by-play rosterSpots; nil when BlockingPlayerID is nil or not in rosterSpots
+	BlockingPlayer *string `json:"blocking_player" parquet:"name=blocking_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HittingPlayerID
 	HittingPlayerID *int64 `json:"hitting_player_id" parquet:"name=hitting_player_id, type=INT64"`
+	// HittingPlayer - full name from the play-by-play rosterSpots; nil when HittingPlayerID is nil or not in rosterSpots
+	HittingPlayer *string `json:"hitting_player" parquet:"name=hitting_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// HitteePlayerID
 	HitteePlayerID *int64 `json:"hittee_player_id" parquet:"name=hittee_player_id, type=INT64"`
+	// HitteePlayer - full name from the play-by-play rosterSpots; nil when HitteePlayerID is nil or not in rosterSpots
+	HitteePlayer *string `json:"hittee_player" parquet:"name=hittee_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// WinningPlayerID - faceoff winner
 	WinningPlayerID *int64 `json:"winning_player_id" parquet:"name=winning_player_id, type=INT64"`
+	// WinningPlayer - full name from the play-by-play rosterSpots; nil when WinningPlayerID is nil or not in rosterSpots
+	WinningPlayer *string `json:"winning_player" parquet:"name=winning_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// LosingPlayerID - faceoff loser
 	LosingPlayerID *int64 `json:"losing_player_id" parquet:"name=losing_player_id, type=INT64"`
+	// LosingPlayer - full name from the play-by-play rosterSpots; nil when LosingPlayerID is nil or not in rosterSpots
+	LosingPlayer *string `json:"losing_player" parquet:"name=losing_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// CommittedByPlayerID - penalty committed by
 	CommittedByPlayerID *int64 `json:"committed_by_player_id" parquet:"name=committed_by_player_id, type=INT64"`
+	// CommittedByPlayer - full name from the play-by-play rosterSpots; nil when CommittedByPlayerID is nil or not in rosterSpots
+	CommittedByPlayer *string `json:"committed_by_player" parquet:"name=committed_by_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// DrawnByPlayerID - penalty drawn by
 	DrawnByPlayerID *int64 `json:"drawn_by_player_id" parquet:"name=drawn_by_player_id, type=INT64"`
+	// DrawnByPlayer - full name from the play-by-play rosterSpots; nil when DrawnByPlayerID is nil or not in rosterSpots
+	DrawnByPlayer *string `json:"drawn_by_player" parquet:"name=drawn_by_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// ServedByPlayerID - penalty served by
 	ServedByPlayerID *int64 `json:"served_by_player_id" parquet:"name=served_by_player_id, type=INT64"`
+	// ServedByPlayer - full name from the play-by-play rosterSpots; nil when ServedByPlayerID is nil or not in rosterSpots
+	ServedByPlayer *string `json:"served_by_player" parquet:"name=served_by_player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerID - player associated with the play e.g. giveaway, takeaway
 	PlayerID *int64 `json:"player_id" parquet:"name=player_id, type=INT64"`
+	// Player - full name from the play-by-play rosterSpots; nil when PlayerID is nil or not in rosterSpots
+	Player *string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
 }

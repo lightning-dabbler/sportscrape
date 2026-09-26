@@ -39,12 +39,12 @@ func (s *SkaterBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	sides, limitedScoring, err := s.FetchBoxScore(&context)
+	box, err := s.FetchBoxScore(&context)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.SkaterBoxScore]{Error: err, Context: context}
 	}
 	var data []model.SkaterBoxScore
-	for _, side := range sides {
+	for _, side := range box.Sides {
 		// forwards then defense
 		skaters := append(append([]jsonresponse.Skater{}, side.Players.Forwards...), side.Players.Defense...)
 		for _, skater := range skaters {
@@ -56,17 +56,14 @@ func (s *SkaterBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 				}
 				toi = &minutes
 			}
-			player, err := s.PlayerName(skater.PlayerID, skater.Name.Default)
-			if err != nil {
-				return sportscrape.EventDataOutput[model.SkaterBoxScore]{Error: err, Context: context}
-			}
+			player := box.PlayerName(skater.PlayerID, skater.Name.Default)
 			data = append(data, model.SkaterBoxScore{
 				PullTimestamp:        pullTimestamp,
 				PullTimestampParquet: pullTimestampParquet,
 				EventID:              matchup.EventID,
 				EventTime:            matchup.EventTime,
 				EventTimeParquet:     matchup.EventTimeParquet,
-				LimitedScoring:       limitedScoring,
+				LimitedScoring:       box.LimitedScoring,
 				TeamID:               side.TeamID,
 				Team:                 side.Team,
 				OpponentID:           side.OpponentID,

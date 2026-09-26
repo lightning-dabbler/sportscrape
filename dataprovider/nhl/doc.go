@@ -24,9 +24,8 @@ Box score (skaters i.e. forwards + defense, goalies):
 	e.g. https://api-web.nhle.com/v1/gamecenter/2024020250/boxscore
 
 	Box score player names are abbreviated (e.g. J. Huberdeau), so each player's
-	first and last name is retrieved from the player header:
-	URL template: https://api-web.nhle.com/v2/player/{player_id}/header
-	e.g. https://api-web.nhle.com/v2/player/8476456/header
+	first and last name is taken from the game's play-by-play rosterSpots
+	(one request per game, see Play by play below).
 
 Play by play:
 
