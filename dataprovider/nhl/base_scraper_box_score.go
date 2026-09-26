@@ -18,26 +18,56 @@ type teamSide struct {
 	Opponent   string
 }
 
+// boxScore is a game's box score split into its away and home team sides
+type boxScore struct {
+	Sides []teamSide
+	// LimitedScoring is the box score's limitedScoring flag
+	LimitedScoring bool
+	// playerNames maps player ID to "{first name} {last name}" from the play-by-play rosterSpots
+	playerNames map[int64]string
+}
+
+// PlayerName returns the player's "{first name} {last name}" from the play-by-play rosterSpots.
+// Falls back to fallbackName (the box score name e.g. J. Huberdeau) when the player isn't in the
+// rosterSpots or has no first or last name.
+func (b boxScore) PlayerName(playerID int64, fallbackName string) string {
+	if name, exists := b.playerNames[playerID]; exists {
+		return name
+	}
+	return fallbackName
+}
+
 type BaseBoxScoreScraper struct {
 	EventDataScraper
 }
 
-// FetchBoxScore retrieves the box score for the matchup in context and returns the away and home team sides
-// and the box score's limitedScoring flag.
+// FetchBoxScore retrieves the box score for the matchup in context, split into the away and home team sides.
 // Returns no team sides when player stats are not available yet (e.g. the game has not started).
-func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContext) ([]teamSide, bool, error) {
-	url := ConstructBoxScoreURL(context.EventID.(int64))
+// Player full names come from the game's play-by-play rosterSpots (one request per game).
+func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContext) (boxScore, error) {
+	eventID := context.EventID.(int64)
+	url := ConstructBoxScoreURL(eventID)
 	context.URL = url
 	boxscore, err := fetchJSON[jsonresponse.BoxScore](url, s.Fetcher)
 	if err != nil {
-		return nil, false, err
+		return boxScore{}, err
 	}
 	if boxscore.PlayerByGameStats == nil {
-		return nil, boxscore.LimitedScoring, nil
+		return boxScore{LimitedScoring: boxscore.LimitedScoring}, nil
+	}
+	pbp, err := fetchJSON[jsonresponse.PlayByPlay](ConstructPlayByPlayURL(eventID), s.Fetcher)
+	if err != nil {
+		return boxScore{}, fmt.Errorf("player names from play-by-play rosterSpots: %w", err)
+	}
+	playerNames := make(map[int64]string, len(pbp.RosterSpots))
+	for _, spot := range pbp.RosterSpots {
+		if spot.FirstName.Default != "" && spot.LastName.Default != "" {
+			playerNames[spot.PlayerID] = spot.FirstName.Default + " " + spot.LastName.Default
+		}
 	}
 	awayID := context.AwayID.(int64)
 	homeID := context.HomeID.(int64)
-	return []teamSide{
+	sides := []teamSide{
 		{
 			Players:    boxscore.PlayerByGameStats.AwayTeam,
 			TeamID:     awayID,
@@ -52,7 +82,8 @@ func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContex
 			OpponentID: awayID,
 			Opponent:   context.AwayTeam,
 		},
-	}, boxscore.LimitedScoring, nil
+	}
+	return boxScore{Sides: sides, LimitedScoring: boxscore.LimitedScoring, playerNames: playerNames}, nil
 }
 
 // parseSavesShots splits a "saves/shots" string e.g. "26/28" into saves and shots

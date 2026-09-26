@@ -37,9 +37,3 @@ func ConstructBoxScoreURL(eventid int64) string {
 func ConstructPlayByPlayURL(eventid int64) string {
 	return BaseURL + "/v1/gamecenter/" + strconv.FormatInt(eventid, 10) + "/play-by-play"
 }
-
-// ConstructPlayerHeaderURL
-// https://api-web.nhle.com/v2/player/8476456/header
-func ConstructPlayerHeaderURL(playerid int64) string {
-	return BaseURL + "/v2/player/" + strconv.FormatInt(playerid, 10) + "/header"
-}

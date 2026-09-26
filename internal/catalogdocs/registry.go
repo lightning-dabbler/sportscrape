@@ -181,27 +181,27 @@ var FeedDocs = []FeedDoc{
 	// NHL
 	{
 		Feed: sportscrape.NHLMatchup, Provider: sportscrape.NHL, Source: "https://api-web.nhle.com", League: "NHL",
-		Description: "Matchup", Periods: "Full",
+		Description: "Matchup", Periods: "Live, Full",
 		ModelPath: "dataprovider/nhl/model/matchup.go", PointInTime: true,
 	},
 	{
 		Feed: sportscrape.NHLMatchupPeriods, Provider: sportscrape.NHL, Source: "https://api-web.nhle.com", League: "NHL",
-		Description: "Matchup periods", Periods: "Full",
+		Description: "Matchup periods", Periods: "Live, Full",
 		ModelPath: "dataprovider/nhl/model/matchup_periods.go", PointInTime: true,
 	},
 	{
 		Feed: sportscrape.NHLSkaterBoxScore, Provider: sportscrape.NHL, Source: "https://api-web.nhle.com", League: "NHL",
-		Description: "Skater box score stats", Periods: "Full",
+		Description: "Skater box score stats", Periods: "Live, Full",
 		ModelPath: "dataprovider/nhl/model/skater_box_score.go", PointInTime: true,
 	},
 	{
 		Feed: sportscrape.NHLGoalieBoxScore, Provider: sportscrape.NHL, Source: "https://api-web.nhle.com", League: "NHL",
-		Description: "Goalie box score stats", Periods: "Full",
+		Description: "Goalie box score stats", Periods: "Live, Full",
 		ModelPath: "dataprovider/nhl/model/goalie_box_score.go", PointInTime: true,
 	},
 	{
 		Feed: sportscrape.NHLPlayByPlay, Provider: sportscrape.NHL, Source: "https://api-web.nhle.com", League: "NHL",
-		Description: "Play by play", Periods: "Full",
+		Description: "Play by play", Periods: "Live, Full",
 		ModelPath: "dataprovider/nhl/model/play_by_play.go", PointInTime: true,
 	},
 

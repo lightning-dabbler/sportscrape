@@ -29,7 +29,7 @@ type SkaterBoxScore struct {
 	Opponent string `json:"opponent" parquet:"name=opponent, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// PlayerID
 	PlayerID int64 `json:"player_id" parquet:"name=player_id, type=INT64"`
-	// Player - full name from the player header e.g. Jonathan Huberdeau (falls back to the box score name e.g. J. Huberdeau only when the player header has no first/last name)
+	// Player - full name from the play-by-play rosterSpots e.g. Jonathan Huberdeau (falls back to the box score name e.g. J. Huberdeau when the player has no first/last name there)
 	Player string `json:"player" parquet:"name=player, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// SweaterNumber
 	SweaterNumber int32 `json:"sweater_number" parquet:"name=sweater_number, type=INT32"`
