@@ -22,7 +22,7 @@ type ESPNMMAFightDetailsScraper struct {
 	// <= 0 falls back to DefaultFetchAttempts.
 	FetchAttempts int
 	// FetchRetryBackoff is the delay between retry attempts.
-	// <= 0 falls back to DefaultFetchRetryBackoff.
+	// <= 0 retries without a delay.
 	FetchRetryBackoff time.Duration
 }
 

@@ -15,11 +15,10 @@ const espnFittMarker = "window['__espnfitt__']="
 // ESPN intermittently serves a bot-check interstitial in place of the real
 // page; the interstitial still satisfies the "html" ready selector, so
 // fetchESPNFittPayload retries a few times rather than treat one empty
-// response as final. These are the defaults applied when a scraper doesn't
-// set FetchAttempts/FetchRetryBackoff explicitly (e.g. via the CLI flags).
+// response as final. DefaultFetchAttempts is applied when a scraper doesn't
+// set FetchAttempts explicitly (e.g. via the CLI flags).
 const (
-	DefaultFetchAttempts     = 3
-	DefaultFetchRetryBackoff = 3 * time.Second
+	DefaultFetchAttempts = 3
 )
 
 // extractESPNFittPayload returns the raw JSON payload embedded in the page's
@@ -41,13 +40,13 @@ func extractESPNFittPayload(doc *goquery.Document) ([]byte, bool) {
 // fetchESPNFittPayload fetches url via fetchDoc, waiting for selector, and
 // retries up to attempts times (sleeping backoff between each) if the
 // espnfitt payload isn't found in the response. attempts <= 0 is treated as
-// DefaultFetchAttempts; backoff <= 0 is treated as DefaultFetchRetryBackoff.
+// DefaultFetchAttempts; backoff <= 0 retries without a delay.
 func fetchESPNFittPayload(fetchDoc func(url, selector string) (*goquery.Document, error), url, selector string, attempts int, backoff time.Duration) ([]byte, error) {
 	if attempts <= 0 {
 		attempts = DefaultFetchAttempts
 	}
-	if backoff <= 0 {
-		backoff = DefaultFetchRetryBackoff
+	if backoff < 0 {
+		backoff = 0
 	}
 	var lastErr error
 	for attempt := 1; attempt <= attempts; attempt++ {

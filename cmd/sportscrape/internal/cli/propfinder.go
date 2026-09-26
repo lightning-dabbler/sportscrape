@@ -20,6 +20,7 @@ func createPropFinderMLBCmd() *cobra.Command {
 	}
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.PropFinderMLBOptions))
 	shared.EmbedDateFlag(cmd)
+	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)

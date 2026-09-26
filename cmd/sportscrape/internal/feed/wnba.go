@@ -120,6 +120,7 @@ func (e *WNBAExtractor) retrieveMatchup() ([]model.Matchup, error) {
 		wnba.WithMatchupDate(e.Date),
 		wnba.WithMatchupEndDate(e.EndDate),
 	)
+	scraper.Timeout = e.Timeout
 	return runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: scraper,

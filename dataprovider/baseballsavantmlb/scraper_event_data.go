@@ -3,6 +3,7 @@ package baseballsavantmlb
 import (
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/baseballsavantmlb/jsonresponse"
@@ -10,7 +11,10 @@ import (
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
-type EventDataScraper struct{}
+type EventDataScraper struct {
+	// Timeout is the request timeout. <= 0 falls back to request.DefaultGetTimeout.
+	Timeout time.Duration
+}
 
 func (e EventDataScraper) Init() {}
 
@@ -27,8 +31,11 @@ func (e EventDataScraper) ConstructContext(matchup model.Matchup) sportscrape.Ev
 
 func (e EventDataScraper) FetchGameFeed(url string) (jsonresponse.GameFeed, error) {
 	var responsePayload jsonresponse.GameFeed
-	response, err := request.Get(url)
+	response, err := request.GetWithTimeout(url, e.Timeout)
 	if err != nil {
+		return responsePayload, err
+	}
+	if err := request.CheckStatus(url, response); err != nil {
 		return responsePayload, err
 	}
 	defer response.Body.Close()

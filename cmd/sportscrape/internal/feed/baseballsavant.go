@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape/cmd/sportscrape/internal/exporters"
 
@@ -29,6 +30,7 @@ var (
 type BaseballSavantExtractor struct {
 	Feed           string
 	Date           string
+	Timeout        time.Duration
 	Concurrency    int
 	OutputPath     string
 	Format         string
@@ -70,11 +72,13 @@ func (e *BaseballSavantExtractor) Scrape(ctx context.Context) error {
 }
 
 func (e *BaseballSavantExtractor) retrieveMatchup() ([]model.Matchup, error) {
+	matchupscraper := baseballsavantmlb.NewMatchupScraper(
+		baseballsavantmlb.MatchupScraperDate(e.Date),
+	)
+	matchupscraper.Timeout = e.Timeout
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
-			Scraper: baseballsavantmlb.NewMatchupScraper(
-				baseballsavantmlb.MatchupScraperDate(e.Date),
-			),
+			Scraper: matchupscraper,
 		},
 	)
 
@@ -95,6 +99,7 @@ func (e *BaseballSavantExtractor) scrapePitchingBoxScore(ctx context.Context) er
 		return err
 	}
 	eventdatascraper := baseballsavantmlb.NewPitchingBoxScoreScraper()
+	eventdatascraper.Timeout = e.Timeout
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PitchingBoxScore]{
 			Concurrency: e.Concurrency,
@@ -114,6 +119,7 @@ func (e *BaseballSavantExtractor) scrapeBattingBoxScore(ctx context.Context) err
 		return err
 	}
 	eventdatascraper := baseballsavantmlb.NewBattingBoxScoreScraper()
+	eventdatascraper.Timeout = e.Timeout
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BattingBoxScore]{
 			Concurrency: e.Concurrency,
@@ -133,6 +139,7 @@ func (e *BaseballSavantExtractor) scrapeFieldingBoxScore(ctx context.Context) er
 		return err
 	}
 	eventdatascraper := baseballsavantmlb.NewFieldingBoxScoreScraper()
+	eventdatascraper.Timeout = e.Timeout
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.FieldingBoxScore]{
 			Concurrency: e.Concurrency,
@@ -152,6 +159,7 @@ func (e *BaseballSavantExtractor) scrapePlayByPlay(ctx context.Context) error {
 		return err
 	}
 	eventdatascraper := baseballsavantmlb.NewPlayByPlayScraper()
+	eventdatascraper.Timeout = e.Timeout
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
 			Concurrency: e.Concurrency,
@@ -171,6 +179,7 @@ func (e *BaseballSavantExtractor) scrapeBattingLineup(ctx context.Context) error
 		return err
 	}
 	eventdatascraper := baseballsavantmlb.NewBattingLineupScraper()
+	eventdatascraper.Timeout = e.Timeout
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BattingLineup]{
 			Concurrency: e.Concurrency,
@@ -190,6 +199,7 @@ func (e *BaseballSavantExtractor) scrapePitchingLineup(ctx context.Context) erro
 		return err
 	}
 	eventdatascraper := baseballsavantmlb.NewPitchingLineupScraper()
+	eventdatascraper.Timeout = e.Timeout
 	eventrunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PitchingLineup]{
 			Concurrency: e.Concurrency,

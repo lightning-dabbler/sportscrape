@@ -3,6 +3,7 @@ package foxsports
 import (
 	"io"
 	"log"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/foxsports/model"
@@ -14,6 +15,8 @@ type EventDataScraper struct {
 	League League
 	// Params - URL Query parameters
 	Params map[string]string
+	// Timeout is the request timeout. <= 0 falls back to request.DefaultGetTimeout.
+	Timeout time.Duration
 }
 
 func (e *EventDataScraper) Init() {
@@ -66,8 +69,11 @@ func (e *EventDataScraper) ConstructMatchupComparisonURL(eventID int64) (string,
 }
 
 func (e *EventDataScraper) FetchData(url string) ([]byte, error) {
-	response, err := request.Get(url)
+	response, err := request.GetWithTimeout(url, e.Timeout)
 	if err != nil {
+		return []byte{}, err
+	}
+	if err := request.CheckStatus(url, response); err != nil {
 		return []byte{}, err
 	}
 	defer response.Body.Close()

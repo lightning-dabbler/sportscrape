@@ -68,6 +68,77 @@ func TestGetUnitTests(t *testing.T) {
 	}
 }
 
+func TestNewClient(t *testing.T) {
+	assert.Equal(t, DefaultGetTimeout, NewClient(0).Timeout, "0 falls back to DefaultGetTimeout")
+	assert.Equal(t, DefaultGetTimeout, NewClient(-1*time.Second).Timeout, "negative falls back to DefaultGetTimeout")
+	assert.Equal(t, 5*time.Second, NewClient(5*time.Second).Timeout)
+}
+
+func TestGetWithTimeout(t *testing.T) {
+	dummyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(500 * time.Millisecond)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer dummyServer.Close()
+
+	resp, err := GetWithTimeout(dummyServer.URL, 50*time.Millisecond)
+	assert.Error(t, err, "request should time out")
+	assert.Nil(t, resp)
+
+	resp, err = GetWithTimeout(dummyServer.URL, 5*time.Second)
+	assert.NoError(t, err)
+	if assert.NotNil(t, resp) {
+		resp.Body.Close()
+	}
+}
+
+func TestGetWithTimeoutDoesNotEvaluateStatus(t *testing.T) {
+	dummyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Retry-After", "16")
+		w.WriteHeader(http.StatusTooManyRequests)
+	}))
+	defer dummyServer.Close()
+
+	resp, err := GetWithTimeout(dummyServer.URL, 5*time.Second)
+	assert.NoError(t, err, "non-200 status should not be an error")
+	if assert.NotNil(t, resp) {
+		defer resp.Body.Close()
+		assert.Equal(t, http.StatusTooManyRequests, resp.StatusCode)
+		assert.Equal(t, "16", resp.Header.Get("Retry-After"))
+	}
+}
+
+func TestCheckStatus(t *testing.T) {
+	tests := []struct {
+		name    string
+		status  int
+		isError bool
+	}{
+		{name: "ok", status: http.StatusOK, isError: false},
+		{name: "not found", status: http.StatusNotFound, isError: true},
+		{name: "too many requests", status: http.StatusTooManyRequests, isError: true},
+		{name: "server error", status: http.StatusInternalServerError, isError: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dummyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tt.status)
+			}))
+			defer dummyServer.Close()
+
+			resp, err := GetWithTimeout(dummyServer.URL, 5*time.Second)
+			assert.NoError(t, err)
+			err = CheckStatus(dummyServer.URL, resp)
+			if tt.isError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				resp.Body.Close()
+			}
+		})
+	}
+}
+
 func TestGetIntegrationTests(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping integration test")

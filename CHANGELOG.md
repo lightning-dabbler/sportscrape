@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `nhl` data provider (`dataprovider/nhl`) for api-web.nhle.com: matchup, matchup periods, skater and goalie box scores, and play-by-play. CLI: `sportscrape nhl --feed <feed> --date YYYY-MM-DD` (#155)
+- Retries for nhl fetches (network errors, 429, 5xx), honoring `Retry-After`; CLI `--fetch-attempts` / `--fetch-retry-backoff` (#155)
+- `--timeout` on `nhl`, `baseballsavant`, `foxsports` and `propfinder`, plus `Timeout` fields on their scrapers and `scraper.BaseJsonScraper` (#155)
+- `request.GetWithTimeout`, `request.CheckStatus` and `request.NewClient` (`util/request`) (#155)
+
+### Changed
+- `request.Get` and wnba's matchup fetch now time out after 120s by default (#155)
+- `--timeout` and fetch-retry flag descriptions are provider-neutral (#155)
+- `--timeout` and `--fetch-attempts` must be greater than 0; `--fetch-retry-backoff` must be 0 or greater (0 = no delay) (#155)
+
+### Breaking changes
+- ESPN MMA scrapers: `FetchRetryBackoff` <= 0 now means no delay instead of 3s (#155)
+- Removed `mma.DefaultFetchRetryBackoff` (#155)
+
+### Fixed
+- `baseballsavantmlb.MatchupScraper` now closes its response body (#155)
+
+### Documentation
+- Added `sportscrape nhl` to README and the NHL feeds to `docs/DATA_PROVIDERS.md` (#155)
 
 ## [1.6.0] - 2026-09-21
 ### Changed

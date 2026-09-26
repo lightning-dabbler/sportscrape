@@ -15,18 +15,49 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-// Get performs a GET request
-// Returns an http response
+// DefaultGetTimeout is the timeout applied to GET requests when no (or a non-positive) timeout is given
+const DefaultGetTimeout = 120 * time.Second
+
+// NewClient returns an http client whose requests time out after timeout.
+// timeout <= 0 is treated as DefaultGetTimeout.
+func NewClient(timeout time.Duration) *http.Client {
+	if timeout <= 0 {
+		timeout = DefaultGetTimeout
+	}
+	return &http.Client{Timeout: timeout}
+}
+
+// Get performs a GET request that times out after DefaultGetTimeout
+// Returns an http response, or an error if the request failed or the response status is not 200
 func Get(url string) (*http.Response, error) {
+	resp, err := GetWithTimeout(url, 0)
+	if err != nil {
+		return nil, err
+	}
+	if err := CheckStatus(url, resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// GetWithTimeout performs a GET request that times out after timeout (<= 0 is treated as DefaultGetTimeout)
+// Returns the http response whatever its status code; evaluating the status (e.g. via CheckStatus) is up to the caller
+func GetWithTimeout(url string, timeout time.Duration) (*http.Response, error) {
 	log.Printf("Fetching from %s\n", url)
-	resp, err := http.Get(url)
+	resp, err := NewClient(timeout).Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP Error at %s: %w", url, err)
 	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Request to '%s' received a %s status", url, resp.Status)
-	}
 	return resp, nil
+}
+
+// CheckStatus returns an error, and closes the response body, if resp's status is not 200
+func CheckStatus(url string, resp *http.Response) error {
+	if resp.StatusCode != http.StatusOK {
+		resp.Body.Close()
+		return fmt.Errorf("Request to '%s' received a %s status", url, resp.Status)
+	}
+	return nil
 }
 
 // DocumentRetriever

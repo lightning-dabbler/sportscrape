@@ -13,6 +13,7 @@ import (
 	"github.com/lightning-dabbler/sportscrape/dataprovider/wnba/jsonresponse"
 	"github.com/lightning-dabbler/sportscrape/scraper"
 	"github.com/lightning-dabbler/sportscrape/util"
+	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
 const (
@@ -103,7 +104,7 @@ func (bms *BaseMatchupScraper) retrieveModel(url string) (*jsonresponse.MatchupJ
 	req.Header.Set("User-Agent", UserAgent)
 	req.Header.Set("Accept", "application/json")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := request.NewClient(bms.Timeout).Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP Error at %s: %w", url, err)
 	}

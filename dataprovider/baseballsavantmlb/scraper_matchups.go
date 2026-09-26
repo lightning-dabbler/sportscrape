@@ -38,6 +38,8 @@ func NewMatchupScraper(options ...MatchupScraperOption) *MatchupScraper {
 
 type MatchupScraper struct {
 	Date string
+	// Timeout is the request timeout. <= 0 falls back to request.DefaultGetTimeout.
+	Timeout time.Duration
 }
 
 func (s MatchupScraper) Init() {
@@ -66,11 +68,16 @@ func (s MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 
 	var jsonobj jsonresponse.Matchups
 	pullTimestamp := time.Now().UTC()
-	response, err := request.Get(url)
+	response, err := request.GetWithTimeout(url, s.Timeout)
 	if err != nil {
 		output.Error = err
 		return output
 	}
+	if err := request.CheckStatus(url, response); err != nil {
+		output.Error = err
+		return output
+	}
+	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		output.Error = err

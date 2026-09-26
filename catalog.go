@@ -171,6 +171,14 @@ var (
 	WNBAFourFactorsBoxScoreOT Feed     = Feed(string(WNBA) + " all ot four factors box score")
 	WNBAPlayByPlay            Feed     = Feed(string(WNBA) + " play by play")
 
+	// NHL
+	NHL               Provider = "nhl"
+	NHLMatchup        Feed     = Feed(string(NHL) + " matchup")
+	NHLMatchupPeriods Feed     = Feed(string(NHL) + " matchup periods")
+	NHLSkaterBoxScore Feed     = Feed(string(NHL) + " skater box score")
+	NHLGoalieBoxScore Feed     = Feed(string(NHL) + " goalie box score")
+	NHLPlayByPlay     Feed     = Feed(string(NHL) + " play by play")
+
 	// prop finder
 	PropFinder           Provider = "prop finder"
 	PropFinderMLBWeather Feed     = Feed(string(PropFinder) + " mlb weather")
