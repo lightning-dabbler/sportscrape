@@ -22,6 +22,7 @@ func createFSMLBCmd() *cobra.Command {
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.FSMLBOptions))
 
 	shared.EmbedDateFlag(cmd)
+	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)
@@ -43,6 +44,7 @@ func createFSNBACmd() *cobra.Command {
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.FSNBAOptions))
 
 	shared.EmbedDateFlag(cmd)
+	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)
@@ -64,6 +66,7 @@ func createFSWNBACmd() *cobra.Command {
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.FSNBAOptions))
 
 	shared.EmbedDateFlag(cmd)
+	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)

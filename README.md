@@ -24,6 +24,7 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
 | `sportscrape wnba` | | wnba.com |
+| `sportscrape nhl` | | nhl.com |
 
 Run `sportscrape <command> --help` for feeds, flags, and defaults per provider.
 
@@ -116,6 +117,7 @@ func main() {
 - [ESPN MMA scraping examples](dataprovider/espn/mma/example_test.go)
 - [nba.com NBA scraping examples](dataprovider/nba/example_test.go)
 - [wnba.com WNBA scraping examples](dataprovider/wnba/example_test.go)
+- [NHL scraping examples](dataprovider/nhl/example_test.go)
 
 ## Data providers
 

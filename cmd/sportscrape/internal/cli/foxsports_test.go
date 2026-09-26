@@ -47,6 +47,7 @@ func testFSSubCmd(t *testing.T, name string, createFn func() *cobra.Command) {
 		flags := []string{
 			"feed",
 			"date",
+			"timeout",
 			"concurrency",
 			"destination",
 			"file-format",
@@ -79,6 +80,7 @@ func testFSSubCmd(t *testing.T, name string, createFn func() *cobra.Command) {
 			{"aws-endpoint", ""},
 			{"destination", ""},
 			{"date", ""},
+			{"timeout", "120"},
 			{"feed", ""},
 		}
 		for _, tc := range cases {

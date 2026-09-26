@@ -38,6 +38,8 @@ func NewWeatherScraper(options ...WeatherScraperOption) *WeatherScraper {
 
 type WeatherScraper struct {
 	Date string
+	// Timeout is the request timeout. <= 0 falls back to request.DefaultGetTimeout.
+	Timeout time.Duration
 }
 
 func (s WeatherScraper) Init() {
@@ -65,8 +67,12 @@ func (s WeatherScraper) Scrape() sportscrape.MatchupOutput[model.Weather] {
 	}
 
 	pullTimestamp := time.Now().UTC()
-	response, err := request.Get(url)
+	response, err := request.GetWithTimeout(url, s.Timeout)
 	if err != nil {
+		output.Error = err
+		return output
+	}
+	if err := request.CheckStatus(url, response); err != nil {
 		output.Error = err
 		return output
 	}

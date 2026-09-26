@@ -22,6 +22,7 @@ func TestCreateBaseballSavantCmd(t *testing.T) {
 		flags := []string{
 			"feed",
 			"date",
+			"timeout",
 			"destination",
 			"file-format",
 			"concurrency",
@@ -54,6 +55,7 @@ func TestCreateBaseballSavantCmd(t *testing.T) {
 			{"aws-endpoint", ""},
 			{"destination", ""},
 			{"date", ""},
+			{"timeout", "120"},
 			{"feed", ""},
 		}
 		for _, tc := range cases {

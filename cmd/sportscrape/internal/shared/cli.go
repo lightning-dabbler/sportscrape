@@ -94,7 +94,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 	var concurrency int
 
 	switch provider {
-	case "foxsports", "baseballsavant", "espn", "nba", "wnba":
+	case "foxsports", "baseballsavant", "espn", "nba", "wnba", "nhl":
 		// --concurrency
 		concurrency, err = cmd.Flags().GetInt("concurrency")
 		if err != nil {
@@ -111,23 +111,24 @@ func Run(cmd *cobra.Command, provider, league string) error {
 			if err != nil {
 				return err
 			}
-			// --fetch-attempts
-			fetchAttempts, err = cmd.Flags().GetInt("fetch-attempts")
+			// --fetch-attempts, --fetch-retry-backoff
+			fetchAttempts, fetchRetryBackoff, err = fetchRetryFlags(cmd)
 			if err != nil {
 				return err
 			}
-			// --fetch-retry-backoff
-			fetchRetryBackoffSeconds, err := cmd.Flags().GetInt("fetch-retry-backoff")
-			if err != nil {
-				return err
-			}
-			fetchRetryBackoff = time.Duration(fetchRetryBackoffSeconds) * time.Second
 		}
 	default:
 		// --date
 		date, err = cmd.Flags().GetString("date")
 		if err != nil {
 			return err
+		}
+		if provider == "nhl" {
+			// --fetch-attempts, --fetch-retry-backoff
+			fetchAttempts, fetchRetryBackoff, err = fetchRetryFlags(cmd)
+			if err != nil {
+				return err
+			}
 		}
 		if provider == "wnba" {
 			// --end-date
@@ -138,15 +139,15 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		}
 	}
 
-	switch provider {
-	case "espn", "nba", "wnba":
-		// --timeout
-		timeout, err := cmd.Flags().GetInt("timeout")
-		if err != nil {
-			return err
-		}
-		timeoutDuration = time.Duration(timeout) * time.Second
+	// --timeout
+	timeout, err := cmd.Flags().GetInt("timeout")
+	if err != nil {
+		return err
 	}
+	if timeout <= 0 {
+		return fmt.Errorf("--timeout must be greater than 0, got %d", timeout)
+	}
+	timeoutDuration = time.Duration(timeout) * time.Second
 
 	switch league {
 	case "mlb":
@@ -184,6 +185,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		e = &feed.FoxSportsExtractor{
 			Feed:           feedstring,
 			Date:           date,
+			Timeout:        timeoutDuration,
 			Concurrency:    concurrency,
 			OutputPath:     destination,
 			Format:         fileFormat,
@@ -194,16 +196,31 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		e = &feed.BaseballSavantExtractor{
 			Feed:           feedstring,
 			Date:           date,
+			Timeout:        timeoutDuration,
 			Concurrency:    concurrency,
 			OutputPath:     destination,
 			Format:         fileFormat,
 			S3Config:       s3config,
 			ParquetOptions: parquetOptions,
 		}
+	case "nhl":
+		e = &feed.NHLExtractor{
+			Feed:              feedstring,
+			Date:              date,
+			FetchAttempts:     fetchAttempts,
+			FetchRetryBackoff: fetchRetryBackoff,
+			Timeout:           timeoutDuration,
+			Concurrency:       concurrency,
+			OutputPath:        destination,
+			Format:            fileFormat,
+			S3Config:          s3config,
+			ParquetOptions:    parquetOptions,
+		}
 	case "propfinder":
 		e = &feed.PropFinderExtractor{
 			Feed:           feedstring,
 			Date:           date,
+			Timeout:        timeoutDuration,
 			OutputPath:     destination,
 			Format:         fileFormat,
 			S3Config:       s3config,
@@ -261,4 +278,24 @@ func Run(cmd *cobra.Command, provider, league string) error {
 	diff := time.Now().UTC().Sub(start)
 	slog.Info("Data extraction complete", "duration", diff)
 	return nil
+}
+
+// fetchRetryFlags reads and validates --fetch-attempts (must be greater than 0) and
+// --fetch-retry-backoff (seconds, must be 0 or greater; 0 retries without a delay).
+func fetchRetryFlags(cmd *cobra.Command) (int, time.Duration, error) {
+	attempts, err := cmd.Flags().GetInt("fetch-attempts")
+	if err != nil {
+		return 0, 0, err
+	}
+	if attempts <= 0 {
+		return 0, 0, fmt.Errorf("--fetch-attempts must be greater than 0, got %d", attempts)
+	}
+	backoffSeconds, err := cmd.Flags().GetInt("fetch-retry-backoff")
+	if err != nil {
+		return 0, 0, err
+	}
+	if backoffSeconds < 0 {
+		return 0, 0, fmt.Errorf("--fetch-retry-backoff must be 0 or greater, got %d", backoffSeconds)
+	}
+	return attempts, time.Duration(backoffSeconds) * time.Second, nil
 }

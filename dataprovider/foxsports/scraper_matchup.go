@@ -60,6 +60,8 @@ type MatchupScraper struct {
 	Params map[string]string
 	// Segmenter - The interface for constructing segment IDs
 	Segmenter Segmenter
+	// Timeout is the request timeout. <= 0 falls back to request.DefaultGetTimeout.
+	Timeout time.Duration
 	// segmentID - The base subdirectory in url used to fetch the point-in-time dataset
 	segmentID string
 	// pullTimestamp - approximate timestamp for when the request to fetch matchups was made
@@ -130,8 +132,11 @@ func (s *MatchupScraper) ConstructFullURL() (string, error) {
 // Returns the JSON struct and optional error
 func (s *MatchupScraper) FetchMatchups(url string) (jsonresponse.Matchup, error) {
 	var responsePayload jsonresponse.Matchup
-	response, err := request.Get(url)
+	response, err := request.GetWithTimeout(url, s.Timeout)
 	if err != nil {
+		return responsePayload, err
+	}
+	if err := request.CheckStatus(url, response); err != nil {
 		return responsePayload, err
 	}
 	defer response.Body.Close()
