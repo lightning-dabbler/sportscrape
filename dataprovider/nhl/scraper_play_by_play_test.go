@@ -30,6 +30,11 @@ func TestPlayByPlayScraper(t *testing.T) {
 
 	goalTested := false
 	penaltyTested := false
+	assistedGoalTested := false
+	faceoffTested := false
+	hitTested := false
+	blockedShotTested := false
+	giveawayTested := false
 	for _, p := range plays {
 		switch p.PlayEventID {
 		case int64(464):
@@ -52,8 +57,15 @@ func TestPlayByPlayScraper(t *testing.T) {
 			assert.Equal(t, "O", *p.ZoneCode)
 			assert.Equal(t, "wrist", *p.ShotType)
 			assert.Equal(t, int64(8477993), *p.ScoringPlayerID)
+			assert.Equal(t, "Justin Kirkland", *p.ScoringPlayer)
 			assert.Equal(t, int32(2), *p.ScoringPlayerTotal)
 			assert.Equal(t, int64(8480947), *p.GoalieInNetID)
+			assert.Equal(t, "Kevin Lankinen", *p.GoalieInNet)
+			// unassisted goal
+			assert.Nil(t, p.Assist1PlayerID)
+			assert.Nil(t, p.Assist1Player)
+			assert.Nil(t, p.Assist2PlayerID)
+			assert.Nil(t, p.Assist2Player)
 			assert.Equal(t, int32(1), *p.AwayScore)
 			assert.Equal(t, int32(0), *p.HomeScore)
 		case int64(32):
@@ -68,11 +80,55 @@ func TestPlayByPlayScraper(t *testing.T) {
 			assert.Equal(t, "high-sticking", *p.PenaltyDescKey)
 			assert.Equal(t, int32(2), *p.PenaltyDuration)
 			assert.Equal(t, int64(8482624), *p.CommittedByPlayerID)
+			assert.Equal(t, "Daniil Miromanov", *p.CommittedByPlayer)
 			assert.Equal(t, int64(8480012), *p.DrawnByPlayerID)
+			assert.Equal(t, "Elias Pettersson", *p.DrawnByPlayer)
 			assert.Equal(t, int64(20), *p.EventOwnerTeamID)
 			assert.Equal(t, "D", *p.ZoneCode)
+		case int64(484):
+			assistedGoalTested = true
+			assert.Equal(t, "goal", p.TypeDescKey)
+			assert.Equal(t, int64(8480012), *p.ScoringPlayerID)
+			assert.Equal(t, "Elias Pettersson", *p.ScoringPlayer)
+			assert.Equal(t, int64(8476468), *p.Assist1PlayerID)
+			assert.Equal(t, "J.T. Miller", *p.Assist1Player)
+			assert.Equal(t, int64(8480800), *p.Assist2PlayerID)
+			assert.Equal(t, "Quinn Hughes", *p.Assist2Player)
+			assert.Equal(t, int64(8478435), *p.GoalieInNetID)
+			assert.Equal(t, "Dan Vladar", *p.GoalieInNet)
+		case int64(53):
+			faceoffTested = true
+			assert.Equal(t, "faceoff", p.TypeDescKey)
+			assert.Equal(t, int64(8476927), *p.WinningPlayerID)
+			assert.Equal(t, "Teddy Blueger", *p.WinningPlayer)
+			assert.Equal(t, int64(8474150), *p.LosingPlayerID)
+			assert.Equal(t, "Mikael Backlund", *p.LosingPlayer)
+		case int64(206):
+			hitTested = true
+			assert.Equal(t, "hit", p.TypeDescKey)
+			assert.Equal(t, int64(8477993), *p.HittingPlayerID)
+			assert.Equal(t, "Justin Kirkland", *p.HittingPlayer)
+			assert.Equal(t, int64(8480073), *p.HitteePlayerID)
+			assert.Equal(t, "Erik Brannstrom", *p.HitteePlayer)
+		case int64(107):
+			blockedShotTested = true
+			assert.Equal(t, "blocked-shot", p.TypeDescKey)
+			assert.Equal(t, int64(8482679), *p.ShootingPlayerID)
+			assert.Equal(t, "Matt Coronato", *p.ShootingPlayer)
+			assert.Equal(t, int64(8474574), *p.BlockingPlayerID)
+			assert.Equal(t, "Tyler Myers", *p.BlockingPlayer)
+		case int64(119):
+			giveawayTested = true
+			assert.Equal(t, "giveaway", p.TypeDescKey)
+			assert.Equal(t, int64(8478498), *p.PlayerID)
+			assert.Equal(t, "Jake DeBrusk", *p.Player)
 		}
 	}
 	assert.True(t, goalTested, "goal play 464 should exist")
 	assert.True(t, penaltyTested, "penalty play 32 should exist")
+	assert.True(t, assistedGoalTested, "assisted goal play 484 should exist")
+	assert.True(t, faceoffTested, "faceoff play 53 should exist")
+	assert.True(t, hitTested, "hit play 206 should exist")
+	assert.True(t, blockedShotTested, "blocked shot play 107 should exist")
+	assert.True(t, giveawayTested, "giveaway play 119 should exist")
 }
