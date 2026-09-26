@@ -14,6 +14,11 @@ type GoalieBoxScore struct {
 	EventTime time.Time `json:"event_time"`
 	// EventTimeParquet is the scheduled start time of the matchup (in milliseconds)
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	// LimitedScoring is the API's limitedScoring flag. "Scoring" means stat recording (scorekeeping), not goals:
+	// true means the NHL recorded only a limited set of stats for the game. Shots against, goals against
+	// (including the even strength/power play/shorthanded splits), save pctg, TOI and decision are recorded;
+	// saves, penalty minutes and starter are nil.
+	LimitedScoring bool `json:"limited_scoring" parquet:"name=limited_scoring, type=BOOLEAN"`
 	// TeamID
 	TeamID int64 `json:"team_id" parquet:"name=team_id, type=INT64"`
 	// Team e.g. Flames
@@ -42,8 +47,8 @@ type GoalieBoxScore struct {
 	ShorthandedSaves int32 `json:"shorthanded_saves" parquet:"name=shorthanded_saves, type=INT32"`
 	// ShorthandedShotsAgainst
 	ShorthandedShotsAgainst int32 `json:"shorthanded_shots_against" parquet:"name=shorthanded_shots_against, type=INT32"`
-	// Saves
-	Saves int32 `json:"saves" parquet:"name=saves, type=INT32"`
+	// Saves - nil in limited scoring games
+	Saves *int32 `json:"saves" parquet:"name=saves, type=INT32"`
 	// ShotsAgainst
 	ShotsAgainst int32 `json:"shots_against" parquet:"name=shots_against, type=INT32"`
 	// SavePctg e.g. 0.90625; nil when no shots were faced
@@ -56,12 +61,12 @@ type GoalieBoxScore struct {
 	ShorthandedGoalsAgainst int32 `json:"shorthanded_goals_against" parquet:"name=shorthanded_goals_against, type=INT32"`
 	// GoalsAgainst
 	GoalsAgainst int32 `json:"goals_against" parquet:"name=goals_against, type=INT32"`
-	// PIM - penalty minutes
-	PIM int32 `json:"pim" parquet:"name=pim, type=INT32"`
+	// PIM - penalty minutes; nil when absent from the box score (e.g. limited scoring and some preseason games)
+	PIM *int32 `json:"pim" parquet:"name=pim, type=INT32"`
 	// TOI - time on ice in minutes e.g. 57.6
 	TOI float32 `json:"toi" parquet:"name=toi, type=FLOAT"`
-	// Starter
-	Starter bool `json:"starter" parquet:"name=starter, type=BOOLEAN"`
+	// Starter - nil when absent from the box score (e.g. limited scoring and some preseason games)
+	Starter *bool `json:"starter" parquet:"name=starter, type=BOOLEAN"`
 	// Decision e.g. W, L, O; nil when the goalie did not receive a decision
 	Decision *string `json:"decision" parquet:"name=decision, type=BYTE_ARRAY, convertedtype=UTF8"`
 }

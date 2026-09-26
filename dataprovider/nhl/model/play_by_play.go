@@ -14,6 +14,10 @@ type PlayByPlay struct {
 	EventTime time.Time `json:"event_time"`
 	// EventTimeParquet is the scheduled start time of the matchup (in milliseconds)
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	// LimitedScoring is the API's limitedScoring flag. "Scoring" means stat recording (scorekeeping), not goals:
+	// true means the NHL recorded only a limited set of stats for the game, and the play-by-play contains
+	// only goal and penalty events (no shots, hits, faceoffs, etc.).
+	LimitedScoring bool `json:"limited_scoring" parquet:"name=limited_scoring, type=BOOLEAN"`
 	// HomeTeamID
 	HomeTeamID int64 `json:"home_team_id" parquet:"name=home_team_id, type=INT64"`
 	// AwayTeamID

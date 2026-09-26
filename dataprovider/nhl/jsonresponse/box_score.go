@@ -4,6 +4,8 @@ package jsonresponse
 type BoxScore struct {
 	ID        int64  `json:"id"`
 	GameState string `json:"gameState"`
+	// LimitedScoring is true when the NHL recorded only a limited set of stats for the game
+	LimitedScoring bool `json:"limitedScoring"`
 	// PlayerByGameStats is absent before the game starts
 	PlayerByGameStats *PlayerByGameStats `json:"playerByGameStats"`
 }
@@ -35,12 +37,14 @@ type Skater struct {
 	SOG            int32           `json:"sog"`
 	// FaceoffWinningPctg is absent for some players (e.g. every defenseman in game 2026010045)
 	FaceoffWinningPctg *float32 `json:"faceoffWinningPctg"`
-	// TOI e.g. 18:45
-	TOI          string `json:"toi"`
-	BlockedShots int32  `json:"blockedShots"`
-	Shifts       int32  `json:"shifts"`
-	Giveaways    int32  `json:"giveaways"`
-	Takeaways    int32  `json:"takeaways"`
+	// TOI e.g. 18:45; absent in limited scoring games
+	TOI          *string `json:"toi"`
+	BlockedShots int32   `json:"blockedShots"`
+	Shifts       int32   `json:"shifts"`
+	// Giveaways is absent in limited scoring games
+	Giveaways *int32 `json:"giveaways"`
+	// Takeaways is absent in limited scoring games
+	Takeaways *int32 `json:"takeaways"`
 }
 
 type Goalie struct {
@@ -58,12 +62,15 @@ type Goalie struct {
 	EvenStrengthGoalsAgainst int32    `json:"evenStrengthGoalsAgainst"`
 	PowerPlayGoalsAgainst    int32    `json:"powerPlayGoalsAgainst"`
 	ShorthandedGoalsAgainst  int32    `json:"shorthandedGoalsAgainst"`
-	PIM                      int32    `json:"pim"`
-	GoalsAgainst             int32    `json:"goalsAgainst"`
-	TOI                      string   `json:"toi"`
-	Starter                  bool     `json:"starter"`
+	// PIM is absent in limited scoring and some preseason games
+	PIM          *int32 `json:"pim"`
+	GoalsAgainst int32  `json:"goalsAgainst"`
+	TOI          string `json:"toi"`
+	// Starter is absent in limited scoring and some preseason games
+	Starter *bool `json:"starter"`
 	// Decision is absent when the goalie did not receive a decision
 	Decision     *string `json:"decision"`
 	ShotsAgainst int32   `json:"shotsAgainst"`
-	Saves        int32   `json:"saves"`
+	// Saves is absent in limited scoring games
+	Saves *int32 `json:"saves"`
 }

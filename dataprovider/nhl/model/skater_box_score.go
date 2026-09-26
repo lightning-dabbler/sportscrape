@@ -14,6 +14,11 @@ type SkaterBoxScore struct {
 	EventTime time.Time `json:"event_time"`
 	// EventTimeParquet is the scheduled start time of the matchup (in milliseconds)
 	EventTimeParquet int64 `json:"-" parquet:"name=event_time, type=INT64, logicaltype=TIMESTAMP, logicaltype.unit=MILLIS, logicaltype.isadjustedtoutc=true, convertedtype=TIMESTAMP_MILLIS"`
+	// LimitedScoring is the API's limitedScoring flag. "Scoring" means stat recording (scorekeeping), not goals:
+	// true means the NHL recorded only a limited set of stats for the game. Goals, assists, points, plus/minus,
+	// penalty minutes, power play goals and shots on goal are recorded; TOI, giveaways, takeaways and faceoff
+	// winning pctg are nil; hits, blocked shots and shifts are reported as 0 because they were not tracked.
+	LimitedScoring bool `json:"limited_scoring" parquet:"name=limited_scoring, type=BOOLEAN"`
 	// TeamID
 	TeamID int64 `json:"team_id" parquet:"name=team_id, type=INT64"`
 	// Team e.g. Flames
@@ -48,14 +53,14 @@ type SkaterBoxScore struct {
 	SOG int32 `json:"sog" parquet:"name=sog, type=INT32"`
 	// FaceoffWinningPctg e.g. 0.5; nil when absent from the box score
 	FaceoffWinningPctg *float32 `json:"faceoff_winning_pctg" parquet:"name=faceoff_winning_pctg, type=FLOAT"`
-	// TOI - time on ice in minutes e.g. 18.75
-	TOI float32 `json:"toi" parquet:"name=toi, type=FLOAT"`
+	// TOI - time on ice in minutes e.g. 18.75; nil in limited scoring games
+	TOI *float32 `json:"toi" parquet:"name=toi, type=FLOAT"`
 	// BlockedShots
 	BlockedShots int32 `json:"blocked_shots" parquet:"name=blocked_shots, type=INT32"`
 	// Shifts
 	Shifts int32 `json:"shifts" parquet:"name=shifts, type=INT32"`
-	// Giveaways
-	Giveaways int32 `json:"giveaways" parquet:"name=giveaways, type=INT32"`
-	// Takeaways
-	Takeaways int32 `json:"takeaways" parquet:"name=takeaways, type=INT32"`
+	// Giveaways - nil in limited scoring games
+	Giveaways *int32 `json:"giveaways" parquet:"name=giveaways, type=INT32"`
+	// Takeaways - nil in limited scoring games
+	Takeaways *int32 `json:"takeaways" parquet:"name=takeaways, type=INT32"`
 }
