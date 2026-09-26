@@ -37,24 +37,21 @@ func (s *GoalieBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	sides, limitedScoring, err := s.FetchBoxScore(&context)
+	box, err := s.FetchBoxScore(&context)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.GoalieBoxScore]{Error: err, Context: context}
 	}
 	var data []model.GoalieBoxScore
-	for _, side := range sides {
+	for _, side := range box.Sides {
 		for _, goalie := range side.Players.Goalies {
-			player, err := s.PlayerName(goalie.PlayerID, goalie.Name.Default)
-			if err != nil {
-				return sportscrape.EventDataOutput[model.GoalieBoxScore]{Error: err, Context: context}
-			}
+			player := box.PlayerName(goalie.PlayerID, goalie.Name.Default)
 			statline := model.GoalieBoxScore{
 				PullTimestamp:            pullTimestamp,
 				PullTimestampParquet:     pullTimestampParquet,
 				EventID:                  matchup.EventID,
 				EventTime:                matchup.EventTime,
 				EventTimeParquet:         matchup.EventTimeParquet,
-				LimitedScoring:           limitedScoring,
+				LimitedScoring:           box.LimitedScoring,
 				TeamID:                   side.TeamID,
 				Team:                     side.Team,
 				OpponentID:               side.OpponentID,

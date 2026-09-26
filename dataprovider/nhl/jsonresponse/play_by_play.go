@@ -7,6 +7,14 @@ type PlayByPlay struct {
 	// LimitedScoring is true when the NHL recorded only a limited set of stats for the game
 	LimitedScoring bool   `json:"limitedScoring"`
 	Plays          []Play `json:"plays"`
+	// RosterSpots lists every player in the game, with full first and last names
+	RosterSpots []RosterSpot `json:"rosterSpots"`
+}
+
+type RosterSpot struct {
+	PlayerID  int64           `json:"playerId"`
+	FirstName LocalizedString `json:"firstName"`
+	LastName  LocalizedString `json:"lastName"`
 }
 
 type Play struct {

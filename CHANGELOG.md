@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-09-26
+### Added
+- nhl play-by-play: full name for each player ID (e.g. `scoring_player`, `goalie_in_net`) from the play-by-play `rosterSpots` (#158)
+
+### Changed
+- nhl skater and goalie box score player names now come from the game's play-by-play `rosterSpots` (one request per game instead of one `/v2/player/{id}/header` request per player) (#158)
+
+### Documentation
+- NHL feeds list `Live` periods in `docs/DATA_PROVIDERS.md` (#158)
+
 ## [1.7.0] - 2026-09-26
 ### Added
 - `nhl` data provider (`dataprovider/nhl`) for api-web.nhle.com: matchup, matchup periods, skater and goalie box scores, and play-by-play. CLI: `sportscrape nhl --feed <feed> --date YYYY-MM-DD` (#155)
