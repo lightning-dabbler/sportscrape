@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape/cmd/sportscrape/internal/exporters"
 
@@ -27,6 +28,7 @@ var (
 type FoxSportsExtractor struct {
 	Feed           string
 	Date           string
+	Timeout        time.Duration
 	Concurrency    int
 	OutputPath     string
 	Format         string
@@ -94,6 +96,7 @@ func (e *FoxSportsExtractor) retrieveMatchup(league foxsports.League) ([]model.M
 			Scraper: &foxsports.MatchupScraper{
 				League:    league,
 				Segmenter: &foxsports.GeneralSegmenter{Date: e.Date},
+				Timeout:   e.Timeout,
 			},
 		},
 	).Run()
@@ -133,6 +136,7 @@ func (e *FoxSportsExtractor) scrapeNFLMatchup(ctx context.Context) error {
 					Week:   week,
 					Year:   year,
 				},
+				Timeout: e.Timeout,
 			},
 		},
 	).Run()
@@ -147,10 +151,12 @@ func (e *FoxSportsExtractor) scrapeNBABoxScore(ctx context.Context, league foxsp
 	if err != nil {
 		return err
 	}
+	eventdatascraper := foxsports.NewNBABoxScoreScraper(foxsports.NBABoxScoreScraperLeague(league))
+	eventdatascraper.Timeout = e.Timeout
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.NBABoxScoreStats]{
 			Concurrency: e.Concurrency,
-			Scraper:     foxsports.NewNBABoxScoreScraper(foxsports.NBABoxScoreScraperLeague(league)),
+			Scraper:     eventdatascraper,
 		},
 	).Run(matchups)
 	if err != nil {
@@ -164,10 +170,12 @@ func (e *FoxSportsExtractor) scrapeMLBBattingBoxScore(ctx context.Context) error
 	if err != nil {
 		return err
 	}
+	eventdatascraper := foxsports.NewMLBBattingBoxScoreScraper()
+	eventdatascraper.Timeout = e.Timeout
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.MLBBattingBoxScoreStats]{
 			Concurrency: e.Concurrency,
-			Scraper:     foxsports.NewMLBBattingBoxScoreScraper(),
+			Scraper:     eventdatascraper,
 		},
 	).Run(matchups)
 	if err != nil {
@@ -181,10 +189,12 @@ func (e *FoxSportsExtractor) scrapeMLBPitchingBoxScore(ctx context.Context) erro
 	if err != nil {
 		return err
 	}
+	eventdatascraper := foxsports.NewMLBPitchingBoxScoreScraper()
+	eventdatascraper.Timeout = e.Timeout
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.MLBPitchingBoxScoreStats]{
 			Concurrency: e.Concurrency,
-			Scraper:     foxsports.NewMLBPitchingBoxScoreScraper(),
+			Scraper:     eventdatascraper,
 		},
 	).Run(matchups)
 	if err != nil {
@@ -198,10 +208,12 @@ func (e *FoxSportsExtractor) scrapeMLBProbableStartingPitcher(ctx context.Contex
 	if err != nil {
 		return err
 	}
+	eventdatascraper := foxsports.NewMLBProbableStartingPitcherScraper()
+	eventdatascraper.Timeout = e.Timeout
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.MLBProbableStartingPitcher]{
 			Concurrency: e.Concurrency,
-			Scraper:     foxsports.NewMLBProbableStartingPitcherScraper(),
+			Scraper:     eventdatascraper,
 		},
 	).Run(matchups)
 	if err != nil {
@@ -215,10 +227,12 @@ func (e *FoxSportsExtractor) scrapeMLBOddsTotal(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	eventdatascraper := foxsports.NewMLBOddsTotalScraper()
+	eventdatascraper.Timeout = e.Timeout
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.MLBOddsTotal]{
 			Concurrency: e.Concurrency,
-			Scraper:     foxsports.NewMLBOddsTotalScraper(),
+			Scraper:     eventdatascraper,
 		},
 	).Run(matchups)
 	if err != nil {
@@ -232,10 +246,12 @@ func (e *FoxSportsExtractor) scrapeMLBOddsMoneyLine(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	eventdatascraper := foxsports.NewMLBOddsMoneyLineScraper()
+	eventdatascraper.Timeout = e.Timeout
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.MLBOddsMoneyLine]{
 			Concurrency: e.Concurrency,
-			Scraper:     foxsports.NewMLBOddsMoneyLineScraper(),
+			Scraper:     eventdatascraper,
 		},
 	).Run(matchups)
 	if err != nil {

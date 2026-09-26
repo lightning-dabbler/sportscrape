@@ -23,7 +23,7 @@ func EmbedDestinationFlag(cmd *cobra.Command) {
 }
 
 func EmbedTimeoutFlag(cmd *cobra.Command) {
-	cmd.Flags().IntP("timeout", "t", 120, "The chromium request timeout (in seconds).")
+	cmd.Flags().IntP("timeout", "t", 120, "Request timeout (in seconds).")
 }
 
 func EmbedDateFlag(cmd *cobra.Command) {
@@ -35,6 +35,6 @@ func EmbedEndDateFlag(cmd *cobra.Command) {
 }
 
 func EmbedFetchRetryFlags(cmd *cobra.Command) {
-	cmd.Flags().Int("fetch-attempts", 3, "Max number of times to fetch a page before giving up (retries on bot-check interstitials).")
-	cmd.Flags().Int("fetch-retry-backoff", 3, "Delay (in seconds) between fetch retry attempts.")
+	cmd.Flags().Int("fetch-attempts", 3, "Max number of times to attempt a fetch before giving up.")
+	cmd.Flags().Int("fetch-retry-backoff", 3, "Delay (in seconds) between fetch retry attempts; 0 retries immediately. A server-provided retry delay takes precedence when present.")
 }

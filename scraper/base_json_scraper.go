@@ -5,20 +5,27 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape/util/request"
 )
 
-type BaseJsonScraper[T any] struct{}
+type BaseJsonScraper[T any] struct {
+	// Timeout is the request timeout. <= 0 falls back to request.DefaultGetTimeout.
+	Timeout time.Duration
+}
 
 func (s BaseJsonScraper[T]) Init() {}
 
 // RetrieveBytes retrieves a []byte slice from the specified URL.
 func (s BaseJsonScraper[T]) RetrieveBytes(url string) (*[]byte, error) {
 
-	resp, err := request.Get(url)
+	resp, err := request.GetWithTimeout(url, s.Timeout)
 	if err != nil {
 
+		return nil, err
+	}
+	if err := request.CheckStatus(url, resp); err != nil {
 		return nil, err
 	}
 

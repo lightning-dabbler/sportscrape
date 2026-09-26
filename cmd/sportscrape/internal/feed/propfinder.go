@@ -3,6 +3,7 @@ package feed
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape/cmd/sportscrape/internal/exporters"
 
@@ -19,6 +20,7 @@ var (
 type PropFinderExtractor struct {
 	Feed           string
 	Date           string
+	Timeout        time.Duration
 	OutputPath     string
 	Format         string
 	S3Config       exporters.S3Config
@@ -47,11 +49,13 @@ func (e *PropFinderExtractor) Scrape(ctx context.Context) error {
 }
 
 func (e *PropFinderExtractor) scrapeMLBWeather(ctx context.Context) error {
+	weatherscraper := mlb.NewWeatherScraper(
+		mlb.WeatherScraperDate(e.Date),
+	)
+	weatherscraper.Timeout = e.Timeout
 	weatherrunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Weather]{
-			Scraper: mlb.NewWeatherScraper(
-				mlb.WeatherScraperDate(e.Date),
-			),
+			Scraper: weatherscraper,
 		},
 	)
 	m, err := weatherrunner.Run()

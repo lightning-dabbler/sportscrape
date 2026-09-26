@@ -22,6 +22,7 @@ func CreateBaseballSavantCmd() *cobra.Command {
 	cmd.Flags().IntP("concurrency", "c", 1, fmt.Sprintf("Max number of concurrent goroutines. Dependent on data feed (%s)", feed.BaseballSavantConcurrencyOptions))
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.BaseballSavantOptions))
 	shared.EmbedDateFlag(cmd)
+	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)
