@@ -42,8 +42,8 @@ type GoalieBoxScore struct {
 	ShorthandedSaves int32 `json:"shorthanded_saves" parquet:"name=shorthanded_saves, type=INT32"`
 	// ShorthandedShotsAgainst
 	ShorthandedShotsAgainst int32 `json:"shorthanded_shots_against" parquet:"name=shorthanded_shots_against, type=INT32"`
-	// Saves
-	Saves int32 `json:"saves" parquet:"name=saves, type=INT32"`
+	// Saves - nil in limited scoring games
+	Saves *int32 `json:"saves" parquet:"name=saves, type=INT32"`
 	// ShotsAgainst
 	ShotsAgainst int32 `json:"shots_against" parquet:"name=shots_against, type=INT32"`
 	// SavePctg e.g. 0.90625; nil when no shots were faced
@@ -56,12 +56,12 @@ type GoalieBoxScore struct {
 	ShorthandedGoalsAgainst int32 `json:"shorthanded_goals_against" parquet:"name=shorthanded_goals_against, type=INT32"`
 	// GoalsAgainst
 	GoalsAgainst int32 `json:"goals_against" parquet:"name=goals_against, type=INT32"`
-	// PIM - penalty minutes
-	PIM int32 `json:"pim" parquet:"name=pim, type=INT32"`
+	// PIM - penalty minutes; nil when absent from the box score (e.g. limited scoring and some preseason games)
+	PIM *int32 `json:"pim" parquet:"name=pim, type=INT32"`
 	// TOI - time on ice in minutes e.g. 57.6
 	TOI float32 `json:"toi" parquet:"name=toi, type=FLOAT"`
-	// Starter
-	Starter bool `json:"starter" parquet:"name=starter, type=BOOLEAN"`
+	// Starter - nil when absent from the box score (e.g. limited scoring and some preseason games)
+	Starter *bool `json:"starter" parquet:"name=starter, type=BOOLEAN"`
 	// Decision e.g. W, L, O; nil when the goalie did not receive a decision
 	Decision *string `json:"decision" parquet:"name=decision, type=BYTE_ARRAY, convertedtype=UTF8"`
 }

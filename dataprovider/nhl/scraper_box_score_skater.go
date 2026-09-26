@@ -48,9 +48,13 @@ func (s *SkaterBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventD
 		// forwards then defense
 		skaters := append(append([]jsonresponse.Skater{}, side.Players.Forwards...), side.Players.Defense...)
 		for _, skater := range skaters {
-			toi, err := util.TransformMinutesPlayed(skater.TOI)
-			if err != nil {
-				return sportscrape.EventDataOutput[model.SkaterBoxScore]{Error: err, Context: context}
+			var toi *float32
+			if skater.TOI != nil {
+				minutes, err := util.TransformMinutesPlayed(*skater.TOI)
+				if err != nil {
+					return sportscrape.EventDataOutput[model.SkaterBoxScore]{Error: err, Context: context}
+				}
+				toi = &minutes
 			}
 			player, err := s.PlayerName(skater.PlayerID, skater.Name.Default)
 			if err != nil {

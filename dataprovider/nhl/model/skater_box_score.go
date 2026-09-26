@@ -48,14 +48,14 @@ type SkaterBoxScore struct {
 	SOG int32 `json:"sog" parquet:"name=sog, type=INT32"`
 	// FaceoffWinningPctg e.g. 0.5; nil when absent from the box score
 	FaceoffWinningPctg *float32 `json:"faceoff_winning_pctg" parquet:"name=faceoff_winning_pctg, type=FLOAT"`
-	// TOI - time on ice in minutes e.g. 18.75
-	TOI float32 `json:"toi" parquet:"name=toi, type=FLOAT"`
+	// TOI - time on ice in minutes e.g. 18.75; nil in limited scoring games
+	TOI *float32 `json:"toi" parquet:"name=toi, type=FLOAT"`
 	// BlockedShots
 	BlockedShots int32 `json:"blocked_shots" parquet:"name=blocked_shots, type=INT32"`
 	// Shifts
 	Shifts int32 `json:"shifts" parquet:"name=shifts, type=INT32"`
-	// Giveaways
-	Giveaways int32 `json:"giveaways" parquet:"name=giveaways, type=INT32"`
-	// Takeaways
-	Takeaways int32 `json:"takeaways" parquet:"name=takeaways, type=INT32"`
+	// Giveaways - nil in limited scoring games
+	Giveaways *int32 `json:"giveaways" parquet:"name=giveaways, type=INT32"`
+	// Takeaways - nil in limited scoring games
+	Takeaways *int32 `json:"takeaways" parquet:"name=takeaways, type=INT32"`
 }
