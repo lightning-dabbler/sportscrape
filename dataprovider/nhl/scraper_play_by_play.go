@@ -44,6 +44,17 @@ func (s *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataO
 	if err != nil {
 		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}
+	playerNames := rosterNames(pbp.RosterSpots)
+	// name returns the full name for a player ID, or nil when the ID is nil or not in rosterSpots
+	name := func(playerID *int64) *string {
+		if playerID == nil {
+			return nil
+		}
+		if n, exists := playerNames[*playerID]; exists {
+			return &n
+		}
+		return nil
+	}
 	var data []model.PlayByPlay
 	for _, play := range pbp.Plays {
 		record := model.PlayByPlay{
@@ -89,22 +100,36 @@ func (s *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataO
 			record.HomeSOG = d.HomeSOG
 			record.GoalInGame = d.GoalInGame
 			record.ScoringPlayerID = d.ScoringPlayerID
+			record.ScoringPlayer = name(d.ScoringPlayerID)
 			record.ScoringPlayerTotal = d.ScoringPlayerTotal
 			record.Assist1PlayerID = d.Assist1PlayerID
+			record.Assist1Player = name(d.Assist1PlayerID)
 			record.Assist1PlayerTotal = d.Assist1PlayerTotal
 			record.Assist2PlayerID = d.Assist2PlayerID
+			record.Assist2Player = name(d.Assist2PlayerID)
 			record.Assist2PlayerTotal = d.Assist2PlayerTotal
 			record.GoalieInNetID = d.GoalieInNetID
+			record.GoalieInNet = name(d.GoalieInNetID)
 			record.ShootingPlayerID = d.ShootingPlayerID
+			record.ShootingPlayer = name(d.ShootingPlayerID)
 			record.BlockingPlayerID = d.BlockingPlayerID
+			record.BlockingPlayer = name(d.BlockingPlayerID)
 			record.HittingPlayerID = d.HittingPlayerID
+			record.HittingPlayer = name(d.HittingPlayerID)
 			record.HitteePlayerID = d.HitteePlayerID
+			record.HitteePlayer = name(d.HitteePlayerID)
 			record.WinningPlayerID = d.WinningPlayerID
+			record.WinningPlayer = name(d.WinningPlayerID)
 			record.LosingPlayerID = d.LosingPlayerID
+			record.LosingPlayer = name(d.LosingPlayerID)
 			record.CommittedByPlayerID = d.CommittedByPlayerID
+			record.CommittedByPlayer = name(d.CommittedByPlayerID)
 			record.DrawnByPlayerID = d.DrawnByPlayerID
+			record.DrawnByPlayer = name(d.DrawnByPlayerID)
 			record.ServedByPlayerID = d.ServedByPlayerID
+			record.ServedByPlayer = name(d.ServedByPlayerID)
 			record.PlayerID = d.PlayerID
+			record.Player = name(d.PlayerID)
 		}
 		data = append(data, record)
 	}

@@ -59,12 +59,7 @@ func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContex
 	if err != nil {
 		return boxScore{}, fmt.Errorf("player names from play-by-play rosterSpots: %w", err)
 	}
-	playerNames := make(map[int64]string, len(pbp.RosterSpots))
-	for _, spot := range pbp.RosterSpots {
-		if spot.FirstName.Default != "" && spot.LastName.Default != "" {
-			playerNames[spot.PlayerID] = spot.FirstName.Default + " " + spot.LastName.Default
-		}
-	}
+	playerNames := rosterNames(pbp.RosterSpots)
 	awayID := context.AwayID.(int64)
 	homeID := context.HomeID.(int64)
 	sides := []teamSide{
@@ -84,6 +79,18 @@ func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContex
 		},
 	}
 	return boxScore{Sides: sides, LimitedScoring: boxscore.LimitedScoring, playerNames: playerNames}, nil
+}
+
+// rosterNames maps player ID to "{first name} {last name}" from the play-by-play rosterSpots,
+// skipping players without a first or last name
+func rosterNames(spots []jsonresponse.RosterSpot) map[int64]string {
+	names := make(map[int64]string, len(spots))
+	for _, spot := range spots {
+		if spot.FirstName.Default != "" && spot.LastName.Default != "" {
+			names[spot.PlayerID] = spot.FirstName.Default + " " + spot.LastName.Default
+		}
+	}
+	return names
 }
 
 // parseSavesShots splits a "saves/shots" string e.g. "26/28" into saves and shots

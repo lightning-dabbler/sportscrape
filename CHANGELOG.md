@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- nhl play-by-play: full name for each player ID (e.g. `scoring_player`, `goalie_in_net`) from the play-by-play `rosterSpots`
+
 ### Changed
 - nhl skater and goalie box score player names now come from the game's play-by-play `rosterSpots` (one request per game instead of one `/v2/player/{id}/header` request per player)
 
