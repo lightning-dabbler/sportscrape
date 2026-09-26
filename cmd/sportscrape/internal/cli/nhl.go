@@ -13,7 +13,7 @@ func CreateNHLCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "nhl",
 		Short: "Extract NHL data",
-		Long:  "Extract NHL data from api-web.nhle.com",
+		Long:  "Extract NHL data from nhl.com",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return shared.Run(cmd, "nhl", "")
 		},

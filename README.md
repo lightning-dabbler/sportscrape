@@ -24,7 +24,7 @@ go install github.com/lightning-dabbler/sportscrape/cmd/sportscrape@latest
 | `sportscrape espn` | `ufc` | espn.com/mma |
 | `sportscrape nba` | | nba.com |
 | `sportscrape wnba` | | wnba.com |
-| `sportscrape nhl` | | api-web.nhle.com |
+| `sportscrape nhl` | | nhl.com |
 
 Run `sportscrape <command> --help` for feeds, flags, and defaults per provider.
 
