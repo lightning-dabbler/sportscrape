@@ -10,12 +10,13 @@ import (
 )
 
 func TestBoxScoreDefenseScraper(t *testing.T) {
+	// https://www.nba.com/game/tor-vs-cle-0022500225/box-score?type=defense
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
 
 	matchupScraper := NewMatchupScraper(
-		WithMatchupDate("2025-06-05"),
+		WithMatchupDate("2025-11-13"),
 		WithMatchupTimeout(3*time.Minute),
 	)
 	matchupScraper.NetworkHeaders = NetworkHeaders
@@ -30,6 +31,17 @@ func TestBoxScoreDefenseScraper(t *testing.T) {
 		matchupScraper.Close()
 		t.Fatal(err)
 	}
+	// 2025-11-13 has 3 games; only scrape TOR @ CLE
+	var tested []model.Matchup
+	for _, m := range matchups {
+		if m.EventID == "0022500225" {
+			tested = append(tested, m)
+		}
+	}
+	if len(tested) != 1 {
+		matchupScraper.Close()
+		t.Fatalf("expected event 0022500225 on 2025-11-13, got %d matching matchups", len(tested))
+	}
 	boxscorescraper := NewBoxScoreDefenseScraper(
 		WithBoxScoreDefenseTimeout(3 * time.Minute),
 	)
@@ -41,38 +53,42 @@ func TestBoxScoreDefenseScraper(t *testing.T) {
 		},
 	)
 
-	records, err := boxscorerunner.Run(matchups)
+	records, err := boxscorerunner.Run(tested)
 	assert.NoError(t, err)
 	n_records := len(records)
-	assert.Equal(t, 21, n_records, "21 stat lines")
-	testRecord := records[4]
-
-	assert.Equal(t, "0042400401", testRecord.EventID)
-	assert.Equal(t, int32(3), testRecord.EventStatus)
-	assert.Equal(t, "Final", testRecord.EventStatusText)
-	assert.Equal(t, int64(1610612760), testRecord.TeamID)
-	assert.Equal(t, "Thunder", testRecord.TeamName)
-	assert.Equal(t, "Oklahoma City Thunder", testRecord.TeamNameFull)
-	assert.Equal(t, int64(1610612754), testRecord.OpponentID)
-	assert.Equal(t, "Pacers", testRecord.OpponentName)
-	assert.Equal(t, "Indiana Pacers", testRecord.OpponentNameFull)
-	assert.Equal(t, int64(1628983), testRecord.PlayerID)
-	assert.Equal(t, "Shai Gilgeous-Alexander", testRecord.PlayerName)
-	assert.Equal(t, "G", testRecord.Position)
-	assert.Equal(t, true, testRecord.Starter)
-	assert.Equal(t, float32(14.78), testRecord.MatchupMinutes)
-	assert.Equal(t, float32(74.2), testRecord.PartialPossessions)
-	assert.Equal(t, int32(0), testRecord.SwitchesOn)
-	assert.Equal(t, int32(14), testRecord.PlayerPoints)
-	assert.Equal(t, int32(5), testRecord.DefensiveRebounds)
-	assert.Equal(t, int32(5), testRecord.MatchupAssists)
-	assert.Equal(t, int32(5), testRecord.MatchupTurnovers)
-	assert.Equal(t, int32(3), testRecord.Steals)
-	assert.Equal(t, int32(0), testRecord.Blocks)
-	assert.Equal(t, int32(6), testRecord.MatchupFieldGoalsMade)
-	assert.Equal(t, int32(8), testRecord.MatchupFieldGoalsAttempted)
-	assert.Equal(t, float32(0.75), testRecord.MatchupFieldGoalPercentage)
-	assert.Equal(t, int32(2), testRecord.MatchupThreePointersMade)
-	assert.Equal(t, int32(2), testRecord.MatchupThreePointersAttempted)
-	assert.Equal(t, float32(1), testRecord.MatchupThreePointerPercentage)
+	assert.Equal(t, 23, n_records, "23 stat lines")
+	mitchellTested := false
+	for _, s := range records {
+		if s.PlayerName == "Donovan Mitchell" {
+			assert.Equal(t, "0022500225", s.EventID)
+			assert.Equal(t, int32(3), s.EventStatus)
+			assert.Equal(t, "Final", s.EventStatusText)
+			assert.Equal(t, int64(1610612739), s.TeamID)
+			assert.Equal(t, "Cavaliers", s.TeamName)
+			assert.Equal(t, "Cleveland Cavaliers", s.TeamNameFull)
+			assert.Equal(t, int64(1610612761), s.OpponentID)
+			assert.Equal(t, "Raptors", s.OpponentName)
+			assert.Equal(t, "Toronto Raptors", s.OpponentNameFull)
+			assert.Equal(t, int64(1628378), s.PlayerID)
+			assert.Equal(t, "G", s.Position)
+			assert.Equal(t, true, s.Starter)
+			assert.Equal(t, float32(13.67), s.MatchupMinutes)
+			assert.Equal(t, float32(70.2), s.PartialPossessions)
+			assert.Equal(t, int32(0), s.SwitchesOn)
+			assert.Equal(t, int32(17), s.PlayerPoints)
+			assert.Equal(t, int32(5), s.DefensiveRebounds)
+			assert.Equal(t, int32(2), s.MatchupAssists)
+			assert.Equal(t, int32(0), s.MatchupTurnovers)
+			assert.Equal(t, int32(1), s.Steals)
+			assert.Equal(t, int32(2), s.Blocks)
+			assert.Equal(t, int32(7), s.MatchupFieldGoalsMade)
+			assert.Equal(t, int32(9), s.MatchupFieldGoalsAttempted)
+			assert.Equal(t, float32(0.778), s.MatchupFieldGoalPercentage)
+			assert.Equal(t, int32(0), s.MatchupThreePointersMade)
+			assert.Equal(t, int32(1), s.MatchupThreePointersAttempted)
+			assert.Equal(t, float32(0), s.MatchupThreePointerPercentage)
+			mitchellTested = true
+		}
+	}
+	assert.True(t, mitchellTested, "Donovan Mitchell statline tested")
 }
