@@ -179,6 +179,24 @@ var (
 	NHLGoalieBoxScore Feed     = Feed(string(NHL) + " goalie box score")
 	NHLPlayByPlay     Feed     = Feed(string(NHL) + " play by play")
 
+	// NFL
+	NFL                      Provider = "nfl"
+	NFLMatchup               Feed     = Feed(string(NFL) + " matchup")
+	NFLMatchupPeriods        Feed     = Feed(string(NFL) + " matchup periods")
+	NFLPassingBoxScore       Feed     = Feed(string(NFL) + " passing box score")
+	NFLRushingBoxScore       Feed     = Feed(string(NFL) + " rushing box score")
+	NFLReceivingBoxScore     Feed     = Feed(string(NFL) + " receiving box score")
+	NFLDefenseBoxScore       Feed     = Feed(string(NFL) + " defense box score")
+	NFLKickingBoxScore       Feed     = Feed(string(NFL) + " kicking box score")
+	NFLKickoffBoxScore       Feed     = Feed(string(NFL) + " kickoff box score")
+	NFLPuntingBoxScore       Feed     = Feed(string(NFL) + " punting box score")
+	NFLKickReturnBoxScore    Feed     = Feed(string(NFL) + " kick return box score")
+	NFLPuntReturnBoxScore    Feed     = Feed(string(NFL) + " punt return box score")
+	NFLFumblesBoxScore       Feed     = Feed(string(NFL) + " fumbles box score")
+	NFLInterceptionsBoxScore Feed     = Feed(string(NFL) + " interceptions box score")
+	NFLPlayByPlay            Feed     = Feed(string(NFL) + " play by play")
+	NFLPlayByPlayStats       Feed     = Feed(string(NFL) + " play by play stats")
+
 	// prop finder
 	PropFinder           Provider = "prop finder"
 	PropFinderMLBWeather Feed     = Feed(string(PropFinder) + " mlb weather")

@@ -205,6 +205,83 @@ var FeedDocs = []FeedDoc{
 		ModelPath: "dataprovider/nhl/model/play_by_play.go", PointInTime: true,
 	},
 
+	// NFL
+	{
+		Feed: sportscrape.NFLMatchup, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Matchup", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/matchup.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLMatchupPeriods, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Matchup periods", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/matchup_periods.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLPassingBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Passing box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/passing_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLRushingBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Rushing box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/rushing_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLReceivingBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Receiving box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/receiving_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLDefenseBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Defense box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/defense_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLKickingBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Kicking box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/kicking_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLKickoffBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Kickoff box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/kickoff_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLPuntingBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Punting box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/punting_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLKickReturnBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Kick return box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/kick_return_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLPuntReturnBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Punt return box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/punt_return_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLFumblesBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Fumbles box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/fumbles_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLInterceptionsBoxScore, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Interceptions box score stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/interceptions_box_score.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLPlayByPlay, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Play by play", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/play_by_play.go", PointInTime: true,
+	},
+	{
+		Feed: sportscrape.NFLPlayByPlayStats, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Play by play stats", Periods: "Live, Full",
+		ModelPath: "dataprovider/nfl/model/play_by_play_stat.go", PointInTime: true,
+	},
+
 	// prop finder
 	{
 		Feed: sportscrape.PropFinderMLBWeather, Provider: sportscrape.PropFinder, Source: "https://api.propfinder.app", League: "MLB",
