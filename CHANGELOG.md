@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SPORTSCRAPE_NFL_DOT_COM_CLIENT_KEY` / `SPORTSCRAPE_NFL_DOT_COM_CLIENT_SECRET` to override the nfl.com client credentials (#160)
 
 ### Changed
-- `TestBoxScoreDefenseScraper` (`dataprovider/nba`) now tests TOR @ CLE on 2025-11-13 (like `TestBoxScoreMatchupsScraper`) with expected values from current nba.com data, and finds its record by player instead of by slice index
+- `TestBoxScoreDefenseScraper` (`dataprovider/nba`) now tests TOR @ CLE on 2025-11-13 (like `TestBoxScoreMatchupsScraper`) with expected values from current nba.com data, and finds its record by player instead of by slice index (#162)
 
 ### Documentation
 - Added `sportscrape nfl` to README and the NFL feeds to `docs/DATA_PROVIDERS.md` (#160)
