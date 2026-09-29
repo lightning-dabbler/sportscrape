@@ -94,7 +94,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 	var concurrency int
 
 	switch provider {
-	case "foxsports", "baseballsavant", "espn", "nba", "wnba", "nhl":
+	case "foxsports", "baseballsavant", "espn", "nba", "wnba", "nhl", "nfl":
 		// --concurrency
 		concurrency, err = cmd.Flags().GetInt("concurrency")
 		if err != nil {
@@ -123,7 +123,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		if err != nil {
 			return err
 		}
-		if provider == "nhl" {
+		if provider == "nhl" || provider == "nfl" {
 			// --fetch-attempts, --fetch-retry-backoff
 			fetchAttempts, fetchRetryBackoff, err = fetchRetryFlags(cmd)
 			if err != nil {
@@ -205,6 +205,19 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		}
 	case "nhl":
 		e = &feed.NHLExtractor{
+			Feed:              feedstring,
+			Date:              date,
+			FetchAttempts:     fetchAttempts,
+			FetchRetryBackoff: fetchRetryBackoff,
+			Timeout:           timeoutDuration,
+			Concurrency:       concurrency,
+			OutputPath:        destination,
+			Format:            fileFormat,
+			S3Config:          s3config,
+			ParquetOptions:    parquetOptions,
+		}
+	case "nfl":
+		e = &feed.NFLExtractor{
 			Feed:              feedstring,
 			Date:              date,
 			FetchAttempts:     fetchAttempts,

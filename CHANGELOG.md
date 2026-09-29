@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `nfl` data provider (`dataprovider/nfl`) for api.nfl.com: matchup, matchup periods (each overtime period), 11 box score feeds (passing, rushing, receiving, defense, kicking, kickoff, punting, kick/punt returns, fumbles, interceptions) with full player names, play-by-play, and play-by-play stats with decoded stat types. CLI: `sportscrape nfl --feed <feed> --date YYYY-MM-DD` (#160)
+- `SPORTSCRAPE_NFL_DOT_COM_CLIENT_KEY` / `SPORTSCRAPE_NFL_DOT_COM_CLIENT_SECRET` to override the nfl.com client credentials (#160)
+
+### Documentation
+- Added `sportscrape nfl` to README and the NFL feeds to `docs/DATA_PROVIDERS.md` (#160)
 
 ## [1.7.1] - 2026-09-26
 ### Added
