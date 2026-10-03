@@ -32,7 +32,7 @@ func (s *ReceivingBoxScoreScraper) Feed() sportscrape.Feed {
 
 func (s *ReceivingBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.ReceivingBoxScore] {
 	context := s.ConstructContext(matchup)
-	box, err := s.FetchBoxScore(&context)
+	box, err := s.FetchBoxScore(&context, matchup.WeekType)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.ReceivingBoxScore]{Error: err, Context: context}
 	}

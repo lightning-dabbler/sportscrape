@@ -1,7 +1,9 @@
 package nfl
 
 import (
+	"errors"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
@@ -74,6 +76,11 @@ func (s *MatchupScraper) Scrape() sportscrape.MatchupOutput[model.Matchup] {
 	}
 	week, err := fetchJSON[jsonresponse.Week](weekURL, s.Fetcher)
 	if err != nil {
+		// the week's own 404 means the date isn't part of any week (an off-season gap e.g. 2022-07-27), so there are no games
+		var statusErr *StatusError
+		if errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound && statusErr.URL == weekURL {
+			return output
+		}
 		output.Error = err
 		return output
 	}

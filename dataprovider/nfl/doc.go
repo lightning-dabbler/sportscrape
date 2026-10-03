@@ -33,6 +33,7 @@ Matchup data:
 	seasonType: PRE, REG, POST
 	weekType: HOF (hall of fame game, PRE week 0), PRE, REG, WC, DIV, CONF, SB
 	The Super Bowl week (POST week 4) spans the off-season e.g. dateEnd 2026-07-29
+	Dates that aren't part of any week (off-season gaps e.g. 2022-07-27) respond with a 404; MatchupScraper returns no matchups for them
 
 	URL template: https://api.nfl.com/football/v2/experience/weekly-game-details?season={season}&type={seasonType}&week={week}&...
 	e.g. https://api.nfl.com/football/v2/experience/weekly-game-details?includeDriveChart=false&includeReplays=false&includeStandings=false&includeTaggedVideos=false&season=2025&type=REG&week=1

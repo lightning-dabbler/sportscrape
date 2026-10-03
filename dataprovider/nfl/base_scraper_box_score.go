@@ -41,7 +41,9 @@ type BaseBoxScoreScraper struct {
 // FetchBoxScore retrieves the player statistics for the matchup in context, split into the away and home team sides.
 // Returns no players when player statistics are not available yet (the game has not started, or is further out and the api responds with a 404).
 // Player full names come from https://api.nfl.com/football/v2/persons/{person_id}, fetched via boxScore.PlayerName only for emitted statlines.
-func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContext) (boxScore, error) {
+// The sides always carry the matchup's team IDs: the Pro Bowl's (weekType ProBowlWeekType) player statistics use Pro Bowl team IDs,
+// so its sides are matched to the matchup's by away/home instead of by team ID.
+func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContext, weekType string) (boxScore, error) {
 	url := ConstructPlayerStatisticsURL(context.EventID.(string))
 	context.URL = url
 	pullTimestamp := time.Now().UTC()
@@ -63,7 +65,7 @@ func (s *BaseBoxScoreScraper) FetchBoxScore(context *sportscrape.EventDataContex
 	awayID := context.AwayID.(string)
 	homeID := context.HomeID.(string)
 	// the player statistics' team sides must be the matchup's, otherwise every statline would be attributed to the wrong team
-	if stats.AwayTeam.TeamID != awayID || stats.HomeTeam.TeamID != homeID {
+	if weekType != ProBowlWeekType && (stats.AwayTeam.TeamID != awayID || stats.HomeTeam.TeamID != homeID) {
 		return box, fmt.Errorf("player statistics teams (away %s, home %s) don't match the matchup's (away %s, home %s)", stats.AwayTeam.TeamID, stats.HomeTeam.TeamID, awayID, homeID)
 	}
 	box.Sides = []teamSide{

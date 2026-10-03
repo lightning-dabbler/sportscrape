@@ -53,6 +53,7 @@ func (s *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataO
 	for _, drive := range details.DriveChart.Drives {
 		drives[drive.Sequence] = drive
 	}
+	teamIDs := matchupTeamIDs(details)
 
 	var data []model.PlayByPlay
 	for _, play := range details.DriveChart.Plays {
@@ -80,11 +81,14 @@ func (s *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataO
 			IsEndOfQuarter:               play.PlayIsEndOfQuarter,
 			Scored:                       play.PlayScored,
 			ScoringPlayType:              play.ScoringPlayType,
-			ScoringTeamID:                play.ScoringTeamID,
 			SpecialTeamsPlayType:         play.SpecialTeamsPlayType,
 			NextPlayType:                 play.NextPlayType,
 			NextPlayIsGoalToGo:           play.NextPlayIsGoalToGo,
 			Deleted:                      play.PlayDeleted,
+		}
+		if play.ScoringTeamID != nil {
+			scoringTeamID := toMatchupTeamID(teamIDs, *play.ScoringTeamID)
+			record.ScoringTeamID = &scoringTeamID
 		}
 		if play.PlayStartTime != nil {
 			start, err := util.RFC3339ToTime(*play.PlayStartTime)
@@ -107,7 +111,8 @@ func (s *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDataO
 		// driveSequence is 0 when the play isn't part of a drive
 		if drive, exists := drives[play.DriveSequence]; exists && play.DriveSequence > 0 {
 			record.DriveSequence = &drive.Sequence
-			record.DriveTeamID = &drive.TeamID
+			driveTeamID := toMatchupTeamID(teamIDs, drive.TeamID)
+			record.DriveTeamID = &driveTeamID
 			record.DriveStart = &drive.StartedDescription
 			record.DriveResult = &drive.EndedDescription
 		}
