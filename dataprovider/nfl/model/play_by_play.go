@@ -58,7 +58,7 @@ type PlayByPlay struct {
 	Scored bool `json:"scored" parquet:"name=scored, type=BOOLEAN"`
 	// ScoringPlayType e.g. TOUCHDOWN, PAT, PAT2, FIELD_GOAL, UNSPECIFIED
 	ScoringPlayType string `json:"scoring_play_type" parquet:"name=scoring_play_type, type=BYTE_ARRAY, convertedtype=UTF8"`
-	// ScoringTeamID - nil when the play didn't score
+	// ScoringTeamID - the matchup's team ID (also for the Pro Bowl, whose drive chart uses Pro Bowl team IDs); nil when the play didn't score
 	ScoringTeamID *string `json:"scoring_team_id" parquet:"name=scoring_team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// SpecialTeamsPlayType e.g. PENALTY, UNSPECIFIED
 	SpecialTeamsPlayType string `json:"special_teams_play_type" parquet:"name=special_teams_play_type, type=BYTE_ARRAY, convertedtype=UTF8"`
@@ -70,7 +70,7 @@ type PlayByPlay struct {
 	Deleted bool `json:"deleted" parquet:"name=deleted, type=BOOLEAN"`
 	// DriveSequence - the drive the play is part of e.g. 1; nil when the play isn't part of a drive (e.g. timeouts)
 	DriveSequence *int32 `json:"drive_sequence" parquet:"name=drive_sequence, type=INT32"`
-	// DriveTeamID - team in possession for the drive; nil when the play isn't part of a drive
+	// DriveTeamID - matchup's team ID of the team in possession for the drive (also for the Pro Bowl); nil when the play isn't part of a drive
 	DriveTeamID *string `json:"drive_team_id" parquet:"name=drive_team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// DriveStart - how the drive started e.g. Kickoff, Punt, Fumble, Downs; nil when the play isn't part of a drive
 	DriveStart *string `json:"drive_start" parquet:"name=drive_start, type=BYTE_ARRAY, convertedtype=UTF8"`

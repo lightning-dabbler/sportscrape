@@ -52,6 +52,16 @@ const (
 	phiTeamID     = "10403700-b939-3cbd-3d16-24d4d6742fa2"
 )
 
+// https://api.nfl.com/experience/v2/gamedetails/10012015-0125-0020-8b38-7e57a77e8e95
+// NFC Pro Bowl Team @ AFC Pro Bowl Team: the matchup uses the AFC and NFC Pro Bowl Team IDs,
+// while the player statistics and drive chart use Pro Bowl team IDs (10408712-617b-8f0f-f061-488f2a55b7b5, 10408713-191c-6da2-c8ff-84762c48a270)
+const (
+	proBowlDate    = "2015-01-25"
+	proBowlEventID = "10012015-0125-0020-8b38-7e57a77e8e95"
+	afcProBowlID   = "10408600-77a1-8b0f-8f54-99b7e0a7d1b2"
+	nfcProBowlID   = "10408700-5035-ce5c-b3dd-20413011bc6a"
+)
+
 // runBoxScore runs s against the matchup for eventID on date
 func runBoxScore[E any](t *testing.T, s scraper.EventDataScraper[model.Matchup, E], date string, eventID string) []E {
 	t.Helper()
@@ -171,11 +181,12 @@ func TestMatchupScraperHallOfFameGame(t *testing.T) {
 }
 
 func TestMatchupScraperNoGames(t *testing.T) {
-	// A Wednesday between weeks 1 and 2 of the 2025 season, and a date in the off-season
+	// A Wednesday between weeks 1 and 2 of the 2025 season, a date in the off-season (part of the Super Bowl week),
+	// and an off-season date that isn't part of any week (https://api.nfl.com/football/v2/weeks/date/2022-07-27 responds with a 404)
 	if testing.Short() {
 		t.Skip("Skipping integration test")
 	}
-	for _, date := range []string{"2025-09-10", "2026-06-15"} {
+	for _, date := range []string{"2025-09-10", "2026-06-15", "2022-07-27"} {
 		assert.Equal(t, 0, len(retrieveMatchups(t, date)), "0 events on %s", date)
 	}
 }

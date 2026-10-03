@@ -145,3 +145,36 @@ func TestPlayByPlayScraperPostSeasonOvertime(t *testing.T) {
 	assert.Equal(t, 28, overtime, "28 overtime plays")
 	assert.Equal(t, 24, len(drives), "24 drives")
 }
+
+func TestPlayByPlayScraperProBowl(t *testing.T) {
+	// https://api.nfl.com/experience/v2/gamedetails/10012015-0125-0020-8b38-7e57a77e8e95?includeDriveChart=true
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	matchup := retrieveMatchup(t, proBowlDate, proBowlEventID)
+	plays := runPlayByPlay(t, matchup)
+	require.Equal(t, 193, len(plays), "193 plays")
+	teamIDs := []string{afcProBowlID, nfcProBowlID}
+	byID := make(map[int64]model.PlayByPlay, len(plays))
+	for _, play := range plays {
+		byID[play.PlayID] = play
+		assert.Equal(t, afcProBowlID, play.HomeTeamID)
+		assert.Equal(t, nfcProBowlID, play.AwayTeamID)
+		// the drive chart's Pro Bowl team IDs are mapped to the matchup's
+		if play.DriveTeamID != nil {
+			assert.Contains(t, teamIDs, *play.DriveTeamID)
+		}
+		if play.ScoringTeamID != nil {
+			assert.Contains(t, teamIDs, *play.ScoringTeamID)
+		}
+	}
+
+	// (5:31) A.Luck pass deep left to G.Olsen for 17 yards, TOUCHDOWN.
+	touchdown, exists := byID[443]
+	require.True(t, exists, "play 443 should exist")
+	assert.Equal(t, "TOUCHDOWN", touchdown.ScoringPlayType)
+	require.NotNil(t, touchdown.ScoringTeamID)
+	assert.Equal(t, afcProBowlID, *touchdown.ScoringTeamID)
+	require.NotNil(t, touchdown.DriveTeamID)
+	assert.Equal(t, afcProBowlID, *touchdown.DriveTeamID)
+}

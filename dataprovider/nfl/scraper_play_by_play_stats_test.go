@@ -125,3 +125,20 @@ func TestPlayByPlayStatsScraperPostSeasonOvertime(t *testing.T) {
 	assert.Equal(t, 107, overtime, "107 overtime stats")
 	assert.Equal(t, int32(66), allenRushingYards, "Josh Allen rushing yards")
 }
+
+func TestPlayByPlayStatsScraperProBowl(t *testing.T) {
+	// https://api.nfl.com/experience/v2/gamedetails/10012015-0125-0020-8b38-7e57a77e8e95?includeDriveChart=true
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+	matchup := retrieveMatchup(t, proBowlDate, proBowlEventID)
+	stats := runPlayByPlayStats(t, matchup)
+	require.Equal(t, 732, len(stats), "732 stats")
+	teams := map[string]string{afcProBowlID: "AFC Pro Bowl Team", nfcProBowlID: "NFC Pro Bowl Team"}
+	for _, stat := range stats {
+		// the drive chart's Pro Bowl team IDs are mapped to the matchup's
+		team, exists := teams[stat.TeamID]
+		require.True(t, exists, "stat team ID %s should be the matchup's", stat.TeamID)
+		assert.Equal(t, team, stat.Team)
+	}
+}

@@ -32,7 +32,7 @@ func (s *PassingBoxScoreScraper) Feed() sportscrape.Feed {
 
 func (s *PassingBoxScoreScraper) Scrape(matchup model.Matchup) sportscrape.EventDataOutput[model.PassingBoxScore] {
 	context := s.ConstructContext(matchup)
-	box, err := s.FetchBoxScore(&context)
+	box, err := s.FetchBoxScore(&context, matchup.WeekType)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.PassingBoxScore]{Error: err, Context: context}
 	}

@@ -53,3 +53,23 @@ func TestPassingBoxScoreScraperPostSeason(t *testing.T) {
 	assert.Equal(t, int32(3), r.Touchdowns)
 	assert.Equal(t, int32(2), r.Interceptions)
 }
+
+func TestPassingBoxScoreScraperProBowl(t *testing.T) {
+	// https://api.nfl.com/football/v2/stats/live/player-statistics/10012015-0125-0020-8b38-7e57a77e8e95
+	s := NewPassingBoxScoreScraper()
+	s.Fetcher = testFetcher
+	records := runBoxScore(t, s, proBowlDate, proBowlEventID)
+	assert.Equal(t, 6, len(records), "6 passers")
+	for _, r := range records {
+		assert.Contains(t, []string{afcProBowlID, nfcProBowlID}, r.TeamID, "statlines carry the matchup's team IDs")
+	}
+	r := findPlayer(t, records, func(r model.PassingBoxScore) string { return r.PlayerID }, "00-0020531")
+	assert.Equal(t, "Drew Brees", r.Player)
+	assert.Equal(t, afcProBowlID, r.TeamID)
+	assert.Equal(t, "AFC Pro Bowl Team", r.Team)
+	assert.Equal(t, nfcProBowlID, r.OpponentID)
+	assert.Equal(t, "NFC Pro Bowl Team", r.Opponent)
+	assert.Equal(t, int32(13), r.Completions)
+	assert.Equal(t, int32(21), r.Attempts)
+	assert.Equal(t, int32(163), r.Yards)
+}
