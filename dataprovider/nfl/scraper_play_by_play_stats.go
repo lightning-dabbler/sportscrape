@@ -55,9 +55,11 @@ func (s *PlayByPlayStatsScraper) Scrape(matchup model.Matchup) sportscrape.Event
 		matchup.HomeTeamID: matchup.HomeTeam,
 		matchup.AwayTeamID: matchup.AwayTeam,
 	}
+	teamIDs := matchupTeamIDs(details)
 	var data []model.PlayByPlayStat
 	for _, play := range details.DriveChart.Plays {
 		for _, stat := range play.Stats {
+			teamID := toMatchupTeamID(teamIDs, stat.TeamID)
 			record := model.PlayByPlayStat{
 				PullTimestamp:        pullTimestamp,
 				PullTimestampParquet: pullTimestampParquet,
@@ -70,8 +72,8 @@ func (s *PlayByPlayStatsScraper) Scrape(matchup model.Matchup) sportscrape.Event
 				StatType:             stat.StatType,
 				StatTypeDescription:  StatTypeDescription(stat.StatType),
 				Yards:                stat.Yards,
-				TeamID:               stat.TeamID,
-				Team:                 teams[stat.TeamID],
+				TeamID:               teamID,
+				Team:                 teams[teamID],
 				PlayerID:             stat.GSISPlayerID,
 				PersonID:             stat.PersonID,
 				PlayerShortName:      stat.GSISPlayerName,

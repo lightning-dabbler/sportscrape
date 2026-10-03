@@ -26,7 +26,7 @@ type PlayByPlayStat struct {
 	StatTypeDescription *string `json:"stat_type_description" parquet:"name=stat_type_description, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Yards e.g. 7; nil for stats without yards (e.g. solo tackle, target)
 	Yards *int32 `json:"yards" parquet:"name=yards, type=INT32"`
-	// TeamID of the team credited with the stat
+	// TeamID - the matchup's team ID of the team credited with the stat (also for the Pro Bowl, whose drive chart uses Pro Bowl team IDs)
 	TeamID string `json:"team_id" parquet:"name=team_id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	// Team of the team credited with the stat e.g. Dallas Cowboys (the franchise's current name, even for past seasons e.g. Los Angeles Chargers for the 2012 San Diego Chargers)
 	Team string `json:"team" parquet:"name=team, type=BYTE_ARRAY, convertedtype=UTF8"`

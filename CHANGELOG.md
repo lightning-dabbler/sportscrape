@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- nfl box score feeds no longer fail on the Pro Bowl, whose player statistics use Pro Bowl team IDs; statlines carry the matchup's team IDs
+- nfl play-by-play and play-by-play stats map the Pro Bowl's drive chart team IDs to the matchup's (`drive_team_id`, `scoring_team_id`, `team_id`, and `team` no longer blank)
+- nfl matchup returns no matchups instead of an error for off-season dates outside every NFL week (e.g. 2022-07-27, where `weeks/date` responds with a 404)
 
 ## [1.8.0] - 2026-09-29
 ### Added
