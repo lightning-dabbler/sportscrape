@@ -11,11 +11,22 @@ jobs:
   validate:
     uses: ./.github/workflows/validate.yml
 
+  build-binary:
+    uses: ./.github/workflows/build-binary.yml
+
+  require-bump:
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built == 'true' && needs.build-binary.outputs.sportscrape_binary_successfully_built == 'true' }}
+    needs: build-binary
+    uses: ./.github/workflows/require-bump.yml
+    with:
+      fail_if_not_bumped: false
+
   approval:
-    if: ${{ needs.validate.outputs.successful_pre_commit_run && needs.tests.outputs.successful_run}}
+    if: ${{ needs.validate.outputs.successful_pre_commit_run == 'true' && needs.tests.outputs.successful_run == 'true' && needs.require-bump.outputs.is_bumped_already == 'true' }}
     needs:
       - tests
       - validate
+      - require-bump
     name: Approval gate for tag and release
     environment: tag-release
     runs-on: ubuntu-latest
@@ -29,7 +40,7 @@ jobs:
           echo "green_light=true" >> $GITHUB_OUTPUT
 
   deploy:
-    if: ${{ needs.approval.outputs.green_light }}
+    if: ${{ needs.approval.outputs.green_light == 'true' }}
     needs:
       - approval
     permissions:
