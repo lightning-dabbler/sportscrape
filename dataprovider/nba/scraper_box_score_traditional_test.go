@@ -1,6 +1,7 @@
 package nba
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -47,6 +48,9 @@ func TestBoxScoreTraditionalScraper(t *testing.T) {
 	)
 
 	records, err := boxscorerunner.Run(matchups)
+	if errors.Is(err, ErrBoxScoreStatsMissing) {
+		t.Skip(err)
+	}
 	require.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 20, n_records, "20 stat lines")

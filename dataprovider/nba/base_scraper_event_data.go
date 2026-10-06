@@ -2,6 +2,7 @@ package nba
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/url"
@@ -127,6 +128,10 @@ func (beds BaseEventDataScraper) LiveBoxScoreDataAvailable(gameStatus int32) boo
 	return false
 }
 
+// ErrBoxScoreStatsMissing is returned (wrapped) by box score scrapers when the
+// page's players still have no statistics after every fetch attempt.
+var ErrBoxScoreStatsMissing = errors.New("box score payload is missing player stats")
+
 // fetchBoxScorePayload fetches url with fetchDocWithRetry and returns the
 // __NEXT_DATA__ JSON. nba.com and wnba.com intermittently server-render box
 // score pages whose player objects carry only names and IDs; that payload still
@@ -135,7 +140,7 @@ func (beds BaseEventDataScraper) LiveBoxScoreDataAvailable(gameStatus int32) boo
 func (beds *BaseEventDataScraper) fetchBoxScorePayload(url, statsKey string) (string, error) {
 	doc, err := beds.fetchDocWithRetry(url, func(doc *goquery.Document) error {
 		if boxScorePlayerStatsMissing(doc.Find(Selector).Text(), statsKey) {
-			return fmt.Errorf("box score payload from %s is missing player %s", url, statsKey)
+			return fmt.Errorf("%w: no player %s in the payload from %s", ErrBoxScoreStatsMissing, statsKey, url)
 		}
 		return nil
 	})

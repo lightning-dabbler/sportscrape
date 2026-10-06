@@ -3,6 +3,7 @@
 package wnba
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -51,6 +52,9 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 	)
 
 	records, err := boxscorerunner.Run([]model.Matchup{matchup})
+	if errors.Is(err, ErrBoxScoreStatsMissing) {
+		t.Skip(err)
+	}
 	assert.NoError(t, err)
 	require.NotEmpty(t, records, "expected at least one player stat line")
 
