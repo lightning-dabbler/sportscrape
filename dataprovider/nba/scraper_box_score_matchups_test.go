@@ -18,7 +18,7 @@ func TestBoxScoreMatchupsScraper(t *testing.T) {
 
 	matchupScraper := NewMatchupScraper(
 		WithMatchupDate("2025-11-13"),
-		WithMatchupTimeout(1*time.Minute),
+		WithMatchupTimeout(3*time.Minute),
 	)
 	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchupScraper.NetworkHeaders = NetworkHeaders
@@ -45,7 +45,7 @@ func TestBoxScoreMatchupsScraper(t *testing.T) {
 		t.Fatalf("expected event 0022500225 on 2025-11-13, got %d matching matchups", len(tested))
 	}
 	boxscorescraper := NewBoxScoreMatchupsScraper(
-		WithBoxScoreMatchupsTimeout(1 * time.Minute),
+		WithBoxScoreMatchupsTimeout(3 * time.Minute),
 	)
 	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever

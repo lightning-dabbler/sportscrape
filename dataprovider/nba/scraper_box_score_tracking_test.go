@@ -18,7 +18,7 @@ func TestBoxScoreTrackingScraper(t *testing.T) {
 
 	matchupScraper := NewMatchupScraper(
 		WithMatchupDate("2025-06-05"),
-		WithMatchupTimeout(1*time.Minute),
+		WithMatchupTimeout(3*time.Minute),
 	)
 	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchupScraper.NetworkHeaders = NetworkHeaders
@@ -34,7 +34,7 @@ func TestBoxScoreTrackingScraper(t *testing.T) {
 		t.Fatal(err)
 	}
 	boxscorescraper := NewBoxScoreTrackingScraper(
-		WithBoxScoreTrackingTimeout(1 * time.Minute),
+		WithBoxScoreTrackingTimeout(3 * time.Minute),
 	)
 	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever

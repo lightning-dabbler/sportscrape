@@ -39,7 +39,7 @@ func TestBoxScoreFourFactorsScraper(t *testing.T) {
 	require.True(t, found, "expected to find game 1022600254 (DAL @ IND) on 2026-08-14")
 
 	boxscorescraper := NewBoxScoreFourFactorsScraper(
-		WithBoxScoreFourFactorsTimeout(1*time.Minute),
+		WithBoxScoreFourFactorsTimeout(3*time.Minute),
 		WithBoxScoreFourFactorsPeriod(Full),
 	)
 	boxscorescraper.FetchRetryBackoff = 5 * time.Second
