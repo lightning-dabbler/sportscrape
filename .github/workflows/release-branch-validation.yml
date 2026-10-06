@@ -27,14 +27,14 @@ jobs:
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
-    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built && needs.build-binary.outputs.sportscrape_binary_successfully_built }}
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built == 'true' && needs.build-binary.outputs.sportscrape_binary_successfully_built == 'true' }}
     uses: ./.github/workflows/require-bump.yml
     needs:
       - build-binary
 
   validate-branch-semver:
     name: Check branch SemVer matches version
-    if: ${{ needs.require-bump.outputs.is_bumped_already }}
+    if: ${{ needs.require-bump.outputs.is_bumped_already == 'true' }}
     needs:
       - require-bump
       - validate-release-branch-format

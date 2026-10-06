@@ -68,7 +68,7 @@ func (pbp *PlayByPlayScraper) Scrape(matchup model.Matchup) sportscrape.EventDat
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	doc, err := pbp.FetchDoc(url, Selector)
+	doc, err := pbp.fetchDocWithRetry(url, nil)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.PlayByPlay]{Error: err, Context: context}
 	}

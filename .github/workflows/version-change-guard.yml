@@ -1,0 +1,43 @@
+name: Version change guard
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  version-change-guard:
+    name: Version changes only on release branches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Validate version change matches branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if git diff --quiet "$BASE_SHA...$HEAD_SHA" -- version/version.go; then
+            VERSION_CHANGED=false
+          else
+            VERSION_CHANGED=true
+          fi
+
+          echo "Head ref: $HEAD_REF"
+          echo "version/version.go changed: $VERSION_CHANGED"
+
+          if [[ "$HEAD_REF" == release/v* && "$VERSION_CHANGED" == "false" ]]; then
+            echo "❌ release/v*.*.* branches must bump version/version.go"
+            exit 1
+          fi
+
+          if [[ "$HEAD_REF" != release/v* && "$VERSION_CHANGED" == "true" ]]; then
+            echo "❌ version/version.go may only change on release/v*.*.* branches"
+            exit 1
+          fi
+
+          echo "✅ Version change matches branch"

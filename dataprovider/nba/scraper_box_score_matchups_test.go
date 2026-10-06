@@ -1,6 +1,7 @@
 package nba
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -19,6 +20,7 @@ func TestBoxScoreMatchupsScraper(t *testing.T) {
 		WithMatchupDate("2025-11-13"),
 		WithMatchupTimeout(3*time.Minute),
 	)
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchupScraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
@@ -45,6 +47,7 @@ func TestBoxScoreMatchupsScraper(t *testing.T) {
 	boxscorescraper := NewBoxScoreMatchupsScraper(
 		WithBoxScoreMatchupsTimeout(3 * time.Minute),
 	)
+	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMatchups]{
@@ -54,6 +57,9 @@ func TestBoxScoreMatchupsScraper(t *testing.T) {
 	)
 
 	records, err := boxscorerunner.Run(tested)
+	if errors.Is(err, ErrBoxScoreStatsMissing) {
+		t.Skip(err)
+	}
 	assert.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 211, n_records, "211 stat lines")

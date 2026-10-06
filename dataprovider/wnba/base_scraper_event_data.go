@@ -1,10 +1,13 @@
 package wnba
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/url"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/wnba/model"
 )
@@ -104,4 +107,66 @@ func (beds BaseEventDataScraper) PeriodBasedBoxScoreDataAvailable(period int32, 
 		}
 	}
 	return false
+}
+
+// ErrBoxScoreStatsMissing is returned (wrapped) by box score scrapers when the
+// page's players still have no statistics after every fetch attempt.
+var ErrBoxScoreStatsMissing = errors.New("box score payload is missing player stats")
+
+// fetchBoxScorePayload fetches url with fetchDocWithRetry and returns the
+// __NEXT_DATA__ JSON. nba.com and wnba.com intermittently server-render box
+// score pages whose player objects carry only names and IDs; that payload still
+// decodes, so a final game whose players are missing statsKey is
+// retried rather than emitted as rows of zero values.
+func (beds *BaseEventDataScraper) fetchBoxScorePayload(url, statsKey string) (string, error) {
+	doc, err := beds.fetchDocWithRetry(url, func(doc *goquery.Document) error {
+		if boxScorePlayerStatsMissing(doc.Find(Selector).Text(), statsKey) {
+			return fmt.Errorf("%w: no player %s in the payload from %s", ErrBoxScoreStatsMissing, statsKey, url)
+		}
+		return nil
+	})
+	if err != nil {
+		return "", err
+	}
+	return doc.Find(Selector).Text(), nil
+}
+
+// boxScorePlayerStatsMissing reports whether a final game's payload lists
+// players but none of them carry statsKey. Live games are never reported, since
+// their players can legitimately have no statistics yet. Unparseable payloads
+// report false so the caller's own decoding surfaces the error.
+func boxScorePlayerStatsMissing(jsonstr, statsKey string) bool {
+	var payload struct {
+		Props struct {
+			PageProps struct {
+				Game struct {
+					GameStatus int32 `json:"gameStatus"`
+					HomeTeam   struct {
+						Players []map[string]json.RawMessage `json:"players"`
+					} `json:"homeTeam"`
+					AwayTeam struct {
+						Players []map[string]json.RawMessage `json:"players"`
+					} `json:"awayTeam"`
+				} `json:"game"`
+			} `json:"pageProps"`
+		} `json:"props"`
+	}
+	if err := json.Unmarshal([]byte(jsonstr), &payload); err != nil {
+		return false
+	}
+	game := payload.Props.PageProps.Game
+	// Game is Final
+	if game.GameStatus != int32(3) {
+		return false
+	}
+	players := append(game.HomeTeam.Players, game.AwayTeam.Players...)
+	if len(players) == 0 {
+		return false
+	}
+	for _, player := range players {
+		if _, ok := player[statsKey]; ok {
+			return false
+		}
+	}
+	return true
 }

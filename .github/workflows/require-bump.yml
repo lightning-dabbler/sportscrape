@@ -2,6 +2,11 @@ name: Require bump
 
 on:
   workflow_call:
+    inputs:
+      fail_if_not_bumped:
+        description: "Fail the job when the version is not bumped higher than the highest git tag"
+        type: boolean
+        default: true
     outputs:
       is_bumped_already:
         description: |
@@ -25,6 +30,7 @@ jobs:
         uses: ./.github/actions/download-tools-binary
       - name: Validate bump is not required
         id: require_bump
+        continue-on-error: ${{ !inputs.fail_if_not_bumped }}
         run: |
           bin/tools git validate-version --require-bump
       - name: outputs

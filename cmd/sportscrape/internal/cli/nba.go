@@ -22,6 +22,7 @@ func CreateNBACmd() *cobra.Command {
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.NBAOptions))
 	shared.EmbedDateFlag(cmd)
 	shared.EmbedTimeoutFlag(cmd)
+	shared.EmbedFetchRetryFlags(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)

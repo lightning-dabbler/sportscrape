@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-06
+### Added
+- Retries for nba and wnba fetches: box score pages are retried when the fetch fails or a final game's payload is missing player statistics; matchup, matchup periods and play-by-play pages when the fetch fails; wnba matchup on network errors, 429 and 5xx. `FetchAttempts` / `FetchRetryBackoff` on the nba and wnba scrapers (default 3 attempts), `DefaultFetchAttempts` in both packages, and CLI `--fetch-attempts` / `--fetch-retry-backoff` on `nba` and `wnba` (#166)
+
+### Changed
+- nba and wnba integration tests use a 5 second retry backoff; nba box score tests stop on a scrape error instead of indexing an empty result; nba and wnba box score tests skip when the scrape fails with `ErrBoxScoreStatsMissing` (#166)
+
+### Fixed
+- nba and wnba box score feeds return an error wrapping `ErrBoxScoreStatsMissing` instead of rows of zero values when nba.com/wnba.com serve a final game's box score page whose players have no statistics; live box scores are unaffected (#166)
+
 ## [1.8.1] - 2026-10-03
 ### Fixed
 - nfl box score feeds no longer fail on the Pro Bowl, whose player statistics use Pro Bowl team IDs; statlines carry the matchup's team IDs (#163)
