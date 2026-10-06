@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.9.0] - 2026-10-06
 ### Added
 - Retries for nba and wnba fetches: box score pages are retried when the fetch fails or a final game's payload is missing player statistics; matchup, matchup periods and play-by-play pages when the fetch fails; wnba matchup on network errors, 429 and 5xx. `FetchAttempts` / `FetchRetryBackoff` on the nba and wnba scrapers (default 3 attempts), `DefaultFetchAttempts` in both packages, and CLI `--fetch-attempts` / `--fetch-retry-backoff` on `nba` and `wnba` (#166)
 
