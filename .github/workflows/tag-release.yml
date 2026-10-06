@@ -8,12 +8,12 @@ jobs:
     uses: ./.github/workflows/build-binary.yml
 
   require-bump:
-    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built && needs.build-binary.outputs.sportscrape_binary_successfully_built }}
+    if: ${{ needs.build-binary.outputs.tool_binary_successfully_built == 'true' && needs.build-binary.outputs.sportscrape_binary_successfully_built == 'true' }}
     needs: build-binary
     uses: ./.github/workflows/require-bump.yml
 
   tag-release:
-    if: ${{ needs.require-bump.outputs.is_bumped_already }}
+    if: ${{ needs.require-bump.outputs.is_bumped_already == 'true' }}
     needs: require-bump
     runs-on: ubuntu-latest
     name: Tag and release
@@ -50,7 +50,7 @@ jobs:
           fi
 
   go-package-deploy:
-    if: ${{ needs.tag-release.outputs.successful_tag_release }}
+    if: ${{ needs.tag-release.outputs.successful_tag_release == 'true' }}
     needs: tag-release
     name: Deploy package to pkg.go.dev
     runs-on: ubuntu-latest
