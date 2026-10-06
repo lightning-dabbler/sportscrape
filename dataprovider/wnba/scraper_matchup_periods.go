@@ -76,7 +76,7 @@ func (bs *MatchupPeriodsScraper) Scrape(matchup model.Matchup) sportscrape.Event
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	doc, err := bs.FetchDoc(url, Selector)
+	doc, err := bs.fetchDocWithRetry(url, nil)
 	if err != nil {
 		return sportscrape.EventDataOutput[model.MatchupPeriods]{Error: err, Context: context}
 	}

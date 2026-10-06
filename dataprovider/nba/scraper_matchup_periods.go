@@ -67,7 +67,7 @@ func (ms *MatchupPeriodsScraper) Scrape() sportscrape.MatchupOutput[model.Matchu
 		return output
 	}
 	pullts := time.Now().UTC()
-	doc, err := ms.FetchDoc(url, Selector)
+	doc, err := ms.fetchDocWithRetry(url, nil)
 	if err != nil {
 		output.Error = err
 		return output

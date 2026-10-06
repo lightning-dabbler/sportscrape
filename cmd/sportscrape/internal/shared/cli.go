@@ -123,7 +123,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		if err != nil {
 			return err
 		}
-		if provider == "nhl" || provider == "nfl" {
+		if provider == "nhl" || provider == "nfl" || provider == "nba" || provider == "wnba" {
 			// --fetch-attempts, --fetch-retry-backoff
 			fetchAttempts, fetchRetryBackoff, err = fetchRetryFlags(cmd)
 			if err != nil {
@@ -254,26 +254,30 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		}
 	case "nba":
 		e = &feed.NBAExtractor{
-			Feed:           feedstring,
-			Date:           date,
-			Timeout:        timeoutDuration,
-			Concurrency:    concurrency,
-			OutputPath:     destination,
-			Format:         fileFormat,
-			S3Config:       s3config,
-			ParquetOptions: parquetOptions,
+			Feed:              feedstring,
+			Date:              date,
+			FetchAttempts:     fetchAttempts,
+			FetchRetryBackoff: fetchRetryBackoff,
+			Timeout:           timeoutDuration,
+			Concurrency:       concurrency,
+			OutputPath:        destination,
+			Format:            fileFormat,
+			S3Config:          s3config,
+			ParquetOptions:    parquetOptions,
 		}
 	case "wnba":
 		e = &feed.WNBAExtractor{
-			Feed:           feedstring,
-			Date:           date,
-			EndDate:        endDate,
-			Timeout:        timeoutDuration,
-			Concurrency:    concurrency,
-			OutputPath:     destination,
-			Format:         fileFormat,
-			S3Config:       s3config,
-			ParquetOptions: parquetOptions,
+			Feed:              feedstring,
+			Date:              date,
+			EndDate:           endDate,
+			FetchAttempts:     fetchAttempts,
+			FetchRetryBackoff: fetchRetryBackoff,
+			Timeout:           timeoutDuration,
+			Concurrency:       concurrency,
+			OutputPath:        destination,
+			Format:            fileFormat,
+			S3Config:          s3config,
+			ParquetOptions:    parquetOptions,
 		}
 	default:
 		return fmt.Errorf("unsupported provider %s", provider)

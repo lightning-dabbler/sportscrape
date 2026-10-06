@@ -19,6 +19,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	}
 
 	matchupScraper := NewMatchupScraper(WithMatchupDate("2026-08-14"))
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{Scraper: matchupScraper},
 	)
@@ -37,6 +38,7 @@ func TestPlayByPlayScraper(t *testing.T) {
 	require.True(t, found, "expected to find game 1022600254 (DAL @ IND) on 2026-08-14")
 
 	pbpscraper := NewPlayByPlayScraper(WithPlayByPlayTimeout(3 * time.Minute))
+	pbpscraper.FetchRetryBackoff = 5 * time.Second
 	pbpscraper.NetworkHeaders = NetworkHeaders
 	pbprunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{

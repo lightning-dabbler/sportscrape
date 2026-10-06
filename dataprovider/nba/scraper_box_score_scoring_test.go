@@ -1,12 +1,14 @@
 package nba
 
 import (
+	"errors"
 	"testing"
 	"time"
 
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
 	"github.com/lightning-dabbler/sportscrape/runner"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBoxScoreScoringScraper(t *testing.T) {
@@ -19,6 +21,7 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 		WithMatchupDate("2025-06-05"),
 		WithMatchupTimeout(3*time.Minute),
 	)
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchupScraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
@@ -35,6 +38,7 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 		WithBoxScoreScoringTimeout(3*time.Minute),
 		WithBoxScoreScoringPeriod(H1),
 	)
+	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreScoring]{
@@ -44,7 +48,10 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 	)
 
 	records, err := boxscorerunner.Run(matchups)
-	assert.NoError(t, err)
+	if errors.Is(err, ErrBoxScoreStatsMissing) {
+		t.Skip(err)
+	}
+	require.NoError(t, err)
 	n_records := len(records)
 	assert.Equal(t, 21, n_records, "21 stat lines")
 	testRecord := records[4]

@@ -29,6 +29,12 @@ type BaseMatchupScraper struct {
 	scraper.BaseJsonScraper[jsonresponse.MatchupJSON]
 	Date    string // YYYY-MM-DD, required
 	EndDate string // YYYY-MM-DD, optional; empty = same as Date (single day)
+	// FetchAttempts is the max number of attempts per schedule request before
+	// giving up. <= 0 falls back to DefaultFetchAttempts.
+	FetchAttempts int
+	// FetchRetryBackoff is the delay between retry attempts.
+	// <= 0 retries without a delay.
+	FetchRetryBackoff time.Duration
 }
 
 func (bms *BaseMatchupScraper) Init() {
@@ -97,27 +103,59 @@ func (bms *BaseMatchupScraper) seasons() ([]string, error) {
 // without a browser-like User-Agent; HydrateModel is still reused for the
 // actual JSON unmarshaling.
 func (bms *BaseMatchupScraper) retrieveModel(url string) (*jsonresponse.MatchupJSON, error) {
+	attempts := bms.FetchAttempts
+	if attempts <= 0 {
+		attempts = DefaultFetchAttempts
+	}
+	backoff := max(bms.FetchRetryBackoff, 0)
+	var body []byte
+	var lastErr error
+	for attempt := 1; attempt <= attempts; attempt++ {
+		var retryable bool
+		body, retryable, lastErr = bms.fetchBody(url)
+		if lastErr == nil {
+			break
+		}
+		if !retryable {
+			return nil, lastErr
+		}
+		if attempt < attempts {
+			log.Printf("Attempt %d/%d fetching %s failed (%v); retrying in %s\n", attempt, attempts, url, lastErr, backoff)
+			time.Sleep(backoff)
+		}
+	}
+	if lastErr != nil {
+		return nil, lastErr
+	}
+	return bms.HydrateModel(body)
+}
+
+// fetchBody performs a single GET request for url and reports whether a
+// failure is worth retrying: network errors, 429 and 5xx are; any other non
+// 200 status isn't.
+func (bms *BaseMatchupScraper) fetchBody(url string) ([]byte, bool, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	req.Header.Set("User-Agent", UserAgent)
 	req.Header.Set("Accept", "application/json")
 
 	resp, err := request.NewClient(bms.Timeout).Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("HTTP Error at %s: %w", url, err)
+		return nil, true, fmt.Errorf("HTTP Error at %s: %w", url, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request to '%s' received a %s status", url, resp.Status)
+		retryable := resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= 500
+		return nil, retryable, fmt.Errorf("request to '%s' received a %s status", url, resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, true, err
 	}
-	return bms.HydrateModel(body)
+	return body, false, nil
 }
 
 // URL builds https://www.wnba.com/api/schedule?season={season}&regionId=1

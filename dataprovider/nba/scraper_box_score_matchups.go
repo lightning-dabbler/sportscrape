@@ -69,11 +69,10 @@ func (bs *BoxScoreMatchupsScraper) Scrape(matchup model.Matchup) sportscrape.Eve
 	pullTimestamp := time.Now().UTC()
 	pullTimestampParquet := types.TimeToTIMESTAMP_MILLIS(pullTimestamp, true)
 	context.PullTimestamp = pullTimestamp
-	doc, err := bs.FetchDoc(url, Selector)
+	jsonstr, err := bs.fetchBoxScorePayload(url, "matchups")
 	if err != nil {
 		return sportscrape.EventDataOutput[model.BoxScoreMatchups]{Error: err, Context: context}
 	}
-	jsonstr := doc.Find(Selector).Text()
 	var jsonPayload jsonresponse.BoxScoreMatchupsJSON
 	var data []model.BoxScoreMatchups
 

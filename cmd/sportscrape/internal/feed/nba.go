@@ -33,15 +33,17 @@ var (
 )
 
 type NBAExtractor struct {
-	Feed           string
-	Date           string
-	Timeout        time.Duration
-	Concurrency    int
-	OutputPath     string
-	Format         string
-	S3Config       exporters.S3Config
-	ParquetOptions []exporters.ParquetConfigOption
-	matchupScraper *nba.MatchupScraper
+	Feed              string
+	Date              string
+	FetchAttempts     int
+	FetchRetryBackoff time.Duration
+	Timeout           time.Duration
+	Concurrency       int
+	OutputPath        string
+	Format            string
+	S3Config          exporters.S3Config
+	ParquetOptions    []exporters.ParquetConfigOption
+	matchupScraper    *nba.MatchupScraper
 }
 
 func (e *NBAExtractor) ValidateFeed() error {
@@ -128,6 +130,8 @@ func (e *NBAExtractor) retrieveMatchup(keepAlive bool) ([]model.Matchup, error) 
 		nba.WithMatchupTimeout(e.Timeout),
 	)
 	scraper.NetworkHeaders = nba.NetworkHeaders
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	m, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper:   scraper,
@@ -156,6 +160,8 @@ func (e *NBAExtractor) scrapeMatchupPeriods(ctx context.Context) error {
 		nba.WithMatchupPeriodsTimeout(e.Timeout),
 	)
 	scraper.NetworkHeaders = nba.NetworkHeaders
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	matchups, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
 			Scraper: scraper,
@@ -174,6 +180,8 @@ func (e *NBAExtractor) scrapeLiveBoxScore(ctx context.Context) error {
 	}
 	scraper := nba.NewBoxScoreLiveScraper(nba.WithBoxScoreLiveTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreLive]{
 			Concurrency: e.Concurrency,
@@ -196,6 +204,8 @@ func (e *NBAExtractor) scrapeAdvancedBoxScore(ctx context.Context, period nba.Pe
 		nba.WithBoxScoreAdvancedTimeout(e.Timeout),
 	)
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreAdvanced]{
 			Concurrency: e.Concurrency,
@@ -218,6 +228,8 @@ func (e *NBAExtractor) scrapeTraditionalBoxScore(ctx context.Context, period nba
 		nba.WithBoxScoreTraditionalTimeout(e.Timeout),
 	)
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTraditional]{
 			Concurrency: e.Concurrency,
@@ -240,6 +252,8 @@ func (e *NBAExtractor) scrapeScoringBoxScore(ctx context.Context, period nba.Per
 		nba.WithBoxScoreScoringTimeout(e.Timeout),
 	)
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreScoring]{
 			Concurrency: e.Concurrency,
@@ -262,6 +276,8 @@ func (e *NBAExtractor) scrapeUsageBoxScore(ctx context.Context, period nba.Perio
 		nba.WithBoxScoreUsageTimeout(e.Timeout),
 	)
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreUsage]{
 			Concurrency: e.Concurrency,
@@ -284,6 +300,8 @@ func (e *NBAExtractor) scrapeMiscBoxScore(ctx context.Context, period nba.Period
 		nba.WithBoxScoreMiscTimeout(e.Timeout),
 	)
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMisc]{
 			Concurrency: e.Concurrency,
@@ -306,6 +324,8 @@ func (e *NBAExtractor) scrapeFourFactorsBoxScore(ctx context.Context, period nba
 		nba.WithBoxScoreFourFactorsTimeout(e.Timeout),
 	)
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreFourFactors]{
 			Concurrency: e.Concurrency,
@@ -325,6 +345,8 @@ func (e *NBAExtractor) scrapeHustleBoxScore(ctx context.Context) error {
 	}
 	scraper := nba.NewBoxScoreHustleScraper(nba.WithBoxScoreHustleTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreHustle]{
 			Concurrency: e.Concurrency,
@@ -344,6 +366,8 @@ func (e *NBAExtractor) scrapeMatchupsBoxScore(ctx context.Context) error {
 	}
 	scraper := nba.NewBoxScoreMatchupsScraper(nba.WithBoxScoreMatchupsTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreMatchups]{
 			Concurrency: e.Concurrency,
@@ -363,6 +387,8 @@ func (e *NBAExtractor) scrapeDefenseBoxScore(ctx context.Context) error {
 	}
 	scraper := nba.NewBoxScoreDefenseScraper(nba.WithBoxScoreDefenseTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreDefense]{
 			Concurrency: e.Concurrency,
@@ -382,6 +408,8 @@ func (e *NBAExtractor) scrapeTrackingBoxScore(ctx context.Context) error {
 	}
 	scraper := nba.NewBoxScoreTrackingScraper(nba.WithBoxScoreTrackingTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTracking]{
 			Concurrency: e.Concurrency,
@@ -401,6 +429,8 @@ func (e *NBAExtractor) scrapePlayByPlay(ctx context.Context) error {
 	}
 	scraper := nba.NewPlayByPlayScraper(nba.WithPlayByPlayTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
 			Concurrency: e.Concurrency,

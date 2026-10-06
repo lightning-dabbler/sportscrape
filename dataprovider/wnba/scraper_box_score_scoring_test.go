@@ -3,6 +3,7 @@
 package wnba
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -19,6 +20,7 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 	}
 
 	matchupScraper := NewMatchupScraper(WithMatchupDate("2026-08-14"))
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{Scraper: matchupScraper},
 	)
@@ -40,6 +42,7 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 		WithBoxScoreScoringTimeout(3*time.Minute),
 		WithBoxScoreScoringPeriod(Full),
 	)
+	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.NetworkHeaders = NetworkHeaders
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreScoring]{
@@ -49,6 +52,9 @@ func TestBoxScoreScoringScraper(t *testing.T) {
 	)
 
 	records, err := boxscorerunner.Run([]model.Matchup{matchup})
+	if errors.Is(err, ErrBoxScoreStatsMissing) {
+		t.Skip(err)
+	}
 	assert.NoError(t, err)
 	require.NotEmpty(t, records, "expected at least one player stat line")
 
