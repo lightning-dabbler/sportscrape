@@ -123,6 +123,8 @@ func (e *WNBAExtractor) retrieveMatchup() ([]model.Matchup, error) {
 		wnba.WithMatchupEndDate(e.EndDate),
 	)
 	scraper.Timeout = e.Timeout
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	return runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: scraper,
@@ -145,6 +147,8 @@ func (e *WNBAExtractor) scrapeMatchupPeriods(ctx context.Context) error {
 	}
 	scraper := wnba.NewMatchupPeriodsScraper(wnba.WithMatchupPeriodsTimeout(e.Timeout))
 	scraper.NetworkHeaders = wnba.NetworkHeaders
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.MatchupPeriods]{
 			Concurrency: e.Concurrency,
@@ -308,6 +312,8 @@ func (e *WNBAExtractor) scrapePlayByPlay(ctx context.Context) error {
 	}
 	scraper := wnba.NewPlayByPlayScraper(wnba.WithPlayByPlayTimeout(e.Timeout))
 	scraper.NetworkHeaders = wnba.NetworkHeaders
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
 			Concurrency: e.Concurrency,

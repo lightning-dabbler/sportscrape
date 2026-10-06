@@ -130,6 +130,8 @@ func (e *NBAExtractor) retrieveMatchup(keepAlive bool) ([]model.Matchup, error) 
 		nba.WithMatchupTimeout(e.Timeout),
 	)
 	scraper.NetworkHeaders = nba.NetworkHeaders
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	m, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper:   scraper,
@@ -158,6 +160,8 @@ func (e *NBAExtractor) scrapeMatchupPeriods(ctx context.Context) error {
 		nba.WithMatchupPeriodsTimeout(e.Timeout),
 	)
 	scraper.NetworkHeaders = nba.NetworkHeaders
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	matchups, err := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.MatchupPeriods]{
 			Scraper: scraper,
@@ -425,6 +429,8 @@ func (e *NBAExtractor) scrapePlayByPlay(ctx context.Context) error {
 	}
 	scraper := nba.NewPlayByPlayScraper(nba.WithPlayByPlayTimeout(e.Timeout))
 	scraper.DocumentRetriever = e.matchupScraper.DocumentRetriever
+	scraper.FetchAttempts = e.FetchAttempts
+	scraper.FetchRetryBackoff = e.FetchRetryBackoff
 	records, err := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.PlayByPlay]{
 			Concurrency: e.Concurrency,
