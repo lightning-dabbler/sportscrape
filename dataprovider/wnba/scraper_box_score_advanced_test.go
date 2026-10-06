@@ -37,7 +37,7 @@ func TestBoxScoreAdvancedScraper(t *testing.T) {
 	require.True(t, found, "expected to find game 1022600254 (DAL @ IND) on 2026-08-14")
 
 	boxscorescraper := NewBoxScoreAdvancedScraper(
-		WithBoxScoreAdvancedTimeout(3*time.Minute),
+		WithBoxScoreAdvancedTimeout(1*time.Minute),
 		WithBoxScoreAdvancedPeriod(Full),
 	)
 	boxscorescraper.NetworkHeaders = NetworkHeaders

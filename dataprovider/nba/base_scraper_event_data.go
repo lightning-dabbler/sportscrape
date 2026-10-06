@@ -1,9 +1,11 @@
 package nba
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
+	"time"
 
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/nba/model"
@@ -14,6 +16,13 @@ type BaseEventDataScraper struct {
 	Period       Period
 	FeedType     FeedType
 	BoxScoreType BoxScoreType
+	// FetchAttempts is the number of times to retry fetching a box score page
+	// when the fetch fails or the payload is missing player statistics.
+	// <= 0 falls back to DefaultFetchAttempts.
+	FetchAttempts int
+	// FetchRetryBackoff is the delay between retry attempts.
+	// <= 0 retries without a delay.
+	FetchRetryBackoff time.Duration
 }
 
 func (beds *BaseEventDataScraper) Init() {
@@ -122,4 +131,86 @@ func (beds BaseEventDataScraper) LiveBoxScoreDataAvailable(gameStatus int32) boo
 		return true
 	}
 	return false
+}
+
+// nba.com and wnba.com intermittently server-render box score pages whose
+// player objects carry only names and IDs, with no statistics. The payload
+// still decodes, so fetchBoxScorePayload retries a few times rather than emit
+// rows of zero values. DefaultFetchAttempts is applied when a scraper doesn't
+// set FetchAttempts explicitly (e.g. via the CLI flags).
+const (
+	DefaultFetchAttempts = 3
+)
+
+// fetchBoxScorePayload fetches url, waiting for the __NEXT_DATA__ selector, and
+// retries up to FetchAttempts times (sleeping FetchRetryBackoff between each)
+// if the fetch fails or the players in the payload are missing statsKey.
+// FetchAttempts <= 0 is treated as DefaultFetchAttempts; FetchRetryBackoff <= 0
+// retries without a delay.
+func (beds *BaseEventDataScraper) fetchBoxScorePayload(url, statsKey string) (string, error) {
+	attempts := beds.FetchAttempts
+	if attempts <= 0 {
+		attempts = DefaultFetchAttempts
+	}
+	backoff := beds.FetchRetryBackoff
+	if backoff < 0 {
+		backoff = 0
+	}
+	var lastErr error
+	for attempt := 1; attempt <= attempts; attempt++ {
+		doc, err := beds.FetchDoc(url, Selector)
+		switch {
+		case err != nil:
+			lastErr = err
+		default:
+			jsonstr := doc.Find(Selector).Text()
+			if !boxScorePlayerStatsMissing(jsonstr, statsKey) {
+				return jsonstr, nil
+			}
+			lastErr = fmt.Errorf("box score payload from %s is missing player %s", url, statsKey)
+		}
+		if attempt < attempts {
+			log.Printf("Attempt %d/%d fetching %s failed (%v); retrying in %s\n", attempt, attempts, url, lastErr, backoff)
+			time.Sleep(backoff)
+		}
+	}
+	return "", lastErr
+}
+
+// boxScorePlayerStatsMissing reports whether a live or final game's payload
+// lists players but none of them carry statsKey. Unparseable payloads report
+// false so the caller's own decoding surfaces the error.
+func boxScorePlayerStatsMissing(jsonstr, statsKey string) bool {
+	var payload struct {
+		Props struct {
+			PageProps struct {
+				Game struct {
+					GameStatus int32 `json:"gameStatus"`
+					HomeTeam   struct {
+						Players []map[string]json.RawMessage `json:"players"`
+					} `json:"homeTeam"`
+					AwayTeam struct {
+						Players []map[string]json.RawMessage `json:"players"`
+					} `json:"awayTeam"`
+				} `json:"game"`
+			} `json:"pageProps"`
+		} `json:"props"`
+	}
+	if err := json.Unmarshal([]byte(jsonstr), &payload); err != nil {
+		return false
+	}
+	game := payload.Props.PageProps.Game
+	if game.GameStatus != int32(2) && game.GameStatus != int32(3) {
+		return false
+	}
+	players := append(game.HomeTeam.Players, game.AwayTeam.Players...)
+	if len(players) == 0 {
+		return false
+	}
+	for _, player := range players {
+		if _, ok := player[statsKey]; ok {
+			return false
+		}
+	}
+	return true
 }

@@ -23,6 +23,7 @@ func CreateWNBACmd() *cobra.Command {
 	shared.EmbedDateFlag(cmd)
 	shared.EmbedEndDateFlag(cmd)
 	shared.EmbedTimeoutFlag(cmd)
+	shared.EmbedFetchRetryFlags(cmd)
 	shared.EmbedDestinationFlag(cmd)
 	shared.EmbedFileFormatFlag(cmd)
 	shared.EmbedParquetFlags(cmd)
