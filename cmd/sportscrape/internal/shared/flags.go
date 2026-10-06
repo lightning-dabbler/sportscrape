@@ -36,5 +36,5 @@ func EmbedEndDateFlag(cmd *cobra.Command) {
 
 func EmbedFetchRetryFlags(cmd *cobra.Command) {
 	cmd.Flags().Int("fetch-attempts", 3, "Max number of times to attempt a fetch before giving up.")
-	cmd.Flags().Int("fetch-retry-backoff", 3, "Delay (in seconds) between fetch retry attempts; 0 retries immediately. A server-provided retry delay takes precedence when present.")
+	cmd.Flags().Int("fetch-retry-backoff", 3, "Delay (in seconds) between fetch retry attempts; 0 retries immediately. For nhl and nfl, a server-provided retry delay takes precedence when present.")
 }

@@ -8,7 +8,6 @@ import (
 	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
-
 	"github.com/lightning-dabbler/sportscrape"
 	"github.com/lightning-dabbler/sportscrape/dataprovider/wnba/model"
 )
@@ -117,7 +116,7 @@ var ErrBoxScoreStatsMissing = errors.New("box score payload is missing player st
 // fetchBoxScorePayload fetches url with fetchDocWithRetry and returns the
 // __NEXT_DATA__ JSON. nba.com and wnba.com intermittently server-render box
 // score pages whose player objects carry only names and IDs; that payload still
-// decodes, so a live or final game whose players are missing statsKey is
+// decodes, so a final game whose players are missing statsKey is
 // retried rather than emitted as rows of zero values.
 func (beds *BaseEventDataScraper) fetchBoxScorePayload(url, statsKey string) (string, error) {
 	doc, err := beds.fetchDocWithRetry(url, func(doc *goquery.Document) error {
@@ -132,9 +131,10 @@ func (beds *BaseEventDataScraper) fetchBoxScorePayload(url, statsKey string) (st
 	return doc.Find(Selector).Text(), nil
 }
 
-// boxScorePlayerStatsMissing reports whether a live or final game's payload
-// lists players but none of them carry statsKey. Unparseable payloads report
-// false so the caller's own decoding surfaces the error.
+// boxScorePlayerStatsMissing reports whether a final game's payload lists
+// players but none of them carry statsKey. Live games are never reported, since
+// their players can legitimately have no statistics yet. Unparseable payloads
+// report false so the caller's own decoding surfaces the error.
 func boxScorePlayerStatsMissing(jsonstr, statsKey string) bool {
 	var payload struct {
 		Props struct {
@@ -155,7 +155,8 @@ func boxScorePlayerStatsMissing(jsonstr, statsKey string) bool {
 		return false
 	}
 	game := payload.Props.PageProps.Game
-	if game.GameStatus != int32(2) && game.GameStatus != int32(3) {
+	// Game is Final
+	if game.GameStatus != int32(3) {
 		return false
 	}
 	players := append(game.HomeTeam.Players, game.AwayTeam.Players...)
