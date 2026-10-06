@@ -20,6 +20,7 @@ func TestBoxScoreAdvancedScraper(t *testing.T) {
 		WithMatchupDate("2025-06-11"),
 		WithMatchupTimeout(1*time.Minute),
 	)
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchupScraper.NetworkHeaders = NetworkHeaders
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
@@ -36,6 +37,7 @@ func TestBoxScoreAdvancedScraper(t *testing.T) {
 		WithBoxScoreAdvancedTimeout(1*time.Minute),
 		WithBoxScoreAdvancedPeriod(Full),
 	)
+	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.DocumentRetriever = matchupScraper.DocumentRetriever
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreAdvanced]{

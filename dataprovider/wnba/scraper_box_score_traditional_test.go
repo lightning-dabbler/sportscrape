@@ -19,6 +19,7 @@ func TestBoxScoreTraditionalScraper(t *testing.T) {
 	}
 
 	matchupScraper := NewMatchupScraper(WithMatchupDate("2026-08-14"))
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{Scraper: matchupScraper},
 	)
@@ -40,6 +41,7 @@ func TestBoxScoreTraditionalScraper(t *testing.T) {
 		WithBoxScoreTraditionalTimeout(1*time.Minute),
 		WithBoxScoreTraditionalPeriod(Q1),
 	)
+	boxscorescraper.FetchRetryBackoff = 5 * time.Second
 	boxscorescraper.NetworkHeaders = NetworkHeaders
 	boxscorerunner := runner.NewEventDataRunner(
 		runner.EventDataRunnerConfig[model.Matchup, model.BoxScoreTraditional]{

@@ -92,6 +92,7 @@ func TestMatchupScraper(t *testing.T) {
 	matchupScraper := NewMatchupScraper(
 		WithMatchupDate("2026-08-14"),
 	)
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
@@ -145,6 +146,7 @@ func TestMatchupScraper_DateRange(t *testing.T) {
 		WithMatchupDate("2026-08-01"),
 		WithMatchupEndDate("2026-08-03"),
 	)
+	matchupScraper.FetchRetryBackoff = 5 * time.Second
 	matchuprunner := runner.NewMatchupRunner(
 		runner.MatchupRunnerConfig[model.Matchup]{
 			Scraper: matchupScraper,
