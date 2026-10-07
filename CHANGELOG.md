@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.10.1] - 2026-10-07
 ### Changed
 - nfl injuries skips entries without a GSIS ID (`player_id`): they come from a duplicate person record that repeats the player's entry for the week, e.g. Brock Wright (DET) in 2021 REG week 18 and 2022 REG week 9 (#170)
 
