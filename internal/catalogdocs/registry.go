@@ -281,6 +281,11 @@ var FeedDocs = []FeedDoc{
 		Description: "Play by play stats", Periods: "Live, Full",
 		ModelPath: "dataprovider/nfl/model/play_by_play_stat.go", PointInTime: true,
 	},
+	{
+		Feed: sportscrape.NFLInjuries, Provider: sportscrape.NFL, Source: "https://api.nfl.com", League: "NFL",
+		Description: "Injury report", Periods: "Full",
+		ModelPath: "dataprovider/nfl/model/injury.go", PointInTime: true,
+	},
 
 	// prop finder
 	{

@@ -19,6 +19,7 @@ func TestCreateNFLCmd(t *testing.T) {
 		flags := []string{
 			"feed",
 			"date",
+			"year",
 			"timeout",
 			"fetch-attempts",
 			"fetch-retry-backoff",
@@ -54,6 +55,7 @@ func TestCreateNFLCmd(t *testing.T) {
 			{"aws-endpoint", ""},
 			{"destination", ""},
 			{"date", ""},
+			{"year", ""},
 			{"timeout", "120"},
 			{"fetch-attempts", "3"},
 			{"fetch-retry-backoff", "3"},

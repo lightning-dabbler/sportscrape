@@ -24,6 +24,7 @@ func CreateNFLCmd() *cobra.Command {
 	cmd.Flags().IntP("concurrency", "c", 1, fmt.Sprintf("Max number of concurrent goroutines. Dependent on data feed (%s)", feed.NFLConcurrencyOptions))
 	cmd.Flags().String("feed", "", fmt.Sprintf("The data feed to extract. Options: %s", feed.NFLOptions))
 	shared.EmbedDateFlag(cmd)
+	cmd.Flags().String("year", "", "YYYY season to extract (injuries feed only).")
 	shared.EmbedTimeoutFlag(cmd)
 	shared.EmbedFetchRetryFlags(cmd)
 	shared.EmbedDestinationFlag(cmd)
