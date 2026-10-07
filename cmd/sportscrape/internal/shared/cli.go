@@ -130,6 +130,13 @@ func Run(cmd *cobra.Command, provider, league string) error {
 				return err
 			}
 		}
+		if provider == "nfl" {
+			// --year
+			year, err = cmd.Flags().GetString("year")
+			if err != nil {
+				return err
+			}
+		}
 		if provider == "wnba" {
 			// --end-date
 			endDate, err = cmd.Flags().GetString("end-date")
@@ -220,6 +227,7 @@ func Run(cmd *cobra.Command, provider, league string) error {
 		e = &feed.NFLExtractor{
 			Feed:              feedstring,
 			Date:              date,
+			Year:              year,
 			FetchAttempts:     fetchAttempts,
 			FetchRetryBackoff: fetchRetryBackoff,
 			Timeout:           timeoutDuration,

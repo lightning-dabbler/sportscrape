@@ -38,6 +38,30 @@ func ExampleMatchupScraper() {
 	}
 }
 
+// Example for nfl.InjuriesScraper
+func ExampleInjuriesScraper() {
+	injuriesscraper := nfl.NewInjuriesScraper(
+		nfl.WithInjuriesSeason("2025"),
+	)
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Injury]{
+			Scraper: injuriesscraper,
+		},
+	)
+	injuries, err := matchuprunner.Run()
+	if err != nil {
+		panic(err)
+	}
+	// Output each injury as pretty json
+	for _, injury := range injuries {
+		jsonBytes, err := json.MarshalIndent(injury, "", "  ")
+		if err != nil {
+			log.Fatalf("Error marshaling to JSON: %v\n", err)
+		}
+		fmt.Println(string(jsonBytes))
+	}
+}
+
 // Example for nfl.MatchupPeriodsScraper
 func ExampleMatchupPeriodsScraper() {
 	matchupscraper := nfl.NewMatchupScraper(

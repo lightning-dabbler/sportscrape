@@ -79,4 +79,19 @@ Box score (players with stats only):
 	Player full names (no endpoint scoped to the game provides them), looked up by the player's personId:
 	URL template: https://api.nfl.com/football/v2/persons/{person_id}
 	e.g. https://api.nfl.com/football/v2/persons/32005052-4528-5723-d1b2-96e92ebc1241 -> "displayName": "Dak Prescott"
+
+Injuries (every weekly injury report of a season, the source of the nfl.com game page's injury report):
+
+	URL template: https://api.nfl.com/football/v2/injuries?season={season}&seasonType={seasonType}&limit={limit}&pageToken={pageToken}
+	e.g. https://api.nfl.com/football/v2/injuries?limit=500&season=2025&seasonType=REG
+	-> {"injuries": [...], "pagination": {"limit": 500, "token": "..."}}
+
+	Paging: the response's pagination.token is passed as the next request's pageToken (passing it as token returns the first page again);
+	the last page has no token. week and teamId are ignored; season and seasonType are honored. PRE has no injuries (e.g. 2025).
+	There's one entry per player per week (season, seasonType, week, person.id); a player's team can change between weeks.
+
+	injuryStatus (the game status): null, OUT, DOUBTFUL, QUESTIONABLE; injuries[] are its reasons (e.g. Knee, "Not injury related - personal matter")
+	practices[] are the reasons on the week's practice report (not tied to a practice day); practiceDays[] the participation per practice day:
+	FULL, LIMITED, DIDNOT; practiceStatus is the latest practice day's participation.
+	The current week's entries change during the week: practiceDays grow with each practice and injuryStatus/injuries are null until the final report.
 */

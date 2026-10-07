@@ -16,6 +16,8 @@ func TestNFLExtractorValidateFeed(t *testing.T) {
 		// valid feeds
 		{name: "matchup jsonl", feed: "matchup", format: "jsonl"},
 		{name: "matchup parquet", feed: "matchup", format: "parquet"},
+		{name: "injuries jsonl", feed: "injuries", format: "jsonl"},
+		{name: "injuries parquet", feed: "injuries", format: "parquet"},
 		{name: "matchup-periods", feed: "matchup-periods", format: "jsonl"},
 		{name: "passing-box-score", feed: "passing-box-score", format: "jsonl"},
 		{name: "rushing-box-score", feed: "rushing-box-score", format: "jsonl"},
