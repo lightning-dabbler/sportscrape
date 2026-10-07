@@ -196,6 +196,7 @@ var (
 	NFLInterceptionsBoxScore Feed     = Feed(string(NFL) + " interceptions box score")
 	NFLPlayByPlay            Feed     = Feed(string(NFL) + " play by play")
 	NFLPlayByPlayStats       Feed     = Feed(string(NFL) + " play by play stats")
+	NFLInjuries              Feed     = Feed(string(NFL) + " injuries")
 
 	// prop finder
 	PropFinder           Provider = "prop finder"

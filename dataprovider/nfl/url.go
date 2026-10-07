@@ -9,6 +9,8 @@ import (
 
 const (
 	BaseURL = "https://api.nfl.com"
+	// InjuriesPageLimit is the number of injuries requested per page
+	InjuriesPageLimit = 500
 )
 
 // ConstructTokenURL
@@ -63,4 +65,18 @@ func ConstructPlayerStatisticsURL(eventID string) string {
 // https://api.nfl.com/football/v2/persons/32005052-4528-5723-d1b2-96e92ebc1241
 func ConstructPersonURL(personID string) string {
 	return BaseURL + "/football/v2/persons/" + personID
+}
+
+// ConstructInjuriesURL
+// https://api.nfl.com/football/v2/injuries?limit=500&season=2025&seasonType=REG
+// pageToken is the previous page's pagination token (omitted when empty)
+func ConstructInjuriesURL(season int32, seasonType string, pageToken string) string {
+	query := url.Values{}
+	query.Set("limit", strconv.Itoa(InjuriesPageLimit))
+	query.Set("season", strconv.FormatInt(int64(season), 10))
+	query.Set("seasonType", seasonType)
+	if pageToken != "" {
+		query.Set("pageToken", pageToken)
+	}
+	return BaseURL + "/football/v2/injuries?" + query.Encode()
 }

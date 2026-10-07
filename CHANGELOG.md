@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-06
+### Added
+- nfl injuries feed (`nfl.InjuriesScraper`, `model.Injury`) for api.nfl.com's weekly injury reports: one row per player per week (season, season type, week, person) with game status and reasons, practice report reasons, latest practice participation and per-day participation; every PRE/REG/POST week of a season in one pull. CLI: `sportscrape nfl --feed injuries --year YYYY` (#168)
+
+### Documentation
+- Added the NFL injury report feed to `docs/DATA_PROVIDERS.md` (#168)
+
 ## [1.9.0] - 2026-10-06
 ### Added
 - Retries for nba and wnba fetches: box score pages are retried when the fetch fails or a final game's payload is missing player statistics; matchup, matchup periods and play-by-play pages when the fetch fails; wnba matchup on network errors, 429 and 5xx. `FetchAttempts` / `FetchRetryBackoff` on the nba and wnba scrapers (default 3 attempts), `DefaultFetchAttempts` in both packages, and CLI `--fetch-attempts` / `--fetch-retry-backoff` on `nba` and `wnba` (#166)

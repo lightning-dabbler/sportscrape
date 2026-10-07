@@ -32,13 +32,14 @@ var (
 		"'play-by-play-stats'",
 	}, ", ")
 
-	NFLOptions string = fmt.Sprintf("'matchup', %s", NFLConcurrencyOptions)
+	NFLOptions string = fmt.Sprintf("'matchup', 'injuries', %s", NFLConcurrencyOptions)
 	ErrNFL     error  = fmt.Errorf("valid options: %s", NFLOptions)
 )
 
 type NFLExtractor struct {
 	Feed              string
 	Date              string
+	Year              string
 	FetchAttempts     int
 	FetchRetryBackoff time.Duration
 	Timeout           time.Duration
@@ -62,7 +63,7 @@ func (e *NFLExtractor) ValidateFeed() error {
 		return err
 	}
 	switch e.Feed {
-	case "matchup", "matchup-periods", "passing-box-score", "rushing-box-score", "receiving-box-score",
+	case "matchup", "injuries", "matchup-periods", "passing-box-score", "rushing-box-score", "receiving-box-score",
 		"defense-box-score", "kicking-box-score", "kickoff-box-score", "punting-box-score", "kick-return-box-score",
 		"punt-return-box-score", "fumbles-box-score", "interceptions-box-score", "play-by-play", "play-by-play-stats":
 		return nil
@@ -76,6 +77,8 @@ func (e *NFLExtractor) Scrape(ctx context.Context) error {
 	switch e.Feed {
 	case "matchup":
 		return e.scrapeMatchup(ctx)
+	case "injuries":
+		return e.scrapeInjuries(ctx)
 	case "matchup-periods":
 		s := nfl.NewMatchupPeriodsScraper()
 		s.Fetcher = fetcher
@@ -157,6 +160,23 @@ func (e *NFLExtractor) scrapeMatchup(ctx context.Context) error {
 		return err
 	}
 	return exporters.BuildAndWrite(ctx, e.OutputPath, e.Format, e.S3Config, m, e.ParquetOptions...)
+}
+
+func (e *NFLExtractor) scrapeInjuries(ctx context.Context) error {
+	injuriesscraper := nfl.NewInjuriesScraper(
+		nfl.WithInjuriesSeason(e.Year),
+	)
+	injuriesscraper.Fetcher = e.fetcher()
+	matchuprunner := runner.NewMatchupRunner(
+		runner.MatchupRunnerConfig[model.Injury]{
+			Scraper: injuriesscraper,
+		},
+	)
+	injuries, err := matchuprunner.Run()
+	if err != nil {
+		return err
+	}
+	return exporters.BuildAndWrite(ctx, e.OutputPath, e.Format, e.S3Config, injuries, e.ParquetOptions...)
 }
 
 // scrapeNFLEventData runs eventdatascraper against the date's matchups and writes the records
