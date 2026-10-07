@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.1] - 2026-10-07
+### Changed
+- nfl injuries skips entries without a GSIS ID (`player_id`): they come from a duplicate person record that repeats the player's entry for the week, e.g. Brock Wright (DET) in 2021 REG week 18 and 2022 REG week 9 (#170)
+
+### Documentation
+- nfl injuries composite key is (season, season_type, week, team_id, player_id): a player traded during a week can be on both teams' reports, e.g. Christian McCaffrey (CAR and SF) in 2022 REG week 7; documented that PRE and POST reports can be partial and that position and practice day status can be empty (#170)
+
 ## [1.10.0] - 2026-10-06
 ### Added
 - nfl injuries feed (`nfl.InjuriesScraper`, `model.Injury`) for api.nfl.com's weekly injury reports: one row per player per week (season, season type, week, person) with game status and reasons, practice report reasons, latest practice participation and per-day participation; every PRE/REG/POST week of a season in one pull. CLI: `sportscrape nfl --feed injuries --year YYYY` (#168)
