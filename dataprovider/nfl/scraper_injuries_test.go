@@ -31,12 +31,13 @@ func TestInjuriesScraper(t *testing.T) {
 	type key struct {
 		seasonType string
 		week       int32
-		personID   string
+		teamID     string
+		playerID   string
 	}
 	seen := make(map[key]bool, len(injuries))
 	weeks := map[string]map[int32]bool{}
 	for _, injury := range injuries {
-		k := key{injury.SeasonType, injury.Week, injury.PersonID}
+		k := key{injury.SeasonType, injury.Week, injury.TeamID, injury.PlayerID}
 		assert.False(t, seen[k], "duplicate %v", k)
 		seen[k] = true
 		if weeks[injury.SeasonType] == nil {
