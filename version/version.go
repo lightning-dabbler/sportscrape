@@ -2,4 +2,4 @@ package version
 
 // Version is a manually maintained semver version.
 // This is updated by hand when releasing new versions
-const Version = "v1.9.0"
+const Version = "v1.10.0"
