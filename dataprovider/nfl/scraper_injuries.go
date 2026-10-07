@@ -14,7 +14,7 @@ import (
 	"github.com/xitongsys/parquet-go/types"
 )
 
-// InjuriesSeasonTypes are the season types whose injury reports are scraped (PRE has had no injury reports e.g. 2025)
+// InjuriesSeasonTypes are the season types whose injury reports are scraped (PRE rarely has injury reports e.g. 2024 week 3 only; none in 2018-2023 and 2025)
 var InjuriesSeasonTypes = []string{"PRE", "REG", "POST"}
 
 // InjuriesScraperOption defines a configuration option for InjuriesScraper
@@ -91,6 +91,14 @@ func (s *InjuriesScraper) Scrape() sportscrape.MatchupOutput[model.Injury] {
 				return output
 			}
 			for _, injury := range page.Injuries {
+				// entries without a GSIS ID are skipped: they come from a duplicate person record that repeats the player's entry
+				// for the week (e.g. Brock Wright, DET, 2021 REG week 18 and 2022 REG week 9)
+				if injury.Person.GSISID == "" {
+					log.Printf("skipping %s %s week %d injury entry of person %s (%s) without a GSIS ID\n",
+						s.Season, seasonType, injury.Week, injury.Person.ID, injury.Person.DisplayName)
+					output.Context.Skips += 1
+					continue
+				}
 				injuries = append(injuries, model.Injury{
 					PullTimestamp:        pullTimestamp,
 					PullTimestampParquet: pullTimestampParquet,

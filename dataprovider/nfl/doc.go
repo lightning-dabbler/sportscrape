@@ -87,8 +87,12 @@ Injuries (every weekly injury report of a season, the source of the nfl.com game
 	-> {"injuries": [...], "pagination": {"limit": 500, "token": "..."}}
 
 	Paging: the response's pagination.token is passed as the next request's pageToken (passing it as token returns the first page again);
-	the last page has no token. week and teamId are ignored; season and seasonType are honored. PRE has no injuries (e.g. 2025).
-	There's one entry per player per week (season, seasonType, week, person.id); a player's team can change between weeks.
+	the last page has no token. week and teamId are ignored; season and seasonType are honored. PRE rarely has injuries (e.g. 2024 week 3 only;
+	none in 2018-2023 and 2025), and some post-season reports are missing weeks (e.g. 2023 POST has week 1 only; 2024 POST weeks 1, 3, 4).
+	There's one entry per player per team per week (season, seasonType, week, team.id, person.gsisId): a player's team can change between weeks,
+	and a player traded during a week can be on both teams' reports (e.g. Christian McCaffrey, CAR and SF, 2022 REG week 7).
+	A few entries have no gsisId: they come from a duplicate person record (different person.id, gsisId null at /football/v2/persons) that
+	repeats the player's entry for the week (e.g. Brock Wright, DET, 2021 REG week 18 and 2022 REG week 9); InjuriesScraper skips them.
 
 	injuryStatus (the game status): null, OUT, DOUBTFUL, QUESTIONABLE; injuries[] are its reasons (e.g. Knee, "Not injury related - personal matter")
 	practices[] are the reasons on the week's practice report (not tied to a practice day); practiceDays[] the participation per practice day:
